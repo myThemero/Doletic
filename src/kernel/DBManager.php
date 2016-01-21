@@ -11,6 +11,10 @@ class DBManager {
 		$this->databases = array();
 	}
 
+	public function Init() {
+		/// \todo implement here
+	}
+
 	public function RegisterDatabase($name, $db) {
 		$ok = false;
 		if($this->databases[$name] == null) {	

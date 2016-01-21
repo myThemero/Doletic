@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 /// \todo implement this class
-class ModuleLoader {
-
+class LogManager {
+	
 	// -- attributes
+	private $loggers;
 
 	// -- functions
 
