@@ -13,7 +13,7 @@ class SettingsManager extends AbstractManager {
 	// --- keys
 	// ---- kernel related keys
 	const KEY_KERN_DEBUG = "kern_debug";
-	const KEY_KERN_INFO = "kern_info";
+	const KEY_KERN_LOG = "kern_log";
 	// ---- database related keys
 	const KEY_DBENGINE = "db_engine";
 	const KEY_DBNAME = "db_name";
@@ -59,5 +59,9 @@ class SettingsManager extends AbstractManager {
 
 	public function GetSettingValue($key) {
 		return $this->settings[$key];
+	}
+
+	public function GetAllSettings() {
+		return $this->settings;
 	}
 }

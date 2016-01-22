@@ -32,7 +32,7 @@ class Main {
 			if(array_key_exists(Main::RPARAM_QUERY, $_GET)) {
 				// GET query is about logout
 				if(!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_LOGOUT)) {
-					$this->logout();
+					$this->displayLogout();
 				} else 
 				// GET query is about interface
 				if(!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_INTERF)) {
@@ -48,35 +48,29 @@ class Main {
 			} else 
 			// check if kernel has a valid user registered
 			if($_SESSION[Main::SPARAM_DOL_KERN]->HasValidUser()) {
-				$this->loadUserInterface();
+				$this->displayHome();
 			} else { // if no valid user ask for a login
-				$this->login();
+				$this->displayLogin();
 			}
 			// disconnect database
 			$_SESSION[Main::SPARAM_DOL_KERN]->DisconnectDB();
 		} else { // if no doletic kernel in session, create one
-			$this->initDoleticKernel();
+			$this->init();
 		}
 	}
 
 # PROTECTED & PRIVATE ##########################################################
 
-	private function initDoleticKernel() {
+	private function init() {
 		// Create a doletic kernel, initialize it & put it in session vars
 		$_SESSION[Main::SPARAM_DOL_KERN] = new DoleticKernel();
 		$_SESSION[Main::SPARAM_DOL_KERN]->Init();
 		// connect to database
 		$_SESSION[Main::SPARAM_DOL_KERN]->ConnectDB();
 		// call login to show login interface
-		$this->login();
+		$this->displayLogin();
 		// connect to database
 		$_SESSION[Main::SPARAM_DOL_KERN]->DisconnectDB();
-	}
-
-	private function login() {
-		
-		// display login interface
-		$_SESSION[Main::SPARAM_DOL_KERN]->DisplayInterface(DoleticKernel::INTERFACE_LOGIN);
 	}
 
 	private function authenticate() {
@@ -84,9 +78,13 @@ class Main {
 		if(array_key_exists(Main::PPARAM_USER, $_POST) &&
 		   array_key_exists(Main::PPARAM_HASH, $_POST)) {
 			// Ask kernel to authenticate user
-			$_SESSION[Main::SPARAM_DOL_KERN]->AuthenticateUser($_POST[Main::PPARAM_USER], $_POST[Main::PPARAM_HASH]);
+			if($_SESSION[Main::SPARAM_DOL_KERN]->AuthenticateUser($_POST[Main::PPARAM_USER], $_POST[Main::PPARAM_HASH])) {
+				$this->displayHome();
+			} else {
+				$this->displayLogin(true);
+			}
 		} else { // if params are missing show login page
-			$this->login();
+			$this->displayLogin();
 		}
 	}
 
@@ -94,25 +92,34 @@ class Main {
 		// check if params
 		if(array_key_exists(Main::GPARAM_PAGE, $_GET)) {
 			// display given interface
-			$_SESSION[Main::SPARAM_DOL_KERN]->DisplayInterface($_GET[Main::GPARAM_PAGE]);
+			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface($_GET[Main::GPARAM_PAGE]);
 		} else {
 			// display page not found interface
-			$_SESSION[Main::SPARAM_DOL_KERN]->DisplayInterface(DoleticKernel::INTERFACE_404);
+			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_404);
 		}
 	}
 
-	private function logout() {
+	private function displayLogin($authFailed = false) {
+		// display login interface
+		if($authFailed) {
+			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_LOGIN_FAILED);	
+		} else {
+			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_LOGIN);	
+		}
+	}
+
+	private function displayLogout() {
 		// unset session vars
 		$_SESSION = array();
 		// destroy session
 		session_destroy();
-		// recall init to show login interface
-		$this->initDoleticKernel();
+		// display logout interface
+		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_LOGOUT);
 	}
 
-	private function loadUserInterface() {
+	private function displayHome() {
 		// load home interface
-		$_SESSION[Main::SPARAM_DOL_KERN]->DisplayInterface(DoleticKernel::INTERFACE_HOME);
+		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_HOME);
 	}
 
 }
