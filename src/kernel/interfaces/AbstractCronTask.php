@@ -1,11 +1,12 @@
-<?php 
+<?php
 
 /**
-* 
+* @brief
 */
-class Services {
+class AbstractCronTask {
 	
 	public function __construct() {
-	
+		
 	}
+	
 }

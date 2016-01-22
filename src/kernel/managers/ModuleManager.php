@@ -1,13 +1,19 @@
 <?php
 
-class ModuleManager {
+require_once "managers/AbstractManager.php";
+
+/**
+* 	@brief
+*/
+class ModuleManager extends AbstractManager {
 
 	// -- attributes
 	private $modules;
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct(&$kernel) {
+		parent::__construct($kernel);
 		$this->modules = array();
 	}
 

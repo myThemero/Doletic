@@ -1,14 +1,19 @@
 <?php 
 
+require_once "managers/AbstractManager.php";
 
-class CronManager {
+/**
+* 	@brief
+*/
+class CronManager extends AbstractManager {
 
 	// -- attributes 
 	private $tasks;
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct(&$kernel) {
+		parent::__construct($kernel);
 		$this->tasks = array();
 	}
 
