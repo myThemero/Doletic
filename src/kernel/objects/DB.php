@@ -7,6 +7,7 @@ class DB {
 	// -- attributes
 	private $dbmanager;
 	private $dns;
+	private $name;
 	private $username;
 	private $passwd;
 	private $pdo;
@@ -14,15 +15,24 @@ class DB {
 
 	// -- functions
 
-	public function __construct(&$dbmanager, $dbengine, $dbhost, $dbname) {
+	public function __construct(&$dbmanager, $dbengine, $dbhost, $dbname, $username, $passwd) {
 		$this->dbmanager = $dbmanager;
+		$this->name = $dbname;
 		$this->dns = $dbengine.':dbname='.$dbname.";host=".$dbhost;
+		$this->user = $username;
+		$this->pass = $passwd;
 		$this->connected = false;
 	}
 
-	public function Connect($username, $passwd) {
-		$this->user = $username;
-		$this->pass = $passwd;
+	public function GetName() {
+		return $this->name;
+	}
+
+	public function IsConnected() {
+		return $this->connected;
+	}
+
+	public function Connect() {
 		try {
 			$this->pdo = new PDO($this->dns, $this->user, $this->pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));	
 			$this->connected = true;
@@ -31,13 +41,9 @@ class DB {
 		}	
 	}
 
-	public function CloseConnection() {
-		$this->pdo = null;
+	public function Disconnect() {
+		$this->pdo = null; // close PDO connection
 		$this->connected = false;
-	}
-
-	public function IsConnected() {
-		return $this->connected;
 	}
 
 	public function ExecuteQuery($sql) {

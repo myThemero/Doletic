@@ -11,13 +11,16 @@ class SettingsManager extends AbstractManager {
 	// --- files
 	const CONFIGURATION_FILE = "settings.ini";
 	// --- keys
+	// ---- kernel related keys
+	const KEY_KERN_DEBUG = "kern_debug";
+	const KEY_KERN_INFO = "kern_info";
 	// ---- database related keys
-	const KEY_DBENGINE = "dbengine";
-	const KEY_DBNAME = "dbname";
-	const KEY_DBHOST = "dbhost";
-	const KEY_DBUSER = "dbuser";
-	const KEY_DBPWD = "dbpwd";
-	const KEY_DBDEBUG = "dbdebug";
+	const KEY_DBENGINE = "db_engine";
+	const KEY_DBNAME = "db_name";
+	const KEY_DBHOST = "db_host";
+	const KEY_DBUSER = "db_user";
+	const KEY_DBPWD = "db_pwd";
+	const KEY_DBDEBUG = "db_debug";
 
 	// -- attributes
 	private $settings;
@@ -44,6 +47,10 @@ class SettingsManager extends AbstractManager {
 			$ok = true;
 		}
 		return $ok;
+	}
+
+	public function OverrideSetting($key, $value) {
+		$this->setting[$key] = $value;
 	}
 
 	public function UnregisterSetting($key) {

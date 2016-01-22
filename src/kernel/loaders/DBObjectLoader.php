@@ -43,4 +43,12 @@ class DBObjectLoader extends AbstractLoader {
 				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME));
 		}
 	}
+
+	public function FullDBUpdate(&$dbmanager) {
+		foreach ($this->objects as $key => $object) {
+			$object->UpdateDB(
+				$dbmanager, 
+				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME));
+		}
+	}
 }

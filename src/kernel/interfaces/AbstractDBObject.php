@@ -22,17 +22,30 @@ class AbstractDBObject {
 		$this->tables = array();
 	}
 
+	/**
+	 *	@brief Returns DBObject name
+	 */
 	public function GetName() {
 		return $this->name;
 	}
 
 	/**
-	 *	@brief Hard reset of database, drop tables and creates it again
+	 *	@brief Deletes all tables and re-creates them after 
 	 */
 	public function ResetDB($dbmanager, $dbname) {
 		foreach ($this->tables as $tableName => $table) {
 			// Drop table if exists
 			$dbmanager->GetOpenConnectionTo($dbname)->ExecuteQuery($table->GetDROPQuery());
+			// Create table if not exists
+			$dbmanager->GetOpenConnectionTo($dbname)->ExecuteQuery($table->GetCREATEQuery());
+		}
+	}
+
+	/**
+	 *	@brief Creates missing tables for all objects in database
+	 */
+	public function UpdateDB($dbmanager, $dbname) {
+		foreach ($this->tables as $tableName => $table) {
 			// Create table if not exists
 			$dbmanager->GetOpenConnectionTo($dbname)->ExecuteQuery($table->GetCREATEQuery());
 		}
@@ -47,6 +60,9 @@ class AbstractDBObject {
 
 # PROTECTED & PRIVATE #########################################################
 
+	/**
+	 *	@brief Add a database table to object tables
+	 */
 	protected function addTable($table) {
 		$this->tables[$table->GetName()] = $table; 
 	}

@@ -14,6 +14,11 @@ require_once "loaders/DBObjectLoader.php";
 */
 class DoleticKernel {
 
+	// -- consts
+	const INTERFACE_LOGIN = "login";
+	const INTERFACE_404 = "404";
+	const INTERFACE_HOME = "home";
+
 	// -- attributes
 	// --- managers
 	private $log_mgr;
@@ -76,22 +81,47 @@ class DoleticKernel {
 		return $this->settings_mgr->GetSettingValue($key);
 	}
 
-	// --- setup
+	// --- ui interaction
 
-	public function SetupDatabase() {
+	public function DisplayInterface($ui) {
+		$this->debug("Showing '" . $ui . "' interface.");
+	}
+
+	// --- database management
+
+	public function ResetDatabase() {
+		$this->info("Reset database.");
 		// build or rebuild database
 		$this->dbobject_ldr->FullDBReset($this->db_mgr);
 	}
+
+	public function UpdateDatabase() {
+		$this->info("Update database.");
+		// update database
+		$this->dbobject_ldr->FullDBUpdate($this->db_mgr);
+	}
+
+	public function ConnectDB() {
+		$this->info("Connect DB.");
+		$this->db_mgr->InitAllConnections();
+	}
+	public function DisconnectDB() {
+		$this->info("Disconect DB.");
+		$this->db_mgr->CloseAllConnections();
+	}
+
+# PROTECTED & PRIVATE ################################################
+
+	private  function debug($msg) {
+		if($this->SettingValue(SettingsManager::KEY_KERN_DEBUG)) {
+			echo "[KERN_DEBUG]>>>> ".$msg."\n";	
+		}
+	}
+
+	private function info($msg) {
+		if($this->SettingValue(SettingsManager::KEY_KERN_INFO)) {
+			echo "[KERN_INFO]>>>> ".$msg."\n";	
+		}	
+	}
+
 }
-
-# TEST ###########################################################
-
-$kernel = new DoleticKernel();
-$kernel->Init();
-$kernel->SetupDatabase();
-
-
-
-
-
-# TEST ###########################################################

@@ -24,21 +24,31 @@ class DBManager extends AbstractManager {
 			$this,
 			$this->kernel()->SettingValue(SettingsManager::KEY_DBENGINE), 
 			$this->kernel()->SettingValue(SettingsManager::KEY_DBHOST), 
-			$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME));
-		// open connection
-		$db->Connect(
+			$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME),
 			$this->kernel()->SettingValue(SettingsManager::KEY_DBUSER),
 			$this->kernel()->SettingValue(SettingsManager::KEY_DBPWD));
 		// register main doletic database 
-		$this->RegisterDatabase(
-			$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME), 
-			$db);
+		$this->RegisterDatabase($db);
 	}
 
-	public function RegisterDatabase($name, $db) {
+	public function InitAllConnections() {
+		// connect all databases
+		foreach ($this->databases as $dbname => $db) {
+			$db->Connect();
+		}
+	}
+
+	public function CloseAllConnections() {
+		// disconnect all databases
+		foreach ($this->databases as $dbname => $db) {
+			$db->Disconnect();
+		}
+	}
+
+	public function RegisterDatabase($db) {
 		$ok = false;
-		if(!array_key_exists($name, $this->databases)) {	
-			$this->databases[$name] = $db;
+		if(!array_key_exists($db->GetName(), $this->databases)) {	
+			$this->databases[$db->GetName()] = $db;
 			$ok = true;
 		}
 		return $ok;
