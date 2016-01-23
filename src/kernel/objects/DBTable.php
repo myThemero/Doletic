@@ -123,7 +123,7 @@ class DBTable {
 		}
 		$query.= " FROM `".$this->name."`";
 		// check if not everywhere
-		if(in_array(DBTable::EVERYWHERE, $where)) {
+		if(!in_array(DBTable::EVERYWHERE, $where)) {
 			$query .= " WHERE ";
 			foreach ($where as $column) {
 				$query .= $column."=:".$column.",";

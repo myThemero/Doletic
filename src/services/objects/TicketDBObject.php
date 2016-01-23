@@ -191,15 +191,17 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create ticket var
 		$ticket = null;
-		if( ($row = $pdos->fetch()) !== false) {
-			$ticket = new Ticket(
-				$row[TicketDBObject::COL_ID], 
-				$row[TicketDBObject::COL_SENDER_ID], 
-				$row[TicketDBObject::COL_RECEIVER_ID], 
-				$row[TicketDBObject::COL_SUBJECT], 
-				$row[TicketDBObject::COL_CATEGORY_ID], 
-				$row[TicketDBObject::COL_DATA], 
-				$row[TicketDBObject::COL_STATUS_ID]);
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$ticket = new Ticket(
+					$row[TicketDBObject::COL_ID], 
+					$row[TicketDBObject::COL_SENDER_ID], 
+					$row[TicketDBObject::COL_RECEIVER_ID], 
+					$row[TicketDBObject::COL_SUBJECT], 
+					$row[TicketDBObject::COL_CATEGORY_ID], 
+					$row[TicketDBObject::COL_DATA], 
+					$row[TicketDBObject::COL_STATUS_ID]);
+			}
 		}
 		return $ticket;
 	}
@@ -230,8 +232,10 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for tickets and fill it
 		$category = null;
-		if( ($row = $pdos->fetch()) !== false) {
-			$category = $row[DBTable::COL_LABEL];
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$category = $row[DBTable::COL_LABEL];
+			}
 		}
 		return $category;
 	}
@@ -243,15 +247,17 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for tickets and fill it
 		$tickets = array();
-		while( ($row = $pdos->fetch()) !== false) {
-			array_push($tickets, new Ticket(
-				$row[TicketDBObject::COL_ID], 
-				$row[TicketDBObject::COL_SENDER_ID], 
-				$row[TicketDBObject::COL_RECEIVER_ID], 
-				$row[TicketDBObject::COL_SUBJECT], 
-				$row[TicketDBObject::COL_CATEGORY_ID], 
-				$row[TicketDBObject::COL_DATA], 
-				$row[TicketDBObject::COL_STATUS_ID]));
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($tickets, new Ticket(
+					$row[TicketDBObject::COL_ID], 
+					$row[TicketDBObject::COL_SENDER_ID], 
+					$row[TicketDBObject::COL_RECEIVER_ID], 
+					$row[TicketDBObject::COL_SUBJECT], 
+					$row[TicketDBObject::COL_CATEGORY_ID], 
+					$row[TicketDBObject::COL_DATA], 
+					$row[TicketDBObject::COL_STATUS_ID]));
+			}
 		}
 		return $tickets;
 	}
@@ -263,8 +269,10 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for tickets and fill it
 		$statuses = array();
-		while( ($row = $pdos->fetch()) !== false) {
-			array_push($statuses, $row[DBTable::COL_LABEL]);
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($statuses, $row[DBTable::COL_LABEL]);
+			}
 		}
 		return $statuses;
 	}
@@ -276,8 +284,10 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for tickets and fill it
 		$categories = array();
-		while( ($row = $pdos->fetch()) !== false) {
-			array_push($categories, $row[DBTable::COL_LABEL]);
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($categories, $row[DBTable::COL_LABEL]);
+			}
 		}
 		return $categories;
 	}

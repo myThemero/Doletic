@@ -83,6 +83,9 @@ class Tests {
 			"data" => "Test data",
 			"statusId" => 3));
 		var_dump($data);
+		// get all
+		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("allt", array());
+		var_dump($data);
 		// update
 		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("update", array(
 			"id" => 1,
@@ -92,6 +95,9 @@ class Tests {
 			"categoryId" => -1,
 			"data" => "Another test data",
 			"statusId" => -1));
+		var_dump($data);
+		// get by id
+		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("byidt", array("id" => 1));
 		var_dump($data);
 		// archive
 		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("archive", array("id" => 1));
