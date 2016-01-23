@@ -8,6 +8,9 @@ class Tests {
 	// -- functions
 	public static function Run($test) {
 		$all=!strcmp($test, "");
+		if(!strcmp($test, "clear") || $all) {
+			Tests::__test_db_clear();
+		}
 		if(!strcmp($test, "reset") || $all) {
 			Tests::__test_db_reset();
 		}
@@ -35,6 +38,16 @@ class Tests {
 	 *
 	 */
 	// --------------------------------- TESTS ---------------------------------
+	/**
+	 *
+	 */
+	private static function __test_db_clear() {
+		$kernel = Tests::__init_kernel__("__test_db_clear"); // initialize kernel
+		// --------- content ------------
+		$kernel->ClearDatabase();
+		// ----------- end --------------
+		Tests::__terminate_kernel__($kernel); // terminate kernel
+	}
 	/**
 	 *
 	 */

@@ -42,19 +42,21 @@ class DBObjectLoader extends AbstractLoader {
 		return $object; 
 	}
 
-	public function FullDBReset(&$dbmanager) {
+	public function FullDBClear() {
 		foreach ($this->objects as $key => $object) {
-			$object->ResetDB(
-				$dbmanager, 
-				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME));
+			$object->ClearDB();
 		}
 	}
 
-	public function FullDBUpdate(&$dbmanager) {
+	public function FullDBReset() {
 		foreach ($this->objects as $key => $object) {
-			$object->UpdateDB(
-				$dbmanager, 
-				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME));
+			$object->ResetDB();
+		}
+	}
+
+	public function FullDBUpdate() {
+		foreach ($this->objects as $key => $object) {
+			$object->UpdateDB();
 		}
 	}
 }

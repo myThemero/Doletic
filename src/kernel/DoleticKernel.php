@@ -128,14 +128,19 @@ class DoleticKernel {
 
 	// --- database management --------------------------------------------------------------------
 
+	public function ClearDatabase() {
+		$this->info("Clear database.");
+		// -- remove all tables
+		$this->dbobject_ldr->FullDBClear($this->db_mgr);
+	}
 	public function ResetDatabase() {
 		$this->info("Reset database.");
-		// -- build or rebuild database
+		// -- build or rebuild all tables
 		$this->dbobject_ldr->FullDBReset($this->db_mgr);
 	}
 	public function UpdateDatabase() {
 		$this->info("Update database.");
-		// -- update database
+		// -- update all tables
 		$this->dbobject_ldr->FullDBUpdate($this->db_mgr);
 	}
 	public function ConnectDB() {
