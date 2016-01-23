@@ -181,7 +181,7 @@ class DBTable {
 		$query = trim($query, " ,") . " WHERE ";
 		// check if where argument is all but id
 		if(in_array(DBTable::ID_ONLY, $where)) {
-			$query = "`id`=:id";
+			$query .= "`id`=:id";
 		} else {
 			foreach ($where as $column) {
 				$query .=  "`".$column."`=:".$column.$link;
@@ -202,7 +202,7 @@ class DBTable {
 		// build query
 		$query = "DELETE FROM `".$this->name."` WHERE ";
 		if(in_array(DBTable::ID_ONLY, $where)) {
-			$query = "`id`=:id";
+			$query .= "`id`=:id";
 		} else {
 			foreach ($where as $column) {
 				$query .=  "`".$column."`=:".$column.$link;
@@ -215,6 +215,6 @@ class DBTable {
 	 *	Returns a SQL to copy a full row from between two tables sharing the same schema
 	 */
 	public function GetARCHIVEQuery($archiveTableName) {
-		return "INSERT INTO ".$archiveTableName." SELECT * FROM ".$this->name." WHERE `ìd`=:id;";
+		return "INSERT INTO `".$archiveTableName."` SELECT * FROM `".$this->name."` WHERE `id`=:id;";
 	}
 }

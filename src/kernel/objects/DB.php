@@ -75,6 +75,7 @@ class DB {
 			var_dump("PrepareExecuteQuery:sql: " . $sql);
 			var_dump("PrepareExecuteQuery:sql_params: ");
 			var_dump($sql_params);
+			return true;
 		} else {
 			$pdos = $this->pdo->prepare($sql);
 			return $pdos->execute($sql_params);	

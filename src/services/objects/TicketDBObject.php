@@ -329,7 +329,7 @@ class TicketServices extends AbstractObjectServices {
 		// create sql params
 		$sql_params = array(":".TicketDBObject::COL_ID => $id);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetARCHIVEQuery();
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetARCHIVEQuery(TicketDBObject::TABL_ARCHIV);
 		// execute archive query
 		$ok = false;
 		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {

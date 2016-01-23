@@ -10,12 +10,12 @@ class Tests {
 		$all=!strcmp($test, "");
 		if(!strcmp($test, "reset") || $all) {
 			Tests::__test_db_reset();
-		} else
+		}
 		if(!strcmp($test, "update") || $all) {
 			Tests::__test_db_update();
-		} else
-		if(!strcmp($test, "insert_ticket") || $all) {
-			Tests::__test_db_insert_ticket();
+		}
+		if(!strcmp($test, "dbo_ticket") || $all) {
+			Tests::__test_dbo_ticket();
 		}
 	}
 
@@ -58,9 +58,10 @@ class Tests {
 	/**
 	 *
 	 */
-	private static function __test_db_insert_ticket() {
-		$kernel = Tests::__init_kernel__("__test_db_insert_ticket"); // initialize kernel
+	private static function __test_dbo_ticket() {
+		$kernel = Tests::__init_kernel__("__test_iua_ticket"); // initialize kernel
 		// --------- content ------------
+		// insert
 		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("insert", array(
 			"senderId" => 0,
 			"receiverId" => 1,
@@ -68,6 +69,19 @@ class Tests {
 			"categoryId" => 2,
 			"data" => "Test data",
 			"statusId" => 3));
+		var_dump($data);
+		// update
+		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("update", array(
+			"id" => 1,
+			"senderId" => -1,
+			"receiverId" => -1,
+			"subject" => "Another test subject",
+			"categoryId" => -1,
+			"data" => "Another test data",
+			"statusId" => -1));
+		var_dump($data);
+		// archive
+		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("archive", array("id" => 1));
 		var_dump($data);
 		// ----------- end --------------
 		Tests::__terminate_kernel__($kernel); // terminate kernel
