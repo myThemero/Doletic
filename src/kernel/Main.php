@@ -1,6 +1,7 @@
 <?php
 
 require_once "DoleticKernel.php";
+require_once "../services/Services.php";
 
 class Main {
 
@@ -15,6 +16,7 @@ class Main {
 	// --- SESSION keys
 	const SPARAM_DOL_KERN = "doletic_kernel";
 	// --- known queries
+	const QUERY_SERVICE = "service";
 	const QUERY_LOGOUT = "logout";
 	const QUERY_AUTHEN = "auth";
 	const QUERY_INTERF = "ui";
@@ -44,6 +46,10 @@ class Main {
 				// POST query is about authentication
 				if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_AUTHEN)) {
 					$this->authenticate();
+				} else 
+				// GET query is about interface
+				if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_SERVICE)) {
+					$this->service();
 				}
 			} else 
 			// check if kernel has a valid user registered
@@ -85,6 +91,19 @@ class Main {
 			}
 		} else { // if params are missing show login page
 			$this->displayLogin();
+		}
+	}
+
+	private function service() {
+		// check if minimum post params are present
+		if(array_key_exists(Main::PPARAM_OBJ, $_POST) &&
+		   array_key_exists(Main::PPARAM_ACT, $_POST)) {
+			// create service instance
+			$service = new Services($_SESSION[Main::SPARAM_DOL_KERN]);
+			// return service response JSON encoded
+			echo json_encode($service->Response($_POST));
+		} else { // if params are missing return service default response
+			echo json_encode($service->DefaultResponse());
 		}
 	}
 

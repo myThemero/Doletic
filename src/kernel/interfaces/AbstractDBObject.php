@@ -10,17 +10,11 @@ require_once "managers/SettingsManager.php";
 class AbstractDBObject {
 
 	// -- attributes
+	private $db_connection;
 	private $name;
-	private $services;
 	private $tables;
 
 	// -- functions
-
-	public function __construct($name, $services) {
-		$this->name = $name;
-		$this->services = $services;
-		$this->tables = array();
-	}
 
 	/**
 	 *	@brief Returns DBObject name
@@ -29,36 +23,50 @@ class AbstractDBObject {
 		return $this->name;
 	}
 
+	public function GetTable($tableName) {
+		return $this->tables[$tableName];
+	}
+
 	/**
 	 *	@brief Deletes all tables and re-creates them after 
 	 */
-	public function ResetDB($dbmanager, $dbname) {
+	public function ResetDB() {
 		foreach ($this->tables as $tableName => $table) {
 			// Drop table if exists
-			$dbmanager->GetOpenConnectionTo($dbname)->ExecuteQuery($table->GetDROPQuery());
+			$this->db_connection->ExecuteQuery($table->GetDROPQuery());
 			// Create table if not exists
-			$dbmanager->GetOpenConnectionTo($dbname)->ExecuteQuery($table->GetCREATEQuery());
+			$this->db_connection->ExecuteQuery($table->GetCREATEQuery());
 		}
 	}
 
 	/**
 	 *	@brief Creates missing tables for all objects in database
 	 */
-	public function UpdateDB($dbmanager, $dbname) {
+	public function UpdateDB() {
 		foreach ($this->tables as $tableName => $table) {
 			// Create table if not exists
-			$dbmanager->GetOpenConnectionTo($dbname)->ExecuteQuery($table->GetCREATEQuery());
+			$this->db_connection->ExecuteQuery($table->GetCREATEQuery());
 		}
 	}
 
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
-	public function Services() {
-		return $this->services;
+	public function GetServices() {
+		die("This function must be overrided in child.");
 	}
 
 # PROTECTED & PRIVATE #########################################################
+
+	protected function __construct(&$dbConnection, $name) {
+		$this->db_connection = $dbConnection;
+		$this->name = $name;
+		$this->tables = array();
+	}
+
+	protected function getDBConnection() {
+		return $this->db_connection;
+	}
 
 	/**
 	 *	@brief Add a database table to object tables

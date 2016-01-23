@@ -1,6 +1,6 @@
 <?php 
 
-require_once "loaders/AbstractLoader.php";
+require_once "interfaces/AbstractLoader.php";
 require_once "../modules/support/SupportModule.php";
 
 /**
@@ -16,9 +16,9 @@ class ModuleLoader extends AbstractLoader {
 
 	// -- functions
 
-	public function __construct(&$kernel) {
+	public function __construct(&$kernel, &$manager) {
 		// -- construct parent
-		parent::__construct($kernel);
+		parent::__construct($kernel, $manager);
 		// -- init attributes
 		$this->modules = array();
 	}

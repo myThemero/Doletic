@@ -2,6 +2,9 @@
 
 require_once "managers/DBManager.php";
 
+/**
+ *
+ */
 class DB {
 
 	// -- attributes
@@ -24,14 +27,21 @@ class DB {
 		$this->connected = false;
 	}
 
+	/**
+	 *
+	 */
 	public function GetName() {
 		return $this->name;
 	}
-
+	/**
+	 *
+	 */
 	public function IsConnected() {
 		return $this->connected;
 	}
-
+	/**
+	 *
+	 */
 	public function Connect() {
 		try {
 			$this->pdo = new PDO($this->dns, $this->user, $this->pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));	
@@ -40,12 +50,16 @@ class DB {
 			die($e);
 		}	
 	}
-
+	/**
+	 *
+	 */
 	public function Disconnect() {
 		$this->pdo = null; // close PDO connection
 		$this->connected = false;
 	}
-
+	/**
+	 *
+	 */
 	public function ExecuteQuery($sql) {
 		if($this->dbmanager->DebuggingModeEnabled()) {
 			var_dump("ExecuteQuery:sql: " . $sql);
@@ -53,21 +67,27 @@ class DB {
 			return $this->pdo->exec($sql);
 		}
 	}
-
+	/**
+	 *
+	 */
 	public function PrepareExecuteQuery($sql, $sql_params) {		
 		if($this->dbmanager->DebuggingModeEnabled()) {
 			var_dump("PrepareExecuteQuery:sql: " . $sql);
-			var_dump("PrepareExecuteQuery:sql_params: " . $sql_params);
+			var_dump("PrepareExecuteQuery:sql_params: ");
+			var_dump($sql_params);
 		} else {
 			$pdos = $this->pdo->prepare($sql);
 			return $pdos->execute($sql_params);	
 		}
 	}
-
+	/**
+	 *
+	 */
 	public function ResultFromQuery($sql, $sql_params) {
 		if($this->dbmanager->DebuggingModeEnabled()) {
 			var_dump("PrepareExecuteQuery:sql: " . $sql);
-			var_dump("PrepareExecuteQuery:sql_params: " . $sql_params);
+			var_dump("PrepareExecuteQuery:sql_params: ");
+			var_dump($sql_params);
 		} else {
 			$pdos = $this->pdo->prepare($sql);
 			$pdos->execute($sql_params);

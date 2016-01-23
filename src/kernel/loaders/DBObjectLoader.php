@@ -1,6 +1,6 @@
 <?php
 
-require_once "loaders/AbstractLoader.php";
+require_once "interfaces/AbstractLoader.php";
 require_once "../services/objects/UserDBObject.php";
 require_once "../services/objects/TicketDBObject.php";
 
@@ -10,27 +10,33 @@ require_once "../services/objects/TicketDBObject.php";
 class DBObjectLoader extends AbstractLoader {
 
 	// -- consts
-	const OBJ_USER = "user";
-	const OBJ_TICKET = "ticket";
+	const OBJ_USER = UserDBObject::OBJ_NAME;
+	const OBJ_TICKET = TicketDBObject::OBJ_NAME;
 
 	// -- attributes
 	private $objects;
 
 	// -- functions
 
-	public function __construct(&$kernel) {
-		parent::__construct($kernel);
+	public function __construct(&$kernel, &$manager) {
+		parent::__construct($kernel, $manager);
 		$this->objects = array();
 	}
 
 	public function Init() {
-		$this->objects[DBObjectLoader::OBJ_USER] = new UserDBObject();
-		$this->objects[DBObjectLoader::OBJ_TICKET] = new TicketDBObject();
+		// -- create user object
+		$this->objects[UserDBObject::OBJ_NAME] = new UserDBObject(
+			$this->manager()->getOpenConnectionTo(
+				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+		// -- create ticket object
+		$this->objects[TicketDBObject::OBJ_NAME] = new TicketDBObject(
+			$this->manager()->getOpenConnectionTo(
+				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 	}
 
-	public function GetObject($key) {
-		$object = "undefined";
-		if(array_key_exists($id, $this->objects)) {
+	public function GetDBObject($key) {
+		$object = null;
+		if(array_key_exists($key, $this->objects)) {
 			$object = $this->objects[$key];	
 		}
 		return $object; 

@@ -7,15 +7,21 @@ class AbstractLoader {
 
 	// -- attributes
 	private $kernel;
+	private $manager;
 	
 	// -- functions
 
-	public function __construct(&$kernel) {
+	protected function __construct(&$kernel, &$manager) {
 		$this->kernel = $kernel;
+		$this->manager = $manager;
 	}
 
 	protected function kernel() {
 		return $this->kernel;
+	}
+
+	protected function manager() {
+		return $this->manager;
 	} 
 
 }

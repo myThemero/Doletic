@@ -5,8 +5,14 @@
 */
 class AbstractCronTask {
 	
-	public function __construct() {
-		
+	// -- attributes
+
+	// -- functions
+
+# PROTECTED & PRIVATE #########################################
+
+	protected function __construct() {
+		/// \todo implement here	
 	}
 	
 }

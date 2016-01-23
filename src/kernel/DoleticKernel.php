@@ -51,8 +51,8 @@ class DoleticKernel {
 	 	$this->authentication_mgr = new AuthenticationManager($this);
 	 	$this->ui_mgr = new UIManager($this);
 	 	// -- create loggers
-	 	$this->module_ldr = new ModuleLoader($this);
-	 	$this->dbobject_ldr = new DBObjectLoader($this);
+	 	$this->module_ldr = new ModuleLoader($this, $this->module_mgr);
+	 	$this->dbobject_ldr = new DBObjectLoader($this, $this->db_mgr);
 	 	// -- unset initialized flag
 	 	$this->initialized = false;
 	 	// -- special uis
@@ -133,13 +133,11 @@ class DoleticKernel {
 		// -- build or rebuild database
 		$this->dbobject_ldr->FullDBReset($this->db_mgr);
 	}
-
 	public function UpdateDatabase() {
 		$this->info("Update database.");
 		// -- update database
 		$this->dbobject_ldr->FullDBUpdate($this->db_mgr);
 	}
-
 	public function ConnectDB() {
 		$this->info("Connect DB.");
 		$this->db_mgr->InitAllConnections();
@@ -147,6 +145,9 @@ class DoleticKernel {
 	public function DisconnectDB() {
 		$this->info("Disconect DB.");
 		$this->db_mgr->CloseAllConnections();
+	}
+	public function GetDBObject($objKey) {
+		return $this->dbobject_ldr->GetDBObject($objKey);
 	}
 
 # PROTECTED & PRIVATE #################################################################################
@@ -173,5 +174,4 @@ class DoleticKernel {
 			echo "[KERN_ERRO]>>>> ".$msg."\n";	
 		}	
 	}
-
 }

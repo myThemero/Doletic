@@ -1,6 +1,7 @@
 <?php
 
 require_once "interfaces/AbstractDBObject.php";
+require_once "interfaces/AbstractObjectServices.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -61,33 +62,72 @@ class User {
 }
 
 
-class UserServices {
+class UserServices extends AbstractObjectServices {
+
+	// -- consts
+	// --- params keys
+	const PARAM_ID 		= "id";
+	const PARAM_UNAME 	= "username";
+	const PARAM_HASH	= "hash";
+	// --- internal services (actions)
+	const GET_USER_BY_ID 	= "byid";
+	const GET_USER_BY_UNAME = "byuname";
+	const GET_ALL_USERS 	= "all";
+	const INSERT_USER		= "insert";
+	const UPDATE_USER		= "update";
+	const DELETE_USER		= "delete";
+	// -- functions
+
+	// -- construct
+	public function __construct(&$dbConnection) {
+		parent::__construct($dbConnection);
+	}
+
+	public function GetResponseData($action, $params) {
+		$data = null;
+		if(!strcmp($action, UserServices::GET_USER_BY_ID)) {
+			$data = $this->getUserById($params[UserServices::PARAM_ID]);
+		} else if(!strcmp($action, UserServices::GET_USER_BY_UNAME)) {
+			$data = $this->getUserByUsername($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
+		} else if(!strcmp($action, UserServices::GET_ALL_USERS)) {
+			$data = $this->getAllUsers();
+		} else if(!strcmp($action, UserServices::INSERT_USER)) {
+			$data = $this->insertUser($params[UserServices::PARAM_ID]);
+		} else if(!strcmp($action, UserServices::UPDATE_USER)) {
+			$data = $this->updateUserPassword($params[UserServices::PARAM_ID], $params[UserServices::PARAM_HASH]);
+		} else if(!strcmp($action, UserServices::DELETE_USER)) {
+			$data = $this->deleteUser($params[UserServices::PARAM_ID]);
+		}
+		return $data;
+	}
+
+# PROTECTED & PRIVATE ####################################################
 
 	// -- consult
 
-	public function GetUserById($id) {
+	private function getUserById($id) {
 		/// \todo implement here
 	}
 
-	public function GetUserByUsername($username, $hash) {
+	private function getUserByUsername($username, $hash) {
 		/// \todo implement here
 	}
 
-	public function GetAllUsers() {
+	private function getAllUsers() {
 		/// \todo implement here
 	}
 
 	// -- modify
 
-	public function InsertUser($username, $hash) {
+	private function insertUser($username, $hash) {
 		/// \todo implement here
 	} 
 
-	public function UpdateUserPassword($id, $hash) {
+	private function updateUserPassword($id, $hash) {
 		/// \todo implement here
 	}
 
-	public function DeleteUser($id) {
+	private function deleteUser($id) {
 		/// \todo implement here
 	}
 
@@ -99,6 +139,8 @@ class UserServices {
 class UserDBObject extends AbstractDBObject {
 
 	// -- consts
+	// --- object name
+	const OBJ_NAME = "user";
 	// --- tables
 	const TABL_USER = "dol_user";
 	// --- columns
@@ -111,9 +153,9 @@ class UserDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct(&$dbConnection) {
 		// -- construct parent
-		parent::__construct("user", new UserServices());
+		parent::__construct($dbConnection, "user");
 		// -- create tables
 		// --- dol_user table
 		$dol_user = new DBTable(UserDBObject::TABL_USER);
@@ -124,7 +166,14 @@ class UserDBObject extends AbstractDBObject {
 		$dol_user->AddColumn(UserDBObject::COL_SIGNUP_TSMP, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
-		$this->addTable($dol_user);
+		parent::addTable($dol_user);
+	}
+
+	/**
+	 *	@brief Returns all services associated with this object
+	 */
+	public function GetServices() {
+		return new UserServices($this, $this->getDBConnection());
 	}
 
 }

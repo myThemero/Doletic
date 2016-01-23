@@ -14,14 +14,6 @@ class AbstractModule {
 
 	// -- functions
 
-	public function __construct($name, $version, $authors = array(), $dependencies = array(), $interfaces = array()) {
-		$this->name = $name;
-		$this->version = $version;
-		$this->authors = $authors;
-		$this->dependencies = $dependencies;
-		$this->interfaces = $interfaces;
-	}
-
 	public function GetName() {
 		return $this->name;
 	}
@@ -40,6 +32,16 @@ class AbstractModule {
 			$interface = $this->interfaces[$key];
 		}
 		return $interface;
+	}
+
+# PROTECTED & PRIVATE ###################################################
+
+	protected function __construct($name, $version, $authors = array(), $dependencies = array(), $interfaces = array()) {
+		$this->name = $name;
+		$this->version = $version;
+		$this->authors = $authors;
+		$this->dependencies = $dependencies;
+		$this->interfaces = $interfaces;
 	}
 
 }

@@ -1,6 +1,7 @@
 <?php
 
 require_once "interfaces/AbstractDBObject.php";
+require_once "interfaces/AbstractObjectServices.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -107,50 +108,239 @@ class Ticket {
 /**
  * @brief Ticket object related services
  */
-class TicketServices {
+class TicketServices extends AbstractObjectServices {
 	
-	// -- consult
+	// -- consts
+	// --- params
+	const PARAM_ID 			= "id";
+	const PARAM_SENDER 		= "senderId";
+	const PARAM_RECEIVER 	= "receiverId";
+	const PARAM_SUBJECT 	= "subject";
+	const PARAM_CATEGO 		= "categoryId";
+	const PARAM_DATA 		= "data";
+	const PARAM_STATUS 		= "statusId";
+	// --- actions
+	const GET_TICKET_BY_ID = "byidt";
+	const GET_STATUS_BY_ID = "byids";
+	const GET_CATEGO_BY_ID = "byidc";
+	const GET_ALL_TICKETS  = "allt";
+	const GET_ALL_STATUSES = "alls";
+	const GET_ALL_CATEGOS  = "allc";
+	const INSERT_TICKET    = "insert";
+	const UPDATE_TICKET    = "update";
+	const DELETE_TICKET    = "delete";
+	const ARCHIVE_TICKET   = "archive";
 
-	public function GetTicketById($id) {
-		/// \todo implement here
+	// -- functions
+
+	// --- construct
+	public function __construct($dbObject, $dbConnection) {
+		parent::__construct($dbObject, $dbConnection);
 	}
 
-	public function GetStatusId($id) {
-		/// \todo implement here
+	public function GetResponseData($action, $params) {
+		$data = null;
+		if(!strcmp($action, TicketServices::GET_TICKET_BY_ID)) {
+			$data = $this->getTicketById($params[TicketServices::PARAM_ID]);
+		} else if(!strcmp($action, TicketServices::GET_STATUS_BY_ID)) {
+			$data = $this->getStatusId($params[TicketServices::PARAM_ID]);
+		} else if(!strcmp($action, TicketServices::GET_CATEGO_BY_ID)) {
+			$data = $this->getCategoryId($params[TicketServices::PARAM_ID]);
+		} else if(!strcmp($action, TicketServices::GET_ALL_TICKETS)) {
+			$data = $this->getAllTickets();
+		} else if(!strcmp($action, TicketServices::GET_ALL_STATUSES)) {
+			$data = $this->getAllTicketStatuses();
+		} else if(!strcmp($action, TicketServices::GET_ALL_CATEGOS)) {
+			$data = $this->getAllTicketCategories();
+		} else if(!strcmp($action, TicketServices::INSERT_TICKET)) {
+			$data = $this->insertTicket(
+				$params[TicketServices::PARAM_SENDER],
+				$params[TicketServices::PARAM_RECEIVER],
+				$params[TicketServices::PARAM_SUBJECT],
+				$params[TicketServices::PARAM_CATEGO],
+				$params[TicketServices::PARAM_DATA],
+				$params[TicketServices::PARAM_STATUS]);
+		} else if(!strcmp($action, TicketServices::UPDATE_TICKET)) {
+			$data = $this->updateTicket(
+				$params[TicketServices::PARAM_ID],
+				$params[TicketServices::PARAM_SENDER],
+				$params[TicketServices::PARAM_RECEIVER],
+				$params[TicketServices::PARAM_SUBJECT],
+				$params[TicketServices::PARAM_CATEGO],
+				$params[TicketServices::PARAM_DATA],
+				$params[TicketServices::PARAM_STATUS]);
+		} else if(!strcmp($action, TicketServices::DELETE_TICKET)) {
+			$data = $this->deleteTicket($params[TicketServices::PARAM_ID]);
+		} else if(!strcmp($action, TicketServices::ARCHIVE_TICKET)) {
+			$data = $this->archiveTicket($params[TicketServices::PARAM_ID]);
+		}
+		return $data;
 	}
 
-	public function GetCategoryId($id) {
-		/// \todo implement here
+# PROTECTED & PRIVATE ###############################################################
+
+	// --- consult
+
+	private function getTicketById($id) {
+		// create sql params array
+		$sql_params = array(":".TicketDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(TicketDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create ticket var
+		$ticket = null;
+		if( ($row = $pdos->fetch()) !== false) {
+			$ticket = new Ticket(
+				$row[TicketDBObject::COL_ID], 
+				$row[TicketDBObject::COL_SENDER_ID], 
+				$row[TicketDBObject::COL_RECEIVER_ID], 
+				$row[TicketDBObject::COL_SUBJECT], 
+				$row[TicketDBObject::COL_CATEGORY_ID], 
+				$row[TicketDBObject::COL_DATA], 
+				$row[TicketDBObject::COL_STATUS_ID]);
+		}
+		return $ticket;
 	}
 
-	public function GetAllTickets() {
-		/// \todo implement here
+	private function getStatusId($id) {
+		// create sql params array
+		$sql_params = array(":".TicketDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_STATUS)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(TicketDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for tickets and fill it
+		$status = null;
+		if( ($row = $pdos->fetch()) !== false) {
+			$status = $row[DBTable::COL_LABEL];
+		}
+		return $status;
 	}
 
-	public function GetAllTicketStatuses() {
-		/// \todo implement here
+	private function getCategoryId($id) {
+		// create sql params array
+		$sql_params = array(":".TicketDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_CATEGO)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(TicketDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for tickets and fill it
+		$category = null;
+		if( ($row = $pdos->fetch()) !== false) {
+			$category = $row[DBTable::COL_LABEL];
+		}
+		return $category;
 	}
 
-	public function GetAllTicketCategories() {
-		/// \todo implement here
+	private function getAllTickets() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for tickets and fill it
+		$tickets = array();
+		while( ($row = $pdos->fetch()) !== false) {
+			array_push($tickets, new Ticket(
+				$row[TicketDBObject::COL_ID], 
+				$row[TicketDBObject::COL_SENDER_ID], 
+				$row[TicketDBObject::COL_RECEIVER_ID], 
+				$row[TicketDBObject::COL_SUBJECT], 
+				$row[TicketDBObject::COL_CATEGORY_ID], 
+				$row[TicketDBObject::COL_DATA], 
+				$row[TicketDBObject::COL_STATUS_ID]));
+		}
+		return $tickets;
 	}
 
-	// -- modify
-
-	public function InsertTicket($id, $senderId, $receiverId, $subject, $categoryId, $data, $statusId) {
-		/// \todo implement here
+	private function getAllTicketStatuses() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_STATUS)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for tickets and fill it
+		$statuses = array();
+		while( ($row = $pdos->fetch()) !== false) {
+			array_push($statuses, $row[DBTable::COL_LABEL]);
+		}
+		return $statuses;
 	}
 
-	public function UpdateTicket($id, $senderId, $receiverId, $subject, $categoryId, $data, $statusId) {
-		/// \todo implement here
+	private function getAllTicketCategories() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_CATEGO)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for tickets and fill it
+		$categories = array();
+		while( ($row = $pdos->fetch()) !== false) {
+			array_push($categories, $row[DBTable::COL_LABEL]);
+		}
+		return $categories;
+	}
+
+	// --- modify
+
+	private function insertTicket($senderId, $receiverId, $subject, $categoryId, $data, $statusId) {
+		// create sql params
+		$sql_params = array(
+			":".TicketDBObject::COL_ID => "NULL",
+			":".TicketDBObject::COL_SENDER_ID => $senderId,
+			":".TicketDBObject::COL_RECEIVER_ID => $receiverId,
+			":".TicketDBObject::COL_SUBJECT => $subject,
+			":".TicketDBObject::COL_CATEGORY_ID => $categoryId,
+			":".TicketDBObject::COL_DATA => $data,
+			":".TicketDBObject::COL_STATUS_ID => $statusId);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetINSERTQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+	private function updateTicket($id, $senderId, $receiverId, $subject, $categoryId, $data, $statusId) {
+		// create sql params
+		$sql_params = array(
+			":".TicketDBObject::COL_ID => $id,
+			":".TicketDBObject::COL_SENDER_ID => $senderId,
+			":".TicketDBObject::COL_RECEIVER_ID => $receiverId,
+			":".TicketDBObject::COL_SUBJECT => $subject,
+			":".TicketDBObject::COL_CATEGORY_ID => $categoryId,
+			":".TicketDBObject::COL_DATA => $data,
+			":".TicketDBObject::COL_STATUS_ID => $statusId);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetUPDATEQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}	
 
-	public function DeleteTicket($id) {
-		/// \todo implement here
+	private function deleteTicket($id) {
+		// create sql params
+		$sql_params = array(":".TicketDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetDELETEQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	public function ArchiveTicket($id) {
-		/// \todo implement here
+	private function archiveTicket($id) {
+		// create sql params
+		$sql_params = array(":".TicketDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetARCHIVEQuery();
+		// execute archive query
+		$ok = false;
+		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+			// create delete query
+			$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetDELETEQuery();
+			// execute delete query
+			if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+				$ok = true;
+			}
+		}
+		return $ok;
 	}
 
 }
@@ -161,6 +351,8 @@ class TicketServices {
 class TicketDBObject extends AbstractDBObject {
 
 	// -- consts
+	// --- object name
+	const OBJ_NAME = "ticket";
 	// --- tables
 	const TABL_TICKET = "dol_ticket";
 	const TABL_CATEGO = "dol_ticket_category";
@@ -179,9 +371,9 @@ class TicketDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct(&$dbmanager) {
 		// -- construct parent
-		parent::__construct("ticket", new TicketServices());
+		parent::__construct($dbmanager,TicketDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_ticket table
 		$dol_ticket = new DBTable(TicketDBObject::TABL_TICKET);
@@ -211,10 +403,17 @@ class TicketDBObject extends AbstractDBObject {
 		$dol_ticket_status->AddColumn(TicketDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
-		$this->addTable($dol_ticket);
-		$this->addTable($dol_ticket_archive);
-		$this->addTable($dol_ticket_category);
-		$this->addTable($dol_ticket_status);
+		parent::addTable($dol_ticket);
+		parent::addTable($dol_ticket_archive);
+		parent::addTable($dol_ticket_category);
+		parent::addTable($dol_ticket_status);
+	}
+
+	/**
+	 *	@brief Returns all services associated with this object
+	 */
+	public function GetServices() {
+		return new TicketServices($this, $this->getDBConnection());
 	}
 
 }
