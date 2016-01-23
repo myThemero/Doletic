@@ -20,6 +20,12 @@ class Tests {
 		if(!strcmp($test, "dbo_ticket") || $all) {
 			Tests::__test_dbo_ticket();
 		}
+		if(!strcmp($test, "dbo_user") || $all) {
+			Tests::__test_dbo_user();
+		}
+		if(!strcmp($test, "dbo_udata") || $all) {
+			Tests::__test_dbo_udata();
+		}
 	}
 
 
@@ -31,7 +37,7 @@ class Tests {
 	 *	private static function __test_xxx() {
 	 *		$kernel = Tests::__init_kernel__("__test_xxx"); // initialize kernel
 	 *		// --------- content ------------
- 	 *
+ 	 *		echo "/// \\todo implement this test !\n";
 	 *		// ----------- end --------------
 	 *		Tests::__terminate_kernel__($kernel); // terminate kernel
 	 *	}
@@ -72,7 +78,7 @@ class Tests {
 	 *
 	 */
 	private static function __test_dbo_ticket() {
-		$kernel = Tests::__init_kernel__("__test_iua_ticket"); // initialize kernel
+		$kernel = Tests::__init_kernel__("__test_dbo_ticket"); // initialize kernel
 		// --------- content ------------
 		// insert
 		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("insert", array(
@@ -105,6 +111,41 @@ class Tests {
 		// ----------- end --------------
 		Tests::__terminate_kernel__($kernel); // terminate kernel
 	}
+	/**
+	 *
+	 */
+	private static function __test_dbo_user() {
+		$kernel = Tests::__init_kernel__("__test_dbo_user"); // initialize kernel
+		// --------- content ------------
+		// insert
+		$data = $kernel->GetDBObject("user")->GetServices()->GetResponseData("insert", array(
+			"username" => "user.test",
+			"password" => "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8")); // sha1("password");
+		var_dump($data);
+		// get all
+		$data = $kernel->GetDBObject("user")->GetServices()->GetResponseData("all", array());
+		var_dump($data);
+		// update
+		$data = $kernel->GetDBObject("user")->GetServices()->GetResponseData("update", array(
+			"id" => 1,
+			"password" => "6184d6847d594ec75c4c07514d4bb490d5e166df"));	// sha1("blank");
+		var_dump($data);
+		// get by id
+		$data = $kernel->GetDBObject("user")->GetServices()->GetResponseData("byid", array("id" => 1));
+		var_dump($data);
+		// ----------- end --------------
+		Tests::__terminate_kernel__($kernel); // terminate kernel
+	}
+	/**
+	 *
+	 */
+	private static function __test_dbo_udata() {
+		$kernel = Tests::__init_kernel__("__test_dbo_udata"); // initialize kernel
+		// --------- content ------------
+		echo "/// \\todo implement this test !\n";
+		// ----------- end --------------
+		Tests::__terminate_kernel__($kernel); // terminate kernel
+	}
 
 	// -------------------------------- COMMON --------------------------------
 	/**
@@ -112,7 +153,7 @@ class Tests {
 	 */
 	private static function __init_kernel__($test) {
 		echo "Running $test...\n";
-	 	echo "// --------- content ------------\n\n";
+	 	echo "// ---------- test - start -------------\n\n";
 		$kernel = new DoleticKernel(); 	// instanciate
 		$kernel->Init();				// initialize
 		$kernel->ConnectDB();		// connect database
@@ -124,7 +165,7 @@ class Tests {
 	private static function __terminate_kernel__(&$kernel) {
 		$kernel->DisconnectDB(); // disconnect database
 		$kernel = null; // destroy kernel explicitly
-		echo "\n// ----------- end --------------\n";
+		echo "\n// ----------- test - end --------------\n";
 	 	echo "...done !\n";
 	}
 	private function __constructs() {

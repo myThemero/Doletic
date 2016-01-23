@@ -7,7 +7,7 @@ require_once "objects/DBTable.php";
 /**
  *	@brief The User class
  */
-class User {
+class User implements \JsonSerializable {
 	
 	// -- consts
 
@@ -20,11 +20,20 @@ class User {
 	/**
 	*	@brief Constructs a user
 	*/
-	public function __construct($id, $username, $last_connection_timestamp, $sign_up_timestamp) {
+	public function __construct($id, $username, $lastConnectionTimestamp, $signUpTimestamp) {
 		$this->id = $id;
 		$this->username = $username;
-		$this->last_connection_timestamp = $last_connection_timestamp;
-		$this->sign_up_timestamp = $sign_up_timestamp;
+		$this->last_connection_timestamp = $lastConnectionTimestamp;
+		$this->sign_up_timestamp = $signUpTimestamp;
+	}
+
+	public function jsonSerialize() {
+		return [
+			UserDBObject::COL_ID => $this->id,
+			UserDBObject::COL_USERNAME => $this->username,
+			UserDBObject::COL_LAST_CON_TSMP => $this->last_connection_timestamp,
+			UserDBObject::COL_SIGNUP_TSMP => $this->sign_up_timestamp
+		];
 	}
 
 	/**
@@ -40,9 +49,6 @@ class User {
 	*/
 	public function GetUsername() {
 		return $this->username;
-	}
-	public function SetUsername($username) {
-		$this->username = $username;
 	}
 	/**
 	*	@brief Returns birthdate formatted : yyyy-mm-dd
@@ -68,7 +74,7 @@ class UserServices extends AbstractObjectServices {
 	// --- params keys
 	const PARAM_ID 		= "id";
 	const PARAM_UNAME 	= "username";
-	const PARAM_HASH	= "hash";
+	const PARAM_HASH	= "password";
 	// --- internal services (actions)
 	const GET_USER_BY_ID 	= "byid";
 	const GET_USER_BY_UNAME = "byuname";
@@ -79,8 +85,8 @@ class UserServices extends AbstractObjectServices {
 	// -- functions
 
 	// -- construct
-	public function __construct(&$dbConnection) {
-		parent::__construct($dbConnection);
+	public function __construct($dbObject, $dbConnection) {
+		parent::__construct($dbObject, $dbConnection);
 	}
 
 	public function GetResponseData($action, $params) {
@@ -88,11 +94,11 @@ class UserServices extends AbstractObjectServices {
 		if(!strcmp($action, UserServices::GET_USER_BY_ID)) {
 			$data = $this->getUserById($params[UserServices::PARAM_ID]);
 		} else if(!strcmp($action, UserServices::GET_USER_BY_UNAME)) {
-			$data = $this->getUserByUsername($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
+			$data = $this->getUserByUsernameAndHash($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
 		} else if(!strcmp($action, UserServices::GET_ALL_USERS)) {
 			$data = $this->getAllUsers();
 		} else if(!strcmp($action, UserServices::INSERT_USER)) {
-			$data = $this->insertUser($params[UserServices::PARAM_ID]);
+			$data = $this->insertUser($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
 		} else if(!strcmp($action, UserServices::UPDATE_USER)) {
 			$data = $this->updateUserPassword($params[UserServices::PARAM_ID], $params[UserServices::PARAM_HASH]);
 		} else if(!strcmp($action, UserServices::DELETE_USER)) {
@@ -106,29 +112,105 @@ class UserServices extends AbstractObjectServices {
 	// -- consult
 
 	private function getUserById($id) {
-		/// \todo implement here
+		// create sql params array
+		$sql_params = array(":".UserDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create ticket var
+		$user = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$user = new User(
+					$row[UserDBObject::COL_ID], 
+					$row[UserDBObject::COL_USERNAME], 
+					$row[UserDBObject::COL_LAST_CON_TSMP], 
+					$row[UserDBObject::COL_SIGNUP_TSMP]);
+			}
+		}
+		return $user;
 	}
 
-	private function getUserByUsername($username, $hash) {
-		/// \todo implement here
+	private function getUserByUsernameAndHash($username, $hash) {
+		// create sql params array
+		$sql_params = array(
+			":".UserDBObject::COL_USERNAME => $username,
+			":".UserDBObject::COL_PASSWORD => $hash
+			);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDBObject::COL_USERNAME, UserDBObject::COL_PASSWORD));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create ticket var
+		$user = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$user = new User(
+					$row[UserDBObject::COL_ID], 
+					$row[UserDBObject::COL_USERNAME], 
+					$row[UserDBObject::COL_LAST_CON_TSMP], 
+					$row[UserDBObject::COL_SIGNUP_TSMP]);
+			}
+		}
+		return $user;
 	}
 
 	private function getAllUsers() {
-		/// \todo implement here
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for tickets and fill it
+		$users = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($users, new User(
+					$row[UserDBObject::COL_ID], 
+					$row[UserDBObject::COL_USERNAME], 
+					$row[UserDBObject::COL_LAST_CON_TSMP], 
+					$row[UserDBObject::COL_SIGNUP_TSMP]));
+			}
+		}
+		return $users;
 	}
 
 	// -- modify
 
 	private function insertUser($username, $hash) {
-		/// \todo implement here
+		// create sql params
+		$sql_params = array(
+			":".UserDBObject::COL_ID => "NULL",
+			":".UserDBObject::COL_USERNAME => $username,
+			":".UserDBObject::COL_PASSWORD => $hash,
+			":".UserDBObject::COL_LAST_CON_TSMP => date(DateTime::ISO8601),
+			":".UserDBObject::COL_SIGNUP_TSMP => date(DateTime::ISO8601));
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetINSERTQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	} 
 
 	private function updateUserPassword($id, $hash) {
-		/// \todo implement here
+		// create sql params
+		$sql_params = array(
+			":".UserDBObject::COL_ID => $id,
+			":".UserDBObject::COL_PASSWORD => $hash);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetUPDATEQuery(array(UserDBObject::COL_PASSWORD));
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
 	private function deleteUser($id) {
-		/// \todo implement here
+		// create sql params
+		$sql_params = array(":".UserDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetDELETEQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
 }

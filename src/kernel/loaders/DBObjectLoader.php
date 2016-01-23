@@ -3,6 +3,7 @@
 require_once "interfaces/AbstractLoader.php";
 require_once "../services/objects/UserDBObject.php";
 require_once "../services/objects/TicketDBObject.php";
+require_once "../services/objects/UserDataDBObject.php";
 
 /**
 * 	@brief
@@ -10,8 +11,9 @@ require_once "../services/objects/TicketDBObject.php";
 class DBObjectLoader extends AbstractLoader {
 
 	// -- consts
-	const OBJ_USER = UserDBObject::OBJ_NAME;
-	const OBJ_TICKET = TicketDBObject::OBJ_NAME;
+	const OBJ_USER 		= UserDBObject::OBJ_NAME;
+	const OBJ_TICKET 	= TicketDBObject::OBJ_NAME;
+	const OBJ_UDATA		= UserDataDBObject::OBJ_NAME;
 
 	// -- attributes
 	private $objects;
@@ -26,6 +28,10 @@ class DBObjectLoader extends AbstractLoader {
 	public function Init() {
 		// -- create user object
 		$this->objects[UserDBObject::OBJ_NAME] = new UserDBObject(
+			$this->manager()->getOpenConnectionTo(
+				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+	// -- create ticket object
+		$this->objects[UserDataDBObject::OBJ_NAME] = new UserDataDBObject(
 			$this->manager()->getOpenConnectionTo(
 				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 		// -- create ticket object

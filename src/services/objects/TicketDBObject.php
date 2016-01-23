@@ -7,7 +7,7 @@ require_once "objects/DBTable.php";
 /**
  * @brief Ticket object
  */
-class Ticket {
+class Ticket implements \JsonSerializable {
 	
 	// -- consts
 	const AUTO_ID = -1;
@@ -48,6 +48,18 @@ class Ticket {
 		$this->subject = $subject;
 	}
 
+public function jsonSerialize() {
+		return [
+			TicketDBObject::COL_ID => $this->id,
+			TicketDBObject::COL_SENDER_ID => $this->sender_id,
+			TicketDBObject::COL_RECEIVER_ID => $this->receiver_id,
+			cTicketDBObject::COL_SUBJECT => $this->subject,
+			TicketDBObject::COL_CATEGORY_ID => $this->category_id,
+			TicketDBObject::COL_DATA => $this->data,
+			TicketDBObject::COL_STATUS_ID => $this->status_id
+		];
+	}
+
 	/**
 	 * @brief Returns object's id
 	 * @return int
@@ -61,28 +73,17 @@ class Ticket {
 	public function GetSubject() {
 		return $this->subject;
 	}
-	public function SetSubject($subject) {
-		$this->subject = $subject;
-	}
-
 	/**
 	 * @brief
 	 */
 	public function GetCategoryId() {
 		return $this->category_id;
 	}
-	public function SetCategoryId($category_id) {
-		$this->category_id = $category_id;
-	}
-
 	/**
 	 * @brief
 	 */
 	public function GetData() {
 		return $this->data;
-	}
-	public function SetData($data) {
-		$this->data = $data;
 	}
 	/**
 	 * @brief
@@ -90,18 +91,11 @@ class Ticket {
 	public function GetStatusId() {
 		return $this->status_id;
 	}
-	public function SetStatusId($status_id) {
-		$this->status_id = $status_id;
-	}
-
 	/**
 	 * @brief
 	 */
 	public function GetSenderId() {
 		return $this->sender_id;
-	}
-	public function SetSenderId($sender_id) {
-		$this->sender_id = $sender_id;
 	}
 }
 

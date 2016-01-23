@@ -1,0 +1,194 @@
+<?php
+
+require_once "interfaces/AbstractDBObject.php";
+require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBTable.php"; 
+
+/**
+ *	@brief The Xxxx class
+ */
+class Xxxx implements \JsonSerializable {
+	
+	// -- consts
+
+	// -- attributes
+	private $id;
+	...
+
+	/**
+	*	@brief Constructs a xxxx
+	*/
+	public function __construct($id, ...) {
+		$this->id = $id;
+		...
+	}
+
+	public function jsonSerialize() {
+		return [
+			XxxxDBObject::COL_ID => $this->id,
+			...
+		];
+	}
+
+	/**
+	*	@brief Returns Xxxx id
+	*/
+	public function GetId() {
+		return $this->id;
+	}
+
+	...
+}
+
+
+class XxxxServices extends AbstractObjectServices {
+
+	// -- consts
+	// --- params keys
+	const PARAM_ID 		= "id";
+	...
+	// --- internal services (actions)
+	const GET_XXXX_BY_ID 	= "byid";
+	const GET_ALL_XXXX 		= "all";
+	const INSERT_XXXX		= "insert";
+	const UPDATE_XXXX		= "update";
+	const DELETE_XXXX		= "delete";
+	// -- functions
+
+	// -- construct
+	public function __construct($dbObject, $dbConnection) {
+		parent::__construct($dbObject, $dbConnection);
+	}
+
+	public function GetResponseData($action, $params) {
+		$data = null;
+		if(!strcmp($action, XxxxServices::GET_XXXX_BY_ID)) {
+			$data = $this->getXxxxById($params[XxxxServices::PARAM_ID]);
+		} else if(!strcmp($action, XxxxServices::GET_ALL_XXXXS)) {
+			$data = $this->getAllXxxxs();
+		} else if(!strcmp($action, XxxxServices::INSERT_XXXX)) {
+			$data = $this->insertXxxx($params[XxxxServices::PARAM_ID], ...);
+		} else if(!strcmp($action, XxxxServices::UPDATE_XXXX)) {
+			$data = $this->updateXxxx($params[XxxxServices::PARAM_ID], ...);
+		} else if(!strcmp($action, XxxxServices::DELETE_XXXX)) {
+			$data = $this->deleteXxxx($params[XxxxServices::PARAM_ID]);
+		}
+		return $data;
+	}
+
+# PROTECTED & PRIVATE ####################################################
+
+	// -- consult
+
+	private function getXxxxById($id) {
+		// create sql params array
+		$sql_params = array(":".XxxxDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(XxxxDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create xxxx var
+		$xxxx = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$xxxx = new Xxxx(
+					$row[XxxxDBObject::COL_ID], 
+					$row[XxxxDBObject::COL_XXXXNAME], 
+					$row[XxxxDBObject::COL_LAST_CON_TSMP], 
+					$row[XxxxDBObject::COL_SIGNUP_TSMP]);
+			}
+		}
+		return $xxxx;
+	}
+
+	private function getAllXxxxs() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for xxxx and fill it
+		$xxxxs = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($xxxxs, new Xxxx(
+					$row[XxxxDBObject::COL_ID], 
+					...));
+			}
+		}
+		return $xxxxs;
+	}
+
+	// -- modify
+
+	private function insertXxxx(...) {
+		// create sql params
+		$sql_params = array(
+			":".XxxxDBObject::COL_ID => "NULL",
+			...);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetINSERTQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	} 
+
+	private function updateXxxx($id, ...) {
+		// create sql params
+		$sql_params = array(
+			":".XxxxDBObject::COL_ID => $id,
+			....);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetUPDATEQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+	private function deleteXxxx($id) {
+		// create sql params
+		$sql_params = array(":".XxxxDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetDELETEQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+}
+
+/**
+ *	@brief Xxxx object interface
+ */
+class XxxxDBObject extends AbstractDBObject {
+
+	// -- consts
+	// --- object name
+	const OBJ_NAME = "xxxx";
+	// --- tables
+	const TABL_XXXX = "dol_xxxx";
+	// --- columns
+	const COL_ID = "id";
+	...
+	// -- attributes
+
+	// -- functions
+
+	public function __construct(&$dbConnection) {
+		// -- construct parent
+		parent::__construct($dbConnection, "xxxx");
+		// -- create tables
+		// --- dol_xxxx table
+		$dol_xxxx = new DBTable(XxxxDBObject::TABL_XXXX);
+		$dol_xxxx->AddColumn(XxxxDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		....
+
+		// -- add tables
+		parent::addTable($dol_xxxx);
+	}
+
+	/**
+	 *	@brief Returns all services associated with this object
+	 */
+	public function GetServices() {
+		return new XxxxServices($this, $this->getDBConnection());
+	}
+
+}

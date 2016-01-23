@@ -15,12 +15,15 @@ class DBTable {
 	const DT_INT = "int";
 	const DT_VARCHAR = "varchar";
 	const DT_TEXT = "text";
+	const DT_DATE = "date";
 	// --- query consts
 	const SELECT_ALL = "*";
 	const EVERYWHERE = "everywhere";
 	const FULL_INSERT = "full_insert";
 	const ALL_BUT_ID = "all_but_id";
 	const ID_ONLY = "id_only";
+	const ORDER_DESC = "DESC";
+	const ORDER_ASC = "ASC";
 	// -- attributes
 	private $name;
 	private $engine;
@@ -110,7 +113,10 @@ class DBTable {
 	/**
 	 *	Returns SQL SELECT query for this table
 	 */
-	public function GetSELECTQuery($select = array(DBTable::SELECT_ALL), $where = array(DBTable::EVERYWHERE)) {
+	public function GetSELECTQuery($select = array(DBTable::SELECT_ALL), 
+								   $where = array(DBTable::EVERYWHERE),
+								   $orderby = array(), // supposed to be a array(column => [ORDER_DESC|ORDER_ASC],...)
+								   $limit = -1) {
 		$query = "SELECT ";
 		// check if select all
 		if(in_array(DBTable::SELECT_ALL, $select)) {
@@ -129,6 +135,18 @@ class DBTable {
 				$query .= $column."=:".$column.",";
 			}
 			$query = trim($query, " ,");
+		}
+		// check if order by
+		if(sizeof($orderby) > 0) {
+			$query .= " ORDER BY ";
+			foreach ($orderby as $column => $order) {
+				$query .= "`".$column."` ".$order.",";
+			}
+			$query = trim($query, " ,");
+		}
+		// check if limit
+		if($limit > 0) {
+			$query .= " LIMIT ".$limit;
 		}
 		$query.=";";
 		// return query
