@@ -28,6 +28,8 @@ class Main {
 		session_start();	
 		// check if doletic kernel exists in session
 		if(array_key_exists(Main::SPARAM_DOL_KERN, $_SESSION)) {
+			// reload settings
+			$_SESSION[Main::SPARAM_DOL_KERN]->ReloadSettings();
 			// connect database
 			$_SESSION[Main::SPARAM_DOL_KERN]->ConnectDB();
 			// check if query received in GET
@@ -114,16 +116,16 @@ class Main {
 			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface($_GET[Main::GPARAM_PAGE]);
 		} else {
 			// display page not found interface
-			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_404);
+			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_404);
 		}
 	}
 
 	private function displayLogin($authFailed = false) {
 		// display login interface
 		if($authFailed) {
-			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_LOGIN_FAILED);	
+			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGIN_FAILED);	
 		} else {
-			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_LOGIN);	
+			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGIN);	
 		}
 	}
 
@@ -133,12 +135,12 @@ class Main {
 		// destroy session
 		session_destroy();
 		// display logout interface
-		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_LOGOUT);
+		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGOUT);
 	}
 
 	private function displayHome() {
 		// load home interface
-		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(DoleticKernel::INTERFACE_HOME);
+		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_HOME);
 	}
 
 }

@@ -3,7 +3,7 @@
 require_once "interfaces/AbstractManager.php";
 
 /**
-* 	@brief
+* 	This manager is charge of managing cron tasks
 */
 class CronManager extends AbstractManager {
 

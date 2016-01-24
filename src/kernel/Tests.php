@@ -26,6 +26,9 @@ class Tests {
 		if(!strcmp($test, "dbo_udata") || $all) {
 			Tests::__test_dbo_udata();
 		}
+		if(!strcmp($test, "ui") || $all) {
+			Tests::__test_get_interface();
+		}
 	}
 
 
@@ -43,9 +46,11 @@ class Tests {
 	 *	}
 	 *
 	 */
+	// -------------------------------------------------------------------------
 	// --------------------------------- TESTS ---------------------------------
+	// -------------------------------------------------------------------------
 	/**
-	 *
+	 *	Test for DoleticKernel DB clear function
 	 */
 	private static function __test_db_clear() {
 		$kernel = Tests::__init_kernel__("__test_db_clear"); // initialize kernel
@@ -55,7 +60,7 @@ class Tests {
 		Tests::__terminate_kernel__($kernel); // terminate kernel
 	}
 	/**
-	 *
+	 *	Test for DoleticKernel DB reset function
 	 */
 	private static function __test_db_reset() {
 		$kernel = Tests::__init_kernel__("__test_db_reset"); // initialize kernel
@@ -65,7 +70,7 @@ class Tests {
 		Tests::__terminate_kernel__($kernel); // terminate kernel
 	}
 	/**
-	 *
+	 *	Test for DoleticKernel DB update function
 	 */
 	private static function __test_db_update() {
 		$kernel = Tests::__init_kernel__("__test_db_update");
@@ -75,7 +80,7 @@ class Tests {
 		Tests::__terminate_kernel__($kernel);
 	}
 	/**
-	 *
+	 *	Test for DB ticket object
 	 */
 	private static function __test_dbo_ticket() {
 		$kernel = Tests::__init_kernel__("__test_dbo_ticket"); // initialize kernel
@@ -112,7 +117,7 @@ class Tests {
 		Tests::__terminate_kernel__($kernel); // terminate kernel
 	}
 	/**
-	 *
+	 *	Test for DB user object
 	 */
 	private static function __test_dbo_user() {
 		$kernel = Tests::__init_kernel__("__test_dbo_user"); // initialize kernel
@@ -137,7 +142,7 @@ class Tests {
 		Tests::__terminate_kernel__($kernel); // terminate kernel
 	}
 	/**
-	 *
+	 *	Test for DB userdata object
 	 */
 	private static function __test_dbo_udata() {
 		$kernel = Tests::__init_kernel__("__test_dbo_udata"); // initialize kernel
@@ -146,8 +151,26 @@ class Tests {
 		// ----------- end --------------
 		Tests::__terminate_kernel__($kernel); // terminate kernel
 	}
-
-	// -------------------------------- COMMON --------------------------------
+	/**
+	 *	Test for DoleticKernel GetInterface function
+	 */
+	private static function __test_get_interface() {
+		$kernel = Tests::__init_kernel__("__test_get_interface"); // initialize kernel
+		// --------- content ------------
+		// -- specials ui
+		echo $kernel->GetInterface("login");
+		echo $kernel->GetInterface("login_failed");
+		echo $kernel->GetInterface("logout");
+		echo $kernel->GetInterface("404");
+		echo $kernel->GetInterface("home");
+		// -- unknown ui
+		echo $kernel->GetInterface("unknown:strange:ui");
+		// ----------- end --------------
+		Tests::__terminate_kernel__($kernel); // terminate kernel
+	}
+	// -------------------------------------------------------------------------
+	// -------------------------------- COMMON ---------------------------------
+	// -------------------------------------------------------------------------
 	/**
 	 *
 	 */

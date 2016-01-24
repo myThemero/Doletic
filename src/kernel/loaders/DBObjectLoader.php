@@ -29,15 +29,15 @@ class DBObjectLoader extends AbstractLoader {
 		// -- create user object
 		$this->objects[UserDBObject::OBJ_NAME] = new UserDBObject(
 			$this->manager()->getOpenConnectionTo(
-				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 	// -- create ticket object
 		$this->objects[UserDataDBObject::OBJ_NAME] = new UserDataDBObject(
 			$this->manager()->getOpenConnectionTo(
-				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 		// -- create ticket object
 		$this->objects[TicketDBObject::OBJ_NAME] = new TicketDBObject(
 			$this->manager()->getOpenConnectionTo(
-				$this->kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 	}
 
 	public function GetDBObject($key) {

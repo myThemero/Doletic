@@ -16,11 +16,6 @@ require_once "loaders/DBObjectLoader.php";
 class DoleticKernel {
 
 	// -- consts
-	const INTERFACE_LOGIN = "login";
-	const INTERFACE_LOGIN_FAILED = "login_failed";
-	const INTERFACE_LOGOUT = "logout";
-	const INTERFACE_404 = "404";
-	const INTERFACE_HOME = "home";
 
 	// -- attributes
 	// --- managers
@@ -36,8 +31,6 @@ class DoleticKernel {
 	private $dbobject_ldr;
 	// --- flags
 	private $initialized;
-	// --- internal
-	private $special_uis;
 
 	// -- functions
 
@@ -55,14 +48,6 @@ class DoleticKernel {
 	 	$this->dbobject_ldr = new DBObjectLoader($this, $this->db_mgr);
 	 	// -- unset initialized flag
 	 	$this->initialized = false;
-	 	// -- special uis
-	 	$this->special_uis = array(
-	 		DoleticKernel::INTERFACE_LOGIN,
-	 		DoleticKernel::INTERFACE_LOGIN_FAILED,
-	 		DoleticKernel::INTERFACE_LOGOUT,
-	 		DoleticKernel::INTERFACE_404,
-	 		DoleticKernel::INTERFACE_HOME
-	 		);
 	}
 
 	public function Init() {
@@ -94,30 +79,60 @@ class DoleticKernel {
 		}
 	}
 
+	// --- authentication management ---------------------------------------------------------
+
+	public function HasValidUser() {
+		return $this->authentication_mgr->HasValidUser();
+	}
+
+	public function AuthenticateUser($username, $hash) {
+		return $this->authentication_mgr->AuthenticateUser();
+	}
+
 	// --- log management --------------------------------------------------------------------
 
 	public function Log($logger,$logMessage) {
 		$this->log_mgr->Log($logger,$logMessage);
 	}
 
-	// --- settings management --------------------------------------------------------------------
+	// --- settings management ---------------------------------------------------------------
+
+	public function ReloadSettings() {
+		$this->settings_mgr->Reload();
+	}
 
 	public function SettingValue($key) {
 		return $this->settings_mgr->GetSettingValue($key);
 	}
 
-	// --- ui management --------------------------------------------------------------------
+	// --- ui management ---------------------------------------------------------------------
 
-	public function GetInterface($ui) {
+	/**
+	 *	Returns the HTML page required
+	 */
+	public function GetInterface($ui) { 
 		$this->debug("Showing '" . $ui . "' interface.");
-		$uiOut = null;
+		// initialize page
+		$page = null;
 		// check if requested ui is a special ui
-		if(in_array($ui, $this->special_uis)) {
-			$uiOut = $this->ui_mgr->MakeUI($ui);
-		} else {
-			$uiOut = $this->ui_mgr->MakeUI($this->module_ldr->GetModule(explode(':', $ui)[0])->GetInterface($ui));
+		if($this->ui_mgr->IsSpecialUI($ui)) {
+			$page = $this->ui_mgr->MakeSpecialUI($ui); // affect page content with special content
+		} else { // page is not special, search for a module
+			$module = $this->module_ldr->GetModule(explode(':', $ui)[0]);
+			$found = false;										// initialize found flag down
+			if($module != null) {								// if module exists
+				$js = $module->GetJS($ui);						// retrieve js array
+				$css = $module->GetCSS($ui);					// retrieve css array
+				if($css != null && $css != null) {				// if both css and js are valid arrays
+					$page = $this->ui_mgr->MakeUI($js, $css); 	// affect page content		
+					$found = true; 								// raise found flag
+				}
+			} 
+			if(!$found) { // if found flag is down
+				$page = $this->ui_mgr->Make404UI(); // affect page content using 404	
+			}
 		}
-		return $uiOut;
+		return $page;
 	}
 
 	// --- cron management --------------------------------------------------------------------

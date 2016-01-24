@@ -3,19 +3,39 @@
 require_once "interfaces/AbstractManager.php";
 
 /**
-* 	@brief
+* 	The role of this manager is to manage user and its rights
 */
 class AuthenticationManager extends AbstractManager {
 
 	// -- attributes 
-
+	private $user;
 	// -- functions
-
 	public function __construct(&$kernel) {
 		parent::__construct($kernel);
+		$this->user = null;
 	}
-
+	/**
+	 *	Initializes this manager 
+	 */
 	public function Init() {
-		/// \todo implement here
+		// nothing to do here
+	}
+	/**
+	 *	Returns true if a valid user is registered
+	 */
+	public function HasValidUser() {
+		return ($this->user != null);
+	}
+	/**
+	 *	Returns true if a valid user has been retrieved
+	 */
+	public function AuthenticateUser($username, $hash) {
+		// load user
+		$user = parrent::kernel()->GetDBObject(DBObjectLoader::OBJ_USER)->GetServices()->GetResponseData(
+					UserServices::GET_USER_BY_UNAME, array(
+						UserServices::PARAM_UNAME => $username, 
+						UserServices::PARAM_HASH => $hash));
+		// return valid user check 
+		return $this->HasValidUser();
 	}
 }

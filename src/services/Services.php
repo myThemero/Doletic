@@ -58,7 +58,7 @@ class Services {
 		// declare response var
 		$response = null;
 		// retreive db object
-		$obj = $this->kernel()->GetDBObject($post[Services::PPARAM_OBJ]);
+		$obj = parent::kernel()->GetDBObject($post[Services::PPARAM_OBJ]);
 		if($obj != null) {
 			// retreive response data
 			$data = $obj->GetServices()->GetResponseData($post[Services::PPARAM_ACT], $post[Services::PPARAM_PARAMS]);

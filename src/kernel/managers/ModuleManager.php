@@ -3,7 +3,7 @@
 require_once "interfaces/AbstractManager.php";
 
 /**
-* 	@brief
+* 	This manager takes care of Doletic modules (plugins)
 */
 class ModuleManager extends AbstractManager {
 

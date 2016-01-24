@@ -29,7 +29,7 @@ class ModuleLoader extends AbstractLoader {
 	}
 
 	public function GetModule($key) {
-		$module = "undefined";
+		$module = null;
 		if(array_key_exists($key, $this->modules)) {
 			$module = $this->modules[$key];	
 		}
