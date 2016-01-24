@@ -36,8 +36,11 @@ class UIManager extends AbstractManager {
 	 */
 	public function Init() {
 		// add css
+		array_push($this->internal_css, "ui/semantic/dist/semantic.min.css");
 		array_push($this->internal_css, "ui/css/doletic.css");
 		// add js
+		array_push($this->internal_js, "ui/js_depends/jquery-2.2.0.min.js");
+		array_push($this->internal_js, "ui/semantic/dist/semantic.min.js");
 		array_push($this->internal_js, "ui/js/doletic.js");
 		// add specials
 		$this->special_uis[UIManager::INTERFACE_LOGIN] = "ui/js/login.js";
@@ -69,7 +72,12 @@ class UIManager extends AbstractManager {
 		$page .= "
 	</head>
 	<body>
+		<div id=\"doletic_main_container\">
+	 		<!-- This element's contents will be replaced with your component. -->
+		</div>
 	</body>
+	<footer>
+	</footer>
 </html>\n\n";
 		return $page;
 	}
