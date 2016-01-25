@@ -130,12 +130,12 @@ class Main {
 	}
 
 	private function displayLogout() {
+		// display logout interface
+		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGOUT);
 		// unset session vars
 		$_SESSION = array();
 		// destroy session
 		session_destroy();
-		// display logout interface
-		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGOUT);
 	}
 
 	private function displayHome() {

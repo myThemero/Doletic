@@ -1,13 +1,3 @@
-// ----------------------- DOLETIC INTERFACE SERVICES CLASS ----------------------------------
-
-/**
- *  DoleticServicesInterface
- */
-var DoleticServicesInterface = new function() {
-
-  /// \todo implement here interface
-
-}
 
 // ------------------------ DOLETIC MASTER INTERFACE CLASS  ----------------------------------
 
@@ -46,7 +36,7 @@ var DoleticMasterInterface = new function() {
                   <a id=\"menu_doletic\" class=\"header item\">Doletic v2.0</a> \
                   <div class=\"right menu\"> \
                     <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>About Doletic</a> \
-                    <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticMasterInterface.logout();\"><i class=\"power icon\"></i>Logout</a> \
+                    <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.requireSpecialLogout();\"><i class=\"power icon\"></i>Logout</a> \
                   </div> \
                 </div> \
                 <div id=\""+this.module_container+"\"> \
@@ -81,8 +71,11 @@ var DoleticMasterInterface = new function() {
                 </div>";
     return html;
   }
+
+// ----------------------- DOLETIC INTERFACE COMMON FUNCTIONS ----------------------------------
+
   /**
-   *  Removes logout button (usefull for login view)
+   *  Removes logout button (usefull for login and logout interfaces)
    */
   this.removeLogoutButton = function() {
       $('#menu_logout').remove();
@@ -107,9 +100,6 @@ var DoleticMasterInterface = new function() {
   }
 
 }
-
-// ----------------------- DOLETIC INTERFACE COMMON FUNCTIONS ----------------------------------
-
 
 // ------------------------ DOLETIC DOCUMENT REDAY FUNCTION ------------------------------------
 
