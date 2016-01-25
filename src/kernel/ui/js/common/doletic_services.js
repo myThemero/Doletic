@@ -9,13 +9,13 @@ var DoleticServicesInterface = new function() {
   /**
    *  Global url to main script
    */
-  this.doleticMainScript = 'https://localhost/src/kernel/Main.php';
+  this.doleticMainScript = 'http://localhost/src/kernel/Main.php';
 
   /**
    *  Loads a standard Doletic page using ui parameter 
    */
   this.requireUI = function(ui) {
-    location.replace(this.doleticMainScript + '?q=ui&page=' + ui);
+    window.location.replace(this.doleticMainScript + '?q=ui&page=' + ui);
   }
   /**
    *  Loads a specific Doletic Login page
@@ -50,33 +50,44 @@ var DoleticServicesInterface = new function() {
   /**
    *  Loads a specific Doletic Auth page
    */
-  this.requireAuth = function() {
-    this.ajaxJSONCall(
+  this.requireAuth = function(username, password, success) {
+    this.ajaxPOST(
       this.doleticMainScript, 
       {
-        /// \todo implement here
-      })
+        q: 'auth',
+        user: username,
+        hash: phpjsLight.sha1(password)
+      },
+      "json",
+      function(jqXHR, textStatus, errorThrown) {
+        // Show an error message on doletic interface
+        DoleticMasterInterface.showError("L'appel AJAX a échoué !", "<p>L'appel AJAX d'authentification à échoué ! Détails : " + errorThrown + " ("+textStatus+")</p>");
+        // Debug the response content
+        console.debug(jqXHR.responseText);
+      },
+      success
+      );
   }
   /**
    *  Make an AJAX call to Doletic services to retrieve some data
    */
-  this.requireService = function() {
-    location.replace(this.doletic);
+  this.requireService = function(obj, action, params) {
+    /// \todo implement here
   }
   /**
    *  Make an ajax call. Do not call it from the outside of this class
    */
-  this.ajaxJSONCall = function(urlString, dataPart, errorFunction, successFunction, ajaxType) {
+  this.ajaxPOST = function(url, data, dataType, error, success) {
+      // DEBUG -------------------------------
+      console.debug("ajaxPOST called with url = "+url);
+      // -------------------------------------
       $.ajax({
-         url: urlString,
-         async: false,
-         data: dataPart,
-         error: function() {
-            $('#info').html('<p>An error has occurred</p>');
-         },
-         dataType: 'json',
-         success: successFunction,
-         type: ajaxType
+         url: url,
+         data: data,
+         dataType: dataType,
+         error: error,
+         success: success,
+         type: "POST"
       });
   }
 

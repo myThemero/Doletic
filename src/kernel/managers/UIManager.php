@@ -9,7 +9,6 @@ class UIManager extends AbstractManager {
 	
 	// -- consts
 	const INTERFACE_LOGIN = "login";
-	const INTERFACE_LOGIN_FAILED = "login_failed";
 	const INTERFACE_LOGOUT = "logout";
 	const INTERFACE_404 = "404";
 	const INTERFACE_HOME = "home";
@@ -41,11 +40,11 @@ class UIManager extends AbstractManager {
 		// add js
 		array_push($this->internal_js, "ui/js_depends/jquery-2.2.0.min.js");
 		array_push($this->internal_js, "ui/semantic/dist/semantic.min.js");
+		array_push($this->internal_js, "ui/js/common/doletic_utils.js");
 		array_push($this->internal_js, "ui/js/common/doletic.js");
 		array_push($this->internal_js, "ui/js/common/doletic_services.js");
 		// add specials
 		$this->special_uis[UIManager::INTERFACE_LOGIN] = "ui/js/specific/login.js";
-		$this->special_uis[UIManager::INTERFACE_LOGIN_FAILED] = "ui/js/specific/login_failed.js";
 		$this->special_uis[UIManager::INTERFACE_LOGOUT] = "ui/js/specific/logout.js";
 		$this->special_uis[UIManager::INTERFACE_404] = "ui/js/specific/404.js";
 		$this->special_uis[UIManager::INTERFACE_HOME] = "ui/js/specific/home.js";

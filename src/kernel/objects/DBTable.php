@@ -116,7 +116,12 @@ class DBTable {
 	public function GetSELECTQuery($select = array(DBTable::SELECT_ALL), 
 								   $where = array(DBTable::EVERYWHERE),
 								   $orderby = array(), // supposed to be a array(column => [ORDER_DESC|ORDER_ASC],...)
-								   $limit = -1) {
+								   $limit = -1,
+								   $or = false) {
+		$link = " AND ";
+		if($or) {
+			$link = " OR ";
+		}
 		$query = "SELECT ";
 		// check if select all
 		if(in_array(DBTable::SELECT_ALL, $select)) {
@@ -132,9 +137,9 @@ class DBTable {
 		if(!in_array(DBTable::EVERYWHERE, $where)) {
 			$query .= " WHERE ";
 			foreach ($where as $column) {
-				$query .= $column."=:".$column.",";
+				$query .= "`".$column."`=:".$column.$link;
 			}
-			$query = trim($query, " ,");
+			$query = substr($query, 0, strlen($query)-strlen($link));
 		}
 		// check if order by
 		if(sizeof($orderby) > 0) {
@@ -148,7 +153,7 @@ class DBTable {
 		if($limit > 0) {
 			$query .= " LIMIT ".$limit;
 		}
-		$query.=";";
+		$query .= ";";
 		// return query
 		return $query;
 	}
@@ -204,7 +209,7 @@ class DBTable {
 			foreach ($where as $column) {
 				$query .=  "`".$column."`=:".$column.$link;
 			}
-			$query = substr($query, 0, sizeof($query)-sizeof($link));
+			$query = substr($query, 0, strlen($query)-strlen($link));
 		}
 		return $query.";";
 	}
@@ -225,7 +230,7 @@ class DBTable {
 			foreach ($where as $column) {
 				$query .=  "`".$column."`=:".$column.$link;
 			}
-			$query = substr($query, 0, sizeof($query)-sizeof($link));
+			$query = substr($query, 0, strlen($query)-strlen($link));
 		}
 		return $query.";";
 	}

@@ -71,11 +71,12 @@ class Services {
 			$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_OBJ, "Object is missing.");
 		}
 		// return response
-		return $response;
+		return json_encode($response);
 	}
 
 	public function DefaultResponse() {
-		return new ServiceResponse("", ServiceResponse::ERR_MISSING_PARAMS, "Parameters (obj and/or act) are missing.");
+		$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_PARAMS, "Parameters (obj and/or act) are missing.");
+		return json_encode($response);
 	}
 
 }

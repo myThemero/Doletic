@@ -3,6 +3,10 @@
 require_once "DoleticKernel.php";
 require_once "../services/Services.php";
 
+/**
+ *	@warning all displayXXX and service function exit script after their execution
+ *				in order to ensure nothing is printed after.
+ */
 class Main {
 
 	// -- consts
@@ -32,39 +36,42 @@ class Main {
 			$_SESSION[Main::SPARAM_DOL_KERN]->ReloadSettings();
 			// connect database
 			$_SESSION[Main::SPARAM_DOL_KERN]->ConnectDB();
-			// check if query received in GET
-			if(array_key_exists(Main::RPARAM_QUERY, $_GET)) {
-				// GET query is about logout
-				if(!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_LOGOUT)) {
-					$this->displayLogout();
-				} else 
-				// GET query is about interface
-				if(!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_INTERF)) {
-					$this->displayInterface();
+			// check if kernel has a valid user registered
+			if($_SESSION[Main::SPARAM_DOL_KERN]->HasValidUser()) {
+				// check if query received in GET
+			  	if(array_key_exists(Main::RPARAM_QUERY, $_GET)) { 
+					// GET query is about logout
+					if(!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_LOGOUT)) {
+						$this->displayLogout();
+					} else 
+					// GET query is about interface
+					if(!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_INTERF)) {
+						$this->displayInterface();
+					}
+				} //check if query received in POST
+				else if(array_key_exists(Main::RPARAM_QUERY, $_POST)) {
+					// GET query is about interface
+					if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_SERVICE)) {
+						$this->service();
+					}
+				} else {
+					$this->displayHome();	
 				}
-			} else 
-			//check if query received in POST
-			if(array_key_exists(Main::RPARAM_QUERY, $_POST)) {
+			}  //check if query received in POST
+			else if(array_key_exists(Main::RPARAM_QUERY, $_POST)) {
 				// POST query is about authentication
 				if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_AUTHEN)) {
 					$this->authenticate();
-				} else 
-				// GET query is about interface
-				if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_SERVICE)) {
-					$this->service();
 				}
-			} else 
-			// check if kernel has a valid user registered
-			if($_SESSION[Main::SPARAM_DOL_KERN]->HasValidUser()) {
-				$this->displayHome();
 			} else { // if no valid user ask for a login
 				$this->displayLogin();
-			}
+			} 
 			// disconnect database
 			$_SESSION[Main::SPARAM_DOL_KERN]->DisconnectDB();
 		} else { // if no doletic kernel in session, create one
 			$this->init();
 		}
+		exit; // terminate script explicitly
 	}
 
 # PROTECTED & PRIVATE ##########################################################
@@ -77,8 +84,6 @@ class Main {
 		$_SESSION[Main::SPARAM_DOL_KERN]->ConnectDB();
 		// call login to show login interface
 		$this->displayLogin();
-		// connect to database
-		$_SESSION[Main::SPARAM_DOL_KERN]->DisconnectDB();
 	}
 
 	private function authenticate() {
@@ -86,11 +91,9 @@ class Main {
 		if(array_key_exists(Main::PPARAM_USER, $_POST) &&
 		   array_key_exists(Main::PPARAM_HASH, $_POST)) {
 			// Ask kernel to authenticate user
-			if($_SESSION[Main::SPARAM_DOL_KERN]->AuthenticateUser($_POST[Main::PPARAM_USER], $_POST[Main::PPARAM_HASH])) {
-				$this->displayHome();
-			} else {
-				$this->displayLogin(true);
-			}
+			$ok = $_SESSION[Main::SPARAM_DOL_KERN]->AuthenticateUser($_POST[Main::PPARAM_USER], $_POST[Main::PPARAM_HASH]);
+			// Terminate returning approriated json structure
+			$this->terminate(json_encode(array('authenticated' => $ok)));
 		} else { // if params are missing show login page
 			$this->displayLogin();
 		}
@@ -103,30 +106,36 @@ class Main {
 			// create service instance
 			$service = new Services($_SESSION[Main::SPARAM_DOL_KERN]);
 			// return service response JSON encoded
-			echo json_encode($service->Response($_POST));
+			$this->terminate($service->Response($_POST));
 		} else { // if params are missing return service default response
-			echo json_encode($service->DefaultResponse());
+			$this->terminate($service->DefaultResponse());
 		}
 	}
 
 	private function displayInterface() {
 		// check if params
 		if(array_key_exists(Main::GPARAM_PAGE, $_GET)) {
-			// display given interface
-			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface($_GET[Main::GPARAM_PAGE]);
+			// if user asks for login page
+			if($_GET[Main::GPARAM_PAGE] === UIManager::INTERFACE_LOGIN) {
+				// display home
+				$this->displayHome();
+			} else // if user asks for logout page
+			if($_GET[Main::GPARAM_PAGE] === UIManager::INTERFACE_LOGOUT) {
+					// display logout
+					$this->displayLogout();
+			} else {
+				// display given interface
+				$this->terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface($_GET[Main::GPARAM_PAGE]));	
+			}
 		} else {
 			// display page not found interface
-			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_404);
+			$this->terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_404));
 		}
 	}
 
-	private function displayLogin($authFailed = false) {
+	private function displayLogin() {
 		// display login interface
-		if($authFailed) {
-			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGIN_FAILED);	
-		} else {
-			echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGIN);	
-		}
+		$this->terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGIN));
 	}
 
 	private function displayLogout() {
@@ -136,11 +145,22 @@ class Main {
 		$_SESSION = array();
 		// destroy session
 		session_destroy();
+		// exit explicitly
+		exit;
 	}
 
 	private function displayHome() {
 		// load home interface
-		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_HOME);
+		$this->terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_HOME));
+	}
+
+	private function terminate($response) {
+		// print
+		echo $response;
+		// disconnect database
+		$_SESSION[Main::SPARAM_DOL_KERN]->DisconnectDB();
+		// explicitly exit
+		exit; 
 	}
 
 }

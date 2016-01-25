@@ -1,6 +1,8 @@
 <?php
 
 require_once "interfaces/AbstractManager.php";
+require_once "loaders/DBObjectLoader.php";
+require_once "../services/objects/UserDBObject.php";
 
 /**
 * 	The role of this manager is to manage user and its rights
@@ -30,8 +32,8 @@ class AuthenticationManager extends AbstractManager {
 	 *	Returns true if a valid user has been retrieved
 	 */
 	public function AuthenticateUser($username, $hash) {
-		// load user
-		$user = parrent::kernel()->GetDBObject(DBObjectLoader::OBJ_USER)->GetServices()->GetResponseData(
+		// load user into class private attribute
+		$this->user = parent::kernel()->GetDBObject(DBObjectLoader::OBJ_USER)->GetServices()->GetResponseData(
 					UserServices::GET_USER_BY_UNAME, array(
 						UserServices::PARAM_UNAME => $username, 
 						UserServices::PARAM_HASH => $hash));

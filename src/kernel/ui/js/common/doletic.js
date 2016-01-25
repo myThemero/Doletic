@@ -6,7 +6,10 @@
  */
 var DoleticMasterInterface = new function() {
 
-  this.module_container = "module_container";
+  // Constantes --------------------------------
+  this.module_container_id = "module_container";
+  this.master_container_id = "master_container";
+  // -------------------------------------------
   /**
    *  Render function, this function builds the content of the web page, 
    *  using the given module
@@ -20,10 +23,10 @@ var DoleticMasterInterface = new function() {
       // set htmlElment innerHTML content
       htmlElement.innerHTML = html;
       // debugging message -----------------------------------------
-      console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticModuleInterface.name);
+      console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticModuleInterface.meta.name);
       // -----------------------------------------------------------
       // for each module call render function
-      DoleticModuleInterface.render(document.getElementById(this.module_container));
+      DoleticModuleInterface.render(document.getElementById(this.module_container_id));
       // debugging message -----------------------------------------
       console.debug("DoleticMasterInterface.render : Rendering process finished.");
       // -----------------------------------------------------------
@@ -33,13 +36,17 @@ var DoleticMasterInterface = new function() {
    */
   this.buildUI = function() {
     var html = "<div class=\"ui menu\"> \
-                  <a id=\"menu_doletic\" class=\"header item\">Doletic v2.0</a> \
+                  <a id=\"menu_doletic\" class=\"header item\" onClick=\"DoleticServicesInterface.requireSpecialHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
                   <div class=\"right menu\"> \
                     <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>About Doletic</a> \
                     <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.requireSpecialLogout();\"><i class=\"power icon\"></i>Logout</a> \
                   </div> \
                 </div> \
-                <div id=\""+this.module_container+"\"> \
+                <div class=\"ui container\"> \
+                  <div id=\""+this.master_container_id+"\" class=\"ui one column centered grid container\"> \
+                  </div> \
+                </div> \
+                <div id=\""+this.module_container_id+"\"> \
                 <!-- module custom content goes here --> \
                 </div> \
                 <div id=\"about_doletic_modal\" class=\"ui basic modal\"> \
@@ -93,11 +100,25 @@ var DoleticMasterInterface = new function() {
       $('#about_doletic_modal').modal('hide');
   }
   /**
-   *  Logout user
+   *  Shows a message
+   *  @param type : message type
+   *  @param header : message title
+   *  @param content : message content
    */
-  this.logout = function() {
-      /// \todo implement here
+  this.showMessage = function(type, header, content) {
+       $('#'+this.master_container_id).append(
+       "<div class=\"column\"> \
+          <div class=\"ui " + type + " message\"> \
+            <i class=\"close icon\" onClick=\"this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);\" ></i> \
+            <div class=\"header\">" + header + "</div>" + 
+            content + 
+         "</div> \
+        </div>");
   }
+  this.showInfo = function(title, msg) { this.showMessage('info', title, msg); }
+  this.showSuccess = function(title, msg) { this.showMessage('success', title, msg); }
+  this.showWarn = function(title, msg) { this.showMessage('warning', title, msg); }
+  this.showError = function(title, msg) { this.showMessage('negative', title, msg); }
 
 }
 

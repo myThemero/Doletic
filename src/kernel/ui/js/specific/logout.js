@@ -21,7 +21,14 @@ var DoleticModuleInterface = new function() {
 	/**
 	 *	Always define a module name, it will be used by DoleticMasterInterface class
 	 */
-	this.name = "LogoutModule";
+	/**
+	 *	Module meta data block, it will be used by DoleticMasterInterface class
+	 */
+	this.meta = {
+		name:"KernelLogoutModule",
+		authors:"Paul Dautry",
+		version:"1.0dev"
+	};
 	/**
 	 *	This function renders the html page for the given module
 	 */
