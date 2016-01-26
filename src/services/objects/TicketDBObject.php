@@ -53,7 +53,7 @@ public function jsonSerialize() {
 			TicketDBObject::COL_ID => $this->id,
 			TicketDBObject::COL_SENDER_ID => $this->sender_id,
 			TicketDBObject::COL_RECEIVER_ID => $this->receiver_id,
-			cTicketDBObject::COL_SUBJECT => $this->subject,
+			TicketDBObject::COL_SUBJECT => $this->subject,
 			TicketDBObject::COL_CATEGORY_ID => $this->category_id,
 			TicketDBObject::COL_DATA => $this->data,
 			TicketDBObject::COL_STATUS_ID => $this->status_id

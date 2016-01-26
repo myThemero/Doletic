@@ -40,4 +40,8 @@ class AuthenticationManager extends AbstractManager {
 		// return valid user check 
 		return $this->HasValidUser();
 	}
+
+	public function GetUserId() {
+		return $this->user->GetId();
+	}
 }

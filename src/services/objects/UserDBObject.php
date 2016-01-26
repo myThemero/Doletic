@@ -12,10 +12,13 @@ class User implements \JsonSerializable {
 	// -- consts
 
 	// -- attributes
+	// --- persistent
 	private $id;
 	private $username;
 	private $last_connection_timestamp;
 	private $sign_up_timestamp;
+	// --- non-persistent
+	private $timestamp_update_failed;
 
 	/**
 	*	@brief Constructs a user
@@ -25,6 +28,8 @@ class User implements \JsonSerializable {
 		$this->username = $username;
 		$this->last_connection_timestamp = $lastConnectionTimestamp;
 		$this->sign_up_timestamp = $signUpTimestamp;
+		// -- initialize fail flag down
+		$this->timestamp_update_failed = false;
 	}
 
 	public function jsonSerialize() {
@@ -32,7 +37,8 @@ class User implements \JsonSerializable {
 			UserDBObject::COL_ID => $this->id,
 			UserDBObject::COL_USERNAME => $this->username,
 			UserDBObject::COL_LAST_CON_TSMP => $this->last_connection_timestamp,
-			UserDBObject::COL_SIGNUP_TSMP => $this->sign_up_timestamp
+			UserDBObject::COL_SIGNUP_TSMP => $this->sign_up_timestamp,
+			'timestamp_update_failed' => $this->timestamp_update_failed
 		];
 	}
 
@@ -65,6 +71,13 @@ class User implements \JsonSerializable {
 		return $this->sign_up_timestamp;
 	}
 
+	public function HasTimestampUpdateFailed() {
+		return $this->timestamp_update_failed;
+	}
+
+	public function RaiseTimestampUpdateFailed() {
+		$this->timestamp_update_failed = true;
+	}
 }
 
 
@@ -144,6 +157,8 @@ class UserServices extends AbstractObjectServices {
 			array(DBTable::SELECT_ALL), array(UserDBObject::COL_USERNAME, UserDBObject::COL_PASSWORD));
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// current_timestamp
+		$timestamp = date(DateTime::ISO8601);
 		// create ticket var
 		$user = null;
 		if($pdos != null) {
@@ -151,10 +166,19 @@ class UserServices extends AbstractObjectServices {
 				$user = new User(
 					$row[UserDBObject::COL_ID], 
 					$row[UserDBObject::COL_USERNAME], 
-					$row[UserDBObject::COL_LAST_CON_TSMP], 
+					$timestamp, 
 					$row[UserDBObject::COL_SIGNUP_TSMP]);
 			}
 		}
+		// check if user is valid and update last connection timestamp
+		if($user != null) {
+			$sql_params = array(UserDBObject::COL_ID => $user->GetId(), UserDBObject::COL_LAST_CON_TSMP => $timestamp);
+			$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetUPDATEQuery(array(UserDBObject::COL_LAST_CON_TSMP));
+			if(!parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+				$user->RaiseTimestampUpdateFailed();
+			}
+		}
+		// return user
 		return $user;
 	}
 
