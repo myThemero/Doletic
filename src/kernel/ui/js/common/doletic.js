@@ -35,13 +35,15 @@ var DoleticMasterInterface = new function() {
    *  Build Doletic common ui
    */
   this.buildUI = function() {
-    var html = "<div id=\"left_sidebar\" class=\"ui visible sidebar vertical menu\"> \
+    var html = "<div id=\"left_menu\" class=\"ui vertical sticky menu fixed top\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
                   <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.requireSpecialHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
+                  <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.requireSpecialLogout();\"><i class=\"power icon\"></i>Logout</a> \
                   <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>About Doletic</a> \
                 </div> \
                 <div class=\"pusher\"> \
                   <div class=\"ui container\"> \
                     <div id=\""+this.master_container_id+"\" class=\"ui one column centered grid container\"> \
+                    <!-- kernel message goes here --> \
                     </div> \
                   </div> \
                   <div id=\""+this.module_container_id+"\"> \
@@ -75,8 +77,25 @@ var DoleticMasterInterface = new function() {
                     </div> \
                   </div> \
                 </div> \
-                <div id=\"right_sidebar\" class=\"ui visible right sidebar vertical menu\"> \
-                  <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.requireSpecialLogout();\"><i class=\"power icon\"></i>Logout</a> \
+                <div id=\"confirm_modal\" class=\"ui basic modal\"> \
+                  <div id=\"confirm_modal_header\" class=\"header\"><!-- Confirm modal header goes here --> \</div> \
+                  <div class=\"image content\"> \
+                    <div id=\"confirm_modal_icon\" class=\"image\"> \
+                      <!-- Confirm modal icon goes here --> \
+                    </div> \
+                    <div id=\"confirm_modal_description\" class=\"description\"> \
+                      <!-- Confirm modal description goes here --> \
+                    </div> \
+                  </div> \
+                  <div class=\"actions\"> \
+                    <div class=\"two fluid ui inverted buttons\"> \
+                      <div id=\"confirm_modal_no\" class=\"ui red basic inverted button\"><i class=\"remove icon\"></i>Non</div> \
+                      <div id=\"confirm_modal_yes\" class=\"ui green basic inverted button\"><i class=\"checkmark icon\"></i>Oui</div> \
+                    </div> \
+                  </div> \
+                </div> \
+                <div id=\"right_sidebar\" class=\"ui right sidebar vertical menu\"> \
+                    <!-- Custom buttons can be added here by modules --> \
                 </div>";
     return html;
   }
@@ -87,19 +106,65 @@ var DoleticMasterInterface = new function() {
    *  Removes logout button (usefull for login and logout interfaces)
    */
   this.removeLogoutButton = function() {
-      $('#menu_logout').remove();
+    $('#menu_logout').remove();
   }
   /**
    *  Shows about Doletic modal
    */
   this.showAboutDoletic = function() {
-      $('#about_doletic_modal').modal('show');
+    $('#about_doletic_modal').modal('show');
   }
   /**
    *  Hides about Doletic modal
    */
   this.hideAboutDoletic = function() {
-      $('#about_doletic_modal').modal('hide');
+    $('#about_doletic_modal').modal('hide');
+  }
+  /**
+   *  Shows Doletic confirmation standard modal
+   */  
+  this.showConfirmModal = function(header, icon, question, yesHandler, noHandler) {
+    $('#confirm_modal_header').html(header);
+    $('#confirm_modal_icon').html(icon);
+    $('#confirm_modal_description').html(question);
+    $('#confirm_modal_no').click(noHandler);
+    $('#confirm_modal_yes').click(yesHandler);
+    $('#confirm_modal').modal('show');
+  }
+  /**
+   *  Shows Doletic confirmation standard modal
+   */
+  this.hideConfirmModal = function() {
+    $('#confirm_modal_header').html('');
+    $('#confirm_modal_icon').html('');
+    $('#confirm_modal_description').html('');
+    $('#confirm_modal_no').click(function(){});
+    $('#confirm_modal_yes').click(function(){});
+    $('#confirm_modal').modal('hide');
+  }
+  /**
+   *  Shows right sidemenu
+   */
+  this.showRightSidemenu = function() {
+    $('#right_sidebar').attr('class', 'ui right visible sidebar vertical menu');
+  }
+  /**
+   *  Hides right sidemenu
+   */
+  this.hideRightSidemenu = function() {
+    $('#right_sidebar').attr('class', 'ui right sidebar vertical menu');
+  }
+  /**
+   *  Add content to right side menu
+   */
+  this.addRightSidemenuContent = function(content) {
+    $('#right_sidebar').append(content);
+  }
+  /**
+   *  Add content to right side menu
+   */
+  this.clearRightSidemenuContent = function() {
+    $('#right_sidebar').html('');
   }
   /**
    *  Shows a message
@@ -108,14 +173,14 @@ var DoleticMasterInterface = new function() {
    *  @param content : message content
    */
   this.showMessage = function(type, header, content) {
-       $('#'+this.master_container_id).append(
-       "<div class=\"column\"> \
-          <div class=\"ui " + type + " message\"> \
-            <i class=\"close icon\" onClick=\"this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);\" ></i> \
-            <div class=\"header\">" + header + "</div>" + 
-            content + 
-         "</div> \
-        </div>");
+    $('#'+this.master_container_id).append(
+    "<div class=\"column\"> \
+      <div class=\"ui " + type + " message\"> \
+        <i class=\"close icon\" onClick=\"this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);\" ></i> \
+        <div class=\"header\">" + header + "</div>" + 
+        content + 
+      "</div> \
+    </div>");
   }
   this.showInfo = function(title, msg) { this.showMessage('info', title, msg); }
   this.showSuccess = function(title, msg) { this.showMessage('success', title, msg); }

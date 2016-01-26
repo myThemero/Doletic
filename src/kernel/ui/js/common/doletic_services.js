@@ -33,7 +33,26 @@ var DoleticServicesInterface = new function() {
    *  Loads a specific Doletic Logout page
    */
   this.requireSpecialLogout = function() {
-    this.requireUI('logout');
+    DoleticMasterInterface.showConfirmModal(
+      '',
+      '',
+      '<h2 class="ui inverted header"> \
+        <i class="help inverted icon"></i> \
+        <div class="content"> \
+          Déconnexion ? \
+          <div class="sub header">Souhaitez-vous vraiment vous deconnecter ?</div> \
+        </div> \
+      </h2>',
+      function(){
+        // require logout
+        DoleticServicesInterface.requireUI("logout");
+      },
+      function() {
+        // hide modal and don't do anything
+        DoleticMasterInterface.hideConfirmModal();
+      });
+
+    //this.requireUI('logout');
   }
   /**
    *  Loads a specific Doletic 404 page

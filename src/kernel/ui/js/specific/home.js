@@ -34,6 +34,8 @@ var DoleticModuleInterface = new function() {
 					<div class=\"ten wide column\"> \
 					  <form id=\"login_form\" class=\"ui form segment\"> \
 				  	    Home page is currently in development... \
+				  	    <a class=\"ui floated right button\" onClick=\"DoleticMasterInterface.showRightSidemenu();\">Show right side menu</a> \
+				  	    <a class=\"ui floated left button\" onClick=\"DoleticMasterInterface.hideRightSidemenu();\">Hide right side menu</a> \
 				      </form> \
 					</div> \
 					<div class=\"three wide column\"> \
