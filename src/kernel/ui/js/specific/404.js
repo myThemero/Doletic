@@ -26,11 +26,22 @@ var DoleticModuleInterface = new function() {
 	 */
 	this.buildUI = function() {
 		return "<div class=\"holder\"> \
-				  <div class=\"ui three column centered middle aligned grid container\"> \
+				  <div class=\"ui two column centered middle aligned grid container\"> \
 					<div class=\"column\"> \
-					  <form id=\"login_form\" class=\"ui form segment\"> \
-				  		404 page is currently in development... \
-					  </form> \
+					  <div id=\"error_msg\" class=\"ui icon message\"> \
+						  <i class=\"warning circle icon\"></i> \
+						  <div class=\"content\"> \
+						    <div class=\"header\"> \
+						      Erreur 404 !  \
+						    </div> \
+						    <p>La page n'existe pas. \
+							<button class=\"ui basic right floated button\" onClick=\"DoleticServicesInterface.requireSpecialHome();\"> \
+  								<i class=\"icon home\"></i> \
+  								Retour à l'accueil \
+							</button> \
+						    </p> \
+						  </div> \
+						</div> \
 					</div> \
 				   </div> \
 				</div>";

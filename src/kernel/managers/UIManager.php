@@ -71,10 +71,7 @@ class UIManager extends AbstractManager {
 		// append page bottom
 		$page .= "
 	</head>
-	<body>
-		<div id=\"doletic_main_container\">
-	 		<!-- This element's contents will be replaced with your component. -->
-		</div>
+	<body id=\"body\">
 	</body>
 	<footer>
 	</footer>

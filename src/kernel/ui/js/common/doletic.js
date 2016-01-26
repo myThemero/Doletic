@@ -35,46 +35,48 @@ var DoleticMasterInterface = new function() {
    *  Build Doletic common ui
    */
   this.buildUI = function() {
-    var html = "<div class=\"ui menu\"> \
-                  <a id=\"menu_doletic\" class=\"header item\" onClick=\"DoleticServicesInterface.requireSpecialHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
-                  <div class=\"right menu\"> \
-                    <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>About Doletic</a> \
-                    <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.requireSpecialLogout();\"><i class=\"power icon\"></i>Logout</a> \
-                  </div> \
+    var html = "<div id=\"left_sidebar\" class=\"ui visible sidebar vertical menu\"> \
+                  <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.requireSpecialHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
+                  <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>About Doletic</a> \
                 </div> \
-                <div class=\"ui container\"> \
-                  <div id=\""+this.master_container_id+"\" class=\"ui one column centered grid container\"> \
-                  </div> \
-                </div> \
-                <div id=\""+this.module_container_id+"\"> \
-                <!-- module custom content goes here --> \
-                </div> \
-                <div id=\"about_doletic_modal\" class=\"ui basic modal\"> \
-                  <i class=\"close icon\"></i> \
-                  <div class=\"header\">Doletic v2.0</div> \
-                  <div class=\"image content\"> \
-                    <div class=\"image\"><i class=\"line chart icon\"></i></div> \
-                    <div class=\"description\">  \
-                      <p> \
-                      Doletic est un ERP open-source destiné au Junior-Entreprises.<br><br> \
-                      Son développement est à l'initiative du pôle DSI de la Junior-Entreprise de l'INSA de Lyon, \
-                      ETIC INSA Technologies. Il est actuellement en cours de développement. \
-                      Si vous souhaitez contribuer à ce merveilleux projet n'hésitez pas à nous contacter ! \
-                      </p>  \
-                      <p> \
-                      Développeurs : \
-                      <ul class=\"ui list\"> \
-                        <li>Paul Dautry (ETIC INSA TEchnologies)</li> \
-                        <li>Nicolas Sorin (ETIC INSA TEchnologies)</li> \
-                      </ul> \
-                      </p>  \
-                    </div>  \
-                  </div>  \
-                  <div class=\"actions\"> \
-                    <div class=\"one fluid ui inverted buttons\"> \
-                      <div class=\"ui green basic inverted button\" onClick=\"DoleticMasterInterface.hideAboutDoletic();\"><i class=\"checkmark icon\"></i>Cool !</div>  \
+                <div class=\"pusher\"> \
+                  <div class=\"ui container\"> \
+                    <div id=\""+this.master_container_id+"\" class=\"ui one column centered grid container\"> \
                     </div> \
                   </div> \
+                  <div id=\""+this.module_container_id+"\"> \
+                  <!-- module custom content goes here --> \
+                  </div> \
+                  <div id=\"about_doletic_modal\" class=\"ui basic modal\"> \
+                    <i class=\"close icon\"></i> \
+                    <div class=\"header\">Doletic v2.0</div> \
+                    <div class=\"image content\"> \
+                      <div class=\"image\"><i class=\"line chart icon\"></i></div> \
+                      <div class=\"description\">  \
+                        <p> \
+                        Doletic est un ERP open-source destiné au Junior-Entreprises.<br><br> \
+                        Son développement est à l'initiative du pôle DSI de la Junior-Entreprise de l'INSA de Lyon, \
+                        ETIC INSA Technologies. Il est actuellement en cours de développement. \
+                        Si vous souhaitez contribuer à ce merveilleux projet n'hésitez pas à nous contacter ! \
+                        </p>  \
+                        <p> \
+                        Développeurs : \
+                        <ul class=\"ui list\"> \
+                          <li>Paul Dautry (ETIC INSA TEchnologies)</li> \
+                          <li>Nicolas Sorin (ETIC INSA TEchnologies)</li> \
+                        </ul> \
+                        </p>  \
+                      </div>  \
+                    </div>  \
+                    <div class=\"actions\"> \
+                      <div class=\"one fluid ui inverted buttons\"> \
+                        <div class=\"ui green basic inverted button\" onClick=\"DoleticMasterInterface.hideAboutDoletic();\"><i class=\"checkmark icon\"></i>Cool !</div>  \
+                      </div> \
+                    </div> \
+                  </div> \
+                </div> \
+                <div id=\"right_sidebar\" class=\"ui visible right sidebar vertical menu\"> \
+                  <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.requireSpecialLogout();\"><i class=\"power icon\"></i>Logout</a> \
                 </div>";
     return html;
   }
@@ -129,5 +131,5 @@ var DoleticMasterInterface = new function() {
  */
 $(document).ready(function(){
     // render page
-    DoleticMasterInterface.render(document.getElementById('doletic_main_container'));
+    DoleticMasterInterface.render(document.getElementById('body'));
 })

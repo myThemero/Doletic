@@ -25,14 +25,20 @@ var DoleticModuleInterface = new function() {
 	 *	This function builds module ui
 	 */
 	this.buildUI = function() {
-		return "<div class=\"holder\"> \
-				  <div class=\"ui three column centered middle aligned grid container\"> \
-					<div class=\"column\"> \
-					  <form id=\"login_form\" class=\"ui form segment\"> \
-				  		Home page is currently in development... \
-					  </form> \
+		return "<div class=\"ui grid container\"> \
+				  <div class=\"row\"> \
+				  </div> \
+				  <div class=\"row\"> \
+					<div class=\"three wide column\"> \
 					</div> \
-				   </div> \
+					<div class=\"ten wide column\"> \
+					  <form id=\"login_form\" class=\"ui form segment\"> \
+				  	    Home page is currently in development... \
+				      </form> \
+					</div> \
+					<div class=\"three wide column\"> \
+					</div> \
+				  </div> \
 				</div>";
 	}
 
