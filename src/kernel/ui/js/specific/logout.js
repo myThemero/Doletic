@@ -50,7 +50,7 @@ var DoleticModuleInterface = new function() {
   							<div class=\"header\">Déconnexion</div> \
   							<p>Procédure de déconnexion réussie.</p> \
 						</div> \
-  						<div class=\"ui blue fluid button\" onClick=\"DoleticServicesInterface.requireSpecialLogin();\">Go back to login</div> \
+  						<div class=\"ui blue fluid button\" onClick=\"DoleticServicesInterface.getUILogin();\">Go back to login</div> \
 					  </form> \
 					</div> \
 				   </div> \

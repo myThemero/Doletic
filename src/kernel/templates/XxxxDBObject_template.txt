@@ -50,9 +50,9 @@ class XxxxServices extends AbstractObjectServices {
 	// --- internal services (actions)
 	const GET_XXXX_BY_ID 	= "byid";
 	const GET_ALL_XXXX 		= "all";
-	const INSERT_XXXX		= "insert";
-	const UPDATE_XXXX		= "update";
-	const DELETE_XXXX		= "delete";
+	const INSERT			= "insert";
+	const UPDATE			= "update";
+	const DELETE			= "delete";
 	// -- functions
 
 	// -- construct
@@ -63,15 +63,15 @@ class XxxxServices extends AbstractObjectServices {
 	public function GetResponseData($action, $params) {
 		$data = null;
 		if(!strcmp($action, XxxxServices::GET_XXXX_BY_ID)) {
-			$data = $this->getXxxxById($params[XxxxServices::PARAM_ID]);
+			$data = $this->__get_xxxx_by_id($params[XxxxServices::PARAM_ID]);
 		} else if(!strcmp($action, XxxxServices::GET_ALL_XXXXS)) {
-			$data = $this->getAllXxxxs();
-		} else if(!strcmp($action, XxxxServices::INSERT_XXXX)) {
-			$data = $this->insertXxxx($params[XxxxServices::PARAM_ID], ...);
-		} else if(!strcmp($action, XxxxServices::UPDATE_XXXX)) {
-			$data = $this->updateXxxx($params[XxxxServices::PARAM_ID], ...);
-		} else if(!strcmp($action, XxxxServices::DELETE_XXXX)) {
-			$data = $this->deleteXxxx($params[XxxxServices::PARAM_ID]);
+			$data = $this->__get_all_xxxxs();
+		} else if(!strcmp($action, XxxxServices::INSERT)) {
+			$data = $this->__insert_xxxx($params[XxxxServices::PARAM_ID], ...);
+		} else if(!strcmp($action, XxxxServices::UPDATE)) {
+			$data = $this->__update_xxxx($params[XxxxServices::PARAM_ID], ...);
+		} else if(!strcmp($action, XxxxServices::DELETE)) {
+			$data = $this->__delete_xxxx($params[XxxxServices::PARAM_ID]);
 		}
 		return $data;
 	}
@@ -80,7 +80,7 @@ class XxxxServices extends AbstractObjectServices {
 
 	// -- consult
 
-	private function getXxxxById($id) {
+	private function __get_xxxx_by_id($id) {
 		// create sql params array
 		$sql_params = array(":".XxxxDBObject::COL_ID => $id);
 		// create sql request
@@ -102,7 +102,7 @@ class XxxxServices extends AbstractObjectServices {
 		return $xxxx;
 	}
 
-	private function getAllXxxxs() {
+	private function __get_all_xxxxs() {
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetSELECTQuery();
 		// execute SQL query and save result
@@ -121,7 +121,7 @@ class XxxxServices extends AbstractObjectServices {
 
 	// -- modify
 
-	private function insertXxxx(...) {
+	private function __insert_xxxx(...) {
 		// create sql params
 		$sql_params = array(
 			":".XxxxDBObject::COL_ID => "NULL",
@@ -132,7 +132,7 @@ class XxxxServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	} 
 
-	private function updateXxxx($id, ...) {
+	private function __update_xxxx($id, ...) {
 		// create sql params
 		$sql_params = array(
 			":".XxxxDBObject::COL_ID => $id,
@@ -143,7 +143,7 @@ class XxxxServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function deleteXxxx($id) {
+	private function __delete_xxxx($id) {
 		// create sql params
 		$sql_params = array(":".XxxxDBObject::COL_ID => $id);
 		// create sql request

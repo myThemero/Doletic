@@ -3,7 +3,7 @@
 /**
 * 	@brief
 */
-class AbstractLoader {
+abstract class AbstractLoader {
 
 	// -- attributes
 	private $kernel;

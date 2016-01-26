@@ -35,7 +35,7 @@ var DoleticModuleInterface = new function() {
 						      Erreur 404 !  \
 						    </div> \
 						    <p>La page n'existe pas. \
-							<button class=\"ui basic right floated button\" onClick=\"DoleticServicesInterface.requireSpecialHome();\"> \
+							<button class=\"ui basic right floated button\" onClick=\"DoleticServicesInterface.getUIHome();\"> \
   								<i class=\"icon home\"></i> \
   								Retour à l'accueil \
 							</button> \

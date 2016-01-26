@@ -86,7 +86,8 @@ class Tests {
 		$kernel = Tests::__init_kernel__("__test_dbo_ticket"); // initialize kernel
 		// --------- content ------------
 		// insert
-		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("insert", array(
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(TicketServices::INSERT, array(
 			"senderId" => 0,
 			"receiverId" => 1,
 			"subject" => "Test subject",
@@ -95,10 +96,12 @@ class Tests {
 			"statusId" => 3));
 		var_dump($data);
 		// get all
-		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("allt", array());
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(TicketServices::GET_ALL_TICKETS, array());
 		var_dump($data);
 		// update
-		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("update", array(
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+						->GetResponseData(TicketServices::UPDATE, array(
 			"id" => 1,
 			"senderId" => -1,
 			"receiverId" => -1,
@@ -108,10 +111,12 @@ class Tests {
 			"statusId" => -1));
 		var_dump($data);
 		// get by id
-		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("byidt", array("id" => 1));
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(TicketServices::GET_TICKET_BY_ID, array("id" => 1));
 		var_dump($data);
 		// archive
-		$data = $kernel->GetDBObject("ticket")->GetServices()->GetResponseData("archive", array("id" => 1));
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(TicketServices::ARCHIVE, array("id" => 1));
 		var_dump($data);
 		// ----------- end --------------
 		Tests::__terminate_kernel__($kernel); // terminate kernel
@@ -123,20 +128,24 @@ class Tests {
 		$kernel = Tests::__init_kernel__("__test_dbo_user"); // initialize kernel
 		// --------- content ------------
 		// insert
-		$data = $kernel->GetDBObject("user")->GetServices()->GetResponseData("insert", array(
+		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(UserServices::INSERT, array(
 			"username" => "user.test",
 			"password" => "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8")); // sha1("password");
 		var_dump($data);
 		// get all
-		$data = $kernel->GetDBObject("user")->GetServices()->GetResponseData("all", array());
+		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(UserServices::GET_ALL_USERS, array());
 		var_dump($data);
 		// update
-		$data = $kernel->GetDBObject("user")->GetServices()->GetResponseData("update", array(
+		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(UserServices::UPDATE, array(
 			"id" => 1,
 			"password" => "6184d6847d594ec75c4c07514d4bb490d5e166df"));	// sha1("blank");
 		var_dump($data);
 		// get by id
-		$data = $kernel->GetDBObject("user")->GetServices()->GetResponseData("byid", array("id" => 1));
+		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(UserServices::GET_USER_BY_ID, array("id" => 1));
 		var_dump($data);
 		// ----------- end --------------
 		Tests::__terminate_kernel__($kernel); // terminate kernel
@@ -158,11 +167,10 @@ class Tests {
 		$kernel = Tests::__init_kernel__("__test_get_interface"); // initialize kernel
 		// --------- content ------------
 		// -- specials ui
-		echo $kernel->GetInterface("login");
-		echo $kernel->GetInterface("login_failed");
-		echo $kernel->GetInterface("logout");
-		echo $kernel->GetInterface("404");
-		echo $kernel->GetInterface("home");
+		echo $kernel->GetInterface(UIManager::INTERFACE_LOGIN);
+		echo $kernel->GetInterface(UIManager::INTERFACE_LOGOUT);
+		echo $kernel->GetInterface(UIManager::INTERFACE_404);
+		echo $kernel->GetInterface(UIManager::INTERFACE_HOME);
 		// -- unknown ui
 		echo $kernel->GetInterface("unknown:strange:ui");
 		// ----------- end --------------

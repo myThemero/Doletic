@@ -3,7 +3,7 @@
 /**
 * 	@brief
 */
-class AbstractModule {
+abstract class AbstractModule {
 	
 	// -- attributes
 	private $name;

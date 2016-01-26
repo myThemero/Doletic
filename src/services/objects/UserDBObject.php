@@ -79,9 +79,9 @@ class UserServices extends AbstractObjectServices {
 	const GET_USER_BY_ID 	= "byid";
 	const GET_USER_BY_UNAME = "byuname";
 	const GET_ALL_USERS 	= "all";
-	const INSERT_USER		= "insert";
-	const UPDATE_USER		= "update";
-	const DELETE_USER		= "delete";
+	const INSERT			= "insert";
+	const UPDATE			= "update";
+	const DELETE			= "delete";
 	// -- functions
 
 	// -- construct
@@ -92,17 +92,17 @@ class UserServices extends AbstractObjectServices {
 	public function GetResponseData($action, $params) {
 		$data = null;
 		if(!strcmp($action, UserServices::GET_USER_BY_ID)) {
-			$data = $this->getUserById($params[UserServices::PARAM_ID]);
+			$data = $this->__get_user_by_id($params[UserServices::PARAM_ID]);
 		} else if(!strcmp($action, UserServices::GET_USER_BY_UNAME)) {
-			$data = $this->getUserByUsernameAndHash($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
+			$data = $this->__get_user_by_username_and_hash($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
 		} else if(!strcmp($action, UserServices::GET_ALL_USERS)) {
-			$data = $this->getAllUsers();
-		} else if(!strcmp($action, UserServices::INSERT_USER)) {
-			$data = $this->insertUser($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
-		} else if(!strcmp($action, UserServices::UPDATE_USER)) {
-			$data = $this->updateUserPassword($params[UserServices::PARAM_ID], $params[UserServices::PARAM_HASH]);
-		} else if(!strcmp($action, UserServices::DELETE_USER)) {
-			$data = $this->deleteUser($params[UserServices::PARAM_ID]);
+			$data = $this->__get_all_users();
+		} else if(!strcmp($action, UserServices::INSERT)) {
+			$data = $this->__insert_user($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
+		} else if(!strcmp($action, UserServices::UPDATE)) {
+			$data = $this->__update_user_password($params[UserServices::PARAM_ID], $params[UserServices::PARAM_HASH]);
+		} else if(!strcmp($action, UserServices::DELETE)) {
+			$data = $this->__delete_user($params[UserServices::PARAM_ID]);
 		}
 		return $data;
 	}
@@ -111,7 +111,7 @@ class UserServices extends AbstractObjectServices {
 
 	// -- consult
 
-	private function getUserById($id) {
+	private function __get_user_by_id($id) {
 		// create sql params array
 		$sql_params = array(":".UserDBObject::COL_ID => $id);
 		// create sql request
@@ -133,7 +133,7 @@ class UserServices extends AbstractObjectServices {
 		return $user;
 	}
 
-	private function getUserByUsernameAndHash($username, $hash) {
+	private function __get_user_by_username_and_hash($username, $hash) {
 		// create sql params array
 		$sql_params = array(
 			":".UserDBObject::COL_USERNAME => $username,
@@ -158,7 +158,7 @@ class UserServices extends AbstractObjectServices {
 		return $user;
 	}
 
-	private function getAllUsers() {
+	private function __get_all_users() {
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery();
 		// execute SQL query and save result
@@ -179,7 +179,7 @@ class UserServices extends AbstractObjectServices {
 
 	// -- modify
 
-	private function insertUser($username, $hash) {
+	private function __insert_user($username, $hash) {
 		// create sql params
 		$sql_params = array(
 			":".UserDBObject::COL_ID => "NULL",
@@ -193,7 +193,7 @@ class UserServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	} 
 
-	private function updateUserPassword($id, $hash) {
+	private function __update_user_password($id, $hash) {
 		// create sql params
 		$sql_params = array(
 			":".UserDBObject::COL_ID => $id,
@@ -204,13 +204,19 @@ class UserServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function deleteUser($id) {
+	private function __delete_user($id) {
 		// create sql params
 		$sql_params = array(":".UserDBObject::COL_ID => $id);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetDELETEQuery();
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+# PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
+
+	public function ResetStaticData() {
+		// no static data for this module
 	}
 
 }
@@ -256,6 +262,14 @@ class UserDBObject extends AbstractDBObject {
 	 */
 	public function GetServices() {
 		return new UserServices($this, $this->getDBConnection());
+	}
+
+	/**
+	 *	Initialize static data
+	 */
+	public function ResetStaticData() {
+		$services = new UserServices($this, $this->getDBConnection());
+		$services->ResetStaticData();
 	}
 
 }

@@ -155,11 +155,21 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_INSA_DEPT_ID 	= "insaDeptId";
 	const PARAM_POSITION_ID  	= "positionId";
 	// --- internal services (actions)
-	const GET_USER_DATA_BY_ID 	= "byid";
-	const GET_ALL_USER_DATA 	= "all";
-	const INSERT_USER_DATA		= "insert";
-	const UPDATE_USER_DATA		= "update";
-	const DELETE_USER_DATA		= "delete";
+	const GET_USER_DATA_BY_ID 	= "byidud";
+	const GET_GENDER_BY_ID      = "byidg";
+	const GET_COUNTRY_BY_ID     = "byidc";
+	const GET_INSA_DEPT_BY_ID   = "byiddept";
+	const GET_POSITION_BY_ID    = "byidpos";
+	const GET_USER_LAST_POS     = "lastpos";
+	const GET_ALL_USER_DATA 	= "allud";
+	const GET_ALL_GENDERS 		= "allg";
+	const GET_ALL_COUNTRIES 	= "allc";
+	const GET_ALL_INSA_DEPTS 	= "alldept";
+	const GET_ALL_POSITIONS 	= "allpos";
+	const INSERT				= "insert";
+	const UPDATE 				= "update";
+	const UPDATE_POSTION        = "updatepos";
+	const DELETE 				= "delete";
 	// -- functions
 
 	// -- construct
@@ -170,11 +180,27 @@ class UserDataServices extends AbstractObjectServices {
 	public function GetResponseData($action, $params) {
 		$data = null;
 		if(!strcmp($action, UserDataServices::GET_USER_DATA_BY_ID)) {
-			$data = $this->getUserDataById($params[UserDataServices::PARAM_ID]);
+			$data = $this->__get_user_data_by_id($params[UserDataServices::PARAM_ID]);
+		} else if(!strcmp($action, UserDataServices::GET_GENDER_BY_ID)) {
+			$data = $this->__get_gender_by_id($params[UserDataServices::PARAM_ID]);
+		} else if(!strcmp($action, UserDataServices::GET_COUNTRY_BY_ID)) {
+			$data = $this->__get_country_by_id($params[UserDataServices::PARAM_ID]);
+		} else if(!strcmp($action, UserDataServices::GET_INSA_DEPT_BY_ID)) {
+			$data = $this->__get_INSA_dept_by_id($params[UserDataServices::PARAM_ID]);
+		} else if(!strcmp($action, UserDataServices::GET_POSITION_BY_ID)) {
+			$data = $this->__get_position_by_id($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_ALL_USER_DATA)) {
-			$data = $this->getAllUserData();
-		} else if(!strcmp($action, UserDataServices::INSERT_USER_DATA)) {
-			$data = $this->insertUserData(
+			$data = $this->__get_all_user_data();
+		} else if(!strcmp($action, UserDataServices::GET_ALL_GENDERS)) {
+			$data = $this->__get_all_genders();
+		} else if(!strcmp($action, UserDataServices::GET_ALL_COUNTRIES)) {
+			$data = $this->__get_all_countries();
+		} else if(!strcmp($action, UserDataServices::GET_ALL_INSA_DEPTS)) {
+			$data = $this->__get_all_INSA_depts();
+		} else if(!strcmp($action, UserDataServices::GET_ALL_POSITIONS)) {
+			$data = $this->__get_all_positions();
+		} else if(!strcmp($action, UserDataServices::INSERT)) {
+			$data = $this->__insert_user_data(
 				$params[UserDataServices::PARAM_USER_ID],
 				$params[UserDataServices::PARAM_GENDER_ID],
 				$params[UserDataServices::PARAM_FIRSTNAME],
@@ -186,8 +212,8 @@ class UserDataServices extends AbstractObjectServices {
 				$params[UserDataServices::PARAM_COUNTRY_ID],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
 				$params[UserDataServices::PARAM_INSA_DEPT_ID]);
-		} else if(!strcmp($action, UserDataServices::UPDATE_USER_DATA)) {
-			$data = $this->updateUserData(
+		} else if(!strcmp($action, UserDataServices::UPDATE)) {
+			$data = $this->__update_user_data(
 				$params[UserDataServices::PARAM_ID],
 				$params[UserDataServices::PARAM_USER_ID],
 				$params[UserDataServices::PARAM_GENDER_ID],
@@ -200,8 +226,12 @@ class UserDataServices extends AbstractObjectServices {
 				$params[UserDataServices::PARAM_COUNTRY_ID],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
 				$params[UserDataServices::PARAM_INSA_DEPT_ID]);
-		} else if(!strcmp($action, UserDataServices::DELETE_USER_DATA)) {
-			$data = $this->deleteUserData($params[UserDataServices::PARAM_ID]);
+		} else if(!strcmp($action, UserDataServices::UPDATE_POSTION)) {
+			$data = $this->__update_user_position(
+				$params[UserDataServices::PARAM_ID],
+				$params[UserDataServices::PARAM_POSITION_ID]);
+		} else if(!strcmp($action, UserDataServices::DELETE)) {
+			$data = $this->__delete_user_data($params[UserDataServices::PARAM_ID]);
 		}
 		return $data;
 	}
@@ -210,7 +240,7 @@ class UserDataServices extends AbstractObjectServices {
 
 	// -- consult
 
-	private function getUserDataById($id) {
+	private function __get_user_data_by_id($id) {
 		// create sql params array
 		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
 		// create sql request
@@ -240,7 +270,79 @@ class UserDataServices extends AbstractObjectServices {
 		return $udata;
 	}
 
-	private function getUserLastPosition($userId) {
+	private function __get_gender_by_id($id) {
+		// create sql params array
+		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create udata var
+		$gender = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$gender = $row[UserDataDBObject::COL_LABEL];
+			}
+		}
+		return $gender;
+	}
+
+	private function __get_country_by_id($id) {
+		// create sql params array
+		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_COUNTRY)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create udata var
+		$country = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$country = $row[UserDataDBObject::COL_LABEL];
+			}
+		}
+		return $country;
+	}
+
+	private function __get_INSA_dept_by_id($id) {
+		// create sql params array
+		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_INSA_DEPT)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create udata var
+		$insa_dept = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$insa_dept = $row[UserDataDBObject::COL_LABEL];
+			}
+		}
+		return $insa_dept;
+	}
+
+	private function __get_position_by_id($id) {
+		// create sql params array
+		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create udata var
+		$position = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$position = $row[UserDataDBObject::COL_LABEL];
+			}
+		}
+		return $position;
+	}
+
+	private function __get_user_last_position($userId) {
 		// create sql params array
 		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
 		// create sql request
@@ -259,79 +361,7 @@ class UserDataServices extends AbstractObjectServices {
 		return $position;
 	}
 
-	private function getGenderById() {
-		// create sql params array
-		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create udata var
-		$gender = null;
-		if($pdos != null) {
-			if( ($row = $pdos->fetch()) !== false) {
-				$gender = $row[UserDataDBObject::COL_LABEL];
-			}
-		}
-		return $gender;
-	}
-
-	private function getCountryById() {
-		// create sql params array
-		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_COUNTRY)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create udata var
-		$country = null;
-		if($pdos != null) {
-			if( ($row = $pdos->fetch()) !== false) {
-				$country = $row[UserDataDBObject::COL_LABEL];
-			}
-		}
-		return $country;
-	}
-
-	private function getINSADeptById() {
-		// create sql params array
-		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_INSA_DEPT)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create udata var
-		$insa_dept = null;
-		if($pdos != null) {
-			if( ($row = $pdos->fetch()) !== false) {
-				$insa_dept = $row[UserDataDBObject::COL_LABEL];
-			}
-		}
-		return $insa_dept;
-	}
-
-	private function getPositionById() {
-		// create sql params array
-		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create udata var
-		$position = null;
-		if($pdos != null) {
-			if( ($row = $pdos->fetch()) !== false) {
-				$position = $row[UserDataDBObject::COL_LABEL];
-			}
-		}
-		return $position;
-	}
-
-	private function getAllUserData() {
+	private function __get_all_user_data() {
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery();
 		// execute SQL query and save result
@@ -358,9 +388,71 @@ class UserDataServices extends AbstractObjectServices {
 		return $udata;
 	}
 
+	private function __get_all_genders() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for labels and fill it
+		$labels = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
+			}
+		}
+		return $labels;
+	}
+
+	private function __get_all_countries() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for labels and fill it
+		$labels = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
+			}
+		}
+		return $labels;
+	}
+
+	private function __get_all_INSA_depts() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for labels and fill it
+		$labels = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
+			}
+		}
+		return $labels;
+	}
+
+	private function __get_all_positions() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for labels and fill it
+		$labels = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
+			}
+		}
+		return $labels;
+	}
+
+
+
 	// -- modify
 
-	private function insertUserData($userId, $genderId, $firstname, $lastname, $birthdate, 
+	private function __insert_user_data($userId, $genderId, $firstname, $lastname, $birthdate, 
 									$tel, $email, $address, $countryId, $schoolYear, 
 									$insaDeptId, $positionId) {
 		// create sql params
@@ -383,7 +475,7 @@ class UserDataServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	} 
 
-	private function updateUserData($id, $userId, $genderId, $firstname, $lastname, $birthdate, 
+	private function __update_user_data($id, $userId, $genderId, $firstname, $lastname, $birthdate, 
 									$tel, $email, $address, $countryId, $schoolYear, 
 									$insaDeptId, $positionId) {
 		// create sql params
@@ -406,7 +498,7 @@ class UserDataServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function updateUserPosition($userId, $positionId) {
+	private function __update_user_position($userId, $positionId) {
 		// create sql params
 		$sql_params = array(
 			":".UserDataDBObject::COL_ID => "NULL",
@@ -419,13 +511,122 @@ class UserDataServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function deleteUserData($id) {
+	private function __delete_user_data($id) {
 		// create sql params
 		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetDELETEQuery();
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+# PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
+	
+	/**
+	 *	---------!---------!---------!---------!---------!---------!---------!---------!---------
+	 *  !  							DATABASE CONSISTENCY WARNING 							    !
+	 *  !  																					    !
+	 *  !  Please respect the following points :   												!
+	 *	!  - When adding static data to existing data => always add at the end of the list      !
+	 *  !  - Never remove data (or ensure that no database element use one as a foreign key)    !
+	 *	---------!---------!---------!---------!---------!---------!---------!---------!---------
+	 */
+	public function ResetStaticData() {
+		// -- init gender table --------------------------------------------------------------------
+		$genders = array("M.","Mlle","Mme");
+		// --- retrieve SQL query
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetINSERTQuery();
+		foreach ($genders as $gender) {
+			// --- create param array
+			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
+								":".UserDataDBObject::COL_LABEL => $gender);
+			// --- execute SQL query
+			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
+		}
+		// -- init countries table --------------------------------------------------------------------
+		$countries = array("Afrique du Sud","Algérie",
+		"Angola","Bénin","Botswana","Burkina Faso","Burundi","Cameroun","Cap-Vert","République centrafricaine","Comores",
+		"République du Congo","République démocratique du Congo","Côte d'Ivoire","Djibouti","Égypte","Érythrée","Éthiopie",
+		"Gabon","Gambie","Ghana","Guinée","Guinée-Bissau","Guinée équatoriale","Kenya","Lesotho","Liberia","Libye",
+		"Madagascar","Malawi","Mali","Maroc","Maurice","Mauritanie","Mozambique","Namibie","Niger","Nigeria","Ouganda",
+		"Rwanda","Sahara Occidental","Sao Tomé-et-Principe","Sénégal","Seychelles","Sierra Leone","Somalie","Soudan",
+		"Soudan du Sud","Swaziland","Tanzanie","Tchad","Togo","Tunisie","Zambie","Zimbabwe","Antigua-et-Barbuda",
+		"Argentine","Bahamas","Barbade","Belize","Bolivie","Brésil","Canada","Chili","Colombie","Costa Rica",
+		"Cuba","République dominicaine","Dominique","Équateur","États-Unis","Grenade","Guatemala","Guyana",
+		"Haïti","Honduras","Jamaïque","Mexique","Nicaragua","Panama","Paraguay","Pérou","Saint-Christophe-et-Niévès",
+		"Sainte-Lucie","Saint-Vincent-et-les-Grenadines","Salvador","Suriname","Trinité-et-Tobago",
+		"Uruguay","Venezuela","Afghanistan","Arabie saoudite","Arménie","Azerbaïdjan","Bahreïn","Bangladesh",
+		"Bhoutan","Birmanie","Brunei","Cambodge","Chine","Chypre","Corée du Nord","Corée du Sud","Émirats arabes unis",
+		"Géorgie","Inde","Indonésie","Irak","Iran","Israël","Japon","Jordanie","Kazakhstan","Kirghizistan",
+		"Koweït","Laos","Liban","Malaisie","Maldives","Mongolie","Népal","Oman","Ouzbékistan","Pakistan",
+		"Philippines","Qatar","Singapour","Sri Lanka","Syrie","Tadjikistan","Thaïlande","Timor oriental",
+		"Turkménistan","Turquie","Viêt Nam","Yémen","Albanie","Allemagne","Andorre","Autriche","Belgique",
+		"Biélorussie","Bosnie-Herzégovine","Bulgarie","Chypre","Crete","Croatie","Danemark","Espagne","Estonie",
+		"Finlande","France","Grèce","Hongrie","Irlande","Islande","Italie","Lettonie","Liechtenstein","Lituanie",
+		"Luxembourg","Macédoine","Malte","Moldavie","Monaco","Monténégro","Norvège","Pays-Bas","Pologne","Portugal",
+		"République tchèque","Roumanie","Royaume-Uni","Russie","Saint-Marin","Serbie","Slovaquie","Slovénie",
+		"Suède","Suisse","Ukraine","Vatican","Australie","Fidji","Kiribati","Marshall","Micronésie","Nauru",
+		"Nouvelle-Zélande","Palaos","Papouasie-Nouvelle-Guinée","Salomon","Samoa","Tonga","Tuvalu","Vanuatu");
+		// --- retrieve SQL query
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_COUNTRY)->GetINSERTQuery();
+		foreach ($countries as $country) {
+			// --- create param array
+			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
+								":".UserDataDBObject::COL_LABEL => $country);
+			// --- execute SQL query
+			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
+		}
+		// -- init INSA Dept table --------------------------------------------------------------------
+		$depts = array(
+			"BB" => "Biochimie et Biotechnologies",
+		    "BIM" => "BioInformatique et Modélisation",
+		    "GCU" => "Génie civil et urbanisme",
+		    "GE" => "Génie électrique",
+		    "GEN" => "Génie énergétique et environnement",
+		    "GMC" => "Génie mécanique conception",
+		    "GMD" => "Génie mécanique développement",
+		    "GMPP" => "Génie mécanique procédés plasturgie",
+		    "GI" => "Génie Industriel",
+		    "IF" => "Informatique",
+		    "SGM" => "Science et Génie des Matériaux",
+		    "TC" => "Télécommunications, Services et Usages");
+		// --- retrieve SQL query
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_INSA_DEPT)->GetINSERTQuery();
+		foreach ($depts as $dept => $detail) {
+			// --- create param array
+			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
+								":".UserDataDBObject::COL_LABEL => $dept,
+								":".UserDataDBObject::COL_DETAIL => $detail);
+			// --- execute SQL query
+			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
+		}
+		// -- init ETIC pos table --------------------------------------------------------------------
+		$positions = array(
+			"Président" => "P",
+			"Vide-Président" => "VP",
+			"Secrétaire Général" => "SG",
+			"Trésorier" => "T",
+			"Comptable" => "C",
+		    "Responsable DSI" => "R-DSI",
+		    "Responsable GRC" => "R-GRC",
+		    "Responsable COM" => "R-COM",
+		    "Responsable UA" => "R-UA",
+		    "Responsable Qualité" => "R-Q",
+		    "Junior DSI" => "J-DSI",
+		    "Junior GRC" => "J-GRC",
+		    "Junior COM" => "J-COM",
+		    "Chargé d'affaire" => "J-CA",
+		    "Junior Qualité" => "J-Q");
+		// --- retrieve SQL query
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetINSERTQuery();
+		foreach ($positions as $position => $rights_code) {
+			// --- create param array
+			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
+								":".UserDataDBObject::COL_LABEL => $position,
+								":".UserDataDBObject::COL_RIGHTS_CODE => $rights_code);
+			// --- execute SQL query
+			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
+		}
 	}
 
 }
@@ -460,7 +661,9 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_INSA_DEPT_ID 	= "insa_dept_id";
 	const COL_POSITION_ID  	= "position_id";
 	const COL_LABEL			= "label";
+	const COL_DETAIL		= "detail";
 	const COL_SINCE			= "since";
+	const COL_RIGHTS_CODE   = "rights_code";
 	// -- attributes
 
 	// -- functions
@@ -501,10 +704,12 @@ class UserDataDBObject extends AbstractDBObject {
 		$com_insa_dept = new DBTable(UserDataDBObject::TABL_COM_INSA_DEPT);
 		$com_insa_dept->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$com_insa_dept->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "");
+		$com_insa_dept->AddColumn(UserDataDBObject::COL_DETAIL, DBTable::DT_VARCHAR, 255, false, "");
 		// --- com_position table
 		$com_position = new DBTable(UserDataDBObject::TABL_COM_POSITION);
 		$com_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$com_position->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "");
+		$com_position->AddColumn(UserDataDBObject::COL_RIGHTS_CODE, DBTable::DT_VARCHAR, 255, false, "");
 
 		// -- add tables
 		parent::addTable($dol_udata);
@@ -520,6 +725,14 @@ class UserDataDBObject extends AbstractDBObject {
 	 */
 	public function GetServices() {
 		return new UserDataServices($this, $this->getDBConnection());
+	}
+
+	/**
+	 *	Initialize static data
+	 */
+	public function ResetStaticData() {
+		$services = new UserDataServices($this, $this->getDBConnection());
+		$services->ResetStaticData();
 	}
 
 }

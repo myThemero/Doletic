@@ -1,6 +1,6 @@
 <?php
 
-class AbstractObjectServices {
+abstract class AbstractObjectServices {
 
 	// -- attributes 
 	private $db_object;
@@ -8,9 +8,9 @@ class AbstractObjectServices {
 
 	// -- functions
 
-	public function GetResponseData($action, $params) {
-		die("This function must be overrided by child.");
-	}
+	abstract public function GetResponseData($action, $params);
+
+	abstract public function ResetStaticData();
 
 # PROTECTED & PRIVATE ###################################################
 

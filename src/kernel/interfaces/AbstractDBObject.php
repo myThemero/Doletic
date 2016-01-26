@@ -7,7 +7,7 @@ require_once "managers/SettingsManager.php";
 /**
 * @brief
 */
-class AbstractDBObject {
+abstract class AbstractDBObject {
 
 	// -- attributes
 	private $db_connection;
@@ -47,6 +47,7 @@ class AbstractDBObject {
 			// create table if not exists
 			$this->db_connection->ExecuteQuery($table->GetCREATEQuery());
 		}
+		$this->ResetStaticData();
 	}
 	/**
 	 *	@brief Creates missing tables for all objects in database
@@ -61,9 +62,19 @@ class AbstractDBObject {
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
-	public function GetServices() {
-		die("This function must be overrided in child.");
-	}
+	abstract public function GetServices();
+	/**
+	 *	@brief Drops and recreate static data tables related to this object
+	 *
+	 *	---------!---------!---------!---------!---------!---------!---------!---------!---------
+	 *  !  							DATABASE CONSISTENCY WARNING 							    !
+	 *  !  																					    !
+	 *  !  Please respect the following points :   												!
+	 *	!  - When adding static data to existing data => always add at the end of the list.     !
+	 *  !  - Never remove data (or ensure that no database element use one as a foreign key).   !
+	 *	---------!---------!---------!---------!---------!---------!---------!---------!---------
+	 */
+	abstract public function ResetStaticData();
 
 # PROTECTED & PRIVATE #########################################################
 

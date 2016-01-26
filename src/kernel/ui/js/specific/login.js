@@ -74,13 +74,13 @@ var DoleticModuleInterface = new function() {
 		   	if(this.hasInputError) {
 		   		DoleticModuleInterface.resetLoginForm();	
 		   	}
-			DoleticServicesInterface.requireAuth(
+			DoleticServicesInterface.authenticate(
 				$('#uname_input').val(),
 				$('#pass_input').val(),
 				function(data) {
        				if(data.authenticated) {
        					// Call for home interface
-          				DoleticServicesInterface.requireSpecialHome();
+          				DoleticServicesInterface.getUIHome();
         			} else {
         				DoleticModuleInterface.showLoginError();
         			}

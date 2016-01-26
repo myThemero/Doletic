@@ -3,7 +3,7 @@
 /**
 * @brief
 */
-class AbstractCronTask {
+abstract class AbstractCronTask {
 	
 	// -- attributes
 

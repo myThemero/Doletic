@@ -54,28 +54,28 @@ class DoleticKernel {
 		if(!$this->initialized) {
 			// -- init managers
 			$this->settings_mgr->Init();
-			$this->info("Settings Manager initialized.");
+			$this->__info("Settings Manager initialized.");
 			$this->log_mgr->Init();
-			$this->info("Log Manager initialized.");
+			$this->__info("Log Manager initialized.");
 			$this->db_mgr->Init();
-			$this->info("Database Manager initialized.");
+			$this->__info("Database Manager initialized.");
 			$this->cron_mgr->Init();
-			$this->info("Cron Manager initialized.");
+			$this->__info("Cron Manager initialized.");
 		 	$this->module_mgr->Init();
-		 	$this->info("Module Manager initialized.");
+		 	$this->__info("Module Manager initialized.");
 		 	$this->authentication_mgr->Init();
-		 	$this->info("Authentication Manager initialized.");
+		 	$this->__info("Authentication Manager initialized.");
 		 	$this->ui_mgr->Init();
-		 	$this->info("User Interface Manager initialized.");
+		 	$this->__info("User Interface Manager initialized.");
 		 	// -- init loaders
 		 	$this->module_ldr->Init();
-		 	$this->info("Module Loader initialized.");
+		 	$this->__info("Module Loader initialized.");
 		 	$this->dbobject_ldr->Init();
-		 	$this->info("Database Object Loader initialized.");
+		 	$this->__info("Database Object Loader initialized.");
 		 	// -- set initialized flag
 		 	$this->initialized = true;	
 		} else {
-			$this->warn("Calling kernel initializer twice or more !");
+			$this->__warn("Calling kernel initializer twice or more !");
 		}
 	}
 
@@ -111,7 +111,7 @@ class DoleticKernel {
 	 *	Returns the HTML page required
 	 */
 	public function GetInterface($ui) { 
-		$this->debug("Showing '" . $ui . "' interface.");
+		$this->__debug("Showing '" . $ui . "' interface.");
 		// initialize page
 		$page = null;
 		// check if requested ui is a special ui
@@ -138,32 +138,34 @@ class DoleticKernel {
 	// --- cron management --------------------------------------------------------------------
 
 	public function RunCron() {
+		$this->__info("Cron running tasks.");
+		// -- run cron tasks
 		$this->cron_mgr->RunTasks();
 	}
 
 	// --- database management --------------------------------------------------------------------
 
 	public function ClearDatabase() {
-		$this->info("Clear database.");
+		$this->__info("Clear database.");
 		// -- remove all tables
 		$this->dbobject_ldr->FullDBClear($this->db_mgr);
 	}
 	public function ResetDatabase() {
-		$this->info("Reset database.");
+		$this->__info("Reset database.");
 		// -- build or rebuild all tables
 		$this->dbobject_ldr->FullDBReset($this->db_mgr);
 	}
 	public function UpdateDatabase() {
-		$this->info("Update database.");
+		$this->__info("Update database.");
 		// -- update all tables
 		$this->dbobject_ldr->FullDBUpdate($this->db_mgr);
 	}
 	public function ConnectDB() {
-		$this->info("Connect DB.");
+		$this->__info("Connect DB.");
 		$this->db_mgr->InitAllConnections();
 	}
 	public function DisconnectDB() {
-		$this->info("Disconect DB.");
+		$this->__info("Disconect DB.");
 		$this->db_mgr->CloseAllConnections();
 	}
 	public function GetDBObject($objKey) {
@@ -174,22 +176,22 @@ class DoleticKernel {
 
 	// --- logging functions
 
-	private  function debug($msg) {
+	private function __debug($msg) {
 		if($this->SettingValue(SettingsManager::KEY_KERN_DEBUG)) {
 			echo "[KERN_DEBUG]>>>> ".$msg."\n";	
 		}
 	}
-	private function info($msg) {
+	private function __info($msg) {
 		if($this->SettingValue(SettingsManager::KEY_KERN_LOG)) {
 			echo "[KERN_INFO]>>>> ".$msg."\n";	
 		}	
 	}
-	private function warn($msg) {
+	private function __warn($msg) {
 		if($this->SettingValue(SettingsManager::KEY_KERN_LOG)) {
 			echo "[KERN_WARN]>>>> ".$msg."\n";	
 		}	
 	}
-	private function erro($msg) {
+	private function __erro($msg) {
 		if($this->SettingValue(SettingsManager::KEY_KERN_LOG)) {
 			echo "[KERN_ERRO]>>>> ".$msg."\n";	
 		}	

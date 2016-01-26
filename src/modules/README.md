@@ -1,3 +1,3 @@
 # Modules
 
-Ce dossier contient les dossier des modules Doletic
+Pour l'instant la création des modules n'est pas encore supportée.

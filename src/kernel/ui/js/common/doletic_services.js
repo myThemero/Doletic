@@ -14,25 +14,19 @@ var DoleticServicesInterface = new function() {
   /**
    *  Loads a standard Doletic page using ui parameter 
    */
-  this.requireUI = function(ui) {
+  this.getUI = function(ui) {
     window.location.replace(this.doleticMainScript + '?q=ui&page=' + ui);
   }
   /**
    *  Loads a specific Doletic Login page
    */
-  this.requireSpecialLogin = function() {
-    this.requireUI('login');
-  }
-  /**
-   *  Loads a specific Doletic Login Failed page
-   */
-  this.requireSpecialLoginFailed = function() {
-    this.requireUI('login_failed');
+  this.getUILogin = function() {
+    this.getUI('login');
   }
   /**
    *  Loads a specific Doletic Logout page
    */
-  this.requireSpecialLogout = function() {
+  this.getUILogout = function() {
     DoleticMasterInterface.showConfirmModal(
       '',
       '',
@@ -45,31 +39,29 @@ var DoleticServicesInterface = new function() {
       </h2>',
       function(){
         // require logout
-        DoleticServicesInterface.requireUI("logout");
+        DoleticServicesInterface.getUI("logout");
       },
       function() {
         // hide modal and don't do anything
         DoleticMasterInterface.hideConfirmModal();
       });
-
-    //this.requireUI('logout');
   }
   /**
    *  Loads a specific Doletic 404 page
    */
-  this.requireSpecial404 = function() {
-    this.requireUI('404');
+  this.getUI404 = function() {
+    this.getUI('404');
   }
   /**
    *  Loads a specific Doletic Home page
    */
-  this.requireSpecialHome = function() {
-    this.requireUI('home');
+  this.getUIHome = function() {
+    this.getUI('home');
   }
   /**
    *  Loads a specific Doletic Auth page
    */
-  this.requireAuth = function(username, password, success) {
+  this.authenticate = function(username, password, successHandler) {
     this.ajaxPOST(
       this.doleticMainScript, 
       {
@@ -78,25 +70,45 @@ var DoleticServicesInterface = new function() {
         hash: phpjsLight.sha1(password)
       },
       "json",
-      function(jqXHR, textStatus, errorThrown) {
-        // Show an error message on doletic interface
-        DoleticMasterInterface.showError("L'appel AJAX a échoué !", "<p>L'appel AJAX d'authentification à échoué ! Détails : " + errorThrown + " ("+textStatus+")</p>");
-        // Debug the response content
-        console.debug(jqXHR.responseText);
+      DoleticServicesInterface.handleAJAXError,
+      successHandler
+      );
+  }
+  /**
+   *  Require an upload from server
+   */
+  this.upload = function(formData, successHandler) {
+    this.ajaxPOST(
+      this.doleticMainScript,
+      {
+        q:'upload',
+        data: formData($(formId)[0])
       },
-      success
+      "json",
+      DoleticServicesInterface.handleAJAXError,
+      successHandler
       );
   }
   /**
    *  Make an AJAX call to Doletic services to retrieve some data
    */
-  this.requireService = function(obj, action, params) {
-    /// \todo implement here
+  this.callService = function(obj, action, params, successHandler) {
+    this.ajaxPOST(
+      this.doleticMainScript,
+      {
+        object:obj,
+        action:action,
+        params:params
+      },
+      "json",
+      DoleticServicesInterface.handleAJAXError,
+      successHandler
+      );
   }
   /**
    *  Make an ajax call. Do not call it from the outside of this class
    */
-  this.ajaxPOST = function(url, data, dataType, error, success) {
+  this.ajaxPOST = function(url, data, dataType, errorHandler, successHandler) {
       // DEBUG -------------------------------
       console.debug("ajaxPOST called with url = "+url);
       // -------------------------------------
@@ -104,10 +116,19 @@ var DoleticServicesInterface = new function() {
          url: url,
          data: data,
          dataType: dataType,
-         error: error,
-         success: success,
+         error: errorHandler,
+         success: successHandler,
          type: "POST"
       });
   }
+  /**
+   *  AJAX error default handler
+   */
+   this.handleAJAXError = function(jqXHR, textStatus, errorThrown) {
+    // Show an error message on doletic interface
+        DoleticMasterInterface.showError("L'appel AJAX a échoué !", "<p>L'appel AJAX d'authentification à échoué ! Détails : " + errorThrown + " ("+textStatus+")</p>");
+        // Debug the response content
+        console.debug(jqXHR.responseText);
+   }
 
 }
