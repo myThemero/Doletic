@@ -26,6 +26,15 @@ class Tests {
 		if(!strcmp($test, "dbo_udata") || $all) {
 			Tests::__test_dbo_udata();
 		}
+		if(!strcmp($test, "dbo_comment") || $all) {
+			Tests::__test_dbo_comment();
+		}
+		if(!strcmp($test, "dbo_module") || $all) {
+			Tests::__test_dbo_module();
+		}
+		if(!strcmp($test, "dbo_upload") || $all) {
+			Tests::__test_dbo_upload();
+		}
 		if(!strcmp($test, "ui") || $all) {
 			Tests::__test_get_interface();
 		}
@@ -87,36 +96,38 @@ class Tests {
 		// --------- content ------------
 		// insert
 		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
-					->GetResponseData(TicketServices::INSERT, array(
-			"senderId" => 0,
-			"receiverId" => 1,
-			"subject" => "Test subject",
-			"categoryId" => 2,
-			"data" => "Test data",
-			"statusId" => 3));
+							->GetResponseData(TicketServices::INSERT, array(
+								TicketServices::PARAM_SENDER => 0,
+								TicketServices::PARAM_RECEIVER => 1,
+								TicketServices::PARAM_SUBJECT => "Test subject",
+								TicketServices::PARAM_CATEGO => 2,
+								TicketServices::PARAM_DATA => "Test data",
+								TicketServices::PARAM_STATUS => 3));
 		var_dump($data);
 		// get all
 		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
-					->GetResponseData(TicketServices::GET_ALL_TICKETS, array());
+							->GetResponseData(TicketServices::GET_ALL_TICKETS, array());
 		var_dump($data);
 		// update
 		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
-						->GetResponseData(TicketServices::UPDATE, array(
-			"id" => 1,
-			"senderId" => -1,
-			"receiverId" => -1,
-			"subject" => "Another test subject",
-			"categoryId" => -1,
-			"data" => "Another test data",
-			"statusId" => -1));
+							->GetResponseData(TicketServices::UPDATE, array(
+								TicketServices::PARAM_ID => 1,
+								TicketServices::PARAM_SENDER => -1,
+								TicketServices::PARAM_RECEIVER => -1,
+								TicketServices::PARAM_SUBJECT => "Another test subject",
+								TicketServices::PARAM_CATEGO => -1,
+								TicketServices::PARAM_DATA => "Another test data",
+								TicketServices::PARAM_STATUS => -1));
 		var_dump($data);
 		// get by id
 		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
-					->GetResponseData(TicketServices::GET_TICKET_BY_ID, array("id" => 1));
+							->GetResponseData(TicketServices::GET_TICKET_BY_ID, array(
+								TicketServices::PARAM_ID => 1));
 		var_dump($data);
 		// archive
 		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
-					->GetResponseData(TicketServices::ARCHIVE, array("id" => 1));
+							->GetResponseData(TicketServices::ARCHIVE, array(
+								TicketServices::PARAM_ID => 1));
 		var_dump($data);
 		// ----------- end --------------
 		Tests::__terminate_kernel__($kernel); // terminate kernel
@@ -129,23 +140,24 @@ class Tests {
 		// --------- content ------------
 		// insert
 		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
-					->GetResponseData(UserServices::INSERT, array(
-			"username" => "user.test",
-			"password" => "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8")); // sha1("password");
+							->GetResponseData(UserServices::INSERT, array(
+								UserServices::PARAM_UNAME => "user.test",
+								UserServices::PARAM_HASH => "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8")); // sha1("password");
 		var_dump($data);
 		// get all
 		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
-					->GetResponseData(UserServices::GET_ALL_USERS, array());
+							->GetResponseData(UserServices::GET_ALL_USERS, array());
 		var_dump($data);
 		// update
 		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
-					->GetResponseData(UserServices::UPDATE, array(
-			"id" => 1,
-			"password" => "6184d6847d594ec75c4c07514d4bb490d5e166df"));	// sha1("blank");
+							->GetResponseData(UserServices::UPDATE, array(
+								UserServices::PARAM_ID => 1,
+								UserServices::PARAM_HASH => "6184d6847d594ec75c4c07514d4bb490d5e166df"));	// sha1("blank");
 		var_dump($data);
 		// get by id
 		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
-					->GetResponseData(UserServices::GET_USER_BY_ID, array("id" => 1));
+							->GetResponseData(UserServices::GET_USER_BY_ID, array(
+								UserServices::PARAM_ID => 1));
 		var_dump($data);
 		// ----------- end --------------
 		Tests::__terminate_kernel__($kernel); // terminate kernel
@@ -157,6 +169,57 @@ class Tests {
 		$kernel = Tests::__init_kernel__("__test_dbo_udata"); // initialize kernel
 		// --------- content ------------
 		echo "/// \\todo implement this test !\n";
+		// ----------- end --------------
+		Tests::__terminate_kernel__($kernel); // terminate kernel
+	}
+	/**
+	 *	Test for DB comment object
+	 */
+	private static function __test_dbo_comment() {
+		$kernel = Tests::__init_kernel__("__test_dbo_comment"); // initialize kernel
+		// --------- content ------------
+		echo "/// \\todo implement this test !\n";
+		// ----------- end --------------
+		Tests::__terminate_kernel__($kernel); // terminate kernel
+	}
+	/**
+	 *	Test for DB comment object
+	 */
+	private static function __test_dbo_module() {
+		$kernel = Tests::__init_kernel__("__test_dbo_module"); // initialize kernel
+		// --------- content ------------
+		echo "/// \\todo implement this test !\n";
+		// ----------- end --------------
+		Tests::__terminate_kernel__($kernel); // terminate kernel
+	}
+	/**
+	 *	Test for DB comment object
+	 */
+	private static function __test_dbo_upload() {
+		$kernel = Tests::__init_kernel__("__test_dbo_upload"); // initialize kernel
+		// --------- content ------------
+		// insert
+		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(UploadServices::INSERT, array(
+		    			UploadServices::PARAM_USER_ID => 1,
+		    			UploadServices::PARAM_FNAME => 'fakefile.pdf',
+		    			UploadServices::PARAM_STOR_FNAME => '/fake_2016_01_27_17_55_30.pdf'));
+		var_dump($data);
+		// get all
+		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(UploadServices::GET_ALL_UPLOADS, array());
+		var_dump($data);
+		// update
+		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(UploadServices::UPDATE, array(
+						UploadServices::PARAM_ID => 1,
+						UploadServices::PARAM_FNAME => "fakefile_renamed.pdf"));
+		var_dump($data);
+		// get by id
+		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+					->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
+						UploadServices::PARAM_ID => 1));
+		var_dump($data);
 		// ----------- end --------------
 		Tests::__terminate_kernel__($kernel); // terminate kernel
 	}

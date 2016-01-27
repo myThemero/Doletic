@@ -9,13 +9,12 @@ var DoleticServicesInterface = new function() {
   /**
    *  Global url to main script
    */
-  this.doleticMainScript = 'http://localhost/src/kernel/Main.php';
-
+  this.doleticMainURL = 'http://localhost/src/kernel/Main.php';
   /**
    *  Loads a standard Doletic page using ui parameter 
    */
   this.getUI = function(ui) {
-    window.location.replace(this.doleticMainScript + '?q=ui&page=' + ui);
+    window.location.replace(this.doleticMainURL + '?q=ui&page=' + ui);
   }
   /**
    *  Loads a specific Doletic Login page
@@ -63,13 +62,13 @@ var DoleticServicesInterface = new function() {
    */
   this.authenticate = function(username, password, successHandler) {
     this.ajaxPOST(
-      this.doleticMainScript, 
+      this.doleticMainURL, 
       {
         q: 'auth',
         user: username,
         hash: phpjsLight.sha1(password)
       },
-      "json",
+      'json',
       DoleticServicesInterface.handleAJAXError,
       successHandler
       );
@@ -78,29 +77,30 @@ var DoleticServicesInterface = new function() {
    *  Require an upload from server
    */
   this.upload = function(formData, successHandler) {
-    this.ajaxPOST(
-      this.doleticMainScript,
-      {
-        q:'upload',
-        data: formData($(formId)[0])
-      },
-      "json",
-      DoleticServicesInterface.handleAJAXError,
-      successHandler
-      );
+    $.ajax({
+         url: this.doleticMainURL,
+         type: 'POST',
+         data: formData,
+         processData: false,
+         contentType: false,
+         dataType: 'json',
+         error: DoleticServicesInterface.handleAJAXError,
+         success: successHandler
+      });
   }
   /**
    *  Make an AJAX call to Doletic services to retrieve some data
    */
-  this.callService = function(obj, action, params, successHandler) {
+  this.callService = function(object, action, params, successHandler) {
     this.ajaxPOST(
-      this.doleticMainScript,
+      this.doleticMainURL,
       {
-        object:obj,
-        action:action,
+        q:'service',
+        obj:object,
+        act:action,
         params:params
       },
-      "json",
+      'json',
       DoleticServicesInterface.handleAJAXError,
       successHandler
       );
@@ -114,11 +114,11 @@ var DoleticServicesInterface = new function() {
       // -------------------------------------
       $.ajax({
          url: url,
+         type: 'POST',
          data: data,
          dataType: dataType,
          error: errorHandler,
-         success: successHandler,
-         type: "POST"
+         success: successHandler
       });
   }
   /**

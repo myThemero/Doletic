@@ -39,6 +39,15 @@ var DoleticModuleInterface = new function() {
 					<div class=\"three wide column\"> \
 					</div> \
 				  </div> \
+				  <div class=\"row\"> \
+				  <div class=\"three wide column\"> \
+					</div> \
+					<div class=\"ten wide column\">"
+					+DoleticUIFactory.makeUploadForm('test')+
+					"</div> \
+					<div class=\"three wide column\"> \
+					</div> \
+				  </div> \
 				</div>";
 	}
 

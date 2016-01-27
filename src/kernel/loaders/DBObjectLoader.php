@@ -5,6 +5,7 @@ require_once "../services/objects/SettingDBObject.php";
 require_once "../services/objects/ModuleDBObject.php";
 require_once "../services/objects/UserDBObject.php";
 require_once "../services/objects/UserDataDBObject.php";
+require_once "../services/objects/UploadDBObject.php";
 require_once "../services/objects/CommentDBObject.php";
 require_once "../services/objects/TicketDBObject.php";
 
@@ -41,6 +42,10 @@ class DBObjectLoader extends AbstractLoader {
 				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 		// -- create userdata object
 		$this->objects[UserDataDBObject::OBJ_NAME] = new UserDataDBObject(
+			$this->manager()->getOpenConnectionTo(
+				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+		// -- create upload object
+		$this->objects[UploadDBObject::OBJ_NAME] = new UploadDBObject(
 			$this->manager()->getOpenConnectionTo(
 				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 		// -- create comment object

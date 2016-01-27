@@ -1,3 +1,35 @@
+// ----------------------------------- Doletic UI elements factory -----------------------------------
+
+
+var DoleticUIFactory = new function() {
+
+  this.makeUploadForm = function(id) {
+    var html = "<form id=\"upload_form_"+id+"\" class=\"ui form segment\"> \
+                  <input id=\"file_input_"+id+"\" name=\"file_"+id+"\" type=\"file\" hidden=\"\" onChange=\" \
+                  $('#selected_filename_"+id+"').html($('#file_input_"+id+"').val()); \
+                  $('#upload_btn_"+id+"').html('Envoyer !'); \
+                  $('#upload_btn_"+id+"').attr('class', 'ui green circular button'); \
+                  $('#upload_btn_"+id+"').attr('onclick', ''); \
+                  $('#upload_btn_"+id+"').click(function(){ \
+                      var formData = new FormData(); \
+                      formData.append('q', 'service'); \
+                      formData.append('obj', 'service'); \
+                      formData.append('act', 'upload'); \
+                      formData.append('file', $('#file_input_"+id+"')[0].files[0], $('#file_input_"+id+"').val()); \
+                      DoleticServicesInterface.upload(formData, function(response){ \
+                        alert('Response is code:'+response.code+' error:'+response.error+' data:'+response.data); \
+                      }); \
+                  });\" \
+                  /> \
+                  <div class=\"inline field\"> \
+                    <a id=\"upload_btn_"+id+"\" class=\"ui circular button\" onClick=\"$('#file_input_"+id+"').click();\"><i class=\"upload icon\"></i>Sélectionner...</a> \
+                    <label id=\"selected_filename_"+id+"\">aucun fichier sélectionné...</label> \
+                  </div> \
+                </form>";
+    return html;
+  }
+
+}
 
 // ----------------------------------- SOME PHP JS FUNCTIONS -----------------------------------
 

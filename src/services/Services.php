@@ -61,12 +61,17 @@ class Services {
 	const SERVICE_UPLOAD 	= "upload";
 	// --- params keys
 	const PKEY_FNAME		= "filename";
-	// --- upload file keys
+	// --- upload related consts
 	const UKEY_FILE			= "file";
 	const UKEY_ERROR		= "error";
 	const UKEY_SIZE			= "size";
 	const UKEY_TMP_NAME		= "tmp_name";
 	const UKEY_NAME			= "name";
+	const UPL_MAX_FILE_SIZE = 4194304;	// size in bytes (4 Mo)
+	const UPL_ALLOWED_EXTS  = array(
+		'png' => 'image/png',
+		'svg' => 'image/svg',
+		'pdf' => 'application/pdf');
 
 	// -- attributes
 	private $kernel;
@@ -84,7 +89,7 @@ class Services {
 		if($post[Services::PPARAM_OBJ] === Services::OBJ_SERVICE) {
 			// find which service is called
 			if($post[Services::PPARAM_ACT] === Services::SERVICE_UPLOAD) {
-				$response = __service_upload($post);
+				$response = $this->__service_upload($post);
 			} else {
 				$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
 			}
@@ -122,16 +127,7 @@ class Services {
 	/// \todo test upload service
 	private function __service_upload($post) {
 		// initialize response with null
-		$response = null;
-		// rebuild params
-		$params = json_decode($post[Services::PPARAM_PARAMS]);
-		$filename = null;
-		if(array_key_exists(Services::PKEY_FNAME, $params)) {
-			$filename = $params[Services::PKEY_FNAME];
-		} else {
-			$filename = "undefined";
-		}
-		
+		$response = null;	
 		// simple upload without check for now...
 		try {
    
@@ -141,25 +137,25 @@ class Services {
 		        !isset($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR]) ||
 		        is_array($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR])
 		    ) {
-		        throw new RuntimeException('Paramètres invalides', Services::ERR_UP_INVALID_PARAMS);
+		        throw new RuntimeException('Paramètres invalides', ServiceResponse::ERR_UP_INVALID_PARAMS);
 		    }
 
-		    // Check $_FILES['upfile']['error'] value.
+		    // Check $_FILES['upfile']['error'] value. ====> PHP . INI related errors
 		    switch ($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR]) {
 		        case UPLOAD_ERR_OK:
 		            break;
 		        case UPLOAD_ERR_NO_FILE:
-		            throw new RuntimeException('Aucun fichier envoyé.', Services::ERR_UP_NO_FILE);
+		            throw new RuntimeException('Aucun fichier envoyé.', ServiceResponse::ERR_UP_NO_FILE);
 		        case UPLOAD_ERR_INI_SIZE:
 		        case UPLOAD_ERR_FORM_SIZE:
-		            throw new RuntimeException('Taille limite de fichier dépassée.', Services::ERR_UP_FILE_TOO_BIG);
+		            throw new RuntimeException('Taille limite de fichier dépassée.', ServiceResponse::ERR_UP_FILE_TOO_BIG);
 		        default:
-		            throw new RuntimeException('Erreur inconnue.', Services::ERR_UP_UNKNOWN);
+		            throw new RuntimeException('Erreur inconnue.', ServiceResponse::ERR_UP_UNKNOWN);
 		    }
 
 		    // You should also check filesize here.
-		    if ($_FILES[Services::UKEY_FILE][Services::UKEY_SIZE] > 1000000) {
-		        throw new RuntimeException('Taille limite de fichier dépassée.', Services::ERR_UP_FILE_TOO_BIG);
+		    if ($_FILES[Services::UKEY_FILE][Services::UKEY_SIZE] > Services::UPL_MAX_FILE_SIZE) {
+		        throw new RuntimeException('Taille limite de fichier dépassée.', ServiceResponse::ERR_UP_FILE_TOO_BIG);
 		    }
 
 		    // DO NOT TRUST $_FILES['upfile']['mime'] VALUE !!
@@ -167,53 +163,50 @@ class Services {
 		    $finfo = new finfo(FILEINFO_MIME_TYPE);
 		    if (false === $ext = array_search(
 		        $finfo->file($_FILES[Services::UKEY_FILE][Services::UKEY_TMP_NAME]),
-		        array(
-		            'jpg' => 'image/jpeg',
-		            'png' => 'image/png',
-		            'gif' => 'image/gif',
-		        ),
+		        Services::UPL_ALLOWED_EXTS,
 		        true
 		    )) {
-		        throw new RuntimeException('Format de fichier interdit.', Services::ERR_UP_FORBID_FORMAT);
+		        throw new RuntimeException('Format de fichier interdit.', ServiceResponse::ERR_UP_FORBID_FORMAT);
 		    }
 
+			// retrieve filename
+		    $filename = $_FILES[Services::UKEY_FILE][Services::UKEY_NAME];
 		    // Obtain safe unique name from its binary data plus date part.
-		    $destfname = sprintf('/%s-%s.%s', 
+		    $destfname = sprintf('/%s_%s.%s', 
 		    	sha1_file($_FILES[Services::UKEY_FILE][Services::UKEY_TMP_NAME]), 
-		    	date('Y-m-d'),
+		    	date('Y_m_d_H_i_s'),
 		    	$ext);
 		    // full dest (prepend absolute path)
-		    $dest = $this->kernel->SettingValue(SettingsManager::KEY_UPLOAD_DIR).$destfname;
-		    // include ext to filename
-		    $filename = explode('.', $filename)[0].$ext;
+		    $dest = rtrim($this->kernel->SettingValue(SettingsManager::KEY_UPLOAD_DIR)," /").$destfname;
 
 		    if (!move_uploaded_file(
 		        $_FILES[Services::UKEY_FILE][Services::UKEY_TMP_NAME],
 		        $dest
 		    )) {
-		        throw new RuntimeException('Echec du déplacement du fichier reçu.', Services::ERR_UP_FILESYSTEM);
+		        throw new RuntimeException('Echec du déplacement du fichier reçu.', ServiceResponse::ERR_UP_FILESYSTEM);
 		    }
 
 		    $id = null;
-		    // write upload in database and retrieve its id
-		    if($this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)
-		    	->GetResponseData(UploadServices::INSERT, array(
+		    $upload_params = array(
 		    			UploadServices::PARAM_USER_ID => $this->kernel->GetUserId(),
 		    			UploadServices::PARAM_FNAME => $filename,
-		    			UploadServices::PARAM_STOR_FNAME => $destfname))) 
+		    			UploadServices::PARAM_STOR_FNAME => $destfname);
+		    // write upload in database and retrieve its id
+		    if($this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+		    	->GetResponseData(UploadServices::INSERT, $upload_params)) 
 		    {
 		    	// retrieve user
-		    	$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)
+		    	$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
 		    				->GetResponseData(UploadServices::GET_UPLOAD_BY_STOR_FNAME, array(
 		    					UploadServices::PARAM_STOR_FNAME => $destfname));
 		    	if($upload != null) {
 		    		// retrieve upload's id
 		    		$id = $upload->GetId();
 		    	} else {
-		    		throw new RuntimeException("Impossible de retrouver l'identifiant de l'upload.", Services::ERR_UP_FILESYSTEM);
+		    		throw new RuntimeException("Impossible de retrouver l'identifiant de l'upload.", ServiceResponse::ERR_UP_FILESYSTEM);
 		    	}
 		    } else {
-		    	throw new RuntimeException("Erreur d'enregistrement dans la base de données.", Services::ERR_UP_FILESYSTEM);
+		    	throw new RuntimeException("Erreur d'enregistrement dans la base de données.", ServiceResponse::ERR_UP_FILESYSTEM);
 		    }
 
 		    // create service response

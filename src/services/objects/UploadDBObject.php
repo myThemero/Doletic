@@ -1,7 +1,5 @@
 <?php
 
-<?php
-
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
 require_once "objects/DBTable.php"; 
@@ -150,7 +148,7 @@ class UploadServices extends AbstractObjectServices {
 					$row[UploadDBObject::COL_ID], 
 					$row[UploadDBObject::COL_USER_ID], 
 					$row[UploadDBObject::COL_TIMESTAMP], 
-					$row[UploadDBObject::COL_FNAME], 
+					$row[UploadDBObject::COL_FILENAME], 
 					$row[UploadDBObject::COL_STOR_FNAME]);
 			}
 		}
@@ -173,7 +171,7 @@ class UploadServices extends AbstractObjectServices {
 					$row[UploadDBObject::COL_ID], 
 					$row[UploadDBObject::COL_USER_ID], 
 					$row[UploadDBObject::COL_TIMESTAMP], 
-					$row[UploadDBObject::COL_FNAME], 
+					$row[UploadDBObject::COL_FILENAME], 
 					$row[UploadDBObject::COL_STOR_FNAME]);
 			}
 		}
@@ -193,7 +191,7 @@ class UploadServices extends AbstractObjectServices {
 					$row[UploadDBObject::COL_ID], 
 					$row[UploadDBObject::COL_USER_ID], 
 					$row[UploadDBObject::COL_TIMESTAMP], 
-					$row[UploadDBObject::COL_FNAME], 
+					$row[UploadDBObject::COL_FILENAME], 
 					$row[UploadDBObject::COL_STOR_FNAME]));
 			}
 		}
@@ -208,7 +206,7 @@ class UploadServices extends AbstractObjectServices {
 			":".UploadDBObject::COL_ID => "NULL",
 			":".UploadDBObject::COL_USER_ID => $userId,
 			":".UploadDBObject::COL_TIMESTAMP => date(DateTime::ISO8601),
-			":".UploadDBObject::COL_FNAME => $filename,
+			":".UploadDBObject::COL_FILENAME => $filename,
 			":".UploadDBObject::COL_STOR_FNAME => $storageFilename);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UploadDBObject::TABL_UPLOAD)->GetINSERTQuery();
@@ -220,7 +218,7 @@ class UploadServices extends AbstractObjectServices {
 		// create sql params
 		$sql_params = array(
 			":".UploadDBObject::COL_ID => $id,
-			":".UploadDBObject::COL_FNAME => $filename);
+			":".UploadDBObject::COL_FILENAME => $filename);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UploadDBObject::TABL_UPLOAD)->GetUPDATEQuery(array(UploadDBObject::COL_FILENAME));
 		// execute query

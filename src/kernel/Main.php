@@ -100,11 +100,11 @@ class Main {
 	}
 
 	private function __service() {
+		// create service instance
+		$service = new Services($_SESSION[Main::SPARAM_DOL_KERN]);
 		// check if minimum post params are present
 		if(array_key_exists(Services::PPARAM_OBJ, $_POST) &&
 		   array_key_exists(Services::PPARAM_ACT, $_POST)) {
-			// create service instance
-			$service = new Services($_SESSION[Main::SPARAM_DOL_KERN]);
 			// return service response JSON encoded
 			$this->__terminate($service->Response($_POST));
 		} else { // if params are missing return service default response
