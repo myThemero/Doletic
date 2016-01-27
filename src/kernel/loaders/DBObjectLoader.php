@@ -1,9 +1,13 @@
 <?php
 
 require_once "interfaces/AbstractLoader.php";
+require_once "../services/objects/SettingDBObject.php";
+require_once "../services/objects/ModuleDBObject.php";
 require_once "../services/objects/UserDBObject.php";
-require_once "../services/objects/TicketDBObject.php";
 require_once "../services/objects/UserDataDBObject.php";
+require_once "../services/objects/CommentDBObject.php";
+require_once "../services/objects/TicketDBObject.php";
+
 
 /**
 * 	@brief
@@ -11,9 +15,6 @@ require_once "../services/objects/UserDataDBObject.php";
 class DBObjectLoader extends AbstractLoader {
 
 	// -- consts
-	const OBJ_USER 		= UserDBObject::OBJ_NAME;
-	const OBJ_TICKET 	= TicketDBObject::OBJ_NAME;
-	const OBJ_UDATA		= UserDataDBObject::OBJ_NAME;
 
 	// -- attributes
 	private $objects;
@@ -26,12 +27,24 @@ class DBObjectLoader extends AbstractLoader {
 	}
 
 	public function Init() {
+		// -- create setting object
+		$this->objects[SettingDBObject::OBJ_NAME] = new SettingDBObject(
+			$this->manager()->getOpenConnectionTo(
+				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+		// -- create module object
+		$this->objects[ModuleDBObject::OBJ_NAME] = new ModuleDBObject(
+			$this->manager()->getOpenConnectionTo(
+				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 		// -- create user object
 		$this->objects[UserDBObject::OBJ_NAME] = new UserDBObject(
 			$this->manager()->getOpenConnectionTo(
 				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
-	// -- create ticket object
+		// -- create userdata object
 		$this->objects[UserDataDBObject::OBJ_NAME] = new UserDataDBObject(
+			$this->manager()->getOpenConnectionTo(
+				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+		// -- create comment object
+		$this->objects[CommentDBObject::OBJ_NAME] = new CommentDBObject(
 			$this->manager()->getOpenConnectionTo(
 				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
 		// -- create ticket object

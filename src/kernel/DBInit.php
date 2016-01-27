@@ -8,9 +8,14 @@ class DBInitializer {
 	public static function Run($arg) {
 		$kernel = DBInitializer::__init_kernel__();
 		// ----- fill functions ------
-		DBInitializer::__fill_ticket($kernel);
-		DBInitializer::__fill_user($kernel);
-		DBInitializer::__fill_udata($kernel);
+		if($arg === "--add-fake-data") {
+			DBInitializer::__trace("Adding fake objects to database.");
+			DBInitializer::__fill_ticket($kernel);
+			DBInitializer::__fill_user($kernel);
+			DBInitializer::__fill_udata($kernel);
+		} else {
+			DBInitializer::__trace("Database empty and ready for use.");
+		}
 		// ---------------------------
 		DBInitializer::__terminate_kernel__($kernel);
 	}
@@ -65,7 +70,7 @@ class DBInitializer {
 	/**
 	 *
 	 */
-	private static function __init_kernel__($test) {
+	private static function __init_kernel__() {
 		
 	 	DBInitializer::__trace("-- dbinit process start --");
 		$kernel = new DoleticKernel(); 	// instanciate

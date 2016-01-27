@@ -33,7 +33,7 @@ class AuthenticationManager extends AbstractManager {
 	 */
 	public function AuthenticateUser($username, $hash) {
 		// load user into class private attribute
-		$this->user = parent::kernel()->GetDBObject(DBObjectLoader::OBJ_USER)->GetServices()->GetResponseData(
+		$this->user = parent::kernel()->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()->GetResponseData(
 					UserServices::GET_USER_BY_UNAME, array(
 						UserServices::PARAM_UNAME => $username, 
 						UserServices::PARAM_HASH => $hash));

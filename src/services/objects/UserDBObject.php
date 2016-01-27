@@ -267,7 +267,7 @@ class UserDBObject extends AbstractDBObject {
 
 	public function __construct(&$dbConnection) {
 		// -- construct parent
-		parent::__construct($dbConnection, "user");
+		parent::__construct($dbConnection, UserDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_user table
 		$dol_user = new DBTable(UserDBObject::TABL_USER);

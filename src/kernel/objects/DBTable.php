@@ -16,6 +16,7 @@ class DBTable {
 	const DT_VARCHAR = "varchar";
 	const DT_TEXT = "text";
 	const DT_DATE = "date";
+	const DT_BOOLEAN = "boolean";
 	// --- query consts
 	const SELECT_ALL = "*";
 	const EVERYWHERE = "everywhere";
