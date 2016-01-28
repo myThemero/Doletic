@@ -1,33 +1,46 @@
 <?php
 
+require_once "interfaces/AbstractScript.php";
 require_once "DoleticKernel.php";
 
-class DBInitializer {
+//________________________________________________________________________________________________________________________
+// ------------- declare script functions --------------------------------------------------------------------------------
 
-	// -- functions
-	public static function Run($arg) {
-		$kernel = DBInitializer::__init_kernel__();
-		// ----- fill functions ------
-		if($arg === "--add-fake-data") {
-			DBInitializer::__trace("Adding fake objects to database.");
-			DBInitializer::__fill_ticket($kernel);
-			DBInitializer::__fill_user($kernel);
-			DBInitializer::__fill_udata($kernel);
-		} else {
-			DBInitializer::__trace("Database empty and ready for use.");
-		}
-		// ---------------------------
-		DBInitializer::__terminate_kernel__($kernel);
+class ResetDBFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'Reset DB', 
+			'-rdb', 
+			'--reset-database', 
+			"Reset database dropping tables and creating them again.");
 	}
-
-
-# PROTECTED & PRIVATE ##########################################
-
-	/**
-	 *	Test for DB ticket object
-	 */
-	private static function __fill_ticket($kernel) {
-		DBInitializer::__partial_trace("Filling ticket object related tables...");
+	public function Execute() {
+		parent::info("-- dbinit process starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
+		parent::info("Reseting database...", true);
+		$kernel->ResetDatabase(); 		// full database reset
+		parent::endlog("done !");
+		$kernel = null;
+		parent::info("-- dbinit process ends --");
+	}
+}
+class FakeDataFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'Fake Data', 
+			'-fd', 
+			'--fake-data', 
+			"Adds fake data to the data base.");
+	}
+	public function Execute() {
+		parent::info("-- fake data process starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
+		// --- fill tickets
+		parent::info("Filling ticket object related tables...", true);
 		// --------------------------------------------------------------
 		$kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
 					->GetResponseData(TicketServices::INSERT, array(
@@ -38,76 +51,45 @@ class DBInitializer {
 			"data" => "Test data",
 			"statusId" => 3));
 		// --------------------------------------------------------------
-		DBInitializer::__finalize_trace("done !");
-	}
-	/**
-	 *	Test for DB user object
-	 */
-	private static function __fill_user($kernel) {
-		DBInitializer::__partial_trace("Filling user object related tables...");
+		parent::endlog("done !");
+		// --- fill users
+		parent::info("Filling user object related tables...", true);
 		// --------------------------------------------------------------
 		$kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
 					->GetResponseData(UserServices::INSERT, array(
 			"username" => "user.test",
 			"password" => sha1("password")));
 		// --------------------------------------------------------------
-		DBInitializer::__finalize_trace("done !");
-	}
-	/**
-	 *	Test for DB userdata object
-	 */
-	private static function __fill_udata($kernel) {
-		DBInitializer::__partial_trace("Filling userdata object related tables...");
+		parent::endlog("done !");
+		// --- fill userdata
+		parent::info("Filling userdata object related tables...", true);
 		// --------------------------------------------------------------
-		DBInitializer::__finalize_trace("skipped !");
-		return;
+		parent::warn("skipped !");
 		// --------------------------------------------------------------
-		DBInitializer::__finalize_trace("done !");
-	}
-	// -------------------------------------------------------------------------
-	// -------------------------------- COMMON ---------------------------------
-	// -------------------------------------------------------------------------
-	/**
-	 *
-	 */
-	private static function __init_kernel__() {
-		
-	 	DBInitializer::__trace("-- dbinit process start --");
-		$kernel = new DoleticKernel(); 	// instanciate
-		$kernel->Init();				// initialize
-		$kernel->ConnectDB();			// connect database
-		DBInitializer::__partial_trace("Reseting database...");
-		$kernel->ResetDatabase(); 		// full database reset
-		DBInitializer::__finalize_trace("done !");
-		return $kernel;
-	}
-	/**
-	 *
-	 */
-	private static function __terminate_kernel__(&$kernel) {
-		$kernel->DisconnectDB(); // disconnect database
-		$kernel = null; // destroy kernel explicitly
-		DBInitializer::__trace("-- dbinit process end --");
-	}
-	private static function __partial_trace($msg) {
-		echo "[TRACE]{DBInit.php} > $msg";
-	}
-	private static function __finalize_trace($msg) {
-		echo "$msg\n";
-	}
-	private static function __trace($msg) {
-		echo "[TRACE]{DBInit.php} > $msg\n";
-	}
-	private function __constructs() {
-		// cannot be constructed
+		//DBInitializer::info("done !");
+		// --- disconnect database
+		parent::endlog("done !");
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- fake data process ends --");
 	}
 }
 
-# SCRIPT
-// retrieve argument
-$arg = "";
-if(sizeof($argv) > 1) {
-	$arg = $argv[1];
+//________________________________________________________________________________________________________________________
+// ------------- declare script in itself --------------------------------------------------------------------------------
+
+class DBInitializerScript extends AbstractScript {
+
+	public function __construct($arg_v) {
+		// ---- build parent
+		parent::__construct($arg_v, "DBInitializerScript", true, "This script can be used to automate database operations.");
+		// ---- add script functions
+		parent::addFunction(new ResetDBFunction($this));
+		parent::addFunction(new FakeDataFunction($this));
+	}
 }
-// run tests
-DBInitializer::Run($arg);
+//________________________________________________________________________________________________________________________
+// ------------- run script ----------------------------------------------------------------------------------------------
+
+$script = new DBInitializerScript($argv);
+$script->Run();
