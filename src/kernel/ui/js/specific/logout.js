@@ -1,47 +1,20 @@
-/**
- *	doletic.js defines the following classes :
- *		
- *		+ DoleticModuleInterface
- *			.registerModule(module)
- *
- *
- *		+ DoleticServicesInterface
- *			....
- *
- *	Note : 
- *		It is strongly recommended to build your module as it is done in this file
- *
- */
-
-//
-//	First define the module interface
-//
-
-var DoleticModuleInterface = new function() {
+var DoleticUIModule = new function() {
 	/**
-	 *	Always define a module name, it will be used by DoleticMasterInterface class
+	 *	Parent abstract module
 	 */
+	this.super = new AbstractDoleticUIModule('Logout_UIModule', 'Paul Dautry', '1.0dev');
 	/**
-	 *	Module meta data block, it will be used by DoleticMasterInterface class
+	 *	Override render function
 	 */
-	this.meta = {
-		name:"KernelLogoutModule",
-		authors:"Paul Dautry",
-		version:"1.0dev"
-	};
-	/**
-	 *	This function renders the html page for the given module
-	 */
-	this.render = function(htmlElement) {
+	this.render = function(htmlNode) {
+		this.super.render(htmlNode, this);
 		// remove logout button 
 		DoleticMasterInterface.removeLogoutButton();
-		// build module UI
-		htmlElement.innerHTML = this.buildUI();
 	}
 	/**
-	 *	This function builds module ui
+	 *	Override build function
 	 */
-	this.buildUI = function() {
+	this.build = function() {
 		return "<div class=\"holder\"> \
 				  <div class=\"ui three column centered middle aligned grid container\"> \
 					<div class=\"column\"> \
@@ -56,9 +29,10 @@ var DoleticModuleInterface = new function() {
 				   </div> \
 				</div>";
 	}
-
-//
-// Then all functions required by module dynamic components such as buttons etc...
-//
-
+	/**
+	 *	Override uploadSuccessHandler
+	 */
+	this.uploadSuccessHandler = function(id, data) {
+		this.super.uploadSuccessHandler(id, data);
+	}
 }

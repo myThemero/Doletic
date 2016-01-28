@@ -2,7 +2,7 @@
 // ------------------------ DOLETIC MASTER INTERFACE CLASS  ----------------------------------
 
 /**
- *  DoleticModuleInterface
+ *  DoleticMasterInterface
  */
 var DoleticMasterInterface = new function() {
 
@@ -14,27 +14,37 @@ var DoleticMasterInterface = new function() {
    *  Render function, this function builds the content of the web page, 
    *  using the given module
    */
-  this.render = function( htmlElement ) {
-    // debugging message -----------------------------------------
-      console.debug("DoleticMasterInterface.render : Starting rendering process.");
-      // -----------------------------------------------------------
-      // create doletic page standard HTML content
-      var html = this.buildUI();
-      // set htmlElment innerHTML content
-      htmlElement.innerHTML = html;
-      // debugging message -----------------------------------------
-      console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticModuleInterface.meta.name);
-      // -----------------------------------------------------------
-      // for each module call render function
-      DoleticModuleInterface.render(document.getElementById(this.module_container_id));
-      // debugging message -----------------------------------------
-      console.debug("DoleticMasterInterface.render : Rendering process finished.");
-      // -----------------------------------------------------------
+  this.render = function( htmlNode ) {
+    // DEBUG message -----------------------------------------
+    console.debug("DoleticMasterInterface.render : Starting rendering process.");
+    // -----------------------------------------------------------
+    // create doletic page standard HTML content
+    var html = this.build();
+    // set htmlElment innerHTML content
+    htmlNode.innerHTML = html;
+    // for each module call render function
+    var htmlNode = document.getElementById(this.module_container_id);
+    if(DoleticUIModule != null) {
+    // DEBUG message -----------------------------------------
+    //console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticUIModule.super.meta.name);
+    // -----------------------------------------------------------
+      DoleticUIModule.render(htmlNode);
+    } else {
+
+    // DEBUG message -----------------------------------------
+    console.debug("DoleticMasterInterface.render : Calling render for DefaultDoleticUIModule ! ERROR !");
+    // -----------------------------------------------------------
+      DefaultDoleticUIModule.render(htmlNode);
+    }
+    
+    // DEBUG message -----------------------------------------
+    console.debug("DoleticMasterInterface.render : Rendering process finished.");
+    // -----------------------------------------------------------
   }
   /**
    *  Build Doletic common ui
    */
-  this.buildUI = function() {
+  this.build = function() {
     var html = "<div id=\"left_menu\" class=\"ui vertical sticky menu fixed top\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
                   <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.getUIHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
                   <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.getUILogout();\"><i class=\"power icon\"></i>Logout</a> \

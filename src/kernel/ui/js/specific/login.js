@@ -1,44 +1,20 @@
-/**
- *	doletic.js defines the following classes :
- *		
- *		+ DoleticModuleInterface
- *			.registerModule(module)
- *
- *
- *		+ DoleticServicesInterface
- *			....
- *
- *	Note : 
- *		It is strongly recommended to build your module as it is done in this file
- *
- */
-
-//
-//	First define the module interface
-//
-
-var DoleticModuleInterface = new function() {
+var DoleticUIModule = new function() {
 	/**
-	 *	Module meta data block, it will be used by DoleticMasterInterface class
+	 *	Parent abstract module
 	 */
-	this.meta = {
-		name:"KernelLoginModule",
-		authors:"Paul Dautry",
-		version:"1.0dev"
-	};
+	this.super = new AbstractDoleticUIModule('Login_UIModule', 'Paul Dautry', '1.0dev');
 	/**
-	 *	This function renders the html page for the given module
+	 *	Override render function
 	 */
-	this.render = function(htmlElement) {
+	this.render = function(htmlNode) {
+		this.super.render(htmlNode, this);
 		// remove logout button 
 		DoleticMasterInterface.removeLogoutButton();
-		// build module UI
-		htmlElement.innerHTML = this.buildUI();
 	}
 	/**
-	 *	This function builds module ui
+	 *	Override build function
 	 */
-	this.buildUI = function() {
+	this.build = function() {
 		return "<div class=\"holder\"> \
 				  <div class=\"ui three column centered middle aligned grid container\"> \
 					<div class=\"column\"> \
@@ -51,17 +27,21 @@ var DoleticModuleInterface = new function() {
 					      <label>Mot de passe</label> \
 					      <input id=\"pass_input\" placeholder=\"mot de passe\" name=\"password\" type=\"password\"> \
 						</div> \
-  						<div class=\"ui green button\" onClick=\"DoleticModuleInterface.checkLoginFormInputs();\">Valider</div> \
-  						<div class=\"ui right floated button\" onClick=\"DoleticModuleInterface.resetLoginForm();\">Reset</div> \
+  						<div class=\"ui green button\" onClick=\"DoleticUIModule.checkLoginFormInputs();\">Valider</div> \
+  						<div class=\"ui right floated button\" onClick=\"DoleticUIModule.resetLoginForm();\">Reset</div> \
 					  </form> \
 					</div> \
 				   </div> \
 				</div>";
 	}
+	/**
+	 *	Override uploadSuccessHandler
+	 */
+	this.uploadSuccessHandler = function(id, data) {
+		this.super.uploadSuccessHandler(id, data);
+	}
 
-//
-// Then all functions and internal vars required by module dynamic components such as buttons etc...
-//
+// ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
 	this.hasInputError = false;
 	/**
@@ -72,7 +52,7 @@ var DoleticModuleInterface = new function() {
 		   $('#pass_input').val().length > 0 && 
 		   $('#uname_input').val().match(/^[\w-]+\.[\w-]+$/g)) {
 		   	if(this.hasInputError) {
-		   		DoleticModuleInterface.resetLoginForm();	
+		   		DoleticUIModule.resetLoginForm();	
 		   	}
 			DoleticServicesInterface.authenticate(
 				$('#uname_input').val(),
@@ -82,11 +62,11 @@ var DoleticModuleInterface = new function() {
        					// Call for home interface
           				DoleticServicesInterface.getUIHome();
         			} else {
-        				DoleticModuleInterface.showLoginError();
+        				DoleticUIModule.showLoginError();
         			}
      		 	});
 		} else {
-			this.showInputError();
+			DoleticUIModule.showInputError();
 		}
 	}
 	/**
@@ -94,7 +74,7 @@ var DoleticModuleInterface = new function() {
 	 */
 	this.showLoginError = function() {
 		// reset login form
-		this.resetLoginForm();
+		DoleticUIModule.resetLoginForm();
 		// put form in error state
 		$('#login_form').attr('class', 'ui form error');
 		// display error message

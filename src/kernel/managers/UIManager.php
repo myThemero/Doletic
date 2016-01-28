@@ -40,9 +40,11 @@ class UIManager extends AbstractManager {
 		// add js
 		array_push($this->internal_js, "ui/js_depends/jquery-2.2.0.min.js");
 		array_push($this->internal_js, "ui/semantic/dist/semantic.min.js");
+		array_push($this->internal_js, "ui/js/common/abstract_doletic_module.js");
 		array_push($this->internal_js, "ui/js/common/doletic_utils.js");
-		array_push($this->internal_js, "ui/js/common/doletic.js");
 		array_push($this->internal_js, "ui/js/common/doletic_services.js");
+		array_push($this->internal_js, "ui/js/common/doletic.js");
+		
 		// add specials
 		$this->special_uis[UIManager::INTERFACE_LOGIN] = "ui/js/specific/login.js";
 		$this->special_uis[UIManager::INTERFACE_LOGOUT] = "ui/js/specific/logout.js";

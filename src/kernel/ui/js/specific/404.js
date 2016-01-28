@@ -1,30 +1,18 @@
-//
-//	First define the module interface
-//
-
-var DoleticModuleInterface = new function() {
+var DoleticUIModule = new function() {
 	/**
-	 *	Always define a module name, it will be used by DoleticMasterInterface class
+	 *	Parent abstract module
 	 */
+	this.super = new AbstractDoleticUIModule('404_UIModule', 'Paul Dautry', '1.0dev');
 	/**
-	 *	Module meta data block, it will be used by DoleticMasterInterface class
+	 *	Override render function
 	 */
-	this.meta = {
-		name:"Kernel404Module",
-		authors:"Paul Dautry",
-		version:"1.0dev"
-	};
-	/**
-	 *	This function renders the html page for the given module
-	 */
-	this.render = function(htmlElement) {
-		// build module UI
-		htmlElement.innerHTML = this.buildUI();
+	this.render = function(htmlNode) {
+		this.super.render(htmlNode, this);
 	}
 	/**
-	 *	This function builds module ui
+	 *	Override build function
 	 */
-	this.buildUI = function() {
+	this.build = function() {
 		return "<div class=\"holder\"> \
 				  <div class=\"ui two column centered middle aligned grid container\"> \
 					<div class=\"column\"> \
@@ -46,9 +34,10 @@ var DoleticModuleInterface = new function() {
 				   </div> \
 				</div>";
 	}
-
-//
-// Then all functions required by module dynamic components such as buttons etc...
-//
-
+	/**
+	 *	Override uploadSuccessHandler
+	 */
+	this.uploadSuccessHandler = function(id, data) {
+		this.super.uploadSuccessHandler(id, data);
+	}
 }

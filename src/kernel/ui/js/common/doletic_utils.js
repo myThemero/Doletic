@@ -17,7 +17,11 @@ var DoleticUIFactory = new function() {
                       formData.append('act', 'upload'); \
                       formData.append('file', $('#file_input_"+id+"')[0].files[0], $('#file_input_"+id+"').val()); \
                       DoleticServicesInterface.upload(formData, function(response){ \
-                        alert('Response is code:'+response.code+' error:'+response.error+' data:'+response.data); \
+                        if(response.code != 0) { \
+                          DoleticMasterInterface.showError('Erreur upload !',response.error); \
+                        } else { \
+                          DoleticUIModule.uploadSuccessHandler('"+id+"', response.data); \
+                        } \
                       }); \
                   });\" \
                   /> \

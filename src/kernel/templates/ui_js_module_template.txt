@@ -1,0 +1,24 @@
+var DoleticUIModule = new function() {
+	/**
+	 *	Parent abstract module
+	 */
+	this.super = new AbstractDoleticUIModule('MODULE_NAME', 'MODULE_AUTHORS', 'MODULE_VERSION');
+	/**
+	 *	Override render function
+	 */
+	this.render = function(htmlNode) {
+		this.super.render(htmlNode, this);
+	}
+	/**
+	 *	Override build function
+	 */
+	this.build = function() {
+		return "SOME_HTML";
+	}
+	/**
+	 *	Override uploadSuccessHandler
+	 */
+	this.uploadSuccessHandler = function(id, data) {
+		this.super.uploadSuccessHandler(id, data);
+	}
+}
