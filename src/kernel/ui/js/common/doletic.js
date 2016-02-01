@@ -45,19 +45,20 @@ var DoleticMasterInterface = new function() {
    *  Build Doletic common ui
    */
   this.build = function() {
-    var html = "<div id=\"left_menu\" class=\"ui vertical sticky menu fixed top\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
+    var html = "<div id=\"left_menu\" class=\"ui visible sidebar vertical menu fixed\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
                   <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.getUIHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
                   <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.getUILogout();\"><i class=\"power icon\"></i>Logout</a> \
+                  <a id=\"menu_preferences_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showSettingsModal();\"><i class=\"settings icon\"></i>Préférences</a> \
                   <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>About Doletic</a> \
                 </div> \
-                <div class=\"pusher\"> \
+                <div class=\"pusher\" style=\"margin-left: 60px;\"> \
                   <div class=\"ui container\"> \
                     <div id=\""+this.master_container_id+"\" class=\"ui one column centered grid container\"> \
                     <!-- kernel message goes here --> \
                     </div> \
                   </div> \
                   <div id=\""+this.module_container_id+"\"> \
-                  <!-- module custom content goes here --> \
+                    <!-- module custom content goes here --> \
                   </div> \
                   <div id=\"about_doletic_modal\" class=\"ui basic modal\"> \
                     <i class=\"close icon\"></i> \
@@ -102,6 +103,17 @@ var DoleticMasterInterface = new function() {
                       <div id=\"confirm_modal_no\" class=\"ui red basic inverted button\"><i class=\"remove icon\"></i>Non</div> \
                       <div id=\"confirm_modal_yes\" class=\"ui green basic inverted button\"><i class=\"checkmark icon\"></i>Oui</div> \
                     </div> \
+                  </div> \
+                </div> \
+                <div id=\"settings_modal\" class=\"ui modal\"> \
+                  <i class=\"close icon\"></i> \
+                  <div class=\"header\">Préférences</div> \
+                  <div class=\"content\"> \
+                    <p> Nothing here for now...</p> \
+                  </div> \
+                  <div class=\"actions\"> \
+                    <div class=\"ui black deny button\" onClick=\"DoleticMasterInterface.hideSettingsModal();\">Annuler</div> \
+                    <div class=\"ui positive right labeled icon button\" onClick=\"DoleticMasterInterface.applySettings();\">Sauvegarder<i class=\"checkmark icon\"></i></div> \
                   </div> \
                 </div> \
                 <div id=\"right_sidebar\" class=\"ui right sidebar vertical menu\"> \
@@ -151,6 +163,27 @@ var DoleticMasterInterface = new function() {
     $('#confirm_modal_no').click(function(){});
     $('#confirm_modal_yes').click(function(){});
     $('#confirm_modal').modal('hide');
+  }
+  /**
+   *  Shows about Doletic modal
+   */
+  this.showSettingsModal = function() {
+    $('#settings_modal').modal('show');
+  }
+  /**
+   *  Hides about Doletic modal
+   */
+  this.hideSettingsModal = function() {
+    $('#settings_modal').modal('hide');
+  }
+  /**
+   *
+   */
+  this.applySettings = function() {
+    // apply settings
+    /// \todo create a night mode using inverted CSS class on elements which support it.
+    // hide modal
+    this.hideSettingsModal();
   }
   /**
    *  Shows right sidemenu
