@@ -1,98 +1,88 @@
 <?php
 
+require_once "interfaces/AbstractScript.php";
 require_once "DoleticKernel.php";
-require_once "interfaces/AbstractDBObject.php";
 
-class Tests {
 
-	// -- functions
-	public static function Run($test) {
-		$all=!strcmp($test, "");
-		if(!strcmp($test, "clear") || $all) {
-			Tests::__test_db_clear();
-		}
-		if(!strcmp($test, "reset") || $all) {
-			Tests::__test_db_reset();
-		}
-		if(!strcmp($test, "update") || $all) {
-			Tests::__test_db_update();
-		}
-		if(!strcmp($test, "dbo_ticket") || $all) {
-			Tests::__test_dbo_ticket();
-		}
-		if(!strcmp($test, "dbo_user") || $all) {
-			Tests::__test_dbo_user();
-		}
-		if(!strcmp($test, "dbo_udata") || $all) {
-			Tests::__test_dbo_udata();
-		}
-		if(!strcmp($test, "dbo_comment") || $all) {
-			Tests::__test_dbo_comment();
-		}
-		if(!strcmp($test, "dbo_module") || $all) {
-			Tests::__test_dbo_module();
-		}
-		if(!strcmp($test, "dbo_upload") || $all) {
-			Tests::__test_dbo_upload();
-		}
-		if(!strcmp($test, "ui") || $all) {
-			Tests::__test_get_interface();
-		}
+//________________________________________________________________________________________________________________________
+// ------------- declare script functions --------------------------------------------------------------------------------
+
+class DBClearTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Clear Test', 
+			'-dbcl', 
+			'--test-database-clear', 
+			"Test database clear function.");
 	}
-
-
-# PROTECTED & PRIVATE ##########################################
-
-	/*
-	 *	Test prototype :
-	 *
-	 *	private static function __test_xxx() {
-	 *		$kernel = Tests::__init_kernel__("__test_xxx"); // initialize kernel
-	 *		// --------- content ------------
- 	 *		echo "/// \\todo implement this test !\n";
-	 *		// ----------- end --------------
-	 *		Tests::__terminate_kernel__($kernel); // terminate kernel
-	 *	}
-	 *
-	 */
-	// -------------------------------------------------------------------------
-	// --------------------------------- TESTS ---------------------------------
-	// -------------------------------------------------------------------------
-	/**
-	 *	Test for DoleticKernel DB clear function
-	 */
-	private static function __test_db_clear() {
-		$kernel = Tests::__init_kernel__("__test_db_clear"); // initialize kernel
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		$kernel->ClearDatabase();
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DoleticKernel DB reset function
-	 */
-	private static function __test_db_reset() {
-		$kernel = Tests::__init_kernel__("__test_db_reset"); // initialize kernel
+}
+class DBResetTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Reset Test', 
+			'-dbr', 
+			'--test-database-reset', 
+			"Test database reset function.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		$kernel->ResetDatabase();
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DoleticKernel DB update function
-	 */
-	private static function __test_db_update() {
-		$kernel = Tests::__init_kernel__("__test_db_update");
+}
+class DBUpdateTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Update Test', 
+			'-dbu', 
+			'--test-database-update', 
+			"Test database update function.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		$kernel->UpdateDatabase();
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel);
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DB ticket object
-	 */
-	private static function __test_dbo_ticket() {
-		$kernel = Tests::__init_kernel__("__test_dbo_ticket"); // initialize kernel
+}
+class DBObjectTicketTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Object Ticket Test', 
+			'-dbot', 
+			'--test-object-ticket', 
+			"Test database object ticket.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		// insert
 		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
@@ -130,13 +120,24 @@ class Tests {
 								TicketServices::PARAM_ID => 1));
 		var_dump($data);
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DB user object
-	 */
-	private static function __test_dbo_user() {
-		$kernel = Tests::__init_kernel__("__test_dbo_user"); // initialize kernel
+}
+class DBObjectUserTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Object User Test', 
+			'-dbou', 
+			'--test-object-user', 
+			"Test database object user.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		// insert
 		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
@@ -160,43 +161,87 @@ class Tests {
 								UserServices::PARAM_ID => 1));
 		var_dump($data);
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DB userdata object
-	 */
-	private static function __test_dbo_udata() {
-		$kernel = Tests::__init_kernel__("__test_dbo_udata"); // initialize kernel
+}
+class DBObjectUserDataTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Object UserData Test', 
+			'-dboud', 
+			'--test-object-user-data', 
+			"Test database object user data.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
-		echo "/// \\todo implement this test !\n";
+		parent::warn("/// \\todo implement this test !");
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DB comment object
-	 */
-	private static function __test_dbo_comment() {
-		$kernel = Tests::__init_kernel__("__test_dbo_comment"); // initialize kernel
+}
+class DBObjectCommentTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Object Comment Test', 
+			'-dboc', 
+			'--test-object-comment', 
+			"Test database object comment.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
-		echo "/// \\todo implement this test !\n";
+		parent::warn("/// \\todo implement this test !");
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DB comment object
-	 */
-	private static function __test_dbo_module() {
-		$kernel = Tests::__init_kernel__("__test_dbo_module"); // initialize kernel
+}
+class DBObjectModuleTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Object Module Test', 
+			'-dbom', 
+			'--test-object-module', 
+			"Test database object module.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
-		echo "/// \\todo implement this test !\n";
+		parent::warn("/// \\todo implement this test !");
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DB comment object
-	 */
-	private static function __test_dbo_upload() {
-		$kernel = Tests::__init_kernel__("__test_dbo_upload"); // initialize kernel
+}
+class DBObjectUploadTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'DB Object Upload Test', 
+			'-dboup', 
+			'--test-object-upload', 
+			"Test database object upload.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		// insert
 		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
@@ -221,13 +266,24 @@ class Tests {
 						UploadServices::PARAM_ID => 1));
 		var_dump($data);
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	/**
-	 *	Test for DoleticKernel GetInterface function
-	 */
-	private static function __test_get_interface() {
-		$kernel = Tests::__init_kernel__("__test_get_interface"); // initialize kernel
+}
+class UITestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'UI Test', 
+			'-ui', 
+			'--test-ui', 
+			"Test kernel user interface.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		// -- specials ui
 		echo $kernel->GetInterface(UIManager::INTERFACE_LOGIN);
@@ -237,42 +293,39 @@ class Tests {
 		// -- unknown ui
 		echo $kernel->GetInterface("unknown:strange:ui");
 		// ----------- end --------------
-		Tests::__terminate_kernel__($kernel); // terminate kernel
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
 	}
-	// -------------------------------------------------------------------------
-	// -------------------------------- COMMON ---------------------------------
-	// -------------------------------------------------------------------------
-	/**
-	 *
-	 */
-	private static function __init_kernel__($test) {
-		echo "Running $test...\n";
-	 	echo "// ---------- test - start -------------\n\n";
-		$kernel = new DoleticKernel(); 	// instanciate
-		$kernel->Init();				// initialize
-		$kernel->ConnectDB();		// connect database
-		return $kernel;
-	}
-	/**
-	 *
-	 */
-	private static function __terminate_kernel__(&$kernel) {
-		$kernel->DisconnectDB(); // disconnect database
-		$kernel = null; // destroy kernel explicitly
-		echo "\n// ----------- test - end --------------\n";
-	 	echo "...done !\n";
-	}
-	private function __constructs() {
-		// cannot be constructed
+}
+//________________________________________________________________________________________________________________________
+// ------------- declare script in itself --------------------------------------------------------------------------------
+
+class TestScript extends AbstractScript {
+
+	public function __construct($arg_v) {
+		// ---- build parent
+		parent::__construct($arg_v, "TestScript", false, "This script purpose is to run unit test for Doletic.");
+		// ---- add script functions
+		// ----- database related tests
+		parent::addFunction(new DBClearTestFunction($this));
+		parent::addFunction(new DBResetTestFunction($this));
+		parent::addFunction(new DBUpdateTestFunction($this));
+		// ----- database objects related tests
+		parent::addFunction(new DBObjectTicketTestFunction($this));
+		parent::addFunction(new DBObjectUserTestFunction($this));
+		parent::addFunction(new DBObjectUserDataTestFunction($this));
+		parent::addFunction(new DBObjectCommentTestFunction($this));
+		parent::addFunction(new DBObjectModuleTestFunction($this));
+		parent::addFunction(new DBObjectUploadTestFunction($this));
+		// ----- kernel ui related tests
+		parent::addFunction(new UITestFunction($this));
 	}
 }
 
-# SCRIPT
-// retrieve argument
-$arg = "";
-if(sizeof($argv) > 1) {
-	$arg = $argv[1];
-}
-// run tests
-Tests::Run($arg);
+//________________________________________________________________________________________________________________________
+// ------------- run script ----------------------------------------------------------------------------------------------
+
+$script = new TestScript($argv);
+$script->Run();
 

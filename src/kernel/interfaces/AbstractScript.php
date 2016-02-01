@@ -75,11 +75,11 @@ abstract class AbstractFunction {
 	 */
 	protected function log($lvl, $message) {
 		echo sprintf("(%s)[%s]{function:%s} - %s", 
-			date(AbstractFunction::LOG_TIME_FORMAT), $lvl, $this->name, $msg)."\n";
+			date(AbstractFunction::LOG_TIME_FORMAT), $lvl, $this->name, $message)."\n";
 	}
 	protected function partial_log($lvl, $message) {
 		echo sprintf("(%s)[%s]{function:%s} - %s", 
-			date(AbstractFunction::LOG_TIME_FORMAT), $lvl, $this->name, $msg);
+			date(AbstractFunction::LOG_TIME_FORMAT), $lvl, $this->name, $message);
 	}
 	protected function trace($msg, $partial = false) 	
 	{ if($partial){$this->partial_log('TRACE', $msg);}else{$this->log('TRACE', $msg);} }
@@ -87,7 +87,7 @@ abstract class AbstractFunction {
 	{ if($partial){$this->partial_log('DEBUG', $msg);}else{$this->log('DEBUG', $msg);} }
 	protected function info($msg, $partial = false) 	
 	{ if($partial){$this->partial_log('INFO', $msg);}else{$this->log('INFO', $msg);} }
-	protected function warning($msg, $partial = false) 	
+	protected function warn($msg, $partial = false) 	
 	{ if($partial){$this->partial_log('WARN', $msg);}else{$this->log('WARN', $msg);} }
 	protected function error($msg, $partial = false) 	
 	{ if($partial){$this->partial_log('ERROR', $msg);}else{$this->log('ERROR', $msg);} }
