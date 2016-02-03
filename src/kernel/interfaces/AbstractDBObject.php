@@ -76,10 +76,14 @@ abstract class AbstractDBObject {
 	 */
 	abstract public function ResetStaticData();
 
+	public function SetDBConnection($dbConnection) {
+		$this->db_connection = $dbConnection;
+	}
+
 # PROTECTED & PRIVATE #########################################################
 
-	protected function __construct(&$dbConnection, $name) {
-		$this->db_connection = $dbConnection;
+	protected function __construct($name) {
+		$this->db_connection = null;
 		$this->name = $name;
 		$this->tables = array();
 	}

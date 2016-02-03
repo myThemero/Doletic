@@ -29,7 +29,15 @@ class Main {
 
 	public function Run() {
 		// retreive session
-		session_start();	
+		session_start();
+		// DEBUG --------------------------------------------
+		if(array_key_exists(Main::RPARAM_QUERY, $_GET)) { 
+			// GET query is about logout
+			if(!strcmp($_GET[Main::RPARAM_QUERY], "reset")) {
+				$this->__display_logout();
+			}
+		}
+		// --------------------------------------------------
 		// check if doletic kernel exists in session
 		if(array_key_exists(Main::SPARAM_DOL_KERN, $_SESSION)) {
 			// reload settings

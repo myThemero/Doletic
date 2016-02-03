@@ -1,19 +1,24 @@
 <?php
 
+require_once "loaders/ModuleLoader.php";
+
 /**
 * 	@brief
 */
 abstract class AbstractModule {
 	
 	// -- attributes
+	private $code;
 	private $name;
 	private $version;
 	private $authors;
 	private $dependencies;
-	private $interfaces;
+	private $db_objects;
 
 	// -- functions
-
+	public function GetCode() {
+		return $this->code;
+	}
 	public function GetName() {
 		return $this->name;
 	}
@@ -26,22 +31,36 @@ abstract class AbstractModule {
 	public function GetDependencies() {
 		return $this->dependencies;
 	}
-	public function GetInterface($id) {
-		$interface = "no_interface";
-		if(array_key_exists($id, $this->interfaces)) {
-			$interface = $this->interfaces[$key];
-		}
-		return $interface;
+	public function GetDBObjects() {
+		return $this->db_objects;
+	}
+	public function GetJSServices() {
+		return $this->code."/services/services.js";
+	}
+	public function GetJS($ui) {
+		$js = array();
+		array_push($js, ModuleLoader::MODS_DIR.'/'.$this->code."/ui/".$ui.".js");
+		return $js;
+	}
+	public function GetCSS($ui) {
+		$css = array();
+		array_push($css, ModuleLoader::MODS_DIR.'/'.$this->code."/ui/".$ui.".css");
+		return $css;
 	}
 
 # PROTECTED & PRIVATE ###################################################
 
-	protected function __construct($name, $version, $authors = array(), $dependencies = array(), $interfaces = array()) {
+	protected function __construct($code, $name, $version, $authors = array(), $dependencies = array()) {
+		$this->code = $code;
 		$this->name = $name;
 		$this->version = $version;
 		$this->authors = $authors;
 		$this->dependencies = $dependencies;
-		$this->interfaces = $interfaces;
+		$this->db_objects = array();
+	}
+
+	protected function addDBObject($object) {
+		$this->db_objects[$object->GetName()] = $object;
 	}
 
 }

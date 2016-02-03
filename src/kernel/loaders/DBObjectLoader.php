@@ -1,13 +1,12 @@
 <?php
 
 require_once "interfaces/AbstractLoader.php";
-require_once "../services/objects/SettingDBObject.php";
-require_once "../services/objects/ModuleDBObject.php";
-require_once "../services/objects/UserDBObject.php";
-require_once "../services/objects/UserDataDBObject.php";
-require_once "../services/objects/UploadDBObject.php";
-require_once "../services/objects/CommentDBObject.php";
-require_once "../services/objects/TicketDBObject.php";
+require_once "services/php/SettingDBObject.php";
+require_once "services/php/ModuleDBObject.php";
+require_once "services/php/UserDBObject.php";
+require_once "services/php/UserDataDBObject.php";
+require_once "services/php/UploadDBObject.php";
+require_once "services/php/CommentDBObject.php";
 
 
 /**
@@ -27,35 +26,15 @@ class DBObjectLoader extends AbstractLoader {
 		$this->objects = array();
 	}
 
-	public function Init() {
-		// -- create setting object
-		$this->objects[SettingDBObject::OBJ_NAME] = new SettingDBObject(
-			$this->manager()->getOpenConnectionTo(
-				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
-		// -- create module object
-		$this->objects[ModuleDBObject::OBJ_NAME] = new ModuleDBObject(
-			$this->manager()->getOpenConnectionTo(
-				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
-		// -- create user object
-		$this->objects[UserDBObject::OBJ_NAME] = new UserDBObject(
-			$this->manager()->getOpenConnectionTo(
-				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
-		// -- create userdata object
-		$this->objects[UserDataDBObject::OBJ_NAME] = new UserDataDBObject(
-			$this->manager()->getOpenConnectionTo(
-				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
-		// -- create upload object
-		$this->objects[UploadDBObject::OBJ_NAME] = new UploadDBObject(
-			$this->manager()->getOpenConnectionTo(
-				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
-		// -- create comment object
-		$this->objects[CommentDBObject::OBJ_NAME] = new CommentDBObject(
-			$this->manager()->getOpenConnectionTo(
-				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
-		// -- create ticket object
-		$this->objects[TicketDBObject::OBJ_NAME] = new TicketDBObject(
-			$this->manager()->getOpenConnectionTo(
-				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+	public function Init($modulesDBObjects) {
+		// -- add kernel db objects
+		$this->__add_kernel_db_objects();
+		// -- add modules db objects
+		foreach ($modulesDBObjects as $dboname => $dbo) {
+			$this->objects[$dboname] = $dbo;
+		}
+		// -- init db objects connections
+		$this->__connect_db_objects();
 	}
 
 	public function GetDBObject($key) {
@@ -83,4 +62,24 @@ class DBObjectLoader extends AbstractLoader {
 			$object->UpdateDB();
 		}
 	}
+
+# PROTECTED & PRIVATE ######################################################
+
+	private function __add_kernel_db_objects() {
+		$this->objects[SettingDBObject::OBJ_NAME] = new SettingDBObject();
+		$this->objects[ModuleDBObject::OBJ_NAME] = new ModuleDBObject();
+		$this->objects[UserDBObject::OBJ_NAME] = new UserDBObject();
+		$this->objects[UserDataDBObject::OBJ_NAME] = new UserDataDBObject();
+		$this->objects[UploadDBObject::OBJ_NAME] = new UploadDBObject();
+		$this->objects[CommentDBObject::OBJ_NAME] = new CommentDBObject();
+	}
+
+	private function __connect_db_objects() {
+		foreach ($this->objects as $dbo) {
+			$dbo->SetDBConnection(
+				$this->manager()->getOpenConnectionTo(
+				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+		}
+	}
+
 }

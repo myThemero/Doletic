@@ -53,25 +53,34 @@ class DoleticKernel {
 	public function Init() {
 		if(!$this->initialized) {
 			// -- init managers
+			// -1- initialize settings manager first to retreive settings
 			$this->settings_mgr->Init();
 			$this->__info("Settings Manager initialized.");
+			// -2- initialize logs manager
 			$this->log_mgr->Init();
 			$this->__info("Log Manager initialized.");
+			// -3- initialize database manager
 			$this->db_mgr->Init();
 			$this->__info("Database Manager initialized.");
+			// -4- initialize cron manager
 			$this->cron_mgr->Init();
 			$this->__info("Cron Manager initialized.");
+			// -5- initialize module manager
 		 	$this->module_mgr->Init();
 		 	$this->__info("Module Manager initialized.");
-		 	$this->authentication_mgr->Init();
-		 	$this->__info("Authentication Manager initialized.");
-		 	$this->ui_mgr->Init();
-		 	$this->__info("User Interface Manager initialized.");
-		 	// -- init loaders
+		 	// -6- initialize module loader (load installed modules)
 		 	$this->module_ldr->Init();
 		 	$this->__info("Module Loader initialized.");
-		 	$this->dbobject_ldr->Init();
+		 	// -7- initialize db objects loader (load db objects including modules db objects)
+		 	$this->dbobject_ldr->Init($this->module_ldr->GetModulesDBObjects());
 		 	$this->__info("Database Object Loader initialized.");
+		 	// -8- initialize authentication manager
+		 	$this->authentication_mgr->Init();
+		 	$this->__info("Authentication Manager initialized.");
+		 	// -9- initialize UI manager
+		 	$this->ui_mgr->Init($this->module_ldr->GetModulesJSServices());
+		 	$this->__info("User Interface Manager initialized.");
+		 	
 		 	// -- set initialized flag
 		 	$this->initialized = true;	
 		} else {
@@ -115,18 +124,19 @@ class DoleticKernel {
 	 *	Returns the HTML page required
 	 */
 	public function GetInterface($ui) { 
-		$this->__debug("Showing '" . $ui . "' interface.");
+		$this->__debug("Interface  '" . $ui . "' required.");
 		// initialize page
 		$page = null;
 		// check if requested ui is a special ui
 		if($this->ui_mgr->IsSpecialUI($ui)) {
 			$page = $this->ui_mgr->MakeSpecialUI($ui); // affect page content with special content
 		} else { // page is not special, search for a module
-			$module = $this->module_ldr->GetModule(explode(':', $ui)[0]);
+			$exploded = explode(':', $ui);
+			$module = $this->module_ldr->GetModule($exploded[0]);
 			$found = false;										// initialize found flag down
 			if($module != null) {								// if module exists
-				$js = $module->GetJS($ui);						// retrieve js array
-				$css = $module->GetCSS($ui);					// retrieve css array
+				$js = $module->GetJS($exploded[1]);				// retrieve js array
+				$css = $module->GetCSS($exploded[1]);			// retrieve css array
 				if($css != null && $css != null) {				// if both css and js are valid arrays
 					$page = $this->ui_mgr->MakeUI($js, $css); 	// affect page content		
 					$found = true; 								// raise found flag

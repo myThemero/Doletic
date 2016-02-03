@@ -87,7 +87,7 @@ class UserServices extends AbstractObjectServices {
 	// --- params keys
 	const PARAM_ID 		= "id";
 	const PARAM_UNAME 	= "username";
-	const PARAM_HASH	= "password";
+	const PARAM_HASH	= "hash";
 	// --- internal services (actions)
 	const GET_USER_BY_ID 	= "byid";
 	const GET_USER_BY_UNAME = "byuname";
@@ -265,9 +265,9 @@ class UserDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct(&$dbConnection) {
+	public function __construct() {
 		// -- construct parent
-		parent::__construct($dbConnection, UserDBObject::OBJ_NAME);
+		parent::__construct(UserDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_user table
 		$dol_user = new DBTable(UserDBObject::TABL_USER);

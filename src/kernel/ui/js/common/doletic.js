@@ -106,7 +106,6 @@ var DoleticMasterInterface = new function() {
                   </div> \
                 </div> \
                 <div id=\"settings_modal\" class=\"ui modal\"> \
-                  <i class=\"close icon\"></i> \
                   <div class=\"header\">Préférences</div> \
                   <div class=\"content\"> \
                     <p> Nothing here for now...</p> \
@@ -127,8 +126,9 @@ var DoleticMasterInterface = new function() {
   /**
    *  Removes logout button (usefull for login and logout interfaces)
    */
-  this.removeLogoutButton = function() {
+  this.removeUserNotLoggedUselessButtons = function() {
     $('#menu_logout').remove();
+    $('#menu_preferences_doletic').remove();
   }
   /**
    *  Shows about Doletic modal

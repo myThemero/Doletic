@@ -2,7 +2,7 @@
 
 require_once "interfaces/AbstractManager.php";
 require_once "loaders/DBObjectLoader.php";
-require_once "../services/objects/UserDBObject.php";
+require_once "services/php/UserDBObject.php";
 
 /**
 * 	The role of this manager is to manage user and its rights

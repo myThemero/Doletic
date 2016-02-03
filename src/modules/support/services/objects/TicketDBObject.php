@@ -411,9 +411,9 @@ class TicketDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct(&$dbmanager) {
+	public function __construct() {
 		// -- construct parent
-		parent::__construct($dbmanager,TicketDBObject::OBJ_NAME);
+		parent::__construct(TicketDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_ticket table
 		$dol_ticket = new DBTable(TicketDBObject::TABL_TICKET);
@@ -448,14 +448,12 @@ class TicketDBObject extends AbstractDBObject {
 		parent::addTable($dol_ticket_category);
 		parent::addTable($dol_ticket_status);
 	}
-
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
 	public function GetServices() {
 		return new TicketServices($this, $this->getDBConnection());
 	}
-
 	/**
 	 *	Initialize static data
 	 */

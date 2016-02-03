@@ -284,9 +284,9 @@ class ModuleDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct(&$dbConnection) {
+	public function __construct() {
 		// -- construct parent
-		parent::__construct($dbConnection, ModuleDBObject::OBJ_NAME);
+		parent::__construct(ModuleDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_module table
 		$dol_module = new DBTable(ModuleDBObject::TABL_MODULE);

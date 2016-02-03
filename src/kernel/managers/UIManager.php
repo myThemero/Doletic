@@ -33,23 +33,13 @@ class UIManager extends AbstractManager {
 	/**
 	 *	Initi
 	 */
-	public function Init() {
+	public function Init($modulesJSServices) {
 		// add css
-		array_push($this->internal_css, "ui/semantic/dist/semantic.min.css");
-		array_push($this->internal_css, "ui/css/doletic.css");
+		$this->__init_css();
 		// add js
-		array_push($this->internal_js, "ui/js_depends/jquery-2.2.0.min.js");
-		array_push($this->internal_js, "ui/semantic/dist/semantic.min.js");
-		array_push($this->internal_js, "ui/js/common/abstract_doletic_module.js");
-		array_push($this->internal_js, "ui/js/common/doletic_utils.js");
-		array_push($this->internal_js, "ui/js/common/doletic_services.js");
-		array_push($this->internal_js, "ui/js/common/doletic.js");
-		
+		$this->__init_js($modulesJSServices);
 		// add specials
-		$this->special_uis[UIManager::INTERFACE_LOGIN] = "ui/js/specific/login.js";
-		$this->special_uis[UIManager::INTERFACE_LOGOUT] = "ui/js/specific/logout.js";
-		$this->special_uis[UIManager::INTERFACE_404] = "ui/js/specific/404.js";
-		$this->special_uis[UIManager::INTERFACE_HOME] = "ui/js/specific/home.js";
+		$this->__init_uis();
 	}
 	/**
 	 *	Creates a standard Doletic page including $js scripts and $css stylesheets
@@ -103,5 +93,35 @@ class UIManager extends AbstractManager {
 		return $this->MakeSpecialUI(UIManager::INTERFACE_404);
 	}
 
+# PROTECTED & PRIVATE ################################################################
+
+	private function __init_css() {
+		array_push($this->internal_css, "ui/semantic/dist/semantic.min.css");
+		array_push($this->internal_css, "ui/css/doletic.css");
+	}
+
+	private function __init_js($modulesJSServices) {
+		// add kernel scripts
+		array_push($this->internal_js, "ui/js_depends/jquery-2.2.0.min.js");
+		array_push($this->internal_js, "ui/semantic/dist/semantic.min.js");
+		array_push($this->internal_js, "ui/js/common/abstract_doletic_module.js");
+		array_push($this->internal_js, "ui/js/common/doletic_utils.js");
+		array_push($this->internal_js, "ui/js/common/doletic.js");
+		array_push($this->internal_js, "services/js/doletic_services.js");
+		array_push($this->internal_js, "services/js/user_services.js");
+		array_push($this->internal_js, "services/js/user_data_services.js");
+		array_push($this->internal_js, "services/js/setting_services.js");
+		array_push($this->internal_js, "services/js/module_services.js");
+		array_push($this->internal_js, "services/js/comment_services.js");
+		// merge with modules services scripts
+		$this->internal_js = array_merge($this->internal_js, $modulesJSServices);
+	}
+
+	private function __init_uis() {
+		$this->special_uis[UIManager::INTERFACE_LOGIN] = "ui/js/kernel_page/login.js";
+		$this->special_uis[UIManager::INTERFACE_LOGOUT] = "ui/js/kernel_page/logout.js";
+		$this->special_uis[UIManager::INTERFACE_404] = "ui/js/kernel_page/404.js";
+		$this->special_uis[UIManager::INTERFACE_HOME] = "ui/js/kernel_page/home.js";
+	}
 
 }
