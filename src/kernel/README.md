@@ -37,3 +37,5 @@ Les scripts importants de ce dossier sont les suivants :
 ### Note concernant l'interface utilisateur
 
 L'interface utilisateur est entièrement réalisée avec [Semantic UI](http://semantic-ui.com/).
+
+Elle exploite également l'[API Plotly JS](https://plot.ly/javascript/).

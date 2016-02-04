@@ -78,6 +78,32 @@ var DoleticUIModule = new function() {
 					<div class=\"two wide column\"> \
 					</div> \
 				  </div> \
+				  <div class=\"row\"> \
+				  <div class=\"two wide column\"> \
+					</div> \
+					<div class=\"twelve wide column\"> \
+					  <div class=\"ui middle aligned divided list\"> \
+						  <div class=\"item\"> \
+						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.displayPlot();\">Run</div></div> \
+						    <div class=\"content\">Affiche un graphique</div> \
+						  </div> \
+						</div> \
+					</div> \
+					<div class=\"two wide column\"> \
+					</div> \
+				  </div> \
+				  <div class=\"row\"> \
+					<div class=\"two wide column\"> \
+					</div> \
+					<div class=\"twelve wide column\"> \
+					  <div id=\"plot\" ><!-- Plotly chart will be drawn inside this DIV --></div> \
+  					  <script> \
+    				    <!-- JAVASCRIPT CODE GOES HERE --> \
+  					  </script> \
+					</div> \
+					<div class=\"two wide column\"> \
+					</div> \
+				  </div> \
 				</div>";
 	}
 	/**
@@ -112,8 +138,20 @@ var DoleticUIModule = new function() {
 		//ModuleServicesInterface.getAll(DoleticUIModule.serviceSuccessHandler);
 	}	
 	this.getTickets = function() {
-		alert('TicketServicesInterface not implemented yet !');
-		//TicketServicesInterface.getAll(DoleticUIModule.serviceSuccessHandler);
+		TicketServicesInterface.getAll(DoleticUIModule.serviceSuccessHandler);
 	}
-
+	this.displayPlot = function() {
+		var trace1 = {
+  			x: [1, 2, 3, 4], 
+  			y: [10, 15, 13, 17], 
+  			type: 'scatter'
+		};
+		var trace2 = {
+		  x: [1, 2, 3, 4], 
+		  y: [16, 5, 11, 9], 
+		  type: 'scatter'
+		};
+		var data = [trace1, trace2];
+			Plotly.newPlot('plot', data);
+		}
 }
