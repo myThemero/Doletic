@@ -11,6 +11,7 @@ var TicketServicesInterface = new function() {
       GET_STATUS_BY_ID:'byids',
       GET_CATEGO_BY_ID:'byidc',
       GET_ALL_TICKETS:'allt',
+      GET_USER_TICKETS:'allut',
       GET_ALL_STATUSES:'alls',
       GET_ALL_CATEGOS:'allc',
       INSERT:'insert',
@@ -22,6 +23,9 @@ var TicketServicesInterface = new function() {
 
   this.getAll = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_TICKETS, {}, successHandler); 
+  }
+  this.getUserTickets = function(successHandler) {
+   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_TICKETS, {}, successHandler); 
   }
   this.getAllStatuses = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_STATUSES, {}, successHandler); 

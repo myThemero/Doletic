@@ -8,8 +8,10 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
-		// fill fields
-		TicketServicesInterface.getAllCategories(DoleticUIModule.resetCategorySelector);
+		// fill category field
+		TicketServicesInterface.getAllCategories(DoleticUIModule.fillCategorySelector);
+		// fill ticket list
+		TicketServicesInterface.getUserTickets(DoleticUIModule.fillTicketsList);
 	}
 	/**
 	 *	Override build function
@@ -32,7 +34,7 @@ var DoleticUIModule = new function() {
 						    <div class=\"field\"> \
 						      <label>Catégorie</label> \
       						  <select id=\"category\" class=\"ui search dropdown\"> \
-      							<!-- categories goes here --> \
+      							<!-- CATEGORIES WILL GO HERE --> \
     						  </select> \
   							</div> \
 						  </div> \
@@ -43,9 +45,30 @@ var DoleticUIModule = new function() {
   						  <div class=\"ui support_center small buttons\"> \
 							<div class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
 							<div class=\"or\" data-text=\"ou\"></div> \
-							<div class=\"ui button\" onClick=\"DoleticUIModule.sendNewTicket();\">Envoyer</div> \
+							<div class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Envoyer</div> \
 						  </div> \
 				      </form> \
+					</div> \
+					<div class=\"three wide column\"> \
+					</div> \
+				  </div> \
+				  <div class=\"row\"> \
+				  <div class=\"three wide column\"> \
+					</div> \
+					<div class=\"ten wide column\"> \
+						<div class=\"ui horizontal divider\">Mes tickets</div> \
+						  <div id=\"open_popup\" class=\"ui special popup\"> \
+							<div class=\"content\">Votre problème n'a pas encore été pris en charge.</div> \
+						  </div> \
+						  <div id=\"work_popup\" class=\"ui special popup\"> \
+							<div class=\"content\">Votre problème est en cours de résolution.</div> \
+						  </div> \
+						  <div id=\"done_popup\" class=\"ui special popup\"> \
+							<div class=\"content\">Votre problème est résolu.</div> \
+						  </div> \
+						  <div id=\"ticket_list\" class=\"ui very relaxed celled selection list\"> \
+							<!-- USER TICKETS WILL GO HERE --> \
+						  </div> \
 					</div> \
 					<div class=\"three wide column\"> \
 					</div> \
@@ -63,7 +86,7 @@ var DoleticUIModule = new function() {
 
 	this.hasInputError = false;
 
-	this.resetCategorySelector = function(data) {
+	this.fillCategorySelector = function(data) {
 		// if no service error
 		if(data.code == 0) {
 			// create content var to build html
@@ -81,11 +104,57 @@ var DoleticUIModule = new function() {
 		}
 	}
 
+	this.fillTicketsList = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// create content var to build html
+			var content = "";
+			var json = JSON.parse(data.data);
+			// iterate over values to build options
+			for (var i = 0; i < json.length; i++) {
+				var status, popup_selector;
+				var id = "popup_trigger_"+i;
+				switch (json[i].status_id) {
+				  case "1":
+				  	status = "red radio";
+				  	popup_selector = "#open_popup";
+				    break;
+				  case "2":
+				  	status = "orange spinner loading";
+				  	popup_selector = "#work_popup";
+				    break;
+				  case "3":
+				  	status = "green selected radio";
+				  	popup_selector = "#done_popup";
+				    break;
+				  default:
+				  	status = "blue help";
+				    break;
+				}
+				content += "<div class=\"item\"> \
+							  <i id=\""+id+"\" class=\""+status+" big icon link\"></i> \
+							  <div class=\"middle aligned content\"> \
+							    <a class=\"header\">"+json[i].subject+"</a> \
+							    <div class=\"description\">"+json[i].data+"</div>  \
+							  </div> \
+							  <script>$('#"+id+"').popup({popup:'"+popup_selector+"'});</script> \
+							</div>";
+			};
+			// insert html content
+			$('#ticket_list').html(content);
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+		
+  ;
+	}
+
 	this.clearNewTicketForm = function() {
 		$('#subject').val('');
 		$('#data').val('');
 		/// \todo trouver quelque chose de mieux ici pour le reset du selecteur
-		TicketServicesInterface.getAllCategories(DoleticUIModule.resetCategorySelector);
+		TicketServicesInterface.getAllCategories(DoleticUIModule.fillCategorySelector);
 		// clear error
 		if(this.hasInputError) {
 			// disable has error
@@ -140,7 +209,6 @@ var DoleticUIModule = new function() {
 		} else {
 			DoleticUIModule.showInputError();
 		}
-		
 	}
 
 }

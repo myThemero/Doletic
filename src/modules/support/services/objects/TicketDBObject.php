@@ -118,6 +118,7 @@ class TicketServices extends AbstractObjectServices {
 	const GET_STATUS_BY_ID = "byids";
 	const GET_CATEGO_BY_ID = "byidc";
 	const GET_ALL_TICKETS  = "allt";
+	const GET_USER_TICKETS = "allut";
 	const GET_ALL_STATUSES = "alls";
 	const GET_ALL_CATEGOS  = "allc";
 	const INSERT 		   = "insert";
@@ -142,6 +143,8 @@ class TicketServices extends AbstractObjectServices {
 			$data = $this->__get_category_by_id($params[TicketServices::PARAM_ID]);
 		} else if(!strcmp($action, TicketServices::GET_ALL_TICKETS)) {
 			$data = $this->__get_all_tickets();
+		} else if(!strcmp($action, TicketServices::GET_USER_TICKETS)) {
+			$data = $this->__get_current_user_tickets();
 		} else if(!strcmp($action, TicketServices::GET_ALL_STATUSES)) {
 			$data = $this->__get_all_statuses();
 		} else if(!strcmp($action, TicketServices::GET_ALL_CATEGOS)) {
@@ -236,6 +239,31 @@ class TicketServices extends AbstractObjectServices {
 		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetSELECTQuery();
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for tickets and fill it
+		$tickets = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($tickets, new Ticket(
+					$row[TicketDBObject::COL_ID], 
+					$row[TicketDBObject::COL_SENDER_ID], 
+					$row[TicketDBObject::COL_RECEIVER_ID], 
+					$row[TicketDBObject::COL_SUBJECT], 
+					$row[TicketDBObject::COL_CATEGORY_ID], 
+					$row[TicketDBObject::COL_DATA], 
+					$row[TicketDBObject::COL_STATUS_ID]));
+			}
+		}
+		return $tickets;
+	}
+
+	private function __get_current_user_tickets() {
+		// create sql params array
+		$sql_params = array(":".TicketDBObject::COL_SENDER_ID => parent::getCurrentUser()->GetId());
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(TicketDBObject::COL_SENDER_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for tickets and fill it
 		$tickets = array();
 		if($pdos != null) {
