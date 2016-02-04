@@ -21,13 +21,29 @@ var DoleticUIModule = new function() {
 				  <div class=\"row\"> \
 				  </div> \
 				  <div class=\"row\"> \
-					<div class=\"three wide column\"> \
+				  <div class=\"ten wide column\"> \
+					<div class=\"ui horizontal divider\">Mes tickets</div> \
+						  <div id=\"open_popup\" class=\"ui special popup\"> \
+							<div class=\"content\">Votre problème n'a pas encore été pris en charge.</div> \
+						  </div> \
+						  <div id=\"work_popup\" class=\"ui special popup\"> \
+							<div class=\"content\">Votre problème est en cours de résolution.</div> \
+						  </div> \
+						  <div id=\"done_popup\" class=\"ui special popup\"> \
+							<div class=\"content\">Votre problème est résolu.</div> \
+						  </div> \
+						  <div id=\"undefined_popup\" class=\"ui special popup\"> \
+							<div class=\"content\">L'etat de ce ticket est étrange. Merci de prévenir les développeurs.</div> \
+						  </div> \
+						  <div id=\"ticket_list\" class=\"ui very relaxed celled selection list\"> \
+							<!-- USER TICKETS WILL GO HERE --> \
+						  </div> \
 					</div> \
-					<div class=\"ten wide column\"> \
+					<div class=\"six wide column\"> \
 					  <form id=\"support_form\" class=\"ui form segment\"> \
 					    <h4 class=\"ui dividing header\">Création d'un nouveau ticket</h4> \
 				  	    <div class=\"fields\"> \
-						    <div id=\"subject_field\" class=\"fourteen wide required field\"> \
+						    <div id=\"subject_field\" class=\"twelve wide required field\"> \
 						      <label>Sujet</label> \
 						      <input id=\"subject\" placeholder=\"Sujet\" type=\"text\"/> \
 						    </div> \
@@ -49,29 +65,8 @@ var DoleticUIModule = new function() {
 						  </div> \
 				      </form> \
 					</div> \
-					<div class=\"three wide column\"> \
-					</div> \
 				  </div> \
 				  <div class=\"row\"> \
-				  <div class=\"three wide column\"> \
-					</div> \
-					<div class=\"ten wide column\"> \
-						<div class=\"ui horizontal divider\">Mes tickets</div> \
-						  <div id=\"open_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème n'a pas encore été pris en charge.</div> \
-						  </div> \
-						  <div id=\"work_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème est en cours de résolution.</div> \
-						  </div> \
-						  <div id=\"done_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème est résolu.</div> \
-						  </div> \
-						  <div id=\"ticket_list\" class=\"ui very relaxed celled selection list\"> \
-							<!-- USER TICKETS WILL GO HERE --> \
-						  </div> \
-					</div> \
-					<div class=\"three wide column\"> \
-					</div> \
 				  </div> \
 				</div>";
 	}
@@ -105,7 +100,7 @@ var DoleticUIModule = new function() {
 
 	this.fillTicketsList = function(data) {
 		// if no service error
-		if(data.code == 0) {
+		if(data.code == 0 && data.data != "[]") {
 			// create content var to build html
 			var content = "";
 			// iterate over values to build options
@@ -113,20 +108,21 @@ var DoleticUIModule = new function() {
 				var status, popup_selector;
 				var id = "popup_trigger_"+i;
 				switch (data.data[i].status_id) {
-				  case "1":
+				  case 1:
 				  	status = "red radio";
 				  	popup_selector = "#open_popup";
 				    break;
-				  case "2":
-				  	status = "orange spinner loading";
+				  case 2:
+				  	status = "orange spinner";
 				  	popup_selector = "#work_popup";
 				    break;
-				  case "3":
+				  case 3:
 				  	status = "green selected radio";
 				  	popup_selector = "#done_popup";
 				    break;
 				  default:
 				  	status = "blue help";
+				  	popup_selector = "#undefined_popup";
 				    break;
 				}
 				content += "<div class=\"item\"> \
@@ -143,9 +139,7 @@ var DoleticUIModule = new function() {
 		} else {
 			// use default service service error handler
 			DoleticServicesInterface.handleServiceError(data);
-		}
-		
-  ;
+		};
 	}
 
 	this.clearNewTicketForm = function() {
@@ -167,19 +161,6 @@ var DoleticUIModule = new function() {
 		}
 	}
 
-	this.sendHandler = function(data) {
-		// if no service error
-		if(data.code == 0) {
-			// clear ticket form
-			DoleticUIModule.clearNewTicketForm();
-			// alert user that creation is a success
-			DoleticMasterInterface.showSuccess("Création réussie !", "Le ticket a été créé avec succès !");
-		} else {
-			// use default service service error handler
-			DoleticServicesInterface.handleServiceError(data);
-		}
-	}
-
 	this.showInputError = function() {
 		if(!this.hasInputError) {
 			// raise loginError flag
@@ -190,6 +171,21 @@ var DoleticUIModule = new function() {
 			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
 			$('#data_field').attr('class', 'field error');
 			$('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
+		}
+	}
+
+	this.sendHandler = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// clear ticket form
+			DoleticUIModule.clearNewTicketForm();
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Création réussie !", "Le ticket a été créé avec succès !");
+			// fill ticket list
+			TicketServicesInterface.getUserTickets(DoleticUIModule.fillTicketsList);
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
 		}
 	}
 

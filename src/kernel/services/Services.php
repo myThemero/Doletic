@@ -118,7 +118,7 @@ class Services {
 				if($data != null) {
 					$response = new ServiceResponse($data);
 				} else {
-					$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_ACT, "Action and/or params is missing.");	
+					$response = new ServiceResponse("[]"); // empty return from service
 				}
 			} else {
 				$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_OBJ, "Object is missing.");

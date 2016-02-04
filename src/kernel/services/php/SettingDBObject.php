@@ -21,7 +21,7 @@ class Setting implements \JsonSerializable {
 	*	@brief Constructs a setting
 	*/
 	public function __construct($id, $key, $value) {
-		$this->id = $id;
+		$this->id = intval($id);
 		$this->key = $key;
 		$this->value = $value;
 	}

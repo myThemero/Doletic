@@ -29,8 +29,8 @@ class Upload implements \JsonSerializable {
 	*		Upload storage filename
 	*/
 	public function __construct($id, $userId, $timestamp, $filename, $storageFilename) {
-		$this->id = $id;
-		$this->user_id = $userId;
+		$this->id = intval($id);
+		$this->user_id = intval($userId);
 		$this->timestamp = $timestamp;
 		$this->filename = $filename;
 		$this->storage_filename = $storageFilename;

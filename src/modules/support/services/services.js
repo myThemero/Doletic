@@ -8,6 +8,7 @@ var TicketServicesInterface = new function() {
     // --- (actions)
     ACTION: {
       GET_TICKET_BY_ID:'byidt',
+      GET_TICKET_BY_STATUS:'bystt',
       GET_STATUS_BY_ID:'byids',
       GET_CATEGO_BY_ID:'byidc',
       GET_ALL_TICKETS:'allt',
@@ -16,6 +17,7 @@ var TicketServicesInterface = new function() {
       GET_ALL_CATEGOS:'allc',
       INSERT:'insert',
       UPDATE:'update',
+      NEXT_STATUS:'nexts',
       DELETE:'delete',
       ARCHIVE:'archive'
     }
@@ -27,13 +29,18 @@ var TicketServicesInterface = new function() {
   this.getUserTickets = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_TICKETS, {}, successHandler); 
   }
+  this.getTicketsByStatus = function(statusId, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_TICKET_BY_STATUS, 
+            { statusId:statusId }, 
+            successHandler); 
+  }
   this.getAllStatuses = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_STATUSES, {}, successHandler); 
   }
   this.getAllCategories = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_CATEGOS, {}, successHandler); 
   }
-
   this.getById = function(id, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_TICKET_BY_ID, 
@@ -52,7 +59,6 @@ var TicketServicesInterface = new function() {
             { id: id }, 
             successHandler); 
   }
-
   this.insert = function(receiverId, subject, categoryId, data, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT, 
@@ -76,6 +82,14 @@ var TicketServicesInterface = new function() {
               statusId:statusId
             }, 
             successHandler);
+  }
+  this.nextTicketStatus = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+      this.meta.OBJECT, this.meta.ACTION.NEXT_STATUS, 
+      { 
+        id:id
+      }, 
+      successHandler);
   }
   this.delete = function(id, successHandler) {
     return DoleticServicesInterface.callService(

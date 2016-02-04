@@ -24,7 +24,7 @@ class Module implements \JsonSerializable {
 	*	@brief Constructs a module
 	*/
 	public function __construct($id, $name, $version, $authors, $dependencies, $enabled) {
-		$this->id = $id;
+		$this->id = intval($id);
 		$this->name = $name;
 		$this->version = $version;
 		$this->authors = $authors;

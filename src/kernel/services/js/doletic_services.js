@@ -149,12 +149,14 @@ var DoleticServicesInterface = new function() {
     *  Service error
     */
     this.handleServiceError = function(data) {
-      if(data.code < this.serviceErrors.length) {
-        DoleticMasterInterface.showError("Le service a renvoyé une erreur !", 
-          "<p>Erreur : "+this.serviceErrors[data.code]+"</p>");
-      } else {
-        DoleticMasterInterface.showError("Le service a renvoyé une erreur !", 
-          "<p>Une erreur inconnue s'est produite lors de l'appel au service. Merci de prévenir les développeurs.</p>");
+      if(data.code != 0) {
+        if(data.code < this.serviceErrors.length) {
+          DoleticMasterInterface.showError("Le service a renvoyé une erreur !", 
+            "<p>Erreur : "+this.serviceErrors[data.code]+"</p>");
+        } else {
+          DoleticMasterInterface.showError("Le service a renvoyé une erreur !", 
+            "<p>Une erreur inconnue s'est produite lors de l'appel au service. Merci de prévenir les développeurs.</p>");
+        }
       }
     }
 }

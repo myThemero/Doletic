@@ -22,8 +22,8 @@ class Comment implements \JsonSerializable {
 	*	@brief Constructs a comment
 	*/
 	public function __construct($id, $date, $userId, $data) {
-		$this->id = $id;
-		$this->user_id = $userId;
+		$this->id = intval($id);
+		$this->user_id = intval($userId);
 		$this->date = $date;
 		$this->data = $data;
 	}

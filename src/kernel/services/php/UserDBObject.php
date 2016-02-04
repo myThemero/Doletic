@@ -24,7 +24,7 @@ class User implements \JsonSerializable {
 	*	@brief Constructs a user
 	*/
 	public function __construct($id, $username, $lastConnectionTimestamp, $signUpTimestamp) {
-		$this->id = $id;
+		$this->id = intval($id);
 		$this->username = $username;
 		$this->last_connection_timestamp = $lastConnectionTimestamp;
 		$this->sign_up_timestamp = $signUpTimestamp;

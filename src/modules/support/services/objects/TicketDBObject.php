@@ -39,11 +39,11 @@ class Ticket implements \JsonSerializable {
 	*		Ticket status
 	*/
 	public function __construct($id, $senderId, $receiverId, $subject, $categoryId, $data, $statusId) {
-		$this->id = $id;
-		$this->sender_id = $senderId;
-		$this->receiver_id = $receiverId;
-		$this->category_id = $categoryId;
-		$this->status_id = $statusId;
+		$this->id = intval($id);
+		$this->sender_id = intval($senderId);
+		$this->receiver_id = intval($receiverId);
+		$this->category_id = intval($categoryId);
+		$this->status_id = intval($statusId);
 		$this->data = $data;
 		$this->subject = $subject;
 	}
@@ -115,6 +115,7 @@ class TicketServices extends AbstractObjectServices {
 	const PARAM_STATUS 		= "statusId";
 	// --- actions
 	const GET_TICKET_BY_ID = "byidt";
+	const GET_TICKET_BY_STATUS = "bystt";
 	const GET_STATUS_BY_ID = "byids";
 	const GET_CATEGO_BY_ID = "byidc";
 	const GET_ALL_TICKETS  = "allt";
@@ -123,6 +124,7 @@ class TicketServices extends AbstractObjectServices {
 	const GET_ALL_CATEGOS  = "allc";
 	const INSERT 		   = "insert";
 	const UPDATE           = "update";
+	const NEXT_STATUS    = "nexts";
 	const DELETE           = "delete";
 	const ARCHIVE          = "archive";
 
@@ -137,6 +139,8 @@ class TicketServices extends AbstractObjectServices {
 		$data = null;
 		if(!strcmp($action, TicketServices::GET_TICKET_BY_ID)) {
 			$data = $this->__get_ticket_by_id($params[TicketServices::PARAM_ID]);
+		} else if(!strcmp($action, TicketServices::GET_TICKET_BY_STATUS)) {
+			$data = $this->__get_ticket_by_status($params[TicketServices::PARAM_STATUS]);
 		} else if(!strcmp($action, TicketServices::GET_STATUS_BY_ID)) {
 			$data = $this->__get_status_by_id($params[TicketServices::PARAM_ID]);
 		} else if(!strcmp($action, TicketServices::GET_CATEGO_BY_ID)) {
@@ -163,6 +167,8 @@ class TicketServices extends AbstractObjectServices {
 				$params[TicketServices::PARAM_CATEGO],
 				$params[TicketServices::PARAM_DATA],
 				$params[TicketServices::PARAM_STATUS]);
+		} else if(!strcmp($action, TicketServices::NEXT_STATUS)) {
+			$data = $this->__next_status($params[TicketServices::PARAM_ID]);
 		} else if(!strcmp($action, TicketServices::DELETE)) {
 			$data = $this->__delete_ticket($params[TicketServices::PARAM_ID]);
 		} else if(!strcmp($action, TicketServices::ARCHIVE)) {
@@ -198,6 +204,31 @@ class TicketServices extends AbstractObjectServices {
 			}
 		}
 		return $ticket;
+	}
+
+	private function __get_ticket_by_status($statusId) {
+		// create sql params array
+		$sql_params = array(":".TicketDBObject::COL_STATUS_ID => $statusId);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(TicketDBObject::COL_STATUS_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create ticket var
+		$tickets = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($tickets, new Ticket(
+					$row[TicketDBObject::COL_ID], 
+					$row[TicketDBObject::COL_SENDER_ID], 
+					$row[TicketDBObject::COL_RECEIVER_ID], 
+					$row[TicketDBObject::COL_SUBJECT], 
+					$row[TicketDBObject::COL_CATEGORY_ID], 
+					$row[TicketDBObject::COL_DATA], 
+					$row[TicketDBObject::COL_STATUS_ID]));
+			}
+		}
+		return $tickets;
 	}
 
 	private function __get_status_by_id($id) {
@@ -344,6 +375,22 @@ class TicketServices extends AbstractObjectServices {
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}	
+
+	private function __next_status($id) {
+		// retreive current status
+		$ticket = $this->__get_ticket_by_id($id);
+		// create sql params
+		$sql_params = array(
+			":".TicketDBObject::COL_ID => $id,
+			":".TicketDBObject::COL_RECEIVER_ID => parent::getCurrentUser()->GetId(),
+			":".TicketDBObject::COL_STATUS_ID => $ticket->GetStatusId()+1);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_TICKET)->GetUPDATEQuery(
+			array(TicketDBObject::COL_RECEIVER_ID, 
+				  TicketDBObject::COL_STATUS_ID));
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
 
 	private function __delete_ticket($id) {
 		// create sql params

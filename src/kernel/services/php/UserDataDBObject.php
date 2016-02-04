@@ -31,18 +31,18 @@ class UserData implements \JsonSerializable {
 	public function __construct($id, $userId, $genderId, $firstname, $lastname, $birthdate, 
 								$tel, $email, $address, $countryId, $schoolYear, 
 								$insaDeptId) {
-		$this->id = $id;
-		$this->user_id = $userId;
-		$this->gender_id = $genderId;
+		$this->id = intval($id);
+		$this->user_id = intval($userId);
+		$this->gender_id = intval($genderId);
 		$this->firstname = $firstname;
 		$this->lastname = $lastname;
 		$this->birthdate = $birthdate;
 		$this->tel = $tel;
 		$this->email = $email;
 		$this->address = $address;
-		$this->country_id = $countryId;
+		$this->country_id = intval($countryId);
 		$this->school_year = $schoolYear;
-		$this->insa_dept_id = $insaDeptId;
+		$this->insa_dept_id = intval($insaDeptId);
 	}
 
 	public function jsonSerialize() {
