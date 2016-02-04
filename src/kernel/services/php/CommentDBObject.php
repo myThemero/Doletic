@@ -18,7 +18,6 @@ class Comment implements \JsonSerializable {
 	private $date;
 	private $data;
 
-
 	/**
 	*	@brief Constructs a comment
 	*/

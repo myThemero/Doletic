@@ -89,6 +89,18 @@ var DoleticServicesInterface = new function() {
       });
   }
   /**
+   *
+   */
+  this.getAll = function(object, action, successHandler) {
+
+  }
+  /**
+   *
+   */
+  this.getById = function(id, object, action, successHandler) {
+    
+  }
+  /**
    *  Make an AJAX call to Doletic services to retrieve some data
    */
   this.callService = function(object, action, params, successHandler) {

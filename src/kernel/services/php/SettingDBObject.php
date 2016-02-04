@@ -122,7 +122,7 @@ class SettingServices extends AbstractObjectServices {
 		return $setting;
 	}
 
-	private function __get_user_by_key($key) {
+	private function __get_setting_by_key($key) {
 		// create sql params array
 		$sql_params = array(":".SettingDBObject::COL_KEY => $key);
 		// create sql request

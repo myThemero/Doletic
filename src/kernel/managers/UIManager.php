@@ -12,6 +12,7 @@ class UIManager extends AbstractManager {
 	const INTERFACE_LOGOUT = "logout";
 	const INTERFACE_404 = "404";
 	const INTERFACE_HOME = "home";
+	const INTERFACE_TEST = "test";
 
 	// -- attributes 
 	private $internal_css;
@@ -122,6 +123,7 @@ class UIManager extends AbstractManager {
 		$this->special_uis[UIManager::INTERFACE_LOGOUT] = "ui/js/kernel_page/logout.js";
 		$this->special_uis[UIManager::INTERFACE_404] = "ui/js/kernel_page/404.js";
 		$this->special_uis[UIManager::INTERFACE_HOME] = "ui/js/kernel_page/home.js";
+		$this->special_uis[UIManager::INTERFACE_TEST] = "ui/js/kernel_page/test.js";
 	}
 
 }

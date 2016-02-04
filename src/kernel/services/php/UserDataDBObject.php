@@ -189,6 +189,8 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__get_INSA_dept_by_id($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_POSITION_BY_ID)) {
 			$data = $this->__get_position_by_id($params[UserDataServices::PARAM_ID]);
+		} else if(!strcmp($action, UserDataServices::GET_USER_LAST_POS)) {
+			$data = $this->__get_user_last_position($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_ALL_USER_DATA)) {
 			$data = $this->__get_all_user_data();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_GENDERS)) {
@@ -342,7 +344,7 @@ class UserDataServices extends AbstractObjectServices {
 		return $position;
 	}
 
-	private function __get_user_last_position($userId) {
+	private function __get_user_last_position($id) {
 		// create sql params array
 		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
 		// create sql request

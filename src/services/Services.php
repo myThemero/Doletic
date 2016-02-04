@@ -29,7 +29,7 @@ class ServiceResponse implements \JsonSerializable {
 	/**
 	 *
 	 */
-	public function __construct($responseData, $responseCode = ServiceResponse::ERR_NO_ERROR, $responseErrString = "") {
+	public function __construct($responseData, $responseCode = ServiceResponse::ERR_NO_ERROR, $responseErrString = "RAS") {
 		$this->code = $responseCode;
 		$this->err_string = $responseErrString;
 		$this->data = $responseData;
@@ -98,14 +98,18 @@ class Services {
 			// declare response var
 			$response = null;
 			// retreive db object
-			$obj = parent::kernel()->GetDBObject($post[Services::PPARAM_OBJ]);
+			$obj = $this->kernel->GetDBObject($post[Services::PPARAM_OBJ]);
 			if($obj != null) {
 				// retreive response data
-				$data = $obj->GetServices()->GetResponseData($post[Services::PPARAM_ACT], $post[Services::PPARAM_PARAMS]);
+				if(array_key_exists(Services::PPARAM_PARAMS, $post)) {
+					$data = $obj->GetServices()->GetResponseData($post[Services::PPARAM_ACT], $post[Services::PPARAM_PARAMS]);
+				} else {
+					$data = $obj->GetServices()->GetResponseData($post[Services::PPARAM_ACT], array());
+				}
 				if($data != null) {
 					$response = new ServiceResponse($data);
 				} else {
-					$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_ACT, "Action is missing.");	
+					$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_ACT, "Action and/or params is missing.");	
 				}
 			} else {
 				$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_OBJ, "Object is missing.");
