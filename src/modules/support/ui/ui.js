@@ -91,10 +91,9 @@ var DoleticUIModule = new function() {
 		if(data.code == 0) {
 			// create content var to build html
 			var content = "";
-			var json = JSON.parse(data.data);
 			// iterate over values to build options
-			for (var i = 0; i < json.length; i++) {
-				content += "<option value=\""+(i+1)+"\">"+json[i]+"</option>\n";
+			for (var i = 0; i < data.data.length; i++) {
+				content += "<option value=\""+(i+1)+"\">"+data.data[i]+"</option>\n";
 			};
 			// insert html content
 			$('#category').html(content);
@@ -109,12 +108,11 @@ var DoleticUIModule = new function() {
 		if(data.code == 0) {
 			// create content var to build html
 			var content = "";
-			var json = JSON.parse(data.data);
 			// iterate over values to build options
-			for (var i = 0; i < json.length; i++) {
+			for (var i = 0; i < data.data.length; i++) {
 				var status, popup_selector;
 				var id = "popup_trigger_"+i;
-				switch (json[i].status_id) {
+				switch (data.data[i].status_id) {
 				  case "1":
 				  	status = "red radio";
 				  	popup_selector = "#open_popup";
@@ -134,8 +132,8 @@ var DoleticUIModule = new function() {
 				content += "<div class=\"item\"> \
 							  <i id=\""+id+"\" class=\""+status+" big icon link\"></i> \
 							  <div class=\"middle aligned content\"> \
-							    <a class=\"header\">"+json[i].subject+"</a> \
-							    <div class=\"description\">"+json[i].data+"</div>  \
+							    <a class=\"header\">"+data.data[i].subject+"</a> \
+							    <div class=\"description\">"+data.data[i].data+"</div>  \
 							  </div> \
 							  <script>$('#"+id+"').popup({popup:'"+popup_selector+"'});</script> \
 							</div>";

@@ -25,6 +25,12 @@ var DoleticMasterInterface = new function() {
     // for each module call render function
     var htmlNode = document.getElementById(this.module_container_id);
     if(DoleticUIModule != null) {
+      if(DoleticUIModule.super.meta.name != 'Login_UIModule' && 
+         DoleticUIModule.super.meta.name != 'Logout_UIModule' &&
+         DoleticUIModule.super.meta.name != '404_UIModule') {
+        // fill module submenu
+        DoleticServicesInterface.availableModuleLinks(DoleticMasterInterface.fillModuleSubmenu);
+      }
     // DEBUG message -----------------------------------------
     //console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticUIModule.super.meta.name);
     // -----------------------------------------------------------
@@ -45,10 +51,13 @@ var DoleticMasterInterface = new function() {
    *  Build Doletic common ui
    */
   this.build = function() {
-    var html = "<div id=\"left_menu\" class=\"ui visible sidebar vertical menu fixed\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
+    var html = "<div id=\"left_menu\" class=\"ui vertical sticky menu fixed top\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
                   <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.getUIHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
                   <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.getUILogout();\"><i class=\"power icon\"></i>Déconnexion</a> \
                   <a id=\"menu_preferences_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showSettingsModal();\"><i class=\"settings icon\"></i>Préférences</a> \
+                  <div id=\"module_submenu\" class=\"item\"> \
+                    <!-- MODULES LINKS WILL GO HERE --> \
+                  </div> \
                   <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>À propos de Doletic</a> \
                 </div> \
                 <div class=\"pusher\" style=\"margin-left: 60px;\"> \
@@ -229,6 +238,35 @@ var DoleticMasterInterface = new function() {
   this.showSuccess = function(title, msg) { this.showMessage('success', title, msg); }
   this.showWarn = function(title, msg) { this.showMessage('warning', title, msg); }
   this.showError = function(title, msg) { this.showMessage('negative', title, msg); }
+  /**
+   *  Fills submodules submenu
+   */
+  this.fillModuleSubmenu = function(data) {
+    // if no service error
+    if(data.code == 0) {
+      // create content var to build html
+      var content = "";
+      var json = JSON.parse(data.data);
+      // iterate over values to build options
+      for (var i = 0; i < json.length; i++) {
+        content += "<div> \
+                      <div class=\"header\">"+json[i][0]+"</div> \
+                        <div class=\"menu\">\n";
+        for (var j = 0; j < json[i][1].length; j++) {
+          content += "    <a class=\"item\" onClick=\"DoleticServicesInterface.getUI('"+json[i][1][j][1]+"');\">"+json[i][1][j][0]+"</a>\n";
+          
+        };
+        content += "    </div> \
+                      </div> \
+                    </div>";
+      };
+      // insert html content
+      $('#module_submenu').html(content);
+    } else {
+      // use default service service error handler
+      DoleticServicesInterface.handleServiceError(data);
+    }             
+  }
 
 }
 

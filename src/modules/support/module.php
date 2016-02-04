@@ -20,6 +20,9 @@ class SupportModule extends AbstractModule {
 			);
 		// -- add module specific dbo objects
 		parent::addDBObject(new TicketDBObject());
+		// -- add module specific ui
+		parent::addUI('Mes tickets','ui'); 	// refer to couple (ui.js, ui.css)
+		parent::addUI('Admin tickets','admin');	// refer to couple (admin.js, admin.css)
 	}
 
 }

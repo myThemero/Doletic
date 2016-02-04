@@ -1,7 +1,7 @@
 <?php
 
 require_once "DoleticKernel.php";
-require_once "../services/Services.php";
+require_once "services/Services.php";
 
 /**
  *	@warning all displayXXX and service function exit script after their execution

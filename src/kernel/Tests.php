@@ -2,11 +2,15 @@
 
 require_once "interfaces/AbstractScript.php";
 require_once "DoleticKernel.php";
+require_once "services/Services.php";
 
 
 //________________________________________________________________________________________________________________________
 // ------------- declare script functions --------------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------------------------------
+//	DATABASE RELATED TEST FUNCTIONS
+// ---------------------------------------------------------------------------------------------------
 class DBClearTestFunction extends AbstractFunction {
 	public function __construct($script) {
 		parent::__construct($script, 
@@ -70,6 +74,9 @@ class DBUpdateTestFunction extends AbstractFunction {
 		parent::info("-- test - ends --");
 	}
 }
+// ---------------------------------------------------------------------------------------------------
+//	DATABASE OBJECTS RELATED TEST FUNCTIONS
+// ---------------------------------------------------------------------------------------------------
 class DBObjectTicketTestFunction extends AbstractFunction {
 	public function __construct($script) {
 		parent::__construct($script, 
@@ -271,6 +278,9 @@ class DBObjectUploadTestFunction extends AbstractFunction {
 		parent::info("-- test - ends --");
 	}
 }
+// ---------------------------------------------------------------------------------------------------
+//	USER INTERFACE RELATED TEST FUNCTIONS
+// ---------------------------------------------------------------------------------------------------
 class UITestFunction extends AbstractFunction {
 	public function __construct($script) {
 		parent::__construct($script, 
@@ -292,6 +302,54 @@ class UITestFunction extends AbstractFunction {
 		echo $kernel->GetInterface(UIManager::INTERFACE_HOME);
 		// -- unknown ui
 		echo $kernel->GetInterface("unknown:strange:ui");
+		// ----------- end --------------
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
+	}
+}
+class UILinksTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'UI Links Test', 
+			'-uil', 
+			'--test-ui-links', 
+			"Test kernel user interface links getter.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
+		// --------- content ------------
+		var_dump($kernel->GetModuleUILinks());
+		// ----------- end --------------
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
+	}
+}
+// ---------------------------------------------------------------------------------------------------
+//	SERVICES RELATED TEST FUNCTIONS
+// ---------------------------------------------------------------------------------------------------
+class ServiceUILinksTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'Service UI Links Test', 
+			'-suil', 
+			'--test-service-ui-links', 
+			"Test kernel user interface links service.");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
+		$services = new Services($kernel); // create services
+		// --------- content ------------
+		echo $services->Response(array(
+			Services::PPARAM_OBJ => "service", 
+			Services::PPARAM_ACT => "uilinks"), true);
 		// ----------- end --------------
 		$kernel->DisconnectDB();
 		$kernel = null;
@@ -320,6 +378,9 @@ class TestScript extends AbstractScript {
 		parent::addFunction(new DBObjectUploadTestFunction($this));
 		// ----- kernel ui related tests
 		parent::addFunction(new UITestFunction($this));
+		parent::addFunction(new UILinksTestFunction($this));
+		// ----- service tests
+		parent::addFunction(new ServiceUILinksTestFunction($this));
 	}
 }
 

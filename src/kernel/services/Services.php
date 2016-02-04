@@ -41,7 +41,7 @@ class ServiceResponse implements \JsonSerializable {
        return [
            'code' => $this->code,
            'error' => $this->err_string,
-           'data' => json_encode($this->data)];
+           'data' => $this->data];
    	}
 }
 
@@ -59,6 +59,7 @@ class Services {
 	const OBJ_SERVICE 		= "service";
 	// --- high-level services
 	const SERVICE_UPLOAD 	= "upload";
+	const SERVICE_UI_LINKS	= "uilinks";
 	// --- params keys
 	const PKEY_FNAME		= "filename";
 	// --- upload related consts
@@ -84,12 +85,14 @@ class Services {
 
 // --------------------------------- GLOBAL Services entry points ----------------------------------------------------------
 
-	public function Response($post = array()) {
+	public function Response($post = array(), $pretty = false) {
 		// first check check if object requested is service for high-level services
 		if($post[Services::PPARAM_OBJ] === Services::OBJ_SERVICE) {
 			// find which service is called
 			if($post[Services::PPARAM_ACT] === Services::SERVICE_UPLOAD) {
 				$response = $this->__service_upload($post);
+			} else if($post[Services::PPARAM_ACT] === Services::SERVICE_UI_LINKS) {
+				$response = $this->__service_uis();
 			} else {
 				$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
 			}
@@ -121,8 +124,14 @@ class Services {
 				$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_OBJ, "Object is missing.");
 			}
 		}
-		// return response
-		return json_encode($response);
+		// return response encoded to json
+		$json = "";
+		if ($pretty) {
+			$json = json_encode($response, JSON_PRETTY_PRINT)."\n";
+		} else {
+			$json = json_encode($response);
+		}
+		return $json;
 	}
 	/**
 	 *	Return service default response -> it's always an error linked with query parameters
@@ -134,7 +143,6 @@ class Services {
 
 // --------------------------------- HIGH-LEVEL Services ---------------------------------------------------------------------
 
-	/// \todo test upload service
 	private function __service_upload($post) {
 		// initialize response with null
 		$response = null;	
@@ -229,5 +237,11 @@ class Services {
 		// return response
 		return $response;
 	}
+
+	private function __service_uis() {
+		// return response
+		return new ServiceResponse($this->kernel->GetModuleUILinks());
+	}
+
 
 }

@@ -97,6 +97,12 @@ var DoleticServicesInterface = new function() {
       });
   }
   /**
+   *  Require list of available uis from the server
+   */
+  this.availableModuleLinks = function(successHandler) {
+    this.callService('service','uilinks', {}, successHandler);
+  }
+  /**
    *  Make an AJAX call to Doletic services to retrieve some data
    */
   this.callService = function(object, action, params, successHandler) {

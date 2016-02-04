@@ -72,13 +72,13 @@ class DoleticKernel {
 		 	$this->module_ldr->Init();
 		 	$this->__info("Module Loader initialized.");
 		 	// -7- initialize db objects loader (load db objects including modules db objects)
-		 	$this->dbobject_ldr->Init($this->module_ldr->GetModulesDBObjects());
+		 	$this->dbobject_ldr->Init($this->module_mgr->GetModulesDBObjects());
 		 	$this->__info("Database Object Loader initialized.");
 		 	// -8- initialize authentication manager
 		 	$this->authentication_mgr->Init();
 		 	$this->__info("Authentication Manager initialized.");
 		 	// -9- initialize UI manager
-		 	$this->ui_mgr->Init($this->module_ldr->GetModulesJSServices());
+		 	$this->ui_mgr->Init($this->module_mgr->GetModulesJSServices());
 		 	$this->__info("User Interface Manager initialized.");
 		 	
 		 	// -- set initialized flag
@@ -119,7 +119,13 @@ class DoleticKernel {
 	}
 
 	// --- ui management ---------------------------------------------------------------------
-
+	
+	/**
+	 *	Returns ui list
+	 */
+	public function GetModuleUILinks() { 
+		return $this->module_mgr->GetModuleUILinks();
+	}
 	/**
 	 *	Returns the HTML page required
 	 */
@@ -132,7 +138,7 @@ class DoleticKernel {
 			$page = $this->ui_mgr->MakeSpecialUI($ui); // affect page content with special content
 		} else { // page is not special, search for a module
 			$exploded = explode(':', $ui);
-			$module = $this->module_ldr->GetModule($exploded[0]);
+			$module = $this->module_mgr->GetModule($exploded[0]);
 			$found = false;										// initialize found flag down
 			if($module != null) {								// if module exists
 				$js = $module->GetJS($exploded[1]);				// retrieve js array
