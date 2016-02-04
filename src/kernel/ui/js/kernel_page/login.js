@@ -27,8 +27,8 @@ var DoleticUIModule = new function() {
 					      <label>Mot de passe</label> \
 					      <input id=\"pass_input\" placeholder=\"mot de passe\" name=\"password\" type=\"password\" onKeyPress=\"if(event.keyCode == 13) { DoleticUIModule.checkLoginFormInputs(); }\"> \
 						</div> \
-  						<div class=\"ui green button\" onClick=\"DoleticUIModule.checkLoginFormInputs();\">Valider</div> \
-  						<div class=\"ui right floated button\" onClick=\"DoleticUIModule.resetLoginForm();\">Reset</div> \
+  						<div class=\"ui green button\" onClick=\"DoleticUIModule.checkLoginFormInputs();\">Connexion</div> \
+  						<div class=\"ui right floated button\" onClick=\"DoleticUIModule.resetLoginForm();\">Effacer</div> \
 					  </form> \
 					</div> \
 				   </div> \

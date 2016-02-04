@@ -114,27 +114,31 @@ class DefaultHelpFunction extends AbstractFunction {
 abstract class AbstractScript {
 
 	// -- attributes
-	private $name;
-	private $arg_c;
-	private $arg_v;
-	private $require_opts;
-	private $functions;
-	private $flags;
-	private $opt_translation_table;
-	private $description;
+	private $name;					// script's name
+	private $description;			// script's description
+	private $arg_c;					// arguments count
+	private $arg_v;					// arguments vector
+	private $require_opts;  		// flag used to specify if script can be run without arguments or not
+	private $functions;				// functions = array('<short_arg>', array(<AbstractFunction>, ...))
+	private $flags;					// internal script flags
+	private $opt_translation_table; // translation table = array('<long_arg>', '<short_arg>')
+	private $excluded;				// excluded short args of run all
 	// -- functions
 
 	public function __construct($argV, $name, $requireOpts = true, $description = "no-script-description") {
 		// -- intialize attributes
 		$this->name = $name;
+		$this->description = $description;
+		$this->arg_c = sizeof($argV);
 		$this->arg_v = $argV;
 		$this->require_opts = $requireOpts;
-		$this->arg_c = sizeof($argV);
-		$this->opt_translation_table = array();
 		$this->functions = array();
-		$this->description = $description;
+		$this->flags = array();
+		$this->opt_translation_table = array();
 		// -- add default functions
-		$this->addFunction(new DefaultHelpFunction($this));
+		$h_f = new DefaultHelpFunction($this);
+		$this->addFunction($h_f);
+		$this->excluded = array($h_f->GetShortOpt());
 	}
 
 	/**
@@ -237,9 +241,11 @@ abstract class AbstractScript {
 	 *	This function run all script functions
 	 */
 	private function __run_all() {
-		foreach ($this->functions as $functions) {
-			foreach ($functions as $f) {
-				$f->Execute();
+		foreach ($this->functions as $key => $functions) {
+			if(!in_array($key, $this->excluded)) {
+				foreach ($functions as $f) {
+					$f->Execute();
+				}
 			}
 		}
 	}

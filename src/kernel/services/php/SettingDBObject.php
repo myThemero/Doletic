@@ -75,8 +75,8 @@ class SettingServices extends AbstractObjectServices {
 	// -- functions
 
 	// -- construct
-	public function __construct($dbObject, $dbConnection) {
-		parent::__construct($dbObject, $dbConnection);
+	public function __construct($currentUser, $dbObject, $dbConnection) {
+		parent::__construct($currentUser, $dbObject, $dbConnection);
 	}
 
 	public function GetResponseData($action, $params) {
@@ -238,15 +238,15 @@ class SettingDBObject extends AbstractDBObject {
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
-	public function GetServices() {
-		return new SettingServices($this, $this->getDBConnection());
+	public function GetServices($currentUser) {
+		return new SettingServices($currentUser, $this, $this->getDBConnection());
 	}
 
 	/**
 	 *	Initialize static data
 	 */
 	public function ResetStaticData() {
-		$services = new SettingServices($this, $this->getDBConnection());
+		$services = new SettingServices(null, $this, $this->getDBConnection());
 		$services->ResetStaticData();
 	}
 

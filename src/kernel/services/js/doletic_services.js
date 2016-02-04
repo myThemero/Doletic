@@ -10,6 +10,14 @@ var DoleticServicesInterface = new function() {
    *  Global url to main script
    */
   this.doleticMainURL = 'http://localhost/src/kernel/Main.php';
+  this.serviceErrors = [
+  'ERR_NO_ERROR',
+  'ERR_MISSING_PARAMS',
+  'ERR_MISSING_OBJ',
+  'ERR_MISSING_ACT',
+  'ERR_MISSING_SERVICE',
+  'ERR_SERVICE_FAILED'
+  ];
   /**
    *  Loads a standard Doletic page using ui parameter 
    */
@@ -89,18 +97,6 @@ var DoleticServicesInterface = new function() {
       });
   }
   /**
-   *
-   */
-  this.getAll = function(object, action, successHandler) {
-
-  }
-  /**
-   *
-   */
-  this.getById = function(id, object, action, successHandler) {
-    
-  }
-  /**
    *  Make an AJAX call to Doletic services to retrieve some data
    */
   this.callService = function(object, action, params, successHandler) {
@@ -138,10 +134,22 @@ var DoleticServicesInterface = new function() {
    */
    this.handleAJAXError = function(jqXHR, textStatus, errorThrown) {
     // Show an error message on doletic interface
-        DoleticMasterInterface.showError("L'appel AJAX a échoué !", "<p>L'appel AJAX d'authentification à échoué ! Détails : " + errorThrown + " ("+textStatus+")</p>");
+        DoleticMasterInterface.showError("L'appel AJAX a échoué !", 
+          "<p>L'appel AJAX d'authentification à échoué ! Détails : " + errorThrown + " ("+textStatus+")</p>");
         // Debug the response content
         console.debug(jqXHR.responseText);
    }
-
+   /**
+    *  Service error
+    */
+    this.handleServiceError = function(data) {
+      if(data.code < this.serviceErrors.length) {
+        DoleticMasterInterface.showError("Le service a renvoyé une erreur !", 
+          "<p>Erreur : "+this.serviceErrors[data.code]+"</p>");
+      } else {
+        DoleticMasterInterface.showError("Le service a renvoyé une erreur !", 
+          "<p>Une erreur inconnue s'est produite lors de l'appel au service. Merci de prévenir les développeurs.</p>");
+      }
+    }
 }
 

@@ -5,18 +5,19 @@ require_once "interfaces/AbstractObjectServices.php";
 require_once "objects/DBTable.php"; 
 
 /**
- *	@brief The Xxxx class
+ *	@brief The Template class
  */
-class Xxxx implements \JsonSerializable {
+class Template implements \JsonSerializable {
 	
 	// -- consts
 
 	// -- attributes
+	// --- persistent
 	private $id;
 	...
 
 	/**
-	*	@brief Constructs a xxxx
+	*	@brief Constructs a template
 	*/
 	public function __construct($id, ...) {
 		$this->id = $id;
@@ -25,53 +26,56 @@ class Xxxx implements \JsonSerializable {
 
 	public function jsonSerialize() {
 		return [
-			XxxxDBObject::COL_ID => $this->id,
+			TemplateDBObject::COL_ID => $this->id,
 			...
 		];
 	}
 
 	/**
-	*	@brief Returns Xxxx id
+	*	@brief Returns template id
+	*	@return string
 	*/
 	public function GetId() {
 		return $this->id;
 	}
-
 	...
 }
 
 
-class XxxxServices extends AbstractObjectServices {
+class TemplateServices extends AbstractObjectServices {
 
 	// -- consts
 	// --- params keys
 	const PARAM_ID 		= "id";
 	...
 	// --- internal services (actions)
-	const GET_XXXX_BY_ID 	= "byid";
-	const GET_ALL_XXXX 		= "all";
-	const INSERT			= "insert";
-	const UPDATE			= "update";
-	const DELETE			= "delete";
+	const GET_TEMPLATE_BY_ID   = "byid";
+	const GET_ALL_TEMPLATES 	 = "all";
+	const INSERT			 = "insert";
+	const UPDATE			 = "update";
+	const DELETE			 = "delete";
 	// -- functions
 
 	// -- construct
-	public function __construct($dbObject, $dbConnection) {
-		parent::__construct($dbObject, $dbConnection);
+	public function __construct($currentUser, $dbObject, $dbConnection) {
+		parent::__construct($currentUser, $dbObject, $dbConnection);
 	}
 
 	public function GetResponseData($action, $params) {
 		$data = null;
-		if(!strcmp($action, XxxxServices::GET_XXXX_BY_ID)) {
-			$data = $this->__get_xxxx_by_id($params[XxxxServices::PARAM_ID]);
-		} else if(!strcmp($action, XxxxServices::GET_ALL_XXXXS)) {
-			$data = $this->__get_all_xxxxs();
-		} else if(!strcmp($action, XxxxServices::INSERT)) {
-			$data = $this->__insert_xxxx($params[XxxxServices::PARAM_ID], ...);
-		} else if(!strcmp($action, XxxxServices::UPDATE)) {
-			$data = $this->__update_xxxx($params[XxxxServices::PARAM_ID], ...);
-		} else if(!strcmp($action, XxxxServices::DELETE)) {
-			$data = $this->__delete_xxxx($params[XxxxServices::PARAM_ID]);
+		if(!strcmp($action, TemplateServices::GET_TEMPLATE_BY_ID)) {
+			$data = $this->__get_template_by_id($params[TemplateServices::PARAM_ID]);
+		} else if(!strcmp($action, TemplateServices::GET_ALL_TEMPLATES)) {
+			$data = $this->__get_all_templates();
+		} else if(!strcmp($action, TemplateServices::INSERT)) {
+			$data = $this->__insert_template(
+				...);
+		} else if(!strcmp($action, TemplateServices::UPDATE)) {
+			$data = $this->__update_template(
+				$params[TemplateServices::PARAM_ID],
+				...);
+		} else if(!strcmp($action, TemplateServices::DELETE)) {
+			$data = $this->__delete_template($params[TemplateServices::PARAM_ID]);
 		}
 		return $data;
 	}
@@ -80,90 +84,93 @@ class XxxxServices extends AbstractObjectServices {
 
 	// -- consult
 
-	private function __get_xxxx_by_id($id) {
+	private function __get_template_by_id($id) {
 		// create sql params array
-		$sql_params = array(":".XxxxDBObject::COL_ID => $id);
+		$sql_params = array(":".TemplateDBObject::COL_ID => $id);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(XxxxDBObject::COL_ID));
+		$sql = parent::getDBObject()->GetTable(TemplateDBObject::TABL_TEMPLATE)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(TemplateDBObject::COL_ID));
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create xxxx var
-		$xxxx = null;
+		// create template var
+		$template = null;
 		if($pdos != null) {
 			if( ($row = $pdos->fetch()) !== false) {
-				$xxxx = new Xxxx(
-					$row[XxxxDBObject::COL_ID], 
-					$row[XxxxDBObject::COL_XXXXNAME], 
-					$row[XxxxDBObject::COL_LAST_CON_TSMP], 
-					$row[XxxxDBObject::COL_SIGNUP_TSMP]);
+				$template = new Template(
+					$row[TemplateDBObject::COL_ID], 
+					...);
 			}
 		}
-		return $xxxx;
+		return $template;
 	}
 
-	private function __get_all_xxxxs() {
+	private function __get_all_templates() {
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetSELECTQuery();
+		$sql = parent::getDBObject()->GetTable(TemplateDBObject::TABL_TEMPLATE)->GetSELECTQuery();
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
-		// create an empty array for xxxx and fill it
-		$xxxxs = array();
+		// create an empty array for templates and fill it
+		$templates = array();
 		if($pdos != null) {
 			while( ($row = $pdos->fetch()) !== false) {
-				array_push($xxxxs, new Xxxx(
-					$row[XxxxDBObject::COL_ID], 
+				array_push($templates, new Template(
+					$row[TemplateDBObject::COL_ID], 
 					...));
 			}
 		}
-		return $xxxxs;
+		return $templates;
 	}
 
 	// -- modify
 
-	private function __insert_xxxx(...) {
+	private function __insert_template($name, $version, $authors, $dependencies, $enabled) {
 		// create sql params
 		$sql_params = array(
-			":".XxxxDBObject::COL_ID => "NULL",
+			":".TemplateDBObject::COL_ID => "NULL",
 			...);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetINSERTQuery();
+		$sql = parent::getDBObject()->GetTable(TemplateDBObject::TABL_TEMPLATE)->GetINSERTQuery();
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	} 
 
-	private function __update_xxxx($id, ...) {
+	private function __update_template($id, $name, $version, $authors, $dependencies, $enabled) {
 		// create sql params
 		$sql_params = array(
-			":".XxxxDBObject::COL_ID => $id,
-			....);
+			":".TemplateDBObject::COL_ID => $id,
+			...);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetUPDATEQuery();
+		$sql = parent::getDBObject()->GetTable(TemplateDBObject::TABL_TEMPLATE)->GetUPDATEQuery();
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function __delete_xxxx($id) {
+	private function __delete_template($id) {
 		// create sql params
-		$sql_params = array(":".XxxxDBObject::COL_ID => $id);
+		$sql_params = array(":".TemplateDBObject::COL_ID => $id);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(XxxxDBObject::TABL_XXXX)->GetDELETEQuery();
+		$sql = parent::getDBObject()->GetTable(TemplateDBObject::TABL_TEMPLATE)->GetDELETEQuery();
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
+# PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
+
+	public function ResetStaticData() {
+		// default templates if needed
+	}
 }
 
 /**
- *	@brief Xxxx object interface
+ *	@brief Template object interface
  */
-class XxxxDBObject extends AbstractDBObject {
+class TemplateDBObject extends AbstractDBObject {
 
 	// -- consts
 	// --- object name
-	const OBJ_NAME = "xxxx";
+	const OBJ_NAME = "template";
 	// --- tables
-	const TABL_XXXX = "dol_xxxx";
+	const TABL_TEMPLATE = "dol_template";
 	// --- columns
 	const COL_ID = "id";
 	...
@@ -171,24 +178,32 @@ class XxxxDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct(&$dbConnection) {
+	public function __construct() {
 		// -- construct parent
-		parent::__construct($dbConnection, "xxxx");
+		parent::__construct(TemplateDBObject::OBJ_NAME);
 		// -- create tables
-		// --- dol_xxxx table
-		$dol_xxxx = new DBTable(XxxxDBObject::TABL_XXXX);
-		$dol_xxxx->AddColumn(XxxxDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		....
+		// --- dol_template table
+		$dol_template = new DBTable(TemplateDBObject::TABL_TEMPLATE);
+		$dol_template->AddColumn(TemplateDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		...
 
 		// -- add tables
-		parent::addTable($dol_xxxx);
+		parent::addTable($dol_template);
 	}
 
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
-	public function GetServices() {
-		return new XxxxServices($this, $this->getDBConnection());
+	public function GetServices($currentUser) {
+		return new TemplateServices($currentUser, $this, $this->getDBConnection());
+	}
+
+	/**
+	 *	Initialize static data
+	 */
+	public function ResetStaticData() {
+		$services = new TemplateServices(null, $this, $this->getDBConnection());
+		$services->ResetStaticData();
 	}
 
 }

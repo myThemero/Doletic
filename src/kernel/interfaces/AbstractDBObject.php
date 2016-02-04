@@ -62,7 +62,7 @@ abstract class AbstractDBObject {
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
-	abstract public function GetServices();
+	abstract public function GetServices($currentUserId);
 	/**
 	 *	@brief Drops and recreate static data tables related to this object
 	 *

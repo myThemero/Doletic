@@ -47,9 +47,9 @@ var DoleticMasterInterface = new function() {
   this.build = function() {
     var html = "<div id=\"left_menu\" class=\"ui visible sidebar vertical menu fixed\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
                   <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.getUIHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
-                  <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.getUILogout();\"><i class=\"power icon\"></i>Logout</a> \
+                  <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.getUILogout();\"><i class=\"power icon\"></i>Déconnexion</a> \
                   <a id=\"menu_preferences_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showSettingsModal();\"><i class=\"settings icon\"></i>Préférences</a> \
-                  <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>About Doletic</a> \
+                  <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>À propos de Doletic</a> \
                 </div> \
                 <div class=\"pusher\" style=\"margin-left: 60px;\"> \
                   <div class=\"ui container\"> \

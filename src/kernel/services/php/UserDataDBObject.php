@@ -173,8 +173,8 @@ class UserDataServices extends AbstractObjectServices {
 	// -- functions
 
 	// -- construct
-	public function __construct($dbObject, $dbConnection) {
-		parent::__construct($dbObject, $dbConnection);
+	public function __construct($currentUser, $dbObject, $dbConnection) {
+		parent::__construct($currentUser, $dbObject, $dbConnection);
 	}
 
 	public function GetResponseData($action, $params) {
@@ -725,15 +725,15 @@ class UserDataDBObject extends AbstractDBObject {
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
-	public function GetServices() {
-		return new UserDataServices($this, $this->getDBConnection());
+	public function GetServices($currentUser) {
+		return new UserDataServices($currentUser, $this, $this->getDBConnection());
 	}
 
 	/**
 	 *	Initialize static data
 	 */
 	public function ResetStaticData() {
-		$services = new UserDataServices($this, $this->getDBConnection());
+		$services = new UserDataServices(null, $this, $this->getDBConnection());
 		$services->ResetStaticData();
 	}
 

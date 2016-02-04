@@ -98,8 +98,8 @@ class DoleticKernel {
 		return $this->authentication_mgr->AuthenticateUser($username, $hash);
 	}
 
-	public function GetUserId() {
-		return $this->authentication_mgr->GetUserId();
+	public function GetCurrentUser() {
+		return $this->authentication_mgr->GetCurrentUser();
 	}
 
 	// --- log management --------------------------------------------------------------------

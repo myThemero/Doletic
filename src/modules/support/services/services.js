@@ -49,25 +49,22 @@ var TicketServicesInterface = new function() {
             successHandler); 
   }
 
-  this.insert = function(senderId, receiverId, subject, categoryId, data, statusId, successHandler) {
+  this.insert = function(receiverId, subject, categoryId, data, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT, 
             {
-              senderId:senderId,
               receiverId:receiverId,
               subject:subject,
               categoryId:categoryId,
-              data:data,
-              statusId:statusId
+              data:data
             }, 
             successHandler); 
   }
-  this.update = function(id, senderId, receiverId, subject, categoryId, data, statusId, successHandler) {
+  this.update = function(id, receiverId, subject, categoryId, data, statusId, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE, 
             {
               id:id,
-              senderId:senderId,
               receiverId:receiverId,
               subject:subject,
               categoryId:categoryId,

@@ -85,7 +85,7 @@ class DBObjectTicketTestFunction extends AbstractFunction {
 		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		// insert
-		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(TicketServices::INSERT, array(
 								TicketServices::PARAM_SENDER => 0,
 								TicketServices::PARAM_RECEIVER => 1,
@@ -95,11 +95,11 @@ class DBObjectTicketTestFunction extends AbstractFunction {
 								TicketServices::PARAM_STATUS => 3));
 		var_dump($data);
 		// get all
-		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(TicketServices::GET_ALL_TICKETS, array());
 		var_dump($data);
 		// update
-		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(TicketServices::UPDATE, array(
 								TicketServices::PARAM_ID => 1,
 								TicketServices::PARAM_SENDER => -1,
@@ -110,12 +110,12 @@ class DBObjectTicketTestFunction extends AbstractFunction {
 								TicketServices::PARAM_STATUS => -1));
 		var_dump($data);
 		// get by id
-		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(TicketServices::GET_TICKET_BY_ID, array(
 								TicketServices::PARAM_ID => 1));
 		var_dump($data);
 		// archive
-		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(TicketServices::ARCHIVE, array(
 								TicketServices::PARAM_ID => 1));
 		var_dump($data);
@@ -140,23 +140,23 @@ class DBObjectUserTestFunction extends AbstractFunction {
 		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		// insert
-		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(UserServices::INSERT, array(
 								UserServices::PARAM_UNAME => "user.test",
 								UserServices::PARAM_HASH => "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8")); // sha1("password");
 		var_dump($data);
 		// get all
-		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(UserServices::GET_ALL_USERS, array());
 		var_dump($data);
 		// update
-		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(UserServices::UPDATE, array(
 								UserServices::PARAM_ID => 1,
 								UserServices::PARAM_HASH => "6184d6847d594ec75c4c07514d4bb490d5e166df"));	// sha1("blank");
 		var_dump($data);
 		// get by id
-		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 							->GetResponseData(UserServices::GET_USER_BY_ID, array(
 								UserServices::PARAM_ID => 1));
 		var_dump($data);
@@ -244,24 +244,24 @@ class DBObjectUploadTestFunction extends AbstractFunction {
 		$kernel->ConnectDB();			// connect database
 		// --------- content ------------
 		// insert
-		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 					->GetResponseData(UploadServices::INSERT, array(
 		    			UploadServices::PARAM_USER_ID => 1,
 		    			UploadServices::PARAM_FNAME => 'fakefile.pdf',
 		    			UploadServices::PARAM_STOR_FNAME => '/fake_2016_01_27_17_55_30.pdf'));
 		var_dump($data);
 		// get all
-		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 					->GetResponseData(UploadServices::GET_ALL_UPLOADS, array());
 		var_dump($data);
 		// update
-		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 					->GetResponseData(UploadServices::UPDATE, array(
 						UploadServices::PARAM_ID => 1,
 						UploadServices::PARAM_FNAME => "fakefile_renamed.pdf"));
 		var_dump($data);
 		// get by id
-		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+		$data = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 					->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
 						UploadServices::PARAM_ID => 1));
 		var_dump($data);

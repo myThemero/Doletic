@@ -102,9 +102,15 @@ class Services {
 			if($obj != null) {
 				// retreive response data
 				if(array_key_exists(Services::PPARAM_PARAMS, $post)) {
-					$data = $obj->GetServices()->GetResponseData($post[Services::PPARAM_ACT], $post[Services::PPARAM_PARAMS]);
+					$data = $obj->GetServices($this->kernel->GetCurrentUser())
+								->GetResponseData(
+									$post[Services::PPARAM_ACT], 
+									$post[Services::PPARAM_PARAMS]);
 				} else {
-					$data = $obj->GetServices()->GetResponseData($post[Services::PPARAM_ACT], array());
+					$data = $obj->GetServices($this->kernel->GetCurrentUser())
+								->GetResponseData(
+									$post[Services::PPARAM_ACT], 
+									array());
 				}
 				if($data != null) {
 					$response = new ServiceResponse($data);
@@ -192,15 +198,15 @@ class Services {
 
 		    $id = null;
 		    $upload_params = array(
-		    			UploadServices::PARAM_USER_ID => $this->kernel->GetUserId(),
+		    			UploadServices::PARAM_USER_ID => $this->kernel->GetCurrentUser()->GetId(),
 		    			UploadServices::PARAM_FNAME => $filename,
 		    			UploadServices::PARAM_STOR_FNAME => $destfname);
 		    // write upload in database and retrieve its id
-		    if($this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+		    if($this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 		    	->GetResponseData(UploadServices::INSERT, $upload_params)) 
 		    {
 		    	// retrieve user
-		    	$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices()
+		    	$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 		    				->GetResponseData(UploadServices::GET_UPLOAD_BY_STOR_FNAME, array(
 		    					UploadServices::PARAM_STOR_FNAME => $destfname));
 		    	if($upload != null) {

@@ -2,7 +2,8 @@
 
 abstract class AbstractObjectServices {
 
-	// -- attributes 
+	// -- attributes
+	private $current_user;
 	private $db_object;
 	private $db_connection;
 
@@ -14,9 +15,14 @@ abstract class AbstractObjectServices {
 
 # PROTECTED & PRIVATE ###################################################
 
-	protected function __construct(&$dbObject, &$dbConnection) {
+	protected function __construct(&$currentUser, &$dbObject, &$dbConnection) {
+		$this->current_user = $currentUser;
 		$this->db_object = $dbObject;
 		$this->db_connection = $dbConnection;
+	}
+
+	protected function getCurrentUser() {
+		return $this->current_user;
 	}
 
 	protected function getDBConnection() {

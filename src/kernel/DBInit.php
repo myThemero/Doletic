@@ -42,9 +42,8 @@ class FakeDataFunction extends AbstractFunction {
 		// --- fill tickets
 		parent::info("Filling ticket object related tables...", true);
 		// --------------------------------------------------------------
-		$kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices()
+		$kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 					->GetResponseData(TicketServices::INSERT, array(
-			"senderId" => 0,
 			"receiverId" => 1,
 			"subject" => "Test subject",
 			"categoryId" => 2,
@@ -55,20 +54,19 @@ class FakeDataFunction extends AbstractFunction {
 		// --- fill users
 		parent::info("Filling user object related tables...", true);
 		// --------------------------------------------------------------
-		$kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices()
+		$kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 					->GetResponseData(UserServices::INSERT, array(
 			"username" => "user.test",
-			"password" => sha1("password")));
+			"hash" => sha1("password")));
 		// --------------------------------------------------------------
 		parent::endlog("done !");
 		// --- fill userdata
 		parent::info("Filling userdata object related tables...", true);
 		// --------------------------------------------------------------
-		parent::warn("skipped !");
+		parent::endlog("skipped !");
 		// --------------------------------------------------------------
-		//DBInitializer::info("done !");
+		//parent::endlog("done !");
 		// --- disconnect database
-		parent::endlog("done !");
 		$kernel->DisconnectDB();
 		$kernel = null;
 		parent::info("-- fake data process ends --");

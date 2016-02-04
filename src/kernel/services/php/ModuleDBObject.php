@@ -109,8 +109,8 @@ class ModuleServices extends AbstractObjectServices {
 	// -- functions
 
 	// -- construct
-	public function __construct($dbObject, $dbConnection) {
-		parent::__construct($dbObject, $dbConnection);
+	public function __construct($currentUser, $dbObject, $dbConnection) {
+		parent::__construct($currentUser, $dbObject, $dbConnection);
 	}
 
 	public function GetResponseData($action, $params) {
@@ -304,15 +304,15 @@ class ModuleDBObject extends AbstractDBObject {
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
-	public function GetServices() {
-		return new ModuleServices($this, $this->getDBConnection());
+	public function GetServices($currentUser) {
+		return new ModuleServices($currentUser, $this, $this->getDBConnection());
 	}
 
 	/**
 	 *	Initialize static data
 	 */
 	public function ResetStaticData() {
-		$services = new ModuleServices($this, $this->getDBConnection());
+		$services = new ModuleServices(null, $this, $this->getDBConnection());
 		$services->ResetStaticData();
 	}
 
