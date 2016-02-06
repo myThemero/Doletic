@@ -57,6 +57,14 @@ var DoleticUIFactory = new function() {
     });
   }
 
+  this.padleft = function(string, size, c) {
+    return Array(Math.max(size - string.length + 1, 0)).join(c) + string;
+  }
+
+  this.padright = function(string, size, c) {
+    return string + Array(Math.max(size - string.length + 1, 0)).join(c);
+  }
+
 }
 
 // ----------------------------------- SOME PHP JS FUNCTIONS -----------------------------------

@@ -125,6 +125,12 @@ var DoleticServicesInterface = new function() {
     this.callService('service','uilinks', {}, successHandler);
   }
   /**
+   *
+   */
+  this.getCurrentUser = function(successHandler) {
+    this.callService('service', 'getuser', {}, successHandler);
+  }
+  /**
    *  Make an AJAX call to Doletic services to retrieve some data
    */
   this.callService = function(object, action, params, successHandler) {

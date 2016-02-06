@@ -246,7 +246,7 @@ var DoleticMasterInterface = new function() {
     if(data.code == 0) {
       // create content var to build html
       var content = "";
-      var json = JSON.parse(data.data);
+      var json = JSON.parse(data.object);
       // iterate over values to build options
       for (var i = 0; i < json.length && json[i].length == 2; i++) {
         content += "<div> \

@@ -377,7 +377,10 @@ class UserDataServices extends AbstractObjectServices {
 			// create an empty array for udata and fill it
 			if($pdos != null) {
 				if( ($row = $pdos->fetch()) !== false) {
-					$position = $row;
+					$position = array();
+					$position[UserDataDBObject::COL_ID] = $row[UserDataDBObject::COL_ID];
+					$position[UserDataDBObject::COL_LABEL] = $row[UserDataDBObject::COL_LABEL];
+					$position[UserDataDBObject::COL_RG_CODE] = $row[UserDataDBObject::COL_RG_CODE];
 				}
 			}
 		}

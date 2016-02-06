@@ -54,24 +54,41 @@ class FakeDataFunction extends AbstractFunction {
 		// --- fill users
 		parent::info("Filling user object related tables...", true);
 		// --------------------------------------------------------------
+		// SA account
 		$kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserServices::INSERT, array(
-			UserServices::PARAM_UNAME 	=> "john.doe",
+			UserServices::PARAM_UNAME 	=> "super-admin.doe",
+			UserServices::PARAM_HASH 	=> sha1("password")));
+		// A account
+		$kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserServices::INSERT, array(
+			UserServices::PARAM_UNAME 	=> "admin.doe",
+			UserServices::PARAM_HASH 	=> sha1("password")));
+		// U account
+		$kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserServices::INSERT, array(
+			UserServices::PARAM_UNAME 	=> "user.doe",
+			UserServices::PARAM_HASH 	=> sha1("password")));
+		// G account
+		$kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserServices::INSERT, array(
+			UserServices::PARAM_UNAME 	=> "guest.doe",
 			UserServices::PARAM_HASH 	=> sha1("password")));
 		// --------------------------------------------------------------
 		parent::endlog("done !");
 		// --- fill userdata
 		parent::info("Filling userdata object related tables...", true);
 		// --------------------------------------------------------------
+		// SA account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT, array(
 					UserDataServices::PARAM_USER_ID => 1,
 					UserDataServices::PARAM_GENDER_ID => 1,
-					UserDataServices::PARAM_FIRSTNAME => "John",
+					UserDataServices::PARAM_FIRSTNAME => "SuperAdmin",
 					UserDataServices::PARAM_LASTNAME => "Doe", 
 					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
 					UserDataServices::PARAM_TEL => "0600000000", 	
-					UserDataServices::PARAM_EMAIL => "john.doe@gmail.com",  
+					UserDataServices::PARAM_EMAIL => "super-admin.doe@gmail.com",  
 					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
 					UserDataServices::PARAM_COUNTRY_ID => 153,
 					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
@@ -80,7 +97,67 @@ class FakeDataFunction extends AbstractFunction {
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
 					UserDataServices::PARAM_USER_ID => 1,
-					UserDataServices::PARAM_POSITION_ID => 17
+					UserDataServices::PARAM_POSITION_ID => 6
+					));
+		// A account
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::INSERT, array(
+					UserDataServices::PARAM_USER_ID => 2,
+					UserDataServices::PARAM_GENDER_ID => 1,
+					UserDataServices::PARAM_FIRSTNAME => "Admin",
+					UserDataServices::PARAM_LASTNAME => "Doe", 
+					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
+					UserDataServices::PARAM_TEL => "0600000000", 	
+					UserDataServices::PARAM_EMAIL => "admin.doe@gmail.com",  
+					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
+					UserDataServices::PARAM_COUNTRY_ID => 153,
+					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
+					UserDataServices::PARAM_INSA_DEPT_ID => 10 
+						));
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
+					UserDataServices::PARAM_USER_ID => 2,
+					UserDataServices::PARAM_POSITION_ID => 1
+					));
+		// U account
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::INSERT, array(
+					UserDataServices::PARAM_USER_ID => 3,
+					UserDataServices::PARAM_GENDER_ID => 1,
+					UserDataServices::PARAM_FIRSTNAME => "User",
+					UserDataServices::PARAM_LASTNAME => "Doe", 
+					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
+					UserDataServices::PARAM_TEL => "0600000000", 	
+					UserDataServices::PARAM_EMAIL => "user.doe@gmail.com",  
+					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
+					UserDataServices::PARAM_COUNTRY_ID => 153,
+					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
+					UserDataServices::PARAM_INSA_DEPT_ID => 10 
+						));
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
+					UserDataServices::PARAM_USER_ID => 3,
+					UserDataServices::PARAM_POSITION_ID => 11
+					));
+		// G account
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::INSERT, array(
+					UserDataServices::PARAM_USER_ID => 4,
+					UserDataServices::PARAM_GENDER_ID => 1,
+					UserDataServices::PARAM_FIRSTNAME => "Guest",
+					UserDataServices::PARAM_LASTNAME => "Doe", 
+					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
+					UserDataServices::PARAM_TEL => "0600000000", 	
+					UserDataServices::PARAM_EMAIL => "guest.doe@gmail.com",  
+					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
+					UserDataServices::PARAM_COUNTRY_ID => 153,
+					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
+					UserDataServices::PARAM_INSA_DEPT_ID => 10 
+						));
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
+					UserDataServices::PARAM_USER_ID => 4,
+					UserDataServices::PARAM_POSITION_ID => 16
 					));
 		// --------------------------------------------------------------
 		parent::endlog("done !");

@@ -44,6 +44,10 @@ var DoleticUIModule = new function() {
 						    <div class=\"content\">Récupérer tous les utilisateurs</div> \
 						  </div> \
 						  <div class=\"item\"> \
+						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.getCurrentUser();\">Run</div></div> \
+						    <div class=\"content\">Récupérer l'utilisateur courrant</div> \
+						  </div> \
+						  <div class=\"item\"> \
 						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.getUserData();\">Run</div></div> \
 						    <div class=\"content\">Récupérer toutes les données utilisateur</div> \
 						  </div> \
@@ -119,7 +123,7 @@ var DoleticUIModule = new function() {
 		var content = "<b>Error code</b> : " + data.code + 
 				  "<br/><b>Error status</b> : " + data.error + 
 				  "<br/><b>Data</b> :<br/><pre><code class=\"code json\">" + 
-				  DoleticUIFactory.JSONSyntaxHighlight(data.data) + 
+				  DoleticUIFactory.JSONSyntaxHighlight(data.object) + 
 				  "</code></pre>";
 		$('#response_zone').html(content);
 	}
@@ -129,6 +133,9 @@ var DoleticUIModule = new function() {
 	}
 	this.getUsers = function() {
 		UserServicesInterface.getAll(DoleticUIModule.serviceSuccessHandler);
+	}
+	this.getCurrentUser = function() {
+		DoleticServicesInterface.getCurrentUser(DoleticUIModule.serviceSuccessHandler);
 	}
 	this.getUserData = function() {
 		UserDataServicesInterface.getAll(DoleticUIModule.serviceSuccessHandler);

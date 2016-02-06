@@ -208,10 +208,10 @@ var UserDataServicesInterface = new function() {
             successHandler); 
   }  
 
-  this.getUserLastPos = function(id, successHandler) {
+  this.getUserLastPos = function(userId, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_USER_LAST_POS, 
-            { id: id }, 
+            { userId: userId }, 
             successHandler);
   }
 

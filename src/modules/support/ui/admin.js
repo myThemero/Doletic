@@ -86,7 +86,7 @@ var DoleticUIModule = new function() {
 	 */
 	this.refreshLists = function(data) {
 		// if no service error
-		if(data.code == 0 && data.data != "[]") {
+		if(data.code == 0 && data.object != "[]") {
 			// fill open ticket list
 			TicketServicesInterface.getTicketsByStatus(1,DoleticUIModule.fillOpenTicketsList);
 			// fill wip ticket list
@@ -99,9 +99,9 @@ var DoleticUIModule = new function() {
 
 	this.fillOpenTicketsList = function(data) {
 		// if no service error
-		if(data.code == 0 && data.data != "[]") {
+		if(data.code == 0 && data.object != "[]") {
 			// fill list
-			DoleticUIModule.fillList('#open_ticket_list', 'Traiter', data.data);
+			DoleticUIModule.fillList('#open_ticket_list', 'Traiter', data.object);
 		} else {
 			// use default service service error handler
 			DoleticServicesInterface.handleServiceError(data);
@@ -109,9 +109,9 @@ var DoleticUIModule = new function() {
 	}
 	this.fillWorkInProgressTicketsList = function(data) {
 		// if no service error
-		if(data.code == 0 && data.data != "[]") {
+		if(data.code == 0 && data.object != "[]") {
 			// fill list
-			DoleticUIModule.fillList('#wip_ticket_list', 'Résolu !', data.data);
+			DoleticUIModule.fillList('#wip_ticket_list', 'Résolu !', data.object);
 		} else {
 			// use default service service error handler
 			DoleticServicesInterface.handleServiceError(data);

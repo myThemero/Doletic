@@ -25,7 +25,7 @@ class ServiceResponse implements \JsonSerializable {
 	// -- attributes
 	private $code;
 	private $err_string;
-	private $data;
+	private $object;
 
 	// -- functions
 	/**
@@ -34,7 +34,7 @@ class ServiceResponse implements \JsonSerializable {
 	public function __construct($responseData, $responseCode = ServiceResponse::ERR_NO_ERROR, $responseErrString = "RAS") {
 		$this->code = $responseCode;
 		$this->err_string = $responseErrString;
-		$this->data = $responseData;
+		$this->object = $responseData;
 	}
 	/**
 	 *
@@ -43,7 +43,7 @@ class ServiceResponse implements \JsonSerializable {
        return [
            'code' => $this->code,
            'error' => $this->err_string,
-           'data' => $this->data];
+           'object' => $this->object];
    	}
 }
 
@@ -62,6 +62,7 @@ class Services {
 	// --- high-level services
 	const SERVICE_UPLOAD 	= "upload";
 	const SERVICE_UI_LINKS	= "uilinks";
+	const SERVICE_GET_USER	= "getuser";
 	// --- params keys
 	const PKEY_FNAME		= "filename";
 	// --- upload related consts
@@ -103,6 +104,8 @@ class Services {
 					$response = $this->__service_upload($post);
 				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_UI_LINKS) {
 					$response = $this->__service_uis();
+				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_GET_USER) {
+					$response = $this->__service_get_user();
 				} else {
 					$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
 				}
@@ -272,6 +275,11 @@ class Services {
 	private function __service_uis() {
 		// return response
 		return new ServiceResponse($this->kernel->GetModuleUILinks());
+	}
+
+	private function __service_get_user() {
+		// return response
+		return new ServiceResponse($this->kernel->GetCurrentUser());	
 	}
 
 
