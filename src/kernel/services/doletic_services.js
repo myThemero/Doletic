@@ -131,6 +131,18 @@ var DoleticServicesInterface = new function() {
     this.callService('service', 'getuser', {}, successHandler);
   }
   /**
+   *
+   */
+  this.updateAvatar = function(newAvatarId, successHandler) {
+   this.callService('service', 'updateava', { avatarId:newAvatarId }, successHandler); 
+  }
+  /**
+   *
+   */
+  this.getAvatar = function(successHandler) {
+   this.callService('service', 'getava', {}, successHandler); 
+  }
+  /**
    *  Make an AJAX call to Doletic services to retrieve some data
    */
   this.callService = function(object, action, params, successHandler) {
@@ -152,7 +164,7 @@ var DoleticServicesInterface = new function() {
    */
   this.ajaxPOST = function(url, data, dataType, errorHandler, successHandler) {
       // DEBUG -------------------------------
-      console.debug("ajaxPOST called with url = "+url);
+      console.debug("ajaxPOST called with url = "+url+"\ndata = \n"+JSON.stringify(data));
       // -------------------------------------
       $.ajax({
          url: url,
@@ -179,8 +191,10 @@ var DoleticServicesInterface = new function() {
     this.handleServiceError = function(data) {
       if(data.code != 0) {
         if(data.code < this.serviceErrors.length) {
-          DoleticMasterInterface.showError("Le service a renvoyé une erreur !", 
-            "<p>Erreur : "+this.serviceErrors[data.code]+"</p>");
+          var html = "<ul><li>Erreur : "+this.serviceErrors[data.code]+"</li>";
+          if(data.code == 5) { html += "<li>Détails : "+data.error+"</li>"; }
+          html += "</ul>";
+          DoleticMasterInterface.showError("Le service a renvoyé une erreur !", html);
         } else {
           DoleticMasterInterface.showError("Le service a renvoyé une erreur !", 
             "<p>Une erreur inconnue s'est produite lors de l'appel au service. Merci de prévenir les développeurs.</p>");

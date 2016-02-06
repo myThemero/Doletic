@@ -60,9 +60,11 @@ class Services {
 	// --- services internal consts
 	const OBJ_SERVICE 		= "service";
 	// --- high-level services
-	const SERVICE_UPLOAD 	= "upload";
-	const SERVICE_UI_LINKS	= "uilinks";
-	const SERVICE_GET_USER	= "getuser";
+	const SERVICE_UPLOAD 		= "upload";
+	const SERVICE_UI_LINKS		= "uilinks";
+	const SERVICE_GET_USER		= "getuser";
+	const SERVICE_UPDATE_AVATAR = "updateava";
+	const SERVICE_GET_AVATAR 	= "getava";
 	// --- params keys
 	const PKEY_FNAME		= "filename";
 	// --- upload related consts
@@ -73,6 +75,8 @@ class Services {
 	const UKEY_NAME			= "name";
 	const UPL_MAX_FILE_SIZE = 4194304;	// size in bytes (4 Mo)
 	const UPL_ALLOWED_EXTS  = array(
+		'jpeg' => 'image/jpeg',
+		'jpg' => 'image/jpeg',
 		'png' => 'image/png',
 		'svg' => 'image/svg',
 		'pdf' => 'application/pdf');
@@ -89,7 +93,10 @@ class Services {
 		// --- add rules to right
 		$this->rights_map->AddRules(array(
 				Services::SERVICE_UPLOAD   => RightsMap::G_RMASK,
-				Services::SERVICE_UI_LINKS => RightsMap::G_RMASK
+				Services::SERVICE_UI_LINKS => RightsMap::G_RMASK,
+				Services::SERVICE_GET_USER   => RightsMap::G_RMASK,
+				Services::SERVICE_UPDATE_AVATAR => RightsMap::G_RMASK,
+				Services::SERVICE_GET_AVATAR => RightsMap::G_RMASK
 			));
 	}
 
@@ -106,6 +113,10 @@ class Services {
 					$response = $this->__service_uis();
 				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_GET_USER) {
 					$response = $this->__service_get_user();
+				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_UPDATE_AVATAR) {
+					$response = $this->__service_update_user_avatar($post);
+				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_GET_AVATAR) {
+					$response = $this->__service_get_avatar();
 				} else {
 					$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
 				}
@@ -282,5 +293,76 @@ class Services {
 		return new ServiceResponse($this->kernel->GetCurrentUser());	
 	}
 
+	private function __service_update_user_avatar($post) {
+		// -- initialize response var
+		$response = null;
+		// -- surround process with try catch block to handle errors
+		try {
+		    // -- retrieve current user data
+			$udata = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+						->GetResponseData(UserDataServices::GET_CURRENT_USER_DATA, array());
+			// -- remove current avatar if needed
+			if($udata != null) {
+				if($udata->GetAvatarId() != 0) {
+					$result = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+								->GetResponseData(UploadServices::DELETE_OWNER_CHECK, array(
+									UploadServices::PARAM_ID => $udata->GetAvatarId()));	
+					if($result == null) {
+						throw new RuntimeException("Echec de suppression de l'avatar courant", ServiceResponse::ERR_SERVICE_FAILED);
+					}
+				}
+			} else {
+				throw new RuntimeException("Echec de récupération des données de l'utilisateur courant", ServiceResponse::ERR_SERVICE_FAILED);
+			}
+			// -- add new avatar
+			$result = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+						->GetResponseData(UserDataServices::UPDATE_AVATAR, $post[Services::PPARAM_PARAMS]);
+			// -- treat result
+			if($result != null) {
+				$response = new ServiceResponse($result);
+			} else {
+				throw new RuntimeException("Echec d'ajout du nouvel avatar.", ServiceResponse::ERR_SERVICE_FAILED);
+			}
+
+		} catch (RuntimeException $e) {
+
+		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
+		}
+		// return response
+		return $response;
+	}
+
+	private function __service_get_avatar() {
+		// initialize null response
+		$response = null;
+		// -- surround process with try catch block to handle errors
+		try {
+			// retrieve user data
+			$udata = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+							->GetResponseData(UserDataServices::GET_CURRENT_USER_DATA, array());
+			// if user data has been retrieved
+			if($udata != null) {
+				// if avatar id is not 0 => meaning not default avatar
+				if($udata->GetAvatarId() != 0) {
+					$avatar = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+							->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
+								UploadServices::PARAM_ID => $udata->GetAvatarId()));	
+					if($avatar == null) {
+						throw new RuntimeException("Echec de recupération de l'avatar courant.", ServiceResponse::ERR_SERVICE_FAILED);
+					} else {
+						$response = new ServiceResponse("/uploads".$avatar->GetStorageFilename());
+					}
+				} else {
+					$response = new ServiceResponse("/resources/image.png");
+				}
+			} else {
+				throw new RuntimeException("Echec de récupération des données de l'utilisateur courant", ServiceResponse::ERR_SERVICE_FAILED);
+			}
+		} catch (RuntimeException $e) {
+
+		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
+		}
+		return $response;
+	}
 
 }

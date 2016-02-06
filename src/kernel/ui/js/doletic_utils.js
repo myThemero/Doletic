@@ -3,33 +3,45 @@
 
 var DoleticUIFactory = new function() {
 
-  this.makeUploadForm = function(id) {
-    var html = "<form id=\"upload_form_"+id+"\" class=\"ui form segment\"> \
-                  <input id=\"file_input_"+id+"\" name=\"file_"+id+"\" type=\"file\" hidden=\"\" onChange=\" \
-                  $('#selected_filename_"+id+"').html($('#file_input_"+id+"').val()); \
-                  $('#upload_btn_"+id+"').html('Envoyer !'); \
-                  $('#upload_btn_"+id+"').attr('class', 'ui green circular button'); \
-                  $('#upload_btn_"+id+"').attr('onclick', ''); \
-                  $('#upload_btn_"+id+"').click(function(){ \
-                      var formData = new FormData(); \
-                      formData.append('q', 'service'); \
-                      formData.append('obj', 'service'); \
-                      formData.append('act', 'upload'); \
-                      formData.append('file', $('#file_input_"+id+"')[0].files[0], $('#file_input_"+id+"').val()); \
-                      DoleticServicesInterface.upload(formData, function(response){ \
-                        if(response.code != 0) { \
-                          DoleticMasterInterface.showError('Erreur upload !',response.error); \
-                        } else { \
-                          DoleticUIModule.uploadSuccessHandler('"+id+"', response.data); \
-                        } \
-                      }); \
-                  });\" \
-                  /> \
-                  <div class=\"inline field\"> \
-                    <a id=\"upload_btn_"+id+"\" class=\"ui circular button\" onClick=\"$('#file_input_"+id+"').click();\"><i class=\"upload icon\"></i>Sélectionner...</a> \
-                    <label id=\"selected_filename_"+id+"\">aucun fichier sélectionné...</label> \
-                  </div> \
-                </form>";
+  this.makeUploadForm = function(id, hidden) {
+    var html = "<form id=\"upload_form_"+id+"\" class=\"ui form segment\"";
+    if(hidden == true) { html += " hidden=\"\""; }
+    html += "> \
+              <input id=\"file_input_"+id+"\" name=\"file_"+id+"\" type=\"file\" hidden=\"\" onChange=\" \
+              if($('#file_input_"+id+"')[0].files.length > 0) { \
+                $('#selected_filename_"+id+"').html($('#file_input_"+id+"').val()); \
+                $('#upload_btn_"+id+"').html('Envoyer !'); \
+                $('#upload_btn_"+id+"').attr('class', 'ui green circular button'); \
+                $('#upload_btn_"+id+"').attr('onclick', ''); \
+                $('#upload_btn_"+id+"').click(function(){ \
+                  var formData = new FormData(); \
+                  formData.append('q', 'service'); \
+                  formData.append('obj', 'service'); \
+                  formData.append('act', 'upload'); \
+                  if($('#file_input_"+id+"')[0].files[0] != undefined) { \
+                    formData.append('file', $('#file_input_"+id+"')[0].files[0], $('#file_input_"+id+"').val()); \
+                    DoleticServicesInterface.upload(formData, function(data){ \
+                      if(data.code != 0) { \
+                        DoleticMasterInterface.showError('Erreur upload !',data.error); \
+                      } else { \
+                        DoleticUIModule.uploadSuccessHandler('"+id+"', data.object); \
+                      } \
+                    }); \
+                  } else { \
+                    $('#file_input_"+id+"').click(); \
+                  } \
+                  $('#upload_btn_"+id+"').attr('click', '$(\\'#file_input_"+id+"\\').click();'); \
+                  $('#upload_form_"+id+"')[0].reset(); \
+                });";
+    if(hidden == true) { 
+      html += "$('#upload_btn_"+id+"').click();"; 
+    }
+    html += "}\"/> \
+              <div class=\"inline field\"> \
+                <a id=\"upload_btn_"+id+"\" class=\"ui circular button\" onClick=\"$('#file_input_"+id+"').click();\"><i class=\"upload icon\"></i>Sélectionner...</a> \
+                <label id=\"selected_filename_"+id+"\">aucun fichier sélectionné...</label> \
+              </div> \
+            </form>";
     return html;
   }
 

@@ -44,8 +44,7 @@ class AuthenticationManager extends AbstractManager {
 		{	// retrieve RG code if user is valid
 			$this->rgcode = parent::kernel()->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->GetCurrentUser())
 						->GetResponseData(
-							UserDataServices::GET_USER_RG_CODE, array(
-								UserDataServices::PARAM_USER_ID => $this->user->GetId()));	
+							UserDataServices::GET_USER_RG_CODE, array());	
 		}
 		// return valid user check 
 		return $this->HasValidUser();

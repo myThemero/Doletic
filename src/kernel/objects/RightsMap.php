@@ -56,7 +56,10 @@ class RightsMap {
 		$this->rules = array_merge($this->rules, $rules);
 	}
 
-	public function Check($rgcode, $action) {
+	public function Check($rgcode, $action, $debug = false) {
+		if($debug) {
+			$this->debug($rgcode, $action);
+		}
 		// check group first
 		$allowed = (($rgcode & $this->groups) !== 0);
 		if($allowed)
@@ -72,5 +75,27 @@ class RightsMap {
 		// return allowed
 		return ($allowed ? RightsMap::OK : RightsMap::KO);
 	}
+
+# PROTECTED & PRIVATE ########################################################
+
+	// DEBUG ------------------------------------------------------------------
+	private function debug($rgcode, $action) {
+		echo "RightsMap::Check : --------------------------------\n";
+		echo "RightsMap::Check : RGCode = 0b".decbin($rgcode)."\n";
+		echo "RightsMap::Check : Groups = 0b".decbin($this->groups)."\n";
+		$mask = null;
+		echo "RightsMap::Check : Action = $action\n";
+		if(array_key_exists($action, $this->rules)) {	
+			echo "RightsMap::Check : ActionMask = 0b".decbin($this->rules[$action])."\n";
+			$mask = $this->rules[$action];
+		} else {	
+			echo "RightsMap::Check : ActionMask = 0b".decbin(RightsMap::SA_RMASK)."\n";
+			$mask = RightsMap::SA_RMASK;
+		}
+		echo "RightsMap::Check : Group Allowed = 0b".decbin($rgcode & $this->groups)." (allowed if not 0)\n";
+		echo "RightsMap::Check : Action Allowed = 0b".decbin($rgcode & $mask)." (allowed if not 0)\n";
+		echo "RightsMap::Check : --------------------------------\n";
+	}
+	// DEBUG ------------------------------------------------------------------
 
 }

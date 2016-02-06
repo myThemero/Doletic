@@ -9,9 +9,9 @@ var DoleticUIModule = new function() {
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
 		// fill category field
-		TicketServicesInterface.getAllCategories(DoleticUIModule.fillCategorySelector);
+		DoleticUIModule.fillCategorySelector();
 		// fill ticket list
-		TicketServicesInterface.getUserTickets(DoleticUIModule.fillTicketsList);
+		DoleticUIModule.fillTicketsList();
 	}
 	/**
 	 *	Override build function
@@ -81,72 +81,76 @@ var DoleticUIModule = new function() {
 
 	this.hasInputError = false;
 
-	this.fillCategorySelector = function(data) {
-		// if no service error
-		if(data.code == 0) {
-			// create content var to build html
-			var content = "";
-			// iterate over values to build options
-			for (var i = 0; i < data.object.length; i++) {
-				content += "<option value=\""+(i+1)+"\">"+data.object[i]+"</option>\n";
-			};
-			// insert html content
-			$('#category').html(content);
-		} else {
-			// use default service service error handler
-			DoleticServicesInterface.handleServiceError(data);
-		}
+	this.fillCategorySelector = function() {
+		TicketServicesInterface.getAllCategories(function(data) {
+			// if no service error
+			if(data.code == 0) {
+				// create content var to build html
+				var content = "";
+				// iterate over values to build options
+				for (var i = 0; i < data.object.length; i++) {
+					content += "<option value=\""+(i+1)+"\">"+data.object[i]+"</option>\n";
+				};
+				// insert html content
+				$('#category').html(content);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 
-	this.fillTicketsList = function(data) {
-		// if no service error
-		if(data.code == 0 && data.object != "[]") {
-			// create content var to build html
-			var content = "";
-			// iterate over values to build options
-			for (var i = 0; i < data.object.length; i++) {
-				var status, popup_selector;
-				var id = "popup_trigger_"+i;
-				switch (data.object[i].status_id) {
-				  case 1:
-				  	status = "red radio";
-				  	popup_selector = "#open_popup";
-				    break;
-				  case 2:
-				  	status = "orange spinner";
-				  	popup_selector = "#work_popup";
-				    break;
-				  case 3:
-				  	status = "green selected radio";
-				  	popup_selector = "#done_popup";
-				    break;
-				  default:
-				  	status = "blue help";
-				  	popup_selector = "#undefined_popup";
-				    break;
-				}
-				content += "<div class=\"item\"> \
-							  <i id=\""+id+"\" class=\""+status+" big icon link\"></i> \
-							  <div class=\"middle aligned content\"> \
-							    <a class=\"header\">"+data.object[i].subject+"</a> \
-							    <div class=\"description\">"+data.object[i].data+"</div>  \
-							  </div> \
-							  <script>$('#"+id+"').popup({popup:'"+popup_selector+"'});</script> \
-							</div>";
-			};
-			// insert html content
-			$('#ticket_list').html(content);
-		} else {
-			// use default service service error handler
-			DoleticServicesInterface.handleServiceError(data);
-		};
+	this.fillTicketsList = function() {
+		TicketServicesInterface.getUserTickets(function(data) {
+			// if no service error
+			if(data.code == 0 && data.object != "[]") {
+				// create content var to build html
+				var content = "";
+				// iterate over values to build options
+				for (var i = 0; i < data.object.length; i++) {
+					var status, popup_selector;
+					var id = "popup_trigger_"+i;
+					switch (data.object[i].status_id) {
+					  case 1:
+					  	status = "red radio";
+					  	popup_selector = "#open_popup";
+					    break;
+					  case 2:
+					  	status = "orange spinner";
+					  	popup_selector = "#work_popup";
+					    break;
+					  case 3:
+					  	status = "green selected radio";
+					  	popup_selector = "#done_popup";
+					    break;
+					  default:
+					  	status = "blue help";
+					  	popup_selector = "#undefined_popup";
+					    break;
+					}
+					content += "<div class=\"item\"> \
+								  <i id=\""+id+"\" class=\""+status+" big icon link\"></i> \
+								  <div class=\"middle aligned content\"> \
+								    <a class=\"header\">"+data.object[i].subject+"</a> \
+								    <div class=\"description\">"+data.object[i].data+"</div>  \
+								  </div> \
+								  <script>$('#"+id+"').popup({popup:'"+popup_selector+"'});</script> \
+								</div>";
+				};
+				// insert html content
+				$('#ticket_list').html(content);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 
 	this.clearNewTicketForm = function() {
 		$('#subject').val('');
 		$('#data').val('');
 		/// \todo trouver quelque chose de mieux ici pour le reset du selecteur
-		TicketServicesInterface.getAllCategories(DoleticUIModule.fillCategorySelector);
+		DoleticUIModule.fillCategorySelector();
 		// clear error
 		if(this.hasInputError) {
 			// disable has error
@@ -182,7 +186,7 @@ var DoleticUIModule = new function() {
 			// alert user that creation is a success
 			DoleticMasterInterface.showSuccess("Création réussie !", "Le ticket a été créé avec succès !");
 			// fill ticket list
-			TicketServicesInterface.getUserTickets(DoleticUIModule.fillTicketsList);
+			DoleticUIModule.fillTicketsList();
 		} else {
 			// use default service service error handler
 			DoleticServicesInterface.handleServiceError(data);

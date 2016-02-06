@@ -9,7 +9,8 @@ var DoleticUIModule = new function() {
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
 		// Retrieve user data
-		DoleticServicesInterface.getCurrentUser(DoleticUIModule.fillUserData);
+		this.fillUserData();
+		this.refreshAvatar();
 	}
 	/**
 	 *	Override build function
@@ -22,7 +23,9 @@ var DoleticUIModule = new function() {
 					<div class=\"four wide column\"> \
 					<div class=\"ui card\"> \
 					  <div class=\"image\"> \
-					    <img src=\"/resources/elliot.jpg\"> \
+					    <a class=\"ui medium image\" onClick=\"$('#upload_btn_avatar').click();\"> \
+  						  <img id=\"user_avatar\" src=\"/resources/image.png\"> \
+						</a> \
 					  </div> \
 					  <div class=\"content\"> \
 					    <a id=\"user_fulname\" class=\"header\">John Doe</a> \
@@ -55,51 +58,76 @@ var DoleticUIModule = new function() {
 					<div class=\"three wide column\"> \
 					</div> \
 				  </div> \
-				</div>";
+				</div>"+DoleticUIFactory.makeUploadForm('avatar', true);
 	}
 	/**
 	 *	Override uploadSuccessHandler
 	 */
 	this.uploadSuccessHandler = function(id, data) {
-		this.super.uploadSuccessHandler(id, data);
+		// treat avatar upload success event
+		if(id == 'avatar') {
+			DoleticServicesInterface.updateAvatar(data, function(data) {
+				if(data.code == 0) {
+					DoleticUIModule.refreshAvatar();
+				} else {
+					DoleticServicesInterface.handleServiceError(data);
+				}
+			});
+		} else {
+			this.super.uploadSuccessHandler(id, data);	
+		}
 	}
 	/**
 	 *
 	 */
-	this.fillUserData = function(data) {
-		if(data.code == 0) {
-			// set last connection timestamp
-			var date = new Date(data.object.last_connect_timestamp);
-			$('#lastco_timestamp').html(
-				DoleticUIFactory.padleft(String(date.getDate()), 2, '0')+'/'+
-				DoleticUIFactory.padleft(String(date.getMonth()), 2, '0')+'/'+
-				DoleticUIFactory.padleft(String(date.getFullYear()), 4, '0')+" à "+
-				DoleticUIFactory.padleft(String(date.getHours()), 2, '0')+':'+
-				DoleticUIFactory.padleft(String(date.getMinutes()), 2, '0')+':'+
-				DoleticUIFactory.padleft(String(date.getSeconds()), 2, '0'));
-			// retrieve user data
-			UserDataServicesInterface.getById(data.object.id, function(data){
-				if(data.code == 0) {
-					// set user name
-					$('#user_fulname').html(data.object.firstname+' '+data.object.lastname);
-				} else {
-					// use doletic services interface to display error
-					DoleticServicesInterface.handleServiceError(data);		
-				}
-			});
-			// retrieve user last position
-			UserDataServicesInterface.getUserLastPos(data.object.id, function(data){
-				if(data.code == 0) {
-					// set user name
-					$('#user_position').html(data.object.label);
-				} else {
-					// use doletic services interface to display error
-					DoleticServicesInterface.handleServiceError(data);		
-				}
-			});
-		} else {
-			// use doletic services interface to display error
-			DoleticServicesInterface.handleServiceError(data);
-		}
+	this.refreshAvatar = function() {
+		DoleticServicesInterface.getAvatar(function(data){
+			if(data.code == 0) {
+				$('#user_avatar').attr('src', data.object);
+			} else {
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+	/**
+	 *
+	 */
+	this.fillUserData = function() {
+		DoleticServicesInterface.getCurrentUser(function(data) {
+			if(data.code == 0) {
+				// set last connection timestamp
+				var date = new Date(data.object.last_connect_timestamp);
+				$('#lastco_timestamp').html(
+					DoleticUIFactory.padleft(String(date.getDate()), 2, '0')+'/'+
+					DoleticUIFactory.padleft(String(date.getMonth()), 2, '0')+'/'+
+					DoleticUIFactory.padleft(String(date.getFullYear()), 4, '0')+" à "+
+					DoleticUIFactory.padleft(String(date.getHours()), 2, '0')+':'+
+					DoleticUIFactory.padleft(String(date.getMinutes()), 2, '0')+':'+
+					DoleticUIFactory.padleft(String(date.getSeconds()), 2, '0'));
+				// retrieve user data
+				UserDataServicesInterface.getById(data.object.id, function(data){
+					if(data.code == 0) {
+						// set user name
+						$('#user_fulname').html(data.object.firstname+' '+data.object.lastname);
+					} else {
+						// use doletic services interface to display error
+						DoleticServicesInterface.handleServiceError(data);		
+					}
+				});
+				// retrieve user last position
+				UserDataServicesInterface.getUserLastPos(data.object.id, function(data){
+					if(data.code == 0) {
+						// set user name
+						$('#user_position').html(data.object.label);
+					} else {
+						// use doletic services interface to display error
+						DoleticServicesInterface.handleServiceError(data);		
+					}
+				});
+			} else {
+				// use doletic services interface to display error
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 }

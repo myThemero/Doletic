@@ -29,7 +29,7 @@ var DoleticMasterInterface = new function() {
          DoleticUIModule.super.meta.name != 'Logout_UIModule' &&
          DoleticUIModule.super.meta.name != '404_UIModule') {
         // fill module submenu
-        DoleticServicesInterface.availableModuleLinks(DoleticMasterInterface.fillModuleSubmenu);
+        DoleticMasterInterface.fillModuleSubmenu();
       }
     // DEBUG message -----------------------------------------
     //console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticUIModule.super.meta.name);
@@ -241,30 +241,34 @@ var DoleticMasterInterface = new function() {
   /**
    *  Fills submodules submenu
    */
-  this.fillModuleSubmenu = function(data) {
-    // if no service error
-    if(data.code == 0) {
-      // create content var to build html
-      var content = "";
-      var json = JSON.parse(data.object);
-      // iterate over values to build options
-      for (var i = 0; i < json.length && json[i].length == 2; i++) {
-        content += "<div> \
-                      <div class=\"header\">"+json[i][0]+"</div> \
-                        <div class=\"menu\">\n";
-        for (var j = 0; j < json[i][1].length  && json[i][1][j].length == 2; j++) {
-          content += "    <a class=\"item\" onClick=\"DoleticServicesInterface.getUI('"+json[i][1][j][1]+"');\">"+json[i][1][j][0]+"</a>\n";
+  this.fillModuleSubmenu = function() {
+    DoleticServicesInterface.availableModuleLinks(function(data){
+      // if no service error
+      if(data.code == 0) {
+        // create content var to build html
+        var content = "";
+        var json = JSON.parse(data.object);
+        // iterate over values to build options
+        for (var i = 0; i < json.length && json[i].length == 2; i++) {
+          content += "<div> \
+                        <div class=\"header\">"+json[i][0]+"</div> \
+                          <div class=\"menu\">\n";
+          for (var j = 0; j < json[i][1].length  && json[i][1][j].length == 2; j++) {
+            content += "    <a class=\"item\" onClick=\"DoleticServicesInterface.getUI('"+
+                              json[i][1][j][1]+"');\">"+
+                              json[i][1][j][0]+"</a>\n";
+          };
+          content += "    </div> \
+                        </div> \
+                      </div>";
         };
-        content += "    </div> \
-                      </div> \
-                    </div>";
-      };
-      // insert html content
-      $('#module_submenu').html(content);
-    } else {
-      // use default service service error handler
-      DoleticServicesInterface.handleServiceError(data);
-    }             
+        // insert html content
+        $('#module_submenu').html(content);
+      } else {
+        // use default service service error handler
+        DoleticServicesInterface.handleServiceError(data);
+      }
+    });           
   }
 
 }

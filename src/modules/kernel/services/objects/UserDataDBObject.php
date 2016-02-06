@@ -25,13 +25,14 @@ class UserData implements \JsonSerializable {
 	private $country_id;
 	private $school_year;
 	private $insa_dept_id;
+	private $avatar_id;
 
 	/**
 	*	@brief Constructs a udata
 	*/
 	public function __construct($id, $userId, $genderId, $firstname, $lastname, $birthdate, 
 								$tel, $email, $address, $countryId, $schoolYear, 
-								$insaDeptId) {
+								$insaDeptId, $avatarId) {
 		$this->id = intval($id);
 		$this->user_id = intval($userId);
 		$this->gender_id = intval($genderId);
@@ -44,6 +45,7 @@ class UserData implements \JsonSerializable {
 		$this->country_id = intval($countryId);
 		$this->school_year = $schoolYear;
 		$this->insa_dept_id = intval($insaDeptId);
+		$this->avatar_id = intval($avatarId);
 	}
 
 	public function jsonSerialize() {
@@ -59,7 +61,8 @@ class UserData implements \JsonSerializable {
 			UserDataDBObject::COL_ADDRESS => $this->address,
 			UserDataDBObject::COL_COUNTRY_ID => $this->country_id,
 			UserDataDBObject::COL_SCHOOL_YEAR => $this->school_year,
-			UserDataDBObject::COL_INSA_DEPT_ID => $this->insa_dept_id
+			UserDataDBObject::COL_INSA_DEPT_ID => $this->insa_dept_id,
+			UserDataDBObject::COL_AVATAR_ID => $this->avatar_id
 		];
 	}
 
@@ -80,61 +83,67 @@ class UserData implements \JsonSerializable {
 	*/
 	public function GetGenderId() {
 		return $this->gender_id;
-		}
+	}
 	/**
 	*	@brief Returns UserData id
 	*/
 	public function GetFirstname() {
 		return $this->firstname;
-		}
+	}
 	/**
 	*	@brief Returns UserData id
 	*/
 	public function GetLastname() {
 		return $this->lastname;
-		}
+	}
 	/**
 	*	@brief Returns UserData id
 	*/
 	public function GetBirthdate() {
 		return $this->birthdate;
-		}
+	}
 	/**
 	*	@brief Returns UserData id
 	*/
 	public function GetTel() {
 		return $this->tel;
-		}
+	}
 	/**
 	*	@brief Returns UserData id
 	*/
 	public function GetEmail() {
 		return $this->email;
-		}
+	}
 	/**
 	*	@brief Returns UserData id
 	*/
 	public function GetAddress() {
 		return $this->address;
-		}
+	}
 	/**
 	*	@brief Returns UserData id
 	*/
 	public function GetCountryId() {
 		return $this->country_id;
-		}
+	}
 	/**
-	*	@brief Returns UserData id
+	*	@brief Returns UserData school year
 	*/
 	public function GetSchoolYear() {
 		return $this->school_year;
-		}
+	}
 	/**
-	*	@brief Returns UserData id
+	*	@brief Returns UserData INSA departement id
 	*/
 	public function GetINSADeptId() {
 		return $this->insa_dept_id;
-		}
+	}
+	/**
+	*	@brief Returns UserData avatar id
+	*/
+	public function GetAvatarId() {
+		return $this->avatar_id;
+	}
 }
 
 
@@ -155,8 +164,10 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_SCHOOL_YEAR 	= "schoolYear";
 	const PARAM_INSA_DEPT_ID 	= "insaDeptId";
 	const PARAM_POSITION_ID  	= "positionId";
+	const PARAM_AVATAR_ID  		= "avatarId";
 	// --- internal services (actions)
 	const GET_USER_DATA_BY_ID 	= "byidud";
+	const GET_CURRENT_USER_DATA	= "currud";
 	const GET_GENDER_BY_ID      = "byidg";
 	const GET_COUNTRY_BY_ID     = "byidc";
 	const GET_INSA_DEPT_BY_ID   = "byiddept";
@@ -172,6 +183,7 @@ class UserDataServices extends AbstractObjectServices {
 	const INSERT				= "insert";
 	const UPDATE 				= "update";
 	const UPDATE_POSTION        = "updatepos";
+	const UPDATE_AVATAR         = "updateava";
 	const DELETE 				= "delete";
 	// -- functions
 
@@ -184,6 +196,8 @@ class UserDataServices extends AbstractObjectServices {
 		$data = null;
 		if(!strcmp($action, UserDataServices::GET_USER_DATA_BY_ID)) {
 			$data = $this->__get_user_data_by_id($params[UserDataServices::PARAM_ID]);
+		} else if(!strcmp($action, UserDataServices::GET_CURRENT_USER_DATA)) {
+			$data = $this->__get_current_user_data();
 		} else if(!strcmp($action, UserDataServices::GET_GENDER_BY_ID)) {
 			$data = $this->__get_gender_by_id($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_COUNTRY_BY_ID)) {
@@ -195,7 +209,7 @@ class UserDataServices extends AbstractObjectServices {
 		} else if(!strcmp($action, UserDataServices::GET_USER_LAST_POS)) {
 			$data = $this->__get_user_last_position($params[UserDataServices::PARAM_USER_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_USER_RG_CODE)) {
-			$data = $this->__get_user_rgcode($params[UserDataServices::PARAM_USER_ID]);
+			$data = $this->__get_user_rgcode();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_USER_DATA)) {
 			$data = $this->__get_all_user_data();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_GENDERS)) {
@@ -239,6 +253,9 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__update_user_position(
 				$params[UserDataServices::PARAM_USER_ID],
 				$params[UserDataServices::PARAM_POSITION_ID]);
+		} else if(!strcmp($action, UserDataServices::UPDATE_AVATAR)) {
+			$data = $this->__update_user_avatar(
+				$params[UserDataServices::PARAM_AVATAR_ID]);
 		} else if(!strcmp($action, UserDataServices::DELETE)) {
 			$data = $this->__delete_user_data($params[UserDataServices::PARAM_ID]);
 		}
@@ -273,7 +290,39 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_ADDRESS],
 					$row[UserDataDBObject::COL_COUNTRY_ID],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
-					$row[UserDataDBObject::COL_INSA_DEPT_ID]);
+					$row[UserDataDBObject::COL_INSA_DEPT_ID],
+					$row[UserDataDBObject::COL_AVATAR_ID]);
+			}
+		}
+		return $udata;
+	}
+
+	private function __get_current_user_data() {
+		// create sql params array
+		$sql_params = array(":".UserDataDBObject::COL_USER_ID => parent::getCurrentUser()->GetId());
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_USER_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create udata var
+		$udata = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$udata = new UserData(
+					$row[UserDataDBObject::COL_ID],
+					$row[UserDataDBObject::COL_USER_ID],
+					$row[UserDataDBObject::COL_GENDER_ID],
+					$row[UserDataDBObject::COL_FIRSTNAME],
+					$row[UserDataDBObject::COL_LASTNAME],
+					$row[UserDataDBObject::COL_BIRTHDATE],
+					$row[UserDataDBObject::COL_TEL],
+					$row[UserDataDBObject::COL_EMAIL],
+					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_COUNTRY_ID],
+					$row[UserDataDBObject::COL_SCHOOL_YEAR],
+					$row[UserDataDBObject::COL_INSA_DEPT_ID],
+					$row[UserDataDBObject::COL_AVATAR_ID]);
 			}
 		}
 		return $udata;
@@ -387,8 +436,8 @@ class UserDataServices extends AbstractObjectServices {
 		return $position;
 	}
 
-	private function __get_user_rgcode($userId) {
-		$position = $this->__get_user_last_position($userId);
+	private function __get_user_rgcode() {
+		$position = $this->__get_user_last_position(parent::getCurrentUser()->GetId());
 		$rgcode = null;
 		if($position != null) {
 			$rgcode = $position[UserDataDBObject::COL_RG_CODE];
@@ -417,7 +466,8 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_ADDRESS],
 					$row[UserDataDBObject::COL_COUNTRY_ID],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
-					$row[UserDataDBObject::COL_INSA_DEPT_ID]));
+					$row[UserDataDBObject::COL_INSA_DEPT_ID],
+					$row[UserDataDBObject::COL_AVATAR_ID]));
 			}
 		}
 		return $udata;
@@ -507,7 +557,8 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_ADDRESS],
 					$row[UserDataDBObject::COL_COUNTRY_ID],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
-					$row[UserDataDBObject::COL_INSA_DEPT_ID]);
+					$row[UserDataDBObject::COL_INSA_DEPT_ID],
+					$row[UserDataDBObject::COL_AVATAR_ID]);
 			}
 		}
 		return $udata;
@@ -531,7 +582,8 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_ADDRESS => $address,
 			":".UserDataDBObject::COL_COUNTRY_ID => $countryId,
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
-			":".UserDataDBObject::COL_INSA_DEPT_ID => $insaDeptId);
+			":".UserDataDBObject::COL_INSA_DEPT_ID => $insaDeptId,
+			":".UserDataDBObject::COL_AVATAR_ID => "NULL");
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetINSERTQuery();
 		// execute query
@@ -554,7 +606,8 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_ADDRESS => $address,
 			":".UserDataDBObject::COL_COUNTRY_ID => $countryId,
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
-			":".UserDataDBObject::COL_INSA_DEPT_ID => $insaDeptId);
+			":".UserDataDBObject::COL_INSA_DEPT_ID => $insaDeptId,
+			":".UserDataDBObject::COL_AVATAR_ID => "NULL");
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery();
 		// execute query
@@ -570,6 +623,18 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_SINCE => date('Y-m-d H:i:s'));
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetINSERTQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+	private function __update_user_avatar($avatarId) {
+		// create sql params
+		$sql_params = array(
+			":".UserDataDBObject::COL_USER_ID => parent::getCurrentUser()->GetId(),
+			":".UserDataDBObject::COL_AVATAR_ID => $avatarId);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(
+			array(UserDataDBObject::COL_AVATAR_ID), array(UserDataDBObject::COL_USER_ID));
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
@@ -730,6 +795,7 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_DETAIL		= "detail";
 	const COL_SINCE			= "since";
 	const COL_RG_CODE   	= "rg_code";
+	const COL_AVATAR_ID   	= "avatar_id";
 	// -- attributes
 
 	// -- functions
@@ -752,6 +818,7 @@ class UserDataDBObject extends AbstractDBObject {
 		$dol_udata->AddColumn(UserDataDBObject::COL_COUNTRY_ID, DBTable::DT_INT, 11, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_SCHOOL_YEAR, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_INSA_DEPT_ID, DBTable::DT_INT, 11, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, false, "-1");
 		// --- dol_udata_position table
 		$dol_udata_position = new DBTable(UserDataDBObject::TABL_USER_POSITION);
 		$dol_udata_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);

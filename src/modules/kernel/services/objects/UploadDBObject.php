@@ -97,6 +97,7 @@ class UploadServices extends AbstractObjectServices {
 	const INSERT 		   			= "insert";
 	const UPDATE           			= "update";
 	const DELETE           			= "delete";
+	const DELETE_OWNER_CHECK		= "deleteown";
 
 	// -- functions
 
@@ -124,6 +125,8 @@ class UploadServices extends AbstractObjectServices {
 				$params[UploadServices::PARAM_FNAME]);
 		} else if(!strcmp($action, UploadServices::DELETE)) {
 			$data = $this->__delete_upload($params[UploadServices::PARAM_ID]);
+		} else if(!strcmp($action, UploadServices::DELETE_OWNER_CHECK)) {
+			$data = $this->__delete_owner_check($params[UploadServices::PARAM_ID]);
 		}
 		return $data;
 	}
@@ -230,6 +233,18 @@ class UploadServices extends AbstractObjectServices {
 		$sql_params = array(":".UploadDBObject::COL_ID => $id);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UploadDBObject::TABL_UPLOAD)->GetDELETEQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+		private function __delete_owner_check($id) {
+		// create sql params
+		$sql_params = array(
+			":".UploadDBObject::COL_ID => $id,
+			":".UploadDBObject::COL_USER_ID => parent::getCurrentUser()->GetId());
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UploadDBObject::TABL_UPLOAD)->GetDELETEQuery(
+			array(UploadDBObject::COL_ID, UploadDBObject::COL_USER_ID));
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}

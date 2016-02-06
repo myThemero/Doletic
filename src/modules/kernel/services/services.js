@@ -149,6 +149,7 @@ var UserDataServicesInterface = new function() {
       INSERT:"insert",
       UPDATE:"update",
       UPDATE_POSTION:"updatepos",
+      UPDATE_AVATAR:"updateava",
       DELETE:"delete"
     }
   };
@@ -264,6 +265,14 @@ var UserDataServicesInterface = new function() {
             { 
               userId: userId,
               positionId: positionId
+            }, 
+            successHandler);
+  }
+  this.updateUserPosition = function(avatarId, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.UPDATE_AVATAR, 
+            { 
+              avatarId: avatarId
             }, 
             successHandler);
   }
