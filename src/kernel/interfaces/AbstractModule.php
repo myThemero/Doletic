@@ -1,6 +1,7 @@
 <?php
 
 require_once "loaders/ModuleLoader.php";
+require_once "objects/RightsMap.php";
 
 /**
 * 	@brief
@@ -8,17 +9,19 @@ require_once "loaders/ModuleLoader.php";
 abstract class AbstractModule {
 	
 	// -- attributes
-	private $code;
+	private $mod_code;
 	private $name;
 	private $version;
 	private $authors;
 	private $dependencies;
 	private $db_objects;
 	private $uis;
+	private $rights_map;
+	private $ui_disabled;
 
 	// -- functions
 	public function GetCode() {
-		return $this->code;
+		return $this->mod_code;
 	}
 	/**
 	 *
@@ -54,46 +57,68 @@ abstract class AbstractModule {
 	 *
 	 */
 	public function GetJSServices() {
-		return $this->code."/services/services.js";
+		return $this->mod_code."/services/services.js";
 	}
 	/**
 	 *
 	 */
-	public function GetJS($ui) {
+	public function GetJS($uiCode) {
 		$js = array();
-		array_push($js, ModuleLoader::MODS_DIR.'/'.$this->code."/ui/".$ui.".js");
+		array_push($js, ModuleLoader::MODS_DIR.'/'.$this->mod_code."/ui/".$uiCode.".js");
 		return $js;
 	}
 	/**
 	 *
 	 */
-	public function GetCSS($ui) {
+	public function GetCSS($uiCode) {
 		$css = array();
-		array_push($css, ModuleLoader::MODS_DIR.'/'.$this->code."/ui/".$ui.".css");
+		array_push($css, ModuleLoader::MODS_DIR.'/'.$this->mod_code."/ui/".$uiCode.".css");
 		return $css;
 	}
 	/**
 	 *
 	 */
-	public function GetAvailableUILinks() {
-		$ui_links = "[\"".$this->name."\",[";
-		foreach ($this->uis as $ui_name => $ui_code) {
-			$ui_links .= "[\"".$ui_name."\",\"".$this->code.":".$ui_code."\"],";
+	public function GetAvailableUILinks($rgcode) {
+		$ui_links = "[";
+		if(!$this->ui_disabled) {
+			$ui_links .= "\"".$this->name."\",[";
+			$ui_added = false;
+			// for each module ui 
+			foreach ($this->uis as $ui_name => $ui_code) {
+				// check if module ui can be accessed by current user
+				if($this->CheckRights($rgcode, $ui_code)) {
+					// add ui to list
+					$ui_links .= "[\"".$ui_name."\",\"".$this->mod_code.":".$ui_code."\"],";	
+					$ui_added = true; // raise added flag
+				}
+			}
+			if($ui_added) {
+				// if at least one ui added remove last comma
+				$ui_links = substr($ui_links, 0, strlen($ui_links)-1);	
+			}
+			$ui_links .= "]";
 		}
-		$ui_links = substr($ui_links, 0, strlen($ui_links)-1);
-		return $ui_links."]]";
+		return $ui_links."]";
+	}
+	/**
+	 *
+	 */
+	public function CheckRights($rgcode, $action) {
+		return ( $this->rights_map->Check($rgcode, $action) === RightsMap::OK );
 	}
 
 # PROTECTED & PRIVATE ###################################################
 
-	protected function __construct($code, $name, $version, $authors = array(), $dependencies = array()) {
-		$this->code = $code;
+	protected function __construct($moduleCode, $name, $version, $authors, $groups, $rules, $uiDisabled = false, $dependencies = array()) {
+		$this->mod_code = $moduleCode;
 		$this->name = $name;
 		$this->version = $version;
 		$this->authors = $authors;
 		$this->dependencies = $dependencies;
 		$this->db_objects = array();
 		$this->uis = array();
+		$this->rights_map = new RightsMap($groups, $rules);
+		$this->ui_disabled = $uiDisabled;
 	}
 
 	protected function addDBObject($object) {

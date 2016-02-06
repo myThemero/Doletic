@@ -124,7 +124,7 @@ class TicketServices extends AbstractObjectServices {
 	const GET_ALL_CATEGOS  = "allc";
 	const INSERT 		   = "insert";
 	const UPDATE           = "update";
-	const NEXT_STATUS    = "nexts";
+	const NEXT_STATUS      = "nexts";
 	const DELETE           = "delete";
 	const ARCHIVE          = "archive";
 
@@ -483,9 +483,9 @@ class TicketDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct($module) {
 		// -- construct parent
-		parent::__construct(TicketDBObject::OBJ_NAME);
+		parent::__construct($module, TicketDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_ticket table
 		$dol_ticket = new DBTable(TicketDBObject::TABL_TICKET);

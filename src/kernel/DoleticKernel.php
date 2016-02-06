@@ -98,8 +98,20 @@ class DoleticKernel {
 		return $this->authentication_mgr->AuthenticateUser($username, $hash);
 	}
 
+	public function ResetPasswordInit($mail) {
+		return $this->authentication_mgr->ResetPasswordInit($mail);
+	}
+
+	public function ResetPasswordExec($token) {
+		return $this->authentication_mgr->ResetPasswordExec($token);
+	}
+
 	public function GetCurrentUser() {
 		return $this->authentication_mgr->GetCurrentUser();
+	}
+
+	public function GetCurrentUserRGCode() {
+		return $this->authentication_mgr->GetCurrentUserRGCode();
 	}
 
 	// --- log management --------------------------------------------------------------------
@@ -133,24 +145,22 @@ class DoleticKernel {
 		$this->__debug("Interface  '" . $ui . "' required.");
 		// initialize page
 		$page = null;
-		// check if requested ui is a special ui
-		if($this->ui_mgr->IsSpecialUI($ui)) {
-			$page = $this->ui_mgr->MakeSpecialUI($ui); // affect page content with special content
-		} else { // page is not special, search for a module
-			$exploded = explode(':', $ui);
-			$module = $this->module_mgr->GetModule($exploded[0]);
-			$found = false;										// initialize found flag down
-			if($module != null) {								// if module exists
+		$exploded = explode(':', $ui);
+		$module = $this->module_mgr->GetModule($exploded[0]);
+		$found = false;										// initialize found flag down
+		if($module != null) {								// if module exists
+			// if user has sufficient rights to access required ui
+			if($module->CheckRights($this->GetCurrentUserRGCode(), $exploded[1])) {
 				$js = $module->GetJS($exploded[1]);				// retrieve js array
 				$css = $module->GetCSS($exploded[1]);			// retrieve css array
 				if($css != null && $css != null) {				// if both css and js are valid arrays
 					$page = $this->ui_mgr->MakeUI($js, $css); 	// affect page content		
 					$found = true; 								// raise found flag
 				}
-			} 
-			if(!$found) { // if found flag is down
-				$page = $this->ui_mgr->Make404UI(); // affect page content using 404	
 			}
+		} 
+		if(!$found) { // if found flag is down
+			$page = $this->ui_mgr->Make404UI(); // affect page content using 404	
 		}
 		return $page;
 	}

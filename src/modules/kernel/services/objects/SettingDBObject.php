@@ -221,9 +221,9 @@ class SettingDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct($module) {
 		// -- construct parent
-		parent::__construct(SettingDBObject::OBJ_NAME);
+		parent::__construct($module, SettingDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_setting table
 		$dol_setting = new DBTable(SettingDBObject::TABL_SETTING);

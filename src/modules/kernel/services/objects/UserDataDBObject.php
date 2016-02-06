@@ -2,7 +2,8 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
-require_once "objects/DBTable.php"; 
+require_once "objects/DBTable.php";
+require_once "objects/RightsMap.php";
 
 /**
  *	@brief The UserData class
@@ -161,11 +162,13 @@ class UserDataServices extends AbstractObjectServices {
 	const GET_INSA_DEPT_BY_ID   = "byiddept";
 	const GET_POSITION_BY_ID    = "byidpos";
 	const GET_USER_LAST_POS     = "lastpos";
+	const GET_USER_RG_CODE      = "rgcode";
 	const GET_ALL_USER_DATA 	= "allud";
 	const GET_ALL_GENDERS 		= "allg";
 	const GET_ALL_COUNTRIES 	= "allc";
 	const GET_ALL_INSA_DEPTS 	= "alldept";
 	const GET_ALL_POSITIONS 	= "allpos";
+	const CHECK_MAIL			= "checkmail";
 	const INSERT				= "insert";
 	const UPDATE 				= "update";
 	const UPDATE_POSTION        = "updatepos";
@@ -190,7 +193,9 @@ class UserDataServices extends AbstractObjectServices {
 		} else if(!strcmp($action, UserDataServices::GET_POSITION_BY_ID)) {
 			$data = $this->__get_position_by_id($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_USER_LAST_POS)) {
-			$data = $this->__get_user_last_position($params[UserDataServices::PARAM_ID]);
+			$data = $this->__get_user_last_position($params[UserDataServices::PARAM_USER_ID]);
+		} else if(!strcmp($action, UserDataServices::GET_USER_RG_CODE)) {
+			$data = $this->__get_user_rgcode($params[UserDataServices::PARAM_USER_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_ALL_USER_DATA)) {
 			$data = $this->__get_all_user_data();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_GENDERS)) {
@@ -201,6 +206,8 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__get_all_INSA_depts();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_POSITIONS)) {
 			$data = $this->__get_all_positions();
+		} else if(!strcmp($action, UserDataServices::CHECK_MAIL)) {
+			$data = $this->__check_mail($params[UserDataServices::PARAM_EMAIL]);
 		} else if(!strcmp($action, UserDataServices::INSERT)) {
 			$data = $this->__insert_user_data(
 				$params[UserDataServices::PARAM_USER_ID],
@@ -230,7 +237,7 @@ class UserDataServices extends AbstractObjectServices {
 				$params[UserDataServices::PARAM_INSA_DEPT_ID]);
 		} else if(!strcmp($action, UserDataServices::UPDATE_POSTION)) {
 			$data = $this->__update_user_position(
-				$params[UserDataServices::PARAM_ID],
+				$params[UserDataServices::PARAM_USER_ID],
 				$params[UserDataServices::PARAM_POSITION_ID]);
 		} else if(!strcmp($action, UserDataServices::DELETE)) {
 			$data = $this->__delete_user_data($params[UserDataServices::PARAM_ID]);
@@ -344,23 +351,46 @@ class UserDataServices extends AbstractObjectServices {
 		return $position;
 	}
 
-	private function __get_user_last_position($id) {
+	private function __get_user_last_position($userId) {
 		// create sql params array
-		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
+		$sql_params = array(":".UserDataDBObject::COL_USER_ID => $userId);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID),
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_USER_ID),
 			array(UserDataDBObject::COL_SINCE => DBTable::ORDER_DESC), 1);
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for udata and fill it
-		$position = null;
+		$positionId = null;
 		if($pdos != null) {
 			if( ($row = $pdos->fetch()) !== false) {
-				$position = $row[UserDataDBObject::COL_POSITION_ID];
+				$positionId = $row[UserDataDBObject::COL_POSITION_ID];
+			}
+		}
+		$position = null;
+		if($positionId != null) {
+			$sql_params = array(":".UserDataDBObject::COL_ID => $positionId);
+			$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
+						array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
+			// execute SQL query and save result
+			$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+			// create an empty array for udata and fill it
+			if($pdos != null) {
+				if( ($row = $pdos->fetch()) !== false) {
+					$position = $row;
+				}
 			}
 		}
 		return $position;
+	}
+
+	private function __get_user_rgcode($userId) {
+		$position = $this->__get_user_last_position($userId);
+		$rgcode = null;
+		if($position != null) {
+			$rgcode = $position[UserDataDBObject::COL_RG_CODE];
+		}
+		return $rgcode;
 	}
 
 	private function __get_all_user_data() {
@@ -450,13 +480,41 @@ class UserDataServices extends AbstractObjectServices {
 		return $labels;
 	}
 
-
+	private function __check_mail($email) {
+		// create sql params array
+		$sql_params = array(":".UserDataDBObject::COL_EMAIL => $email);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_EMAIL));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create udata var
+		$udata = null;
+		if($pdos != null) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$udata = new UserData(
+					$row[UserDataDBObject::COL_ID],
+					$row[UserDataDBObject::COL_USER_ID],
+					$row[UserDataDBObject::COL_GENDER_ID],
+					$row[UserDataDBObject::COL_FIRSTNAME],
+					$row[UserDataDBObject::COL_LASTNAME],
+					$row[UserDataDBObject::COL_BIRTHDATE],
+					$row[UserDataDBObject::COL_TEL],
+					$row[UserDataDBObject::COL_EMAIL],
+					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_COUNTRY_ID],
+					$row[UserDataDBObject::COL_SCHOOL_YEAR],
+					$row[UserDataDBObject::COL_INSA_DEPT_ID]);
+			}
+		}
+		return $udata;
+	}
 
 	// -- modify
 
 	private function __insert_user_data($userId, $genderId, $firstname, $lastname, $birthdate, 
 									$tel, $email, $address, $countryId, $schoolYear, 
-									$insaDeptId, $positionId) {
+									$insaDeptId) {
 		// create sql params
 		$sql_params = array(
 			":".UserDataDBObject::COL_ID => "NULL",
@@ -506,7 +564,7 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_ID => "NULL",
 			":".UserDataDBObject::COL_USER_ID => $userId,
 			":".UserDataDBObject::COL_POSITION_ID => $positionId,
-			":".UserDataDBObject::COL_SINCE => date('Y-m-d'));
+			":".UserDataDBObject::COL_SINCE => date('Y-m-d H:i:s'));
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetINSERTQuery();
 		// execute query
@@ -603,29 +661,32 @@ class UserDataServices extends AbstractObjectServices {
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
 		}
 		// -- init ETIC pos table --------------------------------------------------------------------
-		$positions = array(
-			"Président" => "P",
-			"Vide-Président" => "VP",
-			"Secrétaire Général" => "SG",
-			"Trésorier" => "T",
-			"Comptable" => "C",
-		    "Responsable DSI" => "R-DSI",
-		    "Responsable GRC" => "R-GRC",
-		    "Responsable COM" => "R-COM",
-		    "Responsable UA" => "R-UA",
-		    "Responsable Qualité" => "R-Q",
-		    "Junior DSI" => "J-DSI",
-		    "Junior GRC" => "J-GRC",
-		    "Junior COM" => "J-COM",
-		    "Chargé d'affaire" => "J-CA",
-		    "Junior Qualité" => "J-Q");
+		$positions = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
+			"Président" => 				(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+			"Vide-Président" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+			"Secrétaire Général" => 	(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+			"Trésorier" => 				(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+			"Comptable" => 				(RightsMap::A_R  | RightsMap::M_G | RightsMap::D_G), // A  | M | D
+		    "Responsable DSI" => 		(RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G), // SA | A | D
+		    "Responsable GRC" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+		    "Responsable COM" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+		    "Responsable UA" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+		    "Responsable Qualité" => 	(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+		    "Junior DSI" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
+		    "Junior GRC" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
+		    "Junior COM" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
+		    "Chargé d'affaire" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
+		    "Junior Qualité" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
+		    "Intervenant" => 			(RightsMap::G_R  | RightsMap::I_G | RightsMap::D_G), // G  | I | D
+		    "Client" => 				(RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G)  // G  | C | D
+		    );
 		// --- retrieve SQL query
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetINSERTQuery();
-		foreach ($positions as $position => $rights_code) {
+		foreach ($positions as $position => $rgcode) {
 			// --- create param array
 			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
 								":".UserDataDBObject::COL_LABEL => $position,
-								":".UserDataDBObject::COL_RIGHTS_CODE => $rights_code);
+								":".UserDataDBObject::COL_RG_CODE => $rgcode);
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
 		}
@@ -665,14 +726,14 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_LABEL			= "label";
 	const COL_DETAIL		= "detail";
 	const COL_SINCE			= "since";
-	const COL_RIGHTS_CODE   = "rights_code";
+	const COL_RG_CODE   	= "rg_code";
 	// -- attributes
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct($module) {
 		// -- construct parent
-		parent::__construct(UserDataDBObject::OBJ_NAME);
+		parent::__construct($module, UserDataDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_udata table
 		$dol_udata = new DBTable(UserDataDBObject::TABL_USER_DATA);
@@ -693,7 +754,7 @@ class UserDataDBObject extends AbstractDBObject {
 		$dol_udata_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$dol_udata_position->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "");
 		$dol_udata_position->AddColumn(UserDataDBObject::COL_POSITION_ID, DBTable::DT_INT, 11, false, "");
-		$dol_udata_position->AddColumn(UserDataDBObject::COL_SINCE, DBTable::DT_DATE, -1, false, "");
+		$dol_udata_position->AddColumn(UserDataDBObject::COL_SINCE, DBTable::DT_DATETIME, -1, false, "");
 		// --- com_gender table
 		$com_gender = new DBTable(UserDataDBObject::TABL_COM_GENDER);
 		$com_gender->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
@@ -711,7 +772,7 @@ class UserDataDBObject extends AbstractDBObject {
 		$com_position = new DBTable(UserDataDBObject::TABL_COM_POSITION);
 		$com_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$com_position->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "");
-		$com_position->AddColumn(UserDataDBObject::COL_RIGHTS_CODE, DBTable::DT_VARCHAR, 255, false, "");
+		$com_position->AddColumn(UserDataDBObject::COL_RG_CODE, DBTable::DT_INT, 11, false, "");
 
 		// -- add tables
 		parent::addTable($dol_udata);

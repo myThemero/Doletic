@@ -18,7 +18,13 @@ var DoleticUIModule = new function() {
 		return "<div class=\"holder\"> \
 				  <div class=\"ui three column centered middle aligned grid container\"> \
 					<div class=\"column\"> \
-					  <form id=\"login_form\" class=\"ui form segment\"> \
+					  <div class=\"ui attached message\"> \
+						  <div class=\"header\"> \
+						    Bienvenue ! \
+						  </div> \
+						  <p>Veuillez vous identifier.</p> \
+						</div> \
+					  <form id=\"login_form\" class=\"ui form attached fluid segment\"> \
 				  		<div id=\"uname_field\" class=\"required field\"> \
 					      <label>Nom d'utilisateur</label> \
 					      <input id=\"uname_input\" placeholder=\"prenom.nom\" name=\"username\" type=\"text\"> \
@@ -30,6 +36,10 @@ var DoleticUIModule = new function() {
   						<div class=\"ui green button\" onClick=\"DoleticUIModule.checkLoginFormInputs();\">Connexion</div> \
   						<div class=\"ui right floated button\" onClick=\"DoleticUIModule.resetLoginForm();\">Effacer</div> \
 					  </form> \
+					  <div class=\"ui bottom attached info message\"> \
+  						<i class=\"icon help\"></i> \
+  						<a class=\"ui\" onClick=\"DoleticServicesInterface.getUILost();\">Mot de passe perdu</a> \
+					  </div> \
 					</div> \
 				   </div> \
 				</div>";
@@ -108,7 +118,7 @@ var DoleticUIModule = new function() {
 		$('#uname_input').val("");
 		$('#pass_input').val("");
 		// reset class attributes
-		$('#login_form').attr('class', 'ui form segment');
+		$('#login_form').attr('class', 'ui form attached fluid segment');
 		$('#uname_field').attr('class', 'required field');
 		$('#pass_field').attr('class', 'required field');
 		// remove error elements

@@ -248,13 +248,12 @@ var DoleticMasterInterface = new function() {
       var content = "";
       var json = JSON.parse(data.data);
       // iterate over values to build options
-      for (var i = 0; i < json.length; i++) {
+      for (var i = 0; i < json.length && json[i].length == 2; i++) {
         content += "<div> \
                       <div class=\"header\">"+json[i][0]+"</div> \
                         <div class=\"menu\">\n";
-        for (var j = 0; j < json[i][1].length; j++) {
+        for (var j = 0; j < json[i][1].length  && json[i][1][j].length == 2; j++) {
           content += "    <a class=\"item\" onClick=\"DoleticServicesInterface.getUI('"+json[i][1][j][1]+"');\">"+json[i][1][j][0]+"</a>\n";
-          
         };
         content += "    </div> \
                       </div> \

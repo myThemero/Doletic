@@ -215,9 +215,9 @@ class CommentDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct($module) {
 		// -- construct parent
-		parent::__construct(CommentDBObject::OBJ_NAME);
+		parent::__construct($module, CommentDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_comment table
 		$dol_comment = new DBTable(CommentDBObject::TABL_COMMENT);

@@ -1,5 +1,6 @@
 <?php
 
+
 abstract class AbstractObjectServices {
 
 	// -- attributes
@@ -19,6 +20,7 @@ abstract class AbstractObjectServices {
 		$this->current_user = $currentUser;
 		$this->db_object = $dbObject;
 		$this->db_connection = $dbConnection;
+		$this->rights_map = new RightsMap();
 	}
 
 	protected function getCurrentUser() {
@@ -32,5 +34,4 @@ abstract class AbstractObjectServices {
 	protected function getDBObject() {
 		return $this->db_object;
 	}
-
 }

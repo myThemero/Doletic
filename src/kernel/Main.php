@@ -14,15 +14,18 @@ class Main {
 	const RPARAM_QUERY = "q";
 	// --- GET specific params
 	const GPARAM_PAGE = "page";
+	const GPARAM_TOKEN = "token";
 	// --- POST specific params
 	const PPARAM_USER = "user";
 	const PPARAM_HASH = "hash";
+	const PPARAM_MAIL = "mail";
 	// --- SESSION keys
 	const SPARAM_DOL_KERN = "doletic_kernel";
 	// --- known queries
 	const QUERY_SERVICE = "service";
 	const QUERY_LOGOUT = "logout";
 	const QUERY_AUTHEN = "auth";
+	const QUERY_RESET_PASS = "resetpass";
 	const QUERY_INTERF = "ui";
 
 	// -- functions
@@ -65,14 +68,25 @@ class Main {
 				} else {
 					$this->__display_home();	
 				}
-			}  //check if query received in POST
+			}  // check if query received in GET
+			else if(array_key_exists(Main::RPARAM_QUERY, $_GET) && !strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
+				$this->__reset_pass(false);
+			} //check if query received in POST
 			else if(array_key_exists(Main::RPARAM_QUERY, $_POST)) {
 				// POST query is about authentication
 				if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_AUTHEN)) {
 					$this->__authenticate();
+				} else if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
+					$this->__reset_pass();
 				}
 			} else { // if no valid user ask for a login
-				$this->__display_login();
+				if(array_key_exists(Main::RPARAM_QUERY, $_GET) && 
+				   !strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_INTERF) && 
+				   $_GET[Main::GPARAM_PAGE] == UIManager::INTERFACE_LOST) {
+					$this->__display_interface();
+				} else {
+					$this->__display_login();	
+				}
 			} 
 			// disconnect database
 			$_SESSION[Main::SPARAM_DOL_KERN]->DisconnectDB();
@@ -104,6 +118,23 @@ class Main {
 			$this->__terminate(json_encode(array('authenticated' => $ok)));
 		} else { // if params are missing show login page
 			$this->__display_login();
+		}
+	}
+
+	private function __reset_pass($init = true) {
+		// check if init procedure or not
+		if($init) {
+			// Ask kernel for password reset
+			$ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordInit($_POST[Main::PPARAM_MAIL]);
+			// Terminate returning approriated json structure
+			$this->__terminate(json_encode(array('sent' => $ok)));
+		} else {
+			// Ask kernel for password reset
+			$ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordExec($_GET[Main::GPARAM_TOKEN]);
+			if($ok) {
+				// Terminate returning approriated json structure
+				$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_RESTORED));	
+			}
 		}
 	}
 

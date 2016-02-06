@@ -43,29 +43,47 @@ class FakeDataFunction extends AbstractFunction {
 		parent::info("Filling ticket object related tables...", true);
 		// --------------------------------------------------------------
 		$kernel->GetDBObject(TicketDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
-					->GetResponseData(TicketServices::INSERT, array(
-			"receiverId" => 1,
-			"subject" => "Test subject",
-			"categoryId" => 2,
-			"data" => "Test data",
-			"statusId" => 3));
+				->GetResponseData(TicketServices::INSERT, array(
+			TicketServices::PARAM_RECEIVER 	=> 1,
+			TicketServices::PARAM_SUBJECT 	=> "Test subject",
+			TicketServices::PARAM_CATEGO 	=> 2,
+			TicketServices::PARAM_DATA 		=> "Test data",
+			TicketServices::PARAM_STATUS 	=> 3));
 		// --------------------------------------------------------------
 		parent::endlog("done !");
 		// --- fill users
 		parent::info("Filling user object related tables...", true);
 		// --------------------------------------------------------------
 		$kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
-					->GetResponseData(UserServices::INSERT, array(
-			"username" => "user.test",
-			"hash" => sha1("password")));
+				->GetResponseData(UserServices::INSERT, array(
+			UserServices::PARAM_UNAME 	=> "john.doe",
+			UserServices::PARAM_HASH 	=> sha1("password")));
 		// --------------------------------------------------------------
 		parent::endlog("done !");
 		// --- fill userdata
 		parent::info("Filling userdata object related tables...", true);
 		// --------------------------------------------------------------
-		parent::endlog("skipped !");
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::INSERT, array(
+					UserDataServices::PARAM_USER_ID => 1,
+					UserDataServices::PARAM_GENDER_ID => 1,
+					UserDataServices::PARAM_FIRSTNAME => "John",
+					UserDataServices::PARAM_LASTNAME => "Doe", 
+					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
+					UserDataServices::PARAM_TEL => "0600000000", 	
+					UserDataServices::PARAM_EMAIL => "john.doe@gmail.com",  
+					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
+					UserDataServices::PARAM_COUNTRY_ID => 153,
+					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
+					UserDataServices::PARAM_INSA_DEPT_ID => 10 
+						));
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
+					UserDataServices::PARAM_USER_ID => 1,
+					UserDataServices::PARAM_POSITION_ID => 17
+					));
 		// --------------------------------------------------------------
-		//parent::endlog("done !");
+		parent::endlog("done !");
 		// --- disconnect database
 		$kernel->DisconnectDB();
 		$kernel = null;

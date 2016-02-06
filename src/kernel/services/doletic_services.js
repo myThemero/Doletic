@@ -16,7 +16,8 @@ var DoleticServicesInterface = new function() {
   'ERR_MISSING_OBJ',
   'ERR_MISSING_ACT',
   'ERR_MISSING_SERVICE',
-  'ERR_SERVICE_FAILED'
+  'ERR_SERVICE_FAILED',
+  'ERR_INSUFFICIENT_RIGHTS',
   ];
   /**
    *  Loads a standard Doletic page using ui parameter 
@@ -28,7 +29,13 @@ var DoleticServicesInterface = new function() {
    *  Loads a specific Doletic Login page
    */
   this.getUILogin = function() {
-    this.getUI('login');
+    this.getUI('kernel:login');
+  }
+  /**
+   *  Loads a specific Doletic Lost password page
+   */
+  this.getUILost = function() {
+    this.getUI('kernel:lost');
   }
   /**
    *  Loads a specific Doletic Logout page
@@ -46,7 +53,7 @@ var DoleticServicesInterface = new function() {
       </h2>',
       function(){
         // require logout
-        DoleticServicesInterface.getUI("logout");
+        DoleticServicesInterface.getUI("kernel:logout");
       },
       function() {
         // hide modal and don't do anything
@@ -63,7 +70,7 @@ var DoleticServicesInterface = new function() {
    *  Loads a specific Doletic Home page
    */
   this.getUIHome = function() {
-    this.getUI('home');
+    this.getUI('kernel:home');
   }
   /**
    *  Loads a specific Doletic Auth page
@@ -75,6 +82,21 @@ var DoleticServicesInterface = new function() {
         q: 'auth',
         user: username,
         hash: phpjsLight.sha1(password)
+      },
+      'json',
+      DoleticServicesInterface.handleAJAXError,
+      successHandler
+      );
+  }
+  /**
+   *  Send mail to reset password
+   */
+  this.resetPassword = function(mail, successHandler) {
+    this.ajaxPOST(
+      this.doleticMainURL, 
+      {
+        q: 'resetpass',
+        mail: mail
       },
       'json',
       DoleticServicesInterface.handleAJAXError,

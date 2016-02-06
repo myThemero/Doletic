@@ -10,6 +10,7 @@ require_once "managers/SettingsManager.php";
 abstract class AbstractDBObject {
 
 	// -- attributes
+	private $module;
 	private $db_connection;
 	private $name;
 	private $tables;
@@ -59,6 +60,10 @@ abstract class AbstractDBObject {
 		}
 	}
 
+	public function GetModule() {
+		return $this->module;
+	}
+
 	/**
 	 *	@brief Returns all services associated with this object
 	 */
@@ -82,7 +87,8 @@ abstract class AbstractDBObject {
 
 # PROTECTED & PRIVATE #########################################################
 
-	protected function __construct($name) {
+	protected function __construct($module, $name) {
+		$this->module = $module;
 		$this->db_connection = null;
 		$this->name = $name;
 		$this->tables = array();

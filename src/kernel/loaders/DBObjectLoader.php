@@ -1,13 +1,6 @@
 <?php
 
 require_once "interfaces/AbstractLoader.php";
-require_once "services/php/SettingDBObject.php";
-require_once "services/php/ModuleDBObject.php";
-require_once "services/php/UserDBObject.php";
-require_once "services/php/UserDataDBObject.php";
-require_once "services/php/UploadDBObject.php";
-require_once "services/php/CommentDBObject.php";
-
 
 /**
 * 	@brief
@@ -27,8 +20,6 @@ class DBObjectLoader extends AbstractLoader {
 	}
 
 	public function Init($modulesDBObjects) {
-		// -- add kernel db objects
-		$this->__add_kernel_db_objects();
 		// -- add modules db objects
 		foreach ($modulesDBObjects as $dboname => $dbo) {
 			$this->objects[$dboname] = $dbo;
@@ -64,15 +55,6 @@ class DBObjectLoader extends AbstractLoader {
 	}
 
 # PROTECTED & PRIVATE ######################################################
-
-	private function __add_kernel_db_objects() {
-		$this->objects[SettingDBObject::OBJ_NAME] = new SettingDBObject();
-		$this->objects[ModuleDBObject::OBJ_NAME] = new ModuleDBObject();
-		$this->objects[UserDBObject::OBJ_NAME] = new UserDBObject();
-		$this->objects[UserDataDBObject::OBJ_NAME] = new UserDataDBObject();
-		$this->objects[UploadDBObject::OBJ_NAME] = new UploadDBObject();
-		$this->objects[CommentDBObject::OBJ_NAME] = new CommentDBObject();
-	}
 
 	private function __connect_db_objects() {
 		foreach ($this->objects as $dbo) {

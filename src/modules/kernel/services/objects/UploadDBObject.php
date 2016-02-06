@@ -271,9 +271,9 @@ class UploadDBObject extends AbstractDBObject {
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct($module) {
 		// -- construct parent
-		parent::__construct(UploadDBObject::OBJ_NAME);
+		parent::__construct($module, UploadDBObject::OBJ_NAME);
 		// -- create tables
 		// --- dol_upload table
 		$dol_upload = new DBTable(UploadDBObject::TABL_UPLOAD);

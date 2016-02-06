@@ -1,17 +1,19 @@
 <?php 
 
 require_once "DoleticKernel.php";
+require_once "objects/RightsMap.php";
 
 class ServiceResponse implements \JsonSerializable {
 	
 	// -- consts
 	// --- service errors
-	const ERR_NO_ERROR 			= 0x00;
-	const ERR_MISSING_PARAMS	= 0x01;
-	const ERR_MISSING_OBJ 		= 0x02;
-	const ERR_MISSING_ACT 		= 0x03;
-	const ERR_MISSING_SERVICE   = 0x04;
-	const ERR_SERVICE_FAILED 	= 0x05;
+	const ERR_NO_ERROR 				= 0x00;
+	const ERR_MISSING_PARAMS		= 0x01;
+	const ERR_MISSING_OBJ 			= 0x02;
+	const ERR_MISSING_ACT 			= 0x03;
+	const ERR_MISSING_SERVICE   	= 0x04;
+	const ERR_SERVICE_FAILED 		= 0x05;
+	const ERR_INSUFFICIENT_RIGHTS 	= 0x06;
 	// --- upload errors
 	const ERR_UP_INVALID_PARAMS = 0x10;
 	const ERR_UP_NO_FILE 		= 0x11;
@@ -76,11 +78,18 @@ class Services {
 
 	// -- attributes
 	private $kernel;
+	private $rights_map;
 
 	// -- functions
-
 	public function __construct(&$kernel) {
+		// --- init kernel and rights map
 		$this->kernel = $kernel;
+		$this->rights_map = new RightsMap();
+		// --- add rules to right
+		$this->rights_map->AddRules(array(
+				Services::SERVICE_UPLOAD   => RightsMap::G_RMASK,
+				Services::SERVICE_UI_LINKS => RightsMap::G_RMASK
+			));
 	}
 
 // --------------------------------- GLOBAL Services entry points ----------------------------------------------------------
@@ -88,13 +97,17 @@ class Services {
 	public function Response($post = array(), $pretty = false) {
 		// first check check if object requested is service for high-level services
 		if($post[Services::PPARAM_OBJ] === Services::OBJ_SERVICE) {
-			// find which service is called
-			if($post[Services::PPARAM_ACT] === Services::SERVICE_UPLOAD) {
-				$response = $this->__service_upload($post);
-			} else if($post[Services::PPARAM_ACT] === Services::SERVICE_UI_LINKS) {
-				$response = $this->__service_uis();
+			if($this->__check_rights_service($post[Services::PPARAM_ACT])) {
+				// find which service is called
+				if($post[Services::PPARAM_ACT] === Services::SERVICE_UPLOAD) {
+					$response = $this->__service_upload($post);
+				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_UI_LINKS) {
+					$response = $this->__service_uis();
+				} else {
+					$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
+				}
 			} else {
-				$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
+				$response = new ServiceResponse("", ServiceResponse::ERR_INSUFFICIENT_RIGHTS, "Insufficient rights to access this service.");
 			}
 		} // else an atomic service is called -> redirect call to object specific services
 		else {
@@ -103,22 +116,27 @@ class Services {
 			// retreive db object
 			$obj = $this->kernel->GetDBObject($post[Services::PPARAM_OBJ]);
 			if($obj != null) {
-				// retreive response data
-				if(array_key_exists(Services::PPARAM_PARAMS, $post)) {
-					$data = $obj->GetServices($this->kernel->GetCurrentUser())
-								->GetResponseData(
-									$post[Services::PPARAM_ACT], 
-									$post[Services::PPARAM_PARAMS]);
+				// check rights
+				if($this->__check_rights_module($obj->GetModule(), $post[Services::PPARAM_OBJ].':'.$post[Services::PPARAM_ACT])) {
+					// retrieve services
+					$services = $obj->GetServices($this->kernel->GetCurrentUser());
+					// retreive response data
+					if(array_key_exists(Services::PPARAM_PARAMS, $post)) {
+						$data = $services->GetResponseData(
+										$post[Services::PPARAM_ACT], 
+										$post[Services::PPARAM_PARAMS]);
+					} else {
+						$data = $services->GetResponseData(
+										$post[Services::PPARAM_ACT], 
+										array());
+					}
+					if($data != null) {
+						$response = new ServiceResponse($data);
+					} else {
+						$response = new ServiceResponse("[]"); // empty return from service
+					}	
 				} else {
-					$data = $obj->GetServices($this->kernel->GetCurrentUser())
-								->GetResponseData(
-									$post[Services::PPARAM_ACT], 
-									array());
-				}
-				if($data != null) {
-					$response = new ServiceResponse($data);
-				} else {
-					$response = new ServiceResponse("[]"); // empty return from service
+					$response = new ServiceResponse("", ServiceResponse::ERR_INSUFFICIENT_RIGHTS, "Insufficient rights to access this service.");
 				}
 			} else {
 				$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_OBJ, "Object is missing.");
@@ -134,7 +152,7 @@ class Services {
 		return $json;
 	}
 	/**
-	 *	Return service default response -> it's always an error linked with query parameters
+	 *	Retourne la réponse par défaut du service, cela signifie que la requête est incomplète
 	 */
 	public function DefaultResponse() {
 		$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_PARAMS, "Parameters (obj and/or act) are missing.");
@@ -142,6 +160,19 @@ class Services {
 	}
 
 // --------------------------------- HIGH-LEVEL Services ---------------------------------------------------------------------
+
+	/**
+	 *	Vérifie que l'utilisateur courant possède les droits suffisant pour effectuer l'action demandée au niveau service
+	 */
+	private function __check_rights_service($action) {
+		return ( $this->rights_map->Check($this->kernel->GetCurrentUserRGCode(), $action) === RightsMap::OK );
+	}
+	/**
+	 *	Vérifie que l'utilisateur courant possède les droits suffisant pour effectuer l'action demandée au niveau module
+	 */
+	private function __check_rights_module($module, $action) {
+		return $module->CheckRights($this->kernel->GetCurrentUserRGCode(), $action);	
+	}
 
 	private function __service_upload($post) {
 		// initialize response with null

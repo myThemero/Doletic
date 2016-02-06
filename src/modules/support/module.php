@@ -16,10 +16,13 @@ class SupportModule extends AbstractModule {
 			"Support", 
 			"1.0dev", 
 			array("Paul Dautry","Nicolas Sorin"), 
-			array()
+			(RightsMap::A_G | RightsMap::M_G),
+			array(
+				/// \todo add rules here for ticket services
+				)
 			);
 		// -- add module specific dbo objects
-		parent::addDBObject(new TicketDBObject());
+		parent::addDBObject(new TicketDBObject($this));
 		// -- add module specific ui
 		parent::addUI('Mes tickets','ui'); 	// refer to couple (ui.js, ui.css)
 		parent::addUI('Admin tickets','admin');	// refer to couple (admin.js, admin.css)

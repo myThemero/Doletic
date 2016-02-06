@@ -8,16 +8,17 @@ require_once "interfaces/AbstractManager.php";
 class UIManager extends AbstractManager {
 	
 	// -- consts
-	const INTERFACE_LOGIN = "login";
-	const INTERFACE_LOGOUT = "logout";
-	const INTERFACE_404 = "404";
-	const INTERFACE_HOME = "home";
-	const INTERFACE_TEST = "test";
+	const INTERFACE_LOGIN = "kernel:login";
+	const INTERFACE_LOGOUT = "kernel:logout";
+	const INTERFACE_LOST = "kernel:lost";
+	const INTERFACE_RESTORED = "kernel:restored";
+	const INTERFACE_404 = "kernel:404";
+	const INTERFACE_HOME = "kernel:home";
+	const INTERFACE_TEST = "kernel:test";
 
 	// -- attributes 
 	private $internal_css;
 	private $internal_js;
-	private $special_uis;
 	// -- functions
 	/**
 	 *
@@ -28,8 +29,6 @@ class UIManager extends AbstractManager {
 		$this->internal_css = array();
 		// internal js
 		$this->internal_js = array();
-		// -- special uis
-	 	$this->special_uis = array();
 	}
 	/**
 	 *	Initi
@@ -39,8 +38,6 @@ class UIManager extends AbstractManager {
 		$this->__init_css();
 		// add js
 		$this->__init_js($modulesJSServices);
-		// add specials
-		$this->__init_uis();
 	}
 	/**
 	 *	Creates a standard Doletic page including $js scripts and $css stylesheets
@@ -72,26 +69,10 @@ class UIManager extends AbstractManager {
 		return $page;
 	}
 	/**
-	 *	Returns true if $ui refer to a builtin Doletic page
-	 */
-	public function IsSpecialUI($ui) {
-		return array_key_exists($ui, $this->special_uis);
-	}
-	/**
-	 *	Returns a kernel page, its a Doletic native page, not created by a module.
-	 */
-	public function MakeSpecialUI($ui) {
-		$page = null;
-		if(array_key_exists($ui, $this->special_uis)) {
-			$page  = $this->MakeUI(array($this->special_uis[$ui]), array());
-		}
-		return $page;
-	}
-	/**
 	 *	Returns 404 not found Doletic page
 	 */
 	public function Make404UI() {
-		return $this->MakeSpecialUI(UIManager::INTERFACE_404);
+		return $this->MakeUI(array("ui/js/404.js"),array("ui/css/404.css"));
 	}
 
 # PROTECTED & PRIVATE ################################################################
@@ -106,25 +87,11 @@ class UIManager extends AbstractManager {
 		array_push($this->internal_js, "ui/js_depends/jquery-2.2.0.min.js");
 		array_push($this->internal_js, "ui/js_depends/plotly-1.5.0.min.js");
 		array_push($this->internal_js, "ui/semantic/dist/semantic.min.js");
-		array_push($this->internal_js, "ui/js/common/abstract_doletic_module.js");
-		array_push($this->internal_js, "ui/js/common/doletic_utils.js");
-		array_push($this->internal_js, "ui/js/common/doletic.js");
-		array_push($this->internal_js, "services/js/doletic_services.js");
-		array_push($this->internal_js, "services/js/user_services.js");
-		array_push($this->internal_js, "services/js/user_data_services.js");
-		array_push($this->internal_js, "services/js/setting_services.js");
-		array_push($this->internal_js, "services/js/module_services.js");
-		array_push($this->internal_js, "services/js/comment_services.js");
+		array_push($this->internal_js, "services/doletic_services.js");
+		array_push($this->internal_js, "ui/js/abstract_doletic_module.js");
+		array_push($this->internal_js, "ui/js/doletic_utils.js");
+		array_push($this->internal_js, "ui/js/doletic.js");
 		// merge with modules services scripts
 		$this->internal_js = array_merge($this->internal_js, $modulesJSServices);
 	}
-
-	private function __init_uis() {
-		$this->special_uis[UIManager::INTERFACE_LOGIN] = "ui/js/kernel_page/login.js";
-		$this->special_uis[UIManager::INTERFACE_LOGOUT] = "ui/js/kernel_page/logout.js";
-		$this->special_uis[UIManager::INTERFACE_404] = "ui/js/kernel_page/404.js";
-		$this->special_uis[UIManager::INTERFACE_HOME] = "ui/js/kernel_page/home.js";
-		$this->special_uis[UIManager::INTERFACE_TEST] = "ui/js/kernel_page/test.js";
-	}
-
 }
