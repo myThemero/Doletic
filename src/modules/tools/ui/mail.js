@@ -22,10 +22,10 @@ var DoleticUIModule = new function() {
 				  </div> \
 				  <div class=\"row\"> \
 				  	<div class=\"sixteen wide column\"> \
-						<div class=\"html ui top attached segment\"> \
+						<div id=\"title_seg\" class=\"html ui top attached segment\"> \
 						   	<div class=\"ui top attached label\"><b>Votre signature de mail</b></div> \
 						</div> \
-						<div class=\"ui instructive attached segment\"> \
+						<div id=\"content_seg\" class=\"ui instructive attached segment\"> \
 							<p><i id=\"copy_btn\" class=\"copy circular link icon\"></i> <b>Code HTML :</b></p> \
 							<div id=\"copy_popup\" class=\"ui special small popup\"> \
 								<div class=\"header\">Copier la signature :</div> \
@@ -43,7 +43,7 @@ var DoleticUIModule = new function() {
 								</textarea> \
 							</form> \
 						</div> \
-						<div class=\"ui instructive bottom attached segment\"> \
+						<div id=\"footer_seg\" class=\"ui instructive bottom attached segment\"> \
 							<p><b>Prévisualisation de votre signature :</b></p> \
 							<div id=\"preview_zone\" class=\"\"> \
 								<!-- HTML SIGNATURE WILL GO THERE --> \
@@ -61,6 +61,18 @@ var DoleticUIModule = new function() {
 	this.uploadSuccessHandler = function(id, data) {
 		this.super.uploadSuccessHandler(id, data);
 	}
+
+	this.nightMode = function(on) {
+	    if(on) {
+	    	$('#title_seg').attr('class', 'html ui top attached segment inverted');
+	    	$('#content_seg').attr('class', 'ui instructive attached segment inverted');
+	    	$('#footer_seg').attr('class', 'ui instructive bottom attached segment inverted');
+	    } else {
+	    	$('#title_seg').attr('class', 'html ui top attached segment');
+	    	$('#content_seg').attr('class', 'ui instructive attached segment');
+	    	$('#footer_seg').attr('class', 'ui instructive bottom attached segment');
+	    }
+  	}
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 

@@ -59,9 +59,9 @@ var DoleticUIModule = new function() {
     						<textarea id=\"data\"></textarea> \
   						  </div> \
   						  <div class=\"ui support_center small buttons\"> \
-							<div class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
+							<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
 							<div class=\"or\" data-text=\"ou\"></div> \
-							<div class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Envoyer</div> \
+							<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Envoyer</div> \
 						  </div> \
 				      </form> \
 					</div> \
@@ -76,6 +76,22 @@ var DoleticUIModule = new function() {
 	this.uploadSuccessHandler = function(id, data) {
 		this.super.uploadSuccessHandler(id, data);
 	}
+
+	this.nightMode = function(on) {
+	    if(on) {
+	      $('.ui.horizontal.divider').attr('class', 'ui horizontal divider inverted');
+	      $('#ticket_list').attr('class', 'ui very relaxed celled selection list inverted');
+	      $('#support_form').attr('class', 'ui form segment inverted');
+	      $('#abort_btn').attr('class', 'ui button inverted');
+		  $('#send_btn').attr('class', 'ui green button inverted');
+	    } else {
+	      $('.ui.horizontal.divider.inverted').attr('class', 'ui horizontal divider');
+	      $('#ticket_list').attr('class', 'ui very relaxed celled selection list');
+	      $('#support_form').attr('class', 'ui form segment');
+	      $('#abort_btn').attr('class', 'ui button');
+	      $('#send_btn').attr('class', 'ui green button');
+	    }
+  	}
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 

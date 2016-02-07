@@ -82,7 +82,7 @@ class KernelModule extends AbstractModule {
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::UPDATE_POSTION 		=> RightsMap::A_RMASK,	// only admin and above
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::DELETE 				=> RightsMap::SA_RMASK	// only super admin
 				),
-				true // disable ui
+				false // disable ui must be true in production version
 			);
 		// -- add module specific dbo objects
 		parent::addDBObject(new CommentDBObject($this));

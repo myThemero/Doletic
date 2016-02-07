@@ -53,6 +53,20 @@ var DoleticUIModule = new function() {
 		this.super.uploadSuccessHandler(id, data);
 	}
 
+	this.nightMode = function(on) {
+	    if(on) {
+	    	$('.ui.button.treat').attr('class', 'ui button treat inverted');
+	    	$('.ui.horizontal.divider').attr('class', 'ui horizontal divider inverted');
+	    	$('#open_ticket_list').attr('class', 'ui very relaxed celled selection list inverted');
+	    	$('#wip_ticket_list').attr('class', 'ui very relaxed celled selection list inverted');
+	    } else {
+	    	$('.ui.button.treat.inverted').attr('class', 'ui button treat');
+	    	$('.ui.horizontal.divider.inverted').attr('class', 'ui horizontal divider');
+	    	$('#open_ticket_list').attr('class', 'ui very relaxed celled selection list');
+	    	$('#wip_ticket_list').attr('class', 'ui very relaxed celled selection list');
+	    }
+  	}
+
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
 	this.fillList = function(list, action, json) {
@@ -62,7 +76,7 @@ var DoleticUIModule = new function() {
 		for (var i = 0; i < json.length; i++) {
 			content += "<div class=\"item\"> \
 							<div class=\"right floated content\"> \
-      							<div class=\"ui button\" onClick=\"DoleticUIModule.treatTicket('"+json[i].id+"');\">"+action+"</div> \
+      							<div class=\"ui button treat\" onClick=\"DoleticUIModule.treatTicket('"+json[i].id+"');\">"+action+"</div> \
     						</div> \
 						  <div class=\"middle aligned content\"> \
 						    <a class=\"header\">"+json[i].subject+"</a> \
@@ -72,6 +86,8 @@ var DoleticUIModule = new function() {
 		};
 		// insert html content
 		$(list).html(content);
+		// update night mode
+		DoleticUISettings.applySettings();
 	}
 	/**
 	 *	Passe le ticket dans l'etat "en traitement"

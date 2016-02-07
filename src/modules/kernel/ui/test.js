@@ -34,29 +34,29 @@ var DoleticUIModule = new function() {
 				  <div class=\"two wide column\"> \
 					</div> \
 					<div class=\"twelve wide column\"> \
-					  <div class=\"ui middle aligned divided list\"> \
+					  <div id=\"tests_list\" class=\"ui middle aligned divided list\"> \
 						  <div class=\"item\"> \
-						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.getComments();\">Run</div></div> \
+						    <div class=\"right floated content\"><div class=\"ui button run\" onClick=\"DoleticUIModule.getComments();\">Run</div></div> \
 						    <div class=\"content\">Récupérer tous les commentaires</div> \
 						  </div> \
 						  <div class=\"item\"> \
-						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.getUsers();\">Run</div></div> \
+						    <div class=\"right floated content\"><div class=\"ui button run\" onClick=\"DoleticUIModule.getUsers();\">Run</div></div> \
 						    <div class=\"content\">Récupérer tous les utilisateurs</div> \
 						  </div> \
 						  <div class=\"item\"> \
-						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.getCurrentUser();\">Run</div></div> \
+						    <div class=\"right floated content\"><div class=\"ui button run\" onClick=\"DoleticUIModule.getCurrentUser();\">Run</div></div> \
 						    <div class=\"content\">Récupérer l'utilisateur courrant</div> \
 						  </div> \
 						  <div class=\"item\"> \
-						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.getUserData();\">Run</div></div> \
+						    <div class=\"right floated content\"><div class=\"ui button run\" onClick=\"DoleticUIModule.getUserData();\">Run</div></div> \
 						    <div class=\"content\">Récupérer toutes les données utilisateur</div> \
 						  </div> \
 						  <div class=\"item\"> \
-						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.getModules();\">Run</div></div> \
+						    <div class=\"right floated content\"><div class=\"ui button run\" onClick=\"DoleticUIModule.getModules();\">Run</div></div> \
 						    <div class=\"content\">Récupérer tous les modules</div> \
 						  </div> \
 						  <div class=\"item\"> \
-						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.getTickets();\">Run</div></div> \
+						    <div class=\"right floated content\"><div class=\"ui button run\" onClick=\"DoleticUIModule.getTickets();\">Run</div></div> \
 						    <div class=\"content\">Récupérer tous les tickets</div> \
 						  </div> \
 						</div> \
@@ -69,7 +69,7 @@ var DoleticUIModule = new function() {
 					</div> \
 					<div class=\"twelve wide column\"> \
 					<div class=\"example\"> \
-					    <div class=\"html ui top attached segment\"> \
+					    <div id=\"ajax_segm\" class=\"html ui top attached segment\"> \
 					    	<div class=\"ui top attached label\"><b>AJAX Response</b></div> \
 						</div> \
 						<div style=\"display: none;\" class=\"annotation transition visible\"> \
@@ -86,9 +86,9 @@ var DoleticUIModule = new function() {
 				  <div class=\"two wide column\"> \
 					</div> \
 					<div class=\"twelve wide column\"> \
-					  <div class=\"ui middle aligned divided list\"> \
+					  <div id=\"plot_list\" class=\"ui middle aligned divided list\"> \
 						  <div class=\"item\"> \
-						    <div class=\"right floated content\"><div class=\"ui button\" onClick=\"DoleticUIModule.displayPlot();\">Run</div></div> \
+						    <div class=\"right floated content\"><div class=\"ui button run\" onClick=\"DoleticUIModule.displayPlot();\">Run</div></div> \
 						    <div class=\"content\">Affiche un graphique</div> \
 						  </div> \
 						</div> \
@@ -117,7 +117,23 @@ var DoleticUIModule = new function() {
 		this.super.uploadSuccessHandler(id, data);
 	}
 
-// ----------------------------------------------------------------------------------------------------------
+	this.nightMode = function(on) {
+	    if(on) {
+	      $('.ui.button.run').attr('class', 'ui button run inverted');
+	      $('#tests_list').attr('class', 'ui middle aligned divided list inverted');
+	      $('#plot_list').attr('class', 'ui middle aligned divided list inverted');
+	      $('#ajax_segm').attr('class', 'html ui top attached segment inverted');
+	      $('#response_zone').attr('class', 'ui instructive bottom attached segment inverted');
+	    } else {
+	      $('.ui.button.run.inverted').attr('class', 'ui button run');
+	      $('#tests_list').attr('class', 'ui middle aligned divided list');
+	      $('#plot_list').attr('class', 'ui middle aligned divided list');
+	      $('#ajax_segm').attr('class', 'html ui top attached segment');
+	      $('#response_zone').attr('class', 'ui instructive bottom attached segment');
+	    }
+  	}
+
+// ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
 	this.serviceSuccessHandler = function(data) {
 		var content = "<b>Error code</b> : " + data.code + 

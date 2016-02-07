@@ -21,7 +21,7 @@ var DoleticUIModule = new function() {
 					      <label>Adresse mail</label> \
 					      <input id=\"mail_input\" placeholder=\"adresse@domaine.racine\" name=\"mail\" type=\"text\"> \
 						</div> \
-  						<div class=\"ui fluid green button\" onClick=\"DoleticUIModule.checkLostFormInputs();\">Envoyer un mail</div> \
+  						<div id=\"check_btn\" class=\"ui fluid green button\" onClick=\"DoleticUIModule.checkLostFormInputs();\">Envoyer un mail</div> \
 					  </form> \
 					</div> \
 				   </div> \
@@ -33,6 +33,16 @@ var DoleticUIModule = new function() {
 	this.uploadSuccessHandler = function(id, data) {
 		this.super.uploadSuccessHandler(id, data);
 	}
+
+	this.nightMode = function(on) {
+	    if(on) {
+	      $('#lost_form').attr('class', 'ui form segment inverted');
+	      $('#check_btn').attr('class', 'ui fluid green button inverted');
+	    } else {
+	      $('#lost_form').attr('class', 'ui form segment');
+	      $('#check_btn').attr('class', 'ui fluid green button');
+	    }
+  	}
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 

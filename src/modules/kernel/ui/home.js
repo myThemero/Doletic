@@ -77,6 +77,17 @@ var DoleticUIModule = new function() {
 			this.super.uploadSuccessHandler(id, data);	
 		}
 	}
+
+	this.nightMode = function(on) {
+	    if(on) {
+	      $('#login_form').attr('class', 'ui form segment inverted');
+	    } else {
+	      $('#login_form').attr('class', 'ui form segment');
+	    }
+  	}
+
+// ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
+
 	/**
 	 *
 	 */

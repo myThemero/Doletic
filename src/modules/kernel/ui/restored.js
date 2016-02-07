@@ -16,12 +16,12 @@ var DoleticUIModule = new function() {
 		return "<div class=\"holder\"> \
 				  <div class=\"ui three column centered middle aligned grid container\"> \
 					<div class=\"column\"> \
-					  <form id=\"login_form\" class=\"ui form segment\"> \
+					  <form id=\"central_form\" class=\"ui form segment\"> \
 				  		<div class=\"ui message\"> \
   							<div class=\"header\">Récupération mot de passe.</div> \
   							<p>Mot de passe réinitialisé !</p> \
 						</div> \
-  						<div class=\"ui blue fluid button\" onClick=\"DoleticServicesInterface.getUILogin();\">Retour à la page de connexion</div> \
+  						<div id=\"login_btn\" class=\"ui blue fluid button\" onClick=\"DoleticServicesInterface.getUILogin();\">Retour à la page de connexion</div> \
 					  </form> \
 					</div> \
 				   </div> \
@@ -33,4 +33,14 @@ var DoleticUIModule = new function() {
 	this.uploadSuccessHandler = function(id, data) {
 		this.super.uploadSuccessHandler(id, data);
 	}
+
+	this.nightMode = function(on) {
+	    if(on) {
+	      $('#login_btn').attr('class', 'ui blue fluid button inverted');
+	      $('#central_form').attr('class', 'ui form segment inverted');
+	    } else {
+	      $('#login_btn').attr('class', 'ui blue fluid button');
+	      $('#central_form').attr('class', 'ui form segment');
+	    }
+  	}
 }

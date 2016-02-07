@@ -11,6 +11,11 @@ var DoleticMasterInterface = new function() {
   this.master_container_id = 'master_container';
   // -------------------------------------------
 
+  // Ui settings
+  this.settings = {
+    night_mode:false
+  }
+
   this.init = function() {
     this.render(document.getElementById('body'));
   }
@@ -26,9 +31,8 @@ var DoleticMasterInterface = new function() {
     var html = this.build();
     // set htmlElment innerHTML content
     htmlNode.innerHTML = html;
-   
+    // call get ui login to retrieve appropriate module content
     DoleticServicesInterface.getUILogin();
-    
     // DEBUG message -----------------------------------------
     console.debug("DoleticMasterInterface.render : Rendering process finished.");
     // -----------------------------------------------------------
@@ -105,15 +109,12 @@ var DoleticMasterInterface = new function() {
                 <div id=\"settings_modal\" class=\"ui modal\"> \
                   <div class=\"header\">Préférences</div> \
                   <div class=\"content\"> \
-                    <p> Nothing here for now...</p> \
+                  "+DoleticUISettings.configurationForm+" \
                   </div> \
                   <div class=\"actions\"> \
-                    <div class=\"ui black deny button\" onClick=\"DoleticMasterInterface.hideSettingsModal();\">Annuler</div> \
-                    <div class=\"ui positive right labeled icon button\" onClick=\"DoleticMasterInterface.applySettings();\">Sauvegarder<i class=\"checkmark icon\"></i></div> \
+                    <div class=\"ui button\" onClick=\"DoleticUISettings.defaultSettings();\">Default</div> \
+                    <div class=\"ui green button\" onClick=\"DoleticMasterInterface.hideSettingsModal();\">Terminé !</div> \
                   </div> \
-                </div> \
-                <div id=\"right_sidebar\" class=\"ui right sidebar vertical menu\"> \
-                    <!-- Custom buttons can be added here by modules --> \
                 </div>";
     return html;
   }
@@ -131,18 +132,30 @@ var DoleticMasterInterface = new function() {
         DoleticMasterInterface.addGeneralButtons();
         // fill module submenu
         DoleticMasterInterface.fillModuleSubmenu();
+
       }
     // DEBUG message -----------------------------------------
     console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticUIModule.super.meta.name);
     // -----------------------------------------------------------
     DoleticUIModule.render(document.getElementById(DoleticMasterInterface.module_container_id));
-
+    // apply settings on module
+    DoleticUISettings.applySettings();
     } else {
 
     // DEBUG message -----------------------------------------
     console.debug("DoleticMasterInterface.render : Calling render for DefaultDoleticUIModule ! ERROR !");
     // -----------------------------------------------------------
       DefaultDoleticUIModule.render(document.getElementById(DoleticMasterInterface.module_container_id));
+    }
+  }
+
+  this.nightMode = function(on) {
+    if(on) {
+      $('#left_menu').attr('class', 'ui vertical sticky menu fixed top inverted');
+      $('#body').attr('style', 'background-color:#505050;');
+    } else {
+      $('#left_menu').attr('class', 'ui vertical sticky menu fixed top');
+      $('#body').attr('style', 'background-color:#FFFFFF;');
     }
   }
 
@@ -205,39 +218,6 @@ var DoleticMasterInterface = new function() {
    */
   this.hideSettingsModal = function() {
     $('#settings_modal').modal('hide');
-  }
-  /**
-   *
-   */
-  this.applySettings = function() {
-    // apply settings
-    /// \todo create a night mode using inverted CSS class on elements which support it.
-    // hide modal
-    this.hideSettingsModal();
-  }
-  /**
-   *  Shows right sidemenu
-   */
-  this.showRightSidemenu = function() {
-    $('#right_sidebar').attr('class', 'ui right visible sidebar vertical menu');
-  }
-  /**
-   *  Hides right sidemenu
-   */
-  this.hideRightSidemenu = function() {
-    $('#right_sidebar').attr('class', 'ui right sidebar vertical menu');
-  }
-  /**
-   *  Add content to right side menu
-   */
-  this.addRightSidemenuContent = function(content) {
-    $('#right_sidebar').append(content);
-  }
-  /**
-   *  Add content to right side menu
-   */
-  this.clearRightSidemenuContent = function() {
-    $('#right_sidebar').html('');
   }
   /**
    *  Shows a message

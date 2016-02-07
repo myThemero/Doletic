@@ -31,8 +31,8 @@ var DoleticUIModule = new function() {
 					      <label>Mot de passe</label> \
 					      <input id=\"pass_input\" placeholder=\"mot de passe\" name=\"password\" type=\"password\" onKeyPress=\"if(event.keyCode == 13) { DoleticUIModule.checkLoginFormInputs(); }\"> \
 						</div> \
-  						<div class=\"ui green button\" onClick=\"DoleticUIModule.checkLoginFormInputs();\">Connexion</div> \
-  						<div class=\"ui right floated button\" onClick=\"DoleticUIModule.resetLoginForm();\">Effacer</div> \
+  						<div id=\"login_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.checkLoginFormInputs();\">Connexion</div> \
+  						<div id=\"reset_btn\" class=\"ui right floated button\" onClick=\"DoleticUIModule.resetLoginForm();\">Effacer</div> \
 					  </form> \
 					  <div class=\"ui bottom attached info message\"> \
   						<i class=\"icon help\"></i> \
@@ -48,6 +48,18 @@ var DoleticUIModule = new function() {
 	this.uploadSuccessHandler = function(id, data) {
 		this.super.uploadSuccessHandler(id, data);
 	}
+
+	this.nightMode = function(on) {
+	    if(on) {
+	      $('#login_form').attr('class', 'ui form attached fluid segment inverted');
+	      $('#login_btn').attr('class', 'ui green button inverted');
+	      $('#reset_btn').attr('class', 'ui right floated button inverted');
+	    } else {
+	      $('#login_form').attr('class', 'ui form attached fluid segment');
+	      $('#login_btn').attr('class', 'ui green button');
+	      $('#reset_btn').attr('class', 'ui right floated button');
+	    }
+  	}
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
