@@ -8,8 +8,6 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
-		// remove logout button 
-		DoleticMasterInterface.removeUserNotLoggedUselessButtons();
 	}
 	/**
 	 *	Override build function
@@ -23,7 +21,7 @@ var DoleticUIModule = new function() {
   							<div class=\"header\">Déconnexion</div> \
   							<p>Procédure de déconnexion réussie.</p> \
 						</div> \
-  						<div class=\"ui blue fluid button\" onClick=\"DoleticServicesInterface.getUILogin();\">Retour à la page de connexion</div> \
+  						<div class=\"ui blue fluid button\" onClick=\"DoleticServicesInterface.resetUI();\">Retour à la page de connexion</div> \
 					  </form> \
 					</div> \
 				   </div> \

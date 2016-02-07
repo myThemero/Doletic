@@ -139,14 +139,23 @@ class DoleticKernel {
 		return $this->module_mgr->GetModuleUILinks();
 	}
 	/**
+	 *	Returns HTML base
+	 */
+	public function GetHTMLBase() {
+		return $this->ui_mgr->MakeHTMLBase();
+	}
+	/**
 	 *	Returns the HTML page required
 	 */
-	public function GetInterface($ui) { 
+	public function GetInterfaceScripts($ui) { 
 		$this->__debug("Interface  '" . $ui . "' required.");
-		// initialize page
-		$page = null;
+		// initialize fragment
+		$fragment = null;
+		// extract ui parts
 		$exploded = explode(':', $ui);
+		// retrieve module
 		$module = $this->module_mgr->GetModule($exploded[0]);
+		//
 		$found = false;										// initialize found flag down
 		if($module != null) {								// if module exists
 			// if user has sufficient rights to access required ui
@@ -154,15 +163,15 @@ class DoleticKernel {
 				$js = $module->GetJS($exploded[1]);				// retrieve js array
 				$css = $module->GetCSS($exploded[1]);			// retrieve css array
 				if($css != null && $css != null) {				// if both css and js are valid arrays
-					$page = $this->ui_mgr->MakeUI($js, $css); 	// affect page content		
+					$fragment = $this->ui_mgr->MakeUI($js, $css); 	// affect fragment content		
 					$found = true; 								// raise found flag
 				}
 			}
 		} 
 		if(!$found) { // if found flag is down
-			$page = $this->ui_mgr->Make404UI(); // affect page content using 404	
+			$fragment = $this->ui_mgr->Make404UI(); // affect fragment content using 404	
 		}
-		return $page;
+		return $fragment;
 	}
 
 	// --- cron management --------------------------------------------------------------------

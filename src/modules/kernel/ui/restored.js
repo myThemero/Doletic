@@ -8,8 +8,6 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
-		// remove logout button 
-		DoleticMasterInterface.removeUserNotLoggedUselessButtons();
 	}
 	/**
 	 *	Override build function

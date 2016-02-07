@@ -6,21 +6,14 @@
  */
 var DoleticMasterInterface = new function() {
 
-  // Configuration structure 
-  this.config = {
-    JE:{ // Junior-Entreprise data
-      name:'ETIC INSA Technologies',
-      website_url:'http://www.etic-insa.com',
-      logo_url:'http://www.etic-insa.com/assets/logo-etic.png',
-      school:'INSA Lyon',
-      mail_domain:'@etic-insa.com'
-    }
-  };
-
   // Constantes --------------------------------
-  this.module_container_id = "module_container";
-  this.master_container_id = "master_container";
+  this.module_container_id = 'module_container';
+  this.master_container_id = 'master_container';
   // -------------------------------------------
+
+  this.init = function() {
+    this.render(document.getElementById('body'));
+  }
   /**
    *  Render function, this function builds the content of the web page, 
    *  using the given module
@@ -33,27 +26,8 @@ var DoleticMasterInterface = new function() {
     var html = this.build();
     // set htmlElment innerHTML content
     htmlNode.innerHTML = html;
-    // for each module call render function
-    var htmlNode = document.getElementById(this.module_container_id);
-    if(DoleticUIModule != null) {
-      if(DoleticUIModule.super.meta.name != 'Login_UIModule' && 
-         DoleticUIModule.super.meta.name != 'Logout_UIModule' &&
-         DoleticUIModule.super.meta.name != '404_UIModule' &&
-         DoleticUIModule.super.meta.name != 'Lost_UIModule') {
-        // fill module submenu
-        DoleticMasterInterface.fillModuleSubmenu();
-      }
-    // DEBUG message -----------------------------------------
-    //console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticUIModule.super.meta.name);
-    // -----------------------------------------------------------
-      DoleticUIModule.render(htmlNode);
-    } else {
-
-    // DEBUG message -----------------------------------------
-    console.debug("DoleticMasterInterface.render : Calling render for DefaultDoleticUIModule ! ERROR !");
-    // -----------------------------------------------------------
-      DefaultDoleticUIModule.render(htmlNode);
-    }
+   
+    DoleticServicesInterface.getUILogin();
     
     // DEBUG message -----------------------------------------
     console.debug("DoleticMasterInterface.render : Rendering process finished.");
@@ -63,11 +37,13 @@ var DoleticMasterInterface = new function() {
    *  Build Doletic common ui
    */
   this.build = function() {
-    var html = "<div id=\"left_menu\" class=\"ui vertical sticky menu fixed top\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
+    var html = " \
+    <div id=\"doletic_ui_scripts\"> \
+      <!-- DOLETIC SPECIFIC PAGE SCRIPT GOES HERE --> \
+    </div> \
+    <div id=\"left_menu\" class=\"ui vertical sticky menu fixed top\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
                   <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.getUIHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
                   <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>À propos de Doletic</a> \
-                  <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.getUILogout();\"><i class=\"power icon\"></i>Déconnexion</a> \
-                  <a id=\"menu_preferences_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showSettingsModal();\"><i class=\"settings icon\"></i>Préférences</a> \
                   <div id=\"module_submenu\" class=\"item\"> \
                     <!-- MODULES LINKS WILL GO HERE --> \
                   </div> \
@@ -142,14 +118,47 @@ var DoleticMasterInterface = new function() {
     return html;
   }
 
+  this.loadModule = function(data) {
+    // replace old scripts with new ones
+    $('#doletic_ui_scripts').html(data.module_scripts);
+    // load new module
+    if(DoleticUIModule != null) {
+      if(DoleticUIModule.super.meta.name != 'Login_UIModule' && 
+         DoleticUIModule.super.meta.name != 'Logout_UIModule' &&
+         DoleticUIModule.super.meta.name != '404_UIModule' &&
+         DoleticUIModule.super.meta.name != 'Lost_UIModule') {
+        // add buttons
+        DoleticMasterInterface.addGeneralButtons();
+        // fill module submenu
+        DoleticMasterInterface.fillModuleSubmenu();
+      }
+    // DEBUG message -----------------------------------------
+    console.debug("DoleticMasterInterface.render : Calling render for DoleticModuleInterface::"+DoleticUIModule.super.meta.name);
+    // -----------------------------------------------------------
+    DoleticUIModule.render(document.getElementById(DoleticMasterInterface.module_container_id));
+
+    } else {
+
+    // DEBUG message -----------------------------------------
+    console.debug("DoleticMasterInterface.render : Calling render for DefaultDoleticUIModule ! ERROR !");
+    // -----------------------------------------------------------
+      DefaultDoleticUIModule.render(document.getElementById(DoleticMasterInterface.module_container_id));
+    }
+  }
+
 // ----------------------- DOLETIC INTERFACE COMMON FUNCTIONS ----------------------------------
 
   /**
    *  Removes logout button (usefull for login and logout interfaces)
    */
-  this.removeUserNotLoggedUselessButtons = function() {
+  this.addGeneralButtons = function() {
+    // remove old buttons 
     $('#menu_logout').remove();
     $('#menu_preferences_doletic').remove();
+    // put new ones
+    $('#menu_about_doletic').after(" \
+      <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.logout();\"><i class=\"power icon\"></i>Déconnexion</a> \
+      <a id=\"menu_preferences_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showSettingsModal();\"><i class=\"settings icon\"></i>Préférences</a>");
   }
   /**
    *  Shows about Doletic modal
@@ -292,5 +301,5 @@ var DoleticMasterInterface = new function() {
  */
 $(document).ready(function(){
     // render page
-    DoleticMasterInterface.render(document.getElementById('body'));
+    DoleticMasterInterface.init();
 })

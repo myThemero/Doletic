@@ -39,23 +39,19 @@ class UIManager extends AbstractManager {
 		// add js
 		$this->__init_js($modulesJSServices);
 	}
-	/**
-	 *	Creates a standard Doletic page including $js scripts and $css stylesheets
-	 */
-	public function MakeUI($js, $css) {
-		// create page and add start
-		$page = "
+	public function MakeHTMLBase() {
+				$page = "
 <!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>
 		<title>Doletic</title>";
 		// add css entries
-		foreach (array_merge($this->internal_css, $css) as $value) {
+		foreach (array_merge($this->internal_css) as $value) {
 			$page .= "\n		<link rel=\"stylesheet\" type=\"text/css\" href=\"$value\" />";
 		}
 		// add js entries
-		foreach (array_merge($this->internal_js, $js) as $value) {
+		foreach (array_merge($this->internal_js) as $value) {
 			$page .= "\n		<script src=\"$value\" type=\"text/javascript\"></script>";	
 		}
 		// append page bottom
@@ -67,6 +63,22 @@ class UIManager extends AbstractManager {
 	</footer>
 </html>\n\n";
 		return $page;
+	}
+	/**
+	 *	Creates a standard Doletic page including $js scripts and $css stylesheets
+	 */
+	public function MakeUI($js, $css) {
+		// create page and add start
+		$html_fragment = "";
+		// add css entries
+		foreach ($css as $value) {
+			$html_fragment .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"$value\" />\n";
+		}
+		// add js entries
+		foreach ($js as $value) {
+			$html_fragment .= "<script src=\"$value\" type=\"text/javascript\"></script>\n";	
+		}
+		return json_encode(array("module_scripts" => $html_fragment));
 	}
 	/**
 	 *	Returns 404 not found Doletic page
@@ -90,6 +102,7 @@ class UIManager extends AbstractManager {
 		array_push($this->internal_js, "services/doletic_services.js");
 		array_push($this->internal_js, "ui/js/abstract_doletic_module.js");
 		array_push($this->internal_js, "ui/js/doletic_utils.js");
+		array_push($this->internal_js, "ui/js/doletic_config.js");
 		array_push($this->internal_js, "ui/js/doletic.js");
 		// merge with modules services scripts
 		$this->internal_js = array_merge($this->internal_js, $modulesJSServices);

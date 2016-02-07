@@ -71,8 +71,8 @@ var DoleticUIModule = new function() {
   <tbody>\n \
     <tr>\n \
       <td style=\"padding-right: 15px;\">\n \
-        <a href=\""+DoleticMasterInterface.config.JE.website_url+"\" target=\"_blank\">\n \
-          <img src=\""+DoleticMasterInterface.config.JE.logo_url+"\" alt=\"\" width=\"97\" height=\"76\" />\n \
+        <a href=\""+DoleticConfig.JE.website_url+"\" target=\"_blank\">\n \
+          <img src=\""+DoleticConfig.JE.logo_url+"\" alt=\"\" width=\"97\" height=\"76\" />\n \
         </a>\n \
       </td>\n \
       <td style=\"font-size: 13px; line-height: 14px; font-family: Helvetica,sans-serif;\">\n \
@@ -90,7 +90,7 @@ var DoleticUIModule = new function() {
           </span>\n \
           <br />\n \
           <span style=\"display: inline-block; margin-top: 2px; color: #888888;\">\n \
-            <span>"+DoleticMasterInterface.config.JE.school+"&nbsp;-&nbsp;Département&nbsp;<span id=\"user_departement\"></span>&nbsp;-&nbsp;<span id=\"user_year\"></span>&nbsp;année</span>\n \
+            <span>"+DoleticConfig.JE.school+"&nbsp;-&nbsp;Département&nbsp;<span id=\"user_departement\"></span>&nbsp;-&nbsp;<span id=\"user_year\"></span>&nbsp;année</span>\n \
           </span>\n \
         </p>\n \
       </td>\n \
@@ -103,7 +103,7 @@ var DoleticUIModule = new function() {
 		DoleticServicesInterface.getCurrentUser(function(data) {
 			if(data.code == 0) {
 				// set mail
-				var mail = data.object.username+DoleticMasterInterface.config.JE.mail_domain;
+				var mail = data.object.username+DoleticConfig.JE.mail_domain;
 				$('#mail_lnk').attr('href', 'mailto:'+mail);
 				$('#user_mail').html(mail);
 				// retrieve user data

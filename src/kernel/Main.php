@@ -13,9 +13,9 @@ class Main {
 	// --- GET & POST keys
 	const RPARAM_QUERY = "q";
 	// --- GET specific params
-	const GPARAM_PAGE = "page";
-	const GPARAM_TOKEN = "token";
 	// --- POST specific params
+	const PPARAM_TOKEN = "token";
+	const PPARAM_PAGE = "page";
 	const PPARAM_USER = "user";
 	const PPARAM_HASH = "hash";
 	const PPARAM_MAIL = "mail";
@@ -24,7 +24,9 @@ class Main {
 	// --- known queries
 	const QUERY_SERVICE = "service";
 	const QUERY_LOGOUT = "logout";
+	const QUERY_LOGIN = "login";
 	const QUERY_AUTHEN = "auth";
+	const QUERY_LOST = "lost";
 	const QUERY_RESET_PASS = "resetpass";
 	const QUERY_INTERF = "ui";
 
@@ -49,51 +51,49 @@ class Main {
 			$_SESSION[Main::SPARAM_DOL_KERN]->ConnectDB();
 			// check if kernel has a valid user registered
 			if($_SESSION[Main::SPARAM_DOL_KERN]->HasValidUser()) {
-				// check if query received in GET
-			  	if(array_key_exists(Main::RPARAM_QUERY, $_GET)) { 
-					// GET query is about logout
-					if(!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_LOGOUT)) {
-						$this->__display_logout();
-					} else 
+				//check if query received in POST
+				if(array_key_exists(Main::RPARAM_QUERY, $_POST)) {
 					// GET query is about interface
-					if(!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_INTERF)) {
+					// if login query received 
+					if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_LOGIN)) {
+						$this->__display_home(); // display home cause user is already logged in
+					} // if service query received
+					else if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_SERVICE)) {
+						$this->__service();
+					} // POST logout query
+					else if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_LOGOUT)) {
+						$this->__display_logout();
+					} // POST ui query
+					else if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_INTERF)) {
 						$this->__display_interface();
 					}
-				} //check if query received in POST
-				else if(array_key_exists(Main::RPARAM_QUERY, $_POST)) {
-					// GET query is about interface
-					if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_SERVICE)) {
-						$this->__service();
-					}
 				} else {
-					$this->__display_home();	
+					$this->__display_base();	
 				}
-			}  // check if query received in GET
-			else if(array_key_exists(Main::RPARAM_QUERY, $_GET) && !strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
-				$this->__reset_pass(false);
 			} //check if query received in POST
 			else if(array_key_exists(Main::RPARAM_QUERY, $_POST)) {
-				// POST query is about authentication
-				if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_AUTHEN)) {
+				// if login query received 
+				if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_LOGIN)) {
+					$this->__display_login();
+				} // if authentication query received
+				else if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_AUTHEN)) {
 					$this->__authenticate();
-				} else if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
+				} // if lost password ui required
+				else if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_LOST)) {
+					$this->__display_lost_ui();
+				} // if reset password query received
+				else if(!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
 					$this->__reset_pass();
 				}
 			} else { // if no valid user ask for a login
-				if(array_key_exists(Main::RPARAM_QUERY, $_GET) && 
-				   !strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_INTERF) && 
-				   $_GET[Main::GPARAM_PAGE] == UIManager::INTERFACE_LOST) {
-					$this->__display_interface();
-				} else {
-					$this->__display_login();	
-				}
+				$this->__display_base();
 			} 
 			// disconnect database
 			$_SESSION[Main::SPARAM_DOL_KERN]->DisconnectDB();
 		} else { // if no doletic kernel in session, create one
 			$this->__init();
 		}
-		exit; // terminate script explicitly
+		die("UNHANDLED QUERY"); // terminate script explicitly
 	}
 
 # PROTECTED & PRIVATE ##########################################################
@@ -105,7 +105,7 @@ class Main {
 		// connect to database
 		$_SESSION[Main::SPARAM_DOL_KERN]->ConnectDB();
 		// call login to show login interface
-		$this->__display_login();
+		$this->__display_base();
 	}
 
 	private function __authenticate() {
@@ -121,21 +121,11 @@ class Main {
 		}
 	}
 
-	private function __reset_pass($init = true) {
-		// check if init procedure or not
-		if($init) {
-			// Ask kernel for password reset
-			$ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordInit($_POST[Main::PPARAM_MAIL]);
-			// Terminate returning approriated json structure
-			$this->__terminate(json_encode(array('sent' => $ok)));
-		} else {
-			// Ask kernel for password reset
-			$ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordExec($_GET[Main::GPARAM_TOKEN]);
-			if($ok) {
-				// Terminate returning approriated json structure
-				$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_RESTORED));	
-			}
-		}
+	private function __reset_pass() {
+		// Ask kernel for password reset
+		$ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordInit($_POST[Main::PPARAM_MAIL]);
+		// Terminate returning approriated json structure
+		$this->__terminate(json_encode(array('sent' => $ok)));
 	}
 
 	private function __service() {
@@ -153,33 +143,36 @@ class Main {
 
 	private function __display_interface() {
 		// check if params
-		if(array_key_exists(Main::GPARAM_PAGE, $_GET)) {
-			// if user asks for login page
-			if($_GET[Main::GPARAM_PAGE] === UIManager::INTERFACE_LOGIN) {
-				// display home
-				$this->__display_home();
-			} else // if user asks for logout page
-			if($_GET[Main::GPARAM_PAGE] === UIManager::INTERFACE_LOGOUT) {
-					// display logout
-					$this->__display_logout();
-			} else {
-				// display given interface
-				$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface($_GET[Main::GPARAM_PAGE]));	
-			}
+		if(array_key_exists(Main::PPARAM_PAGE, $_POST)) {
+			// display given interface
+			$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts($_POST[Main::PPARAM_PAGE]));
 		} else {
 			// display page not found interface
-			$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_404));
+			$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_404));
+		}
+	}
+
+	private function __display_base() {
+		$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetHTMLBase());
+	}
+
+	private function __display_lost_ui() {
+		// Ask kernel for password reset
+		$ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordExec($_POST[Main::PPARAM_TOKEN]);
+		if($ok) {
+			// Terminate returning approriated json structure
+			$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_RESTORED));	
 		}
 	}
 
 	private function __display_login() {
 		// display login interface
-		$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGIN));
+		$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_LOGIN));
 	}
 
 	private function __display_logout() {
 		// display logout interface
-		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_LOGOUT);
+		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_LOGOUT);
 		// unset session vars
 		$_SESSION = array();
 		// destroy session
@@ -190,7 +183,7 @@ class Main {
 
 	private function __display_home() {
 		// load home interface
-		$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterface(UIManager::INTERFACE_HOME));
+		$this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_HOME));
 	}
 
 	private function __terminate($response) {

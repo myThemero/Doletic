@@ -79,6 +79,61 @@ var DoleticUIFactory = new function() {
 
 }
 
+// ----------------------------------- Doletic Settings Manager -----------------------------------
+
+var DoleticUISettingsManager = new function() {
+
+  // settings structure
+  this.settings = {
+    night_mode:false
+  };
+  // expire variable
+  this.expire = 1;
+  // external cookie
+  this.external_cookie = "";
+  /**
+   *  Initializes UI settings
+   */
+  this.init = function() {
+    if(document.cookie.length > 0) {
+      var c = document.cookie;
+      while(c.length > 0 && c.indexOf("settings=") != 0) {
+        this.external_cookie += c.charAt(0);
+        c = c.substr(1);
+      }
+    }
+    if(c.length > 0) {
+      this.restoreSettings(c);
+    } else {
+      this.persistSettings();
+    }
+  }
+  /**
+   *  Saves settings into a cookie
+   */
+  this.persistSettings = function() {
+    // compute expire timestamp
+    var d = new Date();
+    d.setTime(d.getTime() + (this.expire*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    // write cookie
+    var c = this.external_cookie + "; settings=" + JSON.stringify(this.settings) + "; " + expires;
+    alert(c);
+    document.cookie = c;
+    alert(document.cookie);
+  }
+  /**
+   *  Retrieves settings from a cookie
+   */
+  this.restoreSettings = function(c) {
+    // read and parse cookie
+    var settings = c.split(';')[0].split('=')[1];
+    // restore settings using JSON parse method
+    this.settings = JSON.parse(settings);
+  }
+
+}
+
 // ----------------------------------- SOME PHP JS FUNCTIONS -----------------------------------
 
 var phpjsLight = new function() {

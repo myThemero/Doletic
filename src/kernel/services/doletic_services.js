@@ -23,24 +23,53 @@ var DoleticServicesInterface = new function() {
    *  Loads a standard Doletic page using ui parameter 
    */
   this.getUI = function(ui) {
-    window.location.replace(this.doleticMainURL + '?q=ui&page=' + ui);
+    this.ajaxPOST(
+      this.doleticMainURL, 
+      {
+        q:'ui',
+        page: ui
+      },
+      'json',
+      DoleticServicesInterface.handleAJAXError,
+      DoleticMasterInterface.loadModule);
   }
+  this.resetUI = function() {
+    window.location.href = this.doleticMainURL;
+  } 
   /**
    *  Loads a specific Doletic Login page
    */
   this.getUILogin = function() {
-    this.getUI('kernel:login');
+    this.ajaxPOST(
+      this.doleticMainURL, 
+      {q:'login'},'json',
+      DoleticServicesInterface.handleAJAXError,
+      DoleticMasterInterface.loadModule);
   }
   /**
    *  Loads a specific Doletic Lost password page
    */
   this.getUILost = function() {
-    this.getUI('kernel:lost');
+    this.ajaxPOST(
+      this.doleticMainURL, 
+      {q:'lost'},'json',
+      DoleticServicesInterface.handleAJAXError,
+      DoleticMasterInterface.loadModule);
+  }
+  /**
+   *  Loads a specific Doletic Lost password page
+   */
+  this.getUILogout = function() {
+    this.ajaxPOST(
+      this.doleticMainURL, 
+      {q:'logout'},'json',
+      DoleticServicesInterface.handleAJAXError,
+      DoleticMasterInterface.loadModule);
   }
   /**
    *  Loads a specific Doletic Logout page
    */
-  this.getUILogout = function() {
+  this.logout = function() {
     DoleticMasterInterface.showConfirmModal(
       '',
       '',
@@ -53,7 +82,9 @@ var DoleticServicesInterface = new function() {
       </h2>',
       function(){
         // require logout
-        DoleticServicesInterface.getUI("kernel:logout");
+        DoleticServicesInterface.getUILogout();
+        // and hide modal
+        DoleticMasterInterface.hideConfirmModal();
       },
       function() {
         // hide modal and don't do anything
