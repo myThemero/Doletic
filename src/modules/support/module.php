@@ -37,7 +37,8 @@ class SupportModule extends AbstractModule {
 				TicketDBObject::OBJ_NAME.':'.TicketServices::DELETE 				=> RightsMap::SA_RMASK, // only super admin
 				TicketDBObject::OBJ_NAME.':'.TicketServices::ARCHIVE 				=> RightsMap::SA_RMASK // only super admin
 				),
-				false // disable ui
+				false, // disable ui
+				array('kernel') // kernel is always a dependency
 			);
 		// -- add module specific dbo objects
 		parent::addDBObject(new TicketDBObject($this));

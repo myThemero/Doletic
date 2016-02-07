@@ -6,6 +6,17 @@
  */
 var DoleticMasterInterface = new function() {
 
+  // Configuration structure 
+  this.config = {
+    JE:{ // Junior-Entreprise data
+      name:'ETIC INSA Technologies',
+      website_url:'http://www.etic-insa.com',
+      logo_url:'http://www.etic-insa.com/assets/logo-etic.png',
+      school:'INSA Lyon',
+      mail_domain:'@etic-insa.com'
+    }
+  };
+
   // Constantes --------------------------------
   this.module_container_id = "module_container";
   this.master_container_id = "master_container";

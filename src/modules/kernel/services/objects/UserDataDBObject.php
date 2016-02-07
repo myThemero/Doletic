@@ -376,7 +376,9 @@ class UserDataServices extends AbstractObjectServices {
 		$insa_dept = null;
 		if($pdos != null) {
 			if( ($row = $pdos->fetch()) !== false) {
-				$insa_dept = $row[UserDataDBObject::COL_LABEL];
+				$insa_dept = array(
+					UserDataDBObject::COL_LABEL => $row[UserDataDBObject::COL_LABEL],
+					UserDataDBObject::COL_DETAIL => $row[UserDataDBObject::COL_DETAIL]);
 			}
 		}
 		return $insa_dept;
@@ -512,7 +514,9 @@ class UserDataServices extends AbstractObjectServices {
 		$labels = array();
 		if($pdos != null) {
 			while( ($row = $pdos->fetch()) !== false) {
-				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
+				array_push($labels, array(
+					UserDataDBObject::COL_LABEL => $row[UserDataDBObject::COL_LABEL],
+					UserDataDBObject::COL_DETAIL => $row[UserDataDBObject::COL_DETAIL]));
 			}
 		}
 		return $labels;
