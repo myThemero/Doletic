@@ -27,7 +27,8 @@ var DoleticMasterInterface = new function() {
     if(DoleticUIModule != null) {
       if(DoleticUIModule.super.meta.name != 'Login_UIModule' && 
          DoleticUIModule.super.meta.name != 'Logout_UIModule' &&
-         DoleticUIModule.super.meta.name != '404_UIModule') {
+         DoleticUIModule.super.meta.name != '404_UIModule' &&
+         DoleticUIModule.super.meta.name != 'Lost_UIModule') {
         // fill module submenu
         DoleticMasterInterface.fillModuleSubmenu();
       }
