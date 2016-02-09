@@ -150,6 +150,32 @@ var DoleticServicesInterface = new function() {
       });
   }
   /**
+   *  Require a download
+   */
+   this.download = function(fileId) {
+    this.ajaxPOST(
+      this.doleticMainURL,
+      {
+        q:'service',
+        obj:'service',
+        act:'download',
+        params:{
+          id:fileId
+        }
+      },
+      'json',
+      DoleticServicesInterface.handleAJAXError,
+      function(data) {
+        if(data.code == 0) {
+          $('#doletic_download').attr('href', data.object.url).attr('download', data.object.basename);
+          $('#doletic_download')[0].click();
+          $('#doletic_download').attr('href', '').attr('download', '');
+        } else {
+          DoleticMasterInterface.showError("Erreur de téléchargement !", "Le système est potentiellement indisponible. Si ce problème persiste merci de prévenir un développeur en lui fournissant le code suivant : " + data.code);
+        }
+      });
+  }
+  /**
    *  Require list of available uis from the server
    */
   this.availableModuleLinks = function(successHandler) {

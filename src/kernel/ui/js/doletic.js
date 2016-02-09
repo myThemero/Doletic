@@ -42,6 +42,7 @@ var DoleticMasterInterface = new function() {
    */
   this.build = function() {
     var html = " \
+    <a id=\"doletic_download\" href=\"\" download=\"\" hidden></a><!-- DO NOT REMOVE : download link --> \
     <div id=\"doletic_ui_scripts\"> \
       <!-- DOLETIC SPECIFIC PAGE SCRIPT GOES HERE --> \
     </div> \

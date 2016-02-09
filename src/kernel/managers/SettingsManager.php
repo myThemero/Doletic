@@ -14,8 +14,8 @@ class SettingsManager extends AbstractManager {
 	// ---- kernel related keys
 	const KEY_KERN_DEBUG = "kern_debug";
 	const KEY_KERN_LOG = "kern_log";
-	// ---- upload related keys
-	const KEY_UPLOAD_DIR = "upload_dir";
+	// ---- upload/download related keys
+	const KEY_DOLETIC_DIR = "doletic_dir";
 	// ---- database related keys
 	const KEY_DBENGINE = "db_engine";
 	const KEY_DBNAME = "db_name";

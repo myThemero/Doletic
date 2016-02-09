@@ -173,6 +173,8 @@ class Main {
 	private function __display_logout() {
 		// display logout interface
 		echo $_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_LOGOUT);
+		// terminate kernel
+		$_SESSION[Main::SPARAM_DOL_KERN]->Terminate();
 		// unset session vars
 		$_SESSION = array();
 		// destroy session

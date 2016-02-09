@@ -21,6 +21,11 @@ class ServiceResponse implements \JsonSerializable {
 	const ERR_UP_UNKNOWN		= 0x13;
 	const ERR_UP_FORBID_FORMAT	= 0x14;
 	const ERR_UP_FILESYSTEM		= 0x15;
+	// --- download errors
+	const ERR_DL_MISSING_ID		= 0x20;
+	const ERR_DL_MISSING_FILE   = 0x21;
+	const ERR_DL_COPY		    = 0x23;
+	const ERR_DL_MAX		    = 0x24;
 
 	// -- attributes
 	private $code;
@@ -61,11 +66,13 @@ class Services {
 	const OBJ_SERVICE 		= "service";
 	// --- high-level services
 	const SERVICE_UPLOAD 		= "upload";
+	const SERVICE_DOWNLOAD		= "download";
 	const SERVICE_UI_LINKS		= "uilinks";
 	const SERVICE_GET_USER		= "getuser";
 	const SERVICE_UPDATE_AVATAR = "updateava";
 	const SERVICE_GET_AVATAR 	= "getava";
 	// --- params keys
+	const PKEY_ID           = "id";
 	const PKEY_FNAME		= "filename";
 	// --- upload related consts
 	const UKEY_FILE			= "file";
@@ -80,6 +87,8 @@ class Services {
 		'png' => 'image/png',
 		'svg' => 'image/svg',
 		'pdf' => 'application/pdf');
+	// --- filesystem related consts
+	const UPLOAD_FOLDER 	= "uploads";
 
 	// -- attributes
 	private $kernel;
@@ -93,6 +102,7 @@ class Services {
 		// --- add rules to right
 		$this->rights_map->AddRules(array(
 				Services::SERVICE_UPLOAD   => RightsMap::G_RMASK,
+				Services::SERVICE_DOWNLOAD => RightsMap::G_RMASK,
 				Services::SERVICE_UI_LINKS => RightsMap::G_RMASK,
 				Services::SERVICE_GET_USER   => RightsMap::G_RMASK,
 				Services::SERVICE_UPDATE_AVATAR => RightsMap::G_RMASK,
@@ -102,6 +112,7 @@ class Services {
 
 // --------------------------------- GLOBAL Services entry points ----------------------------------------------------------
 
+
 	public function Response($post = array(), $pretty = false) {
 		// first check check if object requested is service for high-level services
 		if($post[Services::PPARAM_OBJ] === Services::OBJ_SERVICE) {
@@ -109,6 +120,8 @@ class Services {
 				// find which service is called
 				if($post[Services::PPARAM_ACT] === Services::SERVICE_UPLOAD) {
 					$response = $this->__service_upload($post);
+				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_DOWNLOAD) {
+					$response = $this->__service_download($post);
 				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_UI_LINKS) {
 					$response = $this->__service_uis();
 				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_GET_USER) {
@@ -240,8 +253,8 @@ class Services {
 		    	date('Y_m_d_H_i_s'),
 		    	$ext);
 		    // full dest (prepend absolute path)
-		    $dest = rtrim($this->kernel->SettingValue(SettingsManager::KEY_UPLOAD_DIR)," /").$destfname;
-
+		    $dest = rtrim($this->kernel->SettingValue(SettingsManager::KEY_DOLETIC_DIR)," /").Services::UPLOAD_FOLDER.$destfname;
+		    // move uploaded file and throw error if it fails
 		    if (!move_uploaded_file(
 		        $_FILES[Services::UKEY_FILE][Services::UKEY_TMP_NAME],
 		        $dest
@@ -280,6 +293,49 @@ class Services {
 		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
 		}
 		// return response
+		return $response;
+	}
+
+	private function __service_download($post) {
+		// initialize response with null
+		$response = null;	
+		// simple upload without check for now...
+		try {
+			// retrieve upload record 
+			$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+						->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
+							UploadServices::PARAM_ID => $post[Services::PPARAM_PARAMS][Services::PKEY_ID]));
+
+			// initialize src and dest vars
+			$src = null;
+			$url = null;
+			$basename = null;
+			// check if valid upload is recieved
+			if($upload != null) {
+				// set url
+				$url = sprintf("/%s%s",Services::UPLOAD_FOLDER,$upload->GetStorageFilename());
+				// set src
+				$src = sprintf("%s%s", 
+							rtrim($this->kernel->SettingValue(SettingsManager::KEY_DOLETIC_DIR)," /"),
+							$url);
+				// set basename
+				$basename = $upload->GetFilename();
+			} else {
+				// throw service exception
+				throw new RuntimeException("Le service n'a pas réussi à retrouver le fichier dans la base.", ServiceResponse::ERR_DL_MISSING_ID);
+			}   
+			    
+			// if all goes as planned, send file directly and stop script execution
+			if (!file_exists($src)) {
+				// throw service exception
+				throw new RuntimeException("Le service n'a pas réussi à retrouver le fichier sur le disque.", ServiceResponse::ERR_DL_MISSING_FILE);
+			}
+			// Everything is ok build and send link
+			$response = new ServiceResponse(array("url" => $url, "basename" => $basename));
+		} catch (RuntimeException $e) {
+		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
+		}
+		// return response if no download
 		return $response;
 	}
 

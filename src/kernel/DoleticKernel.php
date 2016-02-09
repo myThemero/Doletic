@@ -80,12 +80,17 @@ class DoleticKernel {
 		 	// -9- initialize UI manager
 		 	$this->ui_mgr->Init($this->module_mgr->GetModulesJSServices());
 		 	$this->__info("User Interface Manager initialized.");
-		 	
+
 		 	// -- set initialized flag
 		 	$this->initialized = true;	
 		} else {
 			$this->__warn("Calling kernel initializer twice or more !");
 		}
+	}
+
+	public function Terminate() {
+		// add last actions to do before terminating kernel
+		// nothing to do for now
 	}
 
 	// --- authentication management ---------------------------------------------------------
