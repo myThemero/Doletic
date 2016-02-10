@@ -2,7 +2,7 @@ var DoleticUIModule = new function() {
 	/**
 	 *	Parent abstract module
 	 */
-	this.super = new AbstractDoleticUIModule('Support_UIModule', 'Paul Dautry', '1.0dev');
+	this.super = new AbstractDoleticUIModule('Mail_UIModule', 'Paul Dautry', '1.0dev');
 	/**
 	 *	Override render function
 	 */
