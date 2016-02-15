@@ -2,6 +2,7 @@
 
 require_once "DoleticKernel.php";
 require_once "objects/RightsMap.php";
+require_once "objects/DocumentProcessor.php";
 
 class ServiceResponse implements \JsonSerializable {
 	
@@ -74,6 +75,9 @@ class Services {
 	// --- params keys
 	const PKEY_ID           = "id";
 	const PKEY_FNAME		= "filename";
+	const PKEY_STUDY_ID		= "studyId";
+	const PKEY_TEMPLATE_IDS	= "templateIds";
+	const PKEY_DOC_TYPE		= "documentType";
 	// --- upload related consts
 	const UKEY_FILE			= "file";
 	const UKEY_ERROR		= "error";
@@ -88,7 +92,7 @@ class Services {
 		'svg' => 'image/svg',
 		'pdf' => 'application/pdf');
 	// --- filesystem related consts
-	const UPLOAD_FOLDER 	= "uploads";
+	const UPLOAD_FOLDER 	= "/uploads";
 
 	// -- attributes
 	private $kernel;
@@ -209,8 +213,7 @@ class Services {
    
 		    // Undefined | Multiple Files | $_FILES Corruption Attack
 		    // If this request falls under any of them, treat it invalid.
-		    if (
-		        !isset($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR]) ||
+		    if (!isset($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR]) ||
 		        is_array($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR])
 		    ) {
 		        throw new RuntimeException('Paramètres invalides', ServiceResponse::ERR_UP_INVALID_PARAMS);
@@ -268,28 +271,22 @@ class Services {
 		    			UploadServices::PARAM_FNAME => $filename,
 		    			UploadServices::PARAM_STOR_FNAME => $destfname);
 		    // write upload in database and retrieve its id
-		    if($this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-		    	->GetResponseData(UploadServices::INSERT, $upload_params)) 
-		    {
-		    	// retrieve user
-		    	$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-		    				->GetResponseData(UploadServices::GET_UPLOAD_BY_STOR_FNAME, array(
-		    					UploadServices::PARAM_STOR_FNAME => $destfname));
-		    	if($upload != null) {
-		    		// retrieve upload's id
-		    		$id = $upload->GetId();
-		    	} else {
-		    		throw new RuntimeException("Impossible de retrouver l'identifiant de l'upload.", ServiceResponse::ERR_UP_FILESYSTEM);
-		    	}
-		    } else {
+		    if(!$this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+		    	->GetResponseData(UploadServices::INSERT, $upload_params)) {
 		    	throw new RuntimeException("Erreur d'enregistrement dans la base de données.", ServiceResponse::ERR_UP_FILESYSTEM);
 		    }
-
+		    // retrieve user
+	    	$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+	    				->GetResponseData(UploadServices::GET_UPLOAD_BY_STOR_FNAME, array(
+	    					UploadServices::PARAM_STOR_FNAME => $destfname));
+	    	if($upload === null) {
+	    		throw new RuntimeException("Impossible de retrouver l'identifiant de l'upload.", ServiceResponse::ERR_UP_FILESYSTEM);
+	    	}
+	    	// retrieve upload's id
+	    	$id = $upload->GetId();
 		    // create service response
 		    $response = new ServiceResponse($id);
-
 		} catch (RuntimeException $e) {
-
 		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
 		}
 		// return response
@@ -305,26 +302,19 @@ class Services {
 			$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 						->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
 							UploadServices::PARAM_ID => $post[Services::PPARAM_PARAMS][Services::PKEY_ID]));
-
-			// initialize src and dest vars
-			$src = null;
-			$url = null;
-			$basename = null;
 			// check if valid upload is recieved
-			if($upload != null) {
-				// set url
-				$url = sprintf("/%s%s",Services::UPLOAD_FOLDER,$upload->GetStorageFilename());
-				// set src
-				$src = sprintf("%s%s", 
-							rtrim($this->kernel->SettingValue(SettingsManager::KEY_DOLETIC_DIR)," /"),
-							$url);
-				// set basename
-				$basename = $upload->GetFilename();
-			} else {
+			if($upload === null) {
 				// throw service exception
 				throw new RuntimeException("Le service n'a pas réussi à retrouver le fichier dans la base.", ServiceResponse::ERR_DL_MISSING_ID);
 			}   
-			    
+			// set url
+			$url = sprintf("%s%s",Services::UPLOAD_FOLDER,$upload->GetStorageFilename());
+			// set src
+			$src = sprintf("%s%s", 
+						rtrim($this->kernel->SettingValue(SettingsManager::KEY_DOLETIC_DIR)," /"),
+						$url);
+			// set basename
+			$basename = $upload->GetFilename(); 
 			// if all goes as planned, send file directly and stop script execution
 			if (!file_exists($src)) {
 				// throw service exception
@@ -358,30 +348,28 @@ class Services {
 			$udata = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 						->GetResponseData(UserDataServices::GET_CURRENT_USER_DATA, array());
 			// -- remove current avatar if needed
-			if($udata != null) {
-				if($udata->GetAvatarId() != 0) {
-					$result = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-								->GetResponseData(UploadServices::DELETE_OWNER_CHECK, array(
-									UploadServices::PARAM_ID => $udata->GetAvatarId()));	
-					if($result == null) {
-						throw new RuntimeException("Echec de suppression de l'avatar courant", ServiceResponse::ERR_SERVICE_FAILED);
-					}
-				}
-			} else {
+			if($udata === null) {
 				throw new RuntimeException("Echec de récupération des données de l'utilisateur courant", ServiceResponse::ERR_SERVICE_FAILED);
+			}
+			// if user data avatar id is not 0
+			if($udata->GetAvatarId() != 0) {
+				$result = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+							->GetResponseData(UploadServices::DELETE_OWNER_CHECK, array(
+								UploadServices::PARAM_ID => $udata->GetAvatarId()));	
+				if($result === null) {
+					throw new RuntimeException("Echec de suppression de l'avatar courant", ServiceResponse::ERR_SERVICE_FAILED);
+				}
 			}
 			// -- add new avatar
 			$result = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 						->GetResponseData(UserDataServices::UPDATE_AVATAR, $post[Services::PPARAM_PARAMS]);
 			// -- treat result
-			if($result != null) {
-				$response = new ServiceResponse($result);
-			} else {
+			if($result === null) {
 				throw new RuntimeException("Echec d'ajout du nouvel avatar.", ServiceResponse::ERR_SERVICE_FAILED);
 			}
-
+			// create service response
+			$response = new ServiceResponse($result);
 		} catch (RuntimeException $e) {
-
 		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
 		}
 		// return response
@@ -397,25 +385,77 @@ class Services {
 			$udata = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 							->GetResponseData(UserDataServices::GET_CURRENT_USER_DATA, array());
 			// if user data has been retrieved
-			if($udata != null) {
-				// if avatar id is not 0 => meaning not default avatar
-				if($udata->GetAvatarId() != 0) {
-					$avatar = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-							->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
-								UploadServices::PARAM_ID => $udata->GetAvatarId()));	
-					if($avatar == null) {
-						throw new RuntimeException("Echec de recupération de l'avatar courant.", ServiceResponse::ERR_SERVICE_FAILED);
-					} else {
-						$response = new ServiceResponse("/uploads".$avatar->GetStorageFilename());
-					}
-				} else {
-					$response = new ServiceResponse("/resources/image.png");
-				}
-			} else {
+			if($udata === null) {
 				throw new RuntimeException("Echec de récupération des données de l'utilisateur courant", ServiceResponse::ERR_SERVICE_FAILED);
 			}
+			// if avatar id is not 0 => meaning not default avatar
+			if($udata->GetAvatarId() != 0) {
+				$avatar = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+						->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
+							UploadServices::PARAM_ID => $udata->GetAvatarId()));	
+				if($avatar === null) {
+					throw new RuntimeException("Echec de recupération de l'avatar courant.", ServiceResponse::ERR_SERVICE_FAILED);
+				}
+				// create service response
+				$response = new ServiceResponse("/uploads".$avatar->GetStorageFilename());
+			} else {
+				// create service response
+				$response = new ServiceResponse("/resources/image.png");
+			}
 		} catch (RuntimeException $e) {
+		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
+		}
+		// return response
+		return $response;
+	}
 
+	private function __service_publish($post) {
+		// initialize null response
+		$response = null;
+		// -- surround process with try catch block to handle errors
+		try {
+			// retrieve study object
+			$study = $this->kernel->GetDBObject(StudyDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+						->GetResponseData(StudyServices::GET_STUDY_BY_ID, array(
+							StudyServices::PARAM_ID => $post[Services::PPARAM_PARAMS][Services::PKEY_STUDY_ID]));
+			if($study === null) {
+				throw new RuntimeException("Echec de récupération de l'étude.", ServiceResponse::ERR_SERVICE_FAILED);
+			}
+			$templates = array();
+			// retrieve all templates storage names
+			foreach ($post[Services::PPARAM_PARAMS][Services::PKEY_TEMPLATE_IDS] as $id) {
+				// retrieve upload record
+				$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+					->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
+						UploadServices::PARAM_ID => $id));
+				// if upload record is not null
+				if($upload === null) {
+					throw new RuntimeException("Echec de récupération d'un template.", ServiceResponse::ERR_SERVICE_FAILED);		
+				}
+				// push templates array
+				array_push($templates, 
+						rtrim($this->kernel->SettingValue(SettingsManager::KEY_DOLETIC_DIR)," /")."/uploads".$upload->GetStorageFilename());
+			}
+			// when all templates are retrieved, check if at least one template to process
+			if(sizeof($templates) <= 0) {
+				throw new RuntimeException("Aucun template à traiter.", ServiceResponse::ERR_SERVICE_FAILED);
+			}
+			// create document processor instance
+			$doc_processor = new DocumentProcessor($this->kernel);
+			// retrieve needed data to use document processor
+			$basename = $study->GetUniqueIdentifier();
+			$dictionary = $study->GetDictionnary();
+			$type = $post[Services::PPARAM_PARAMS][Services::PKEY_DOC_TYPE];
+			// process templates
+			$result_dict = $doc_processor->GenerateFromTemplates($basename, $templates, $dictionary, $type);
+			if($result_dict[DocumentProcessor::RESULT_STATUS]) {
+				// create service response
+				$response = new ServiceResponse($result_dict[DocumentProcessor::RESULT_DATA]);
+			} else {
+				$response = new ServiceResponse("", Services::ERR_SERVICE_FAILED, $result_dict[DocumentProcessor::RESULT_DATA]);
+			}
+			
+		} catch (RuntimeException $e) {
 		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
 		}
 		return $response;

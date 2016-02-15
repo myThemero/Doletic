@@ -10,6 +10,8 @@ var DoleticUIModule = new function() {
 		this.super.render(htmlNode, this);
 		// activate items in tabs
 		$('.menu .item').tab();
+		// activate checkboxes
+		$('.ui.checkbox').checkbox();
 	}
 	/**
 	 *	Override build function
@@ -51,7 +53,7 @@ var DoleticUIModule = new function() {
 									</div> \
 							  	</div> \
 					  		</div> \
-					  		<div class=\"ui bottom attached blue button\">Ajouter un document modèle</div> \
+					  		<div class=\"ui bottom attached blue button\" onClick=\"alert('not implemented yet');\">Ajouter un document modèle</div> \
 							</div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"mail\"> \
 						<div class=\"ui top attached segment\"> \
@@ -94,11 +96,38 @@ var DoleticUIModule = new function() {
 								</div> \
 						  	</div> \
 				  		</div> \
-				  		<div class=\"ui bottom attached blue button\">Ajouter une mailing liste</div> \
+				  		<div class=\"ui bottom attached blue button\" onClick=\"$('#maillist_modal').modal('show');\">Ajouter une mailing liste</div> \
 						</div> \
 					</div> \
 				  </div> \
 				  <div class=\"row\"> \
+				  </div> \
+				</div> \
+				<div id=\"maillist_modal\" class=\"ui modal\"> \
+				  <div class=\"header\">Ajouter une mailing liste</div> \
+				  <div class=\"content\"> \
+					<form id=\"maillist_form\" class=\"ui form\"> \
+					  <div class=\"two fields\"> \
+						<div class=\"inline field\"> \
+						  <label>Nom de la liste</label> \
+						  <input id=\"name_input\" name=\"name\" placeholder=\"Nom de la mailing liste\" type=\"text\" onChange=\"DoleticUIModule.updateMaillistForm();\"> \
+						</div> \
+						<div class=\"inline field\"> \
+						  <label id=\"mailing_mail\"></label> \
+						</div> \
+					  </div> \
+					  <div class=\"field\"> \
+					    <div id=\"can_subscribe_cb\" class=\"ui checkbox\"> \
+					      <input class=\"hidden\" tabindex=\"0\" type=\"checkbox\"> \
+					      <label>Inscription autorisée</label> \
+					    </div> \
+					  </div> \
+					</form> \
+				  </div> \
+				  <div class=\"actions\"> \
+				    <div class=\"ui red deny button\" onClick=\"DoleticUIModule.resetMaillist();\">Annuler</div> \
+				    <div class=\"ui positive right labeled icon button\" onClick=\"DoleticUIModule.addMaillist();\">Ajouter<i class=\"checkmark icon\"></i> \
+				    </div> \
 				  </div> \
 				</div>";
 	}
@@ -119,4 +148,22 @@ var DoleticUIModule = new function() {
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
+	this.resetMaillist = function() {
+		$('#maillist_form')[0].reset();
+		$('#mailing_mail').html('');
+		$('#maillist_modal').modal('hide');
+	}
+
+	this.addMaillist = function() {
+		alert('not implemented yet');
+		this.resetMaillist();
+	}
+
+	this.updateMaillistForm = function() {
+		$('#mailing_mail').html(this.formatName($('#name_input').val())+DoleticConfig.JE.mail_domain);
+	}
+
+	this.formatName = function(name) {
+		return name.replace(' ', '-').toLowerCase();
+	}
 }

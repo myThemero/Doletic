@@ -176,6 +176,33 @@ var DoleticServicesInterface = new function() {
       });
   }
   /**
+   *
+   */
+  this.publish = function(studyId, templateIds) {
+    this.ajaxPOST(
+      this.doleticMainURL,
+      {
+        q:'service',
+        obj:'service',
+        act:'publish',
+        params:{
+          studyId:studyId,
+          templateIds:templateIds
+        }
+      },
+      'json',
+      DoleticServicesInterface.handleAJAXError,
+      function(data) {
+        if(data.code == 0) {
+          $('#doletic_download').attr('href', data.object.url).attr('download', data.object.basename);
+          $('#doletic_download')[0].click();
+          $('#doletic_download').attr('href', '').attr('download', '');
+        } else {
+          DoleticMasterInterface.showError("Erreur de publication !", "Le service à renvoyé une erreur: (code=" + data.code + ",message="+data.error+")");
+        }
+      });
+  }
+  /**
    *  Require list of available uis from the server
    */
   this.availableModuleLinks = function(successHandler) {
