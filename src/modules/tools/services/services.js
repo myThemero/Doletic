@@ -7,13 +7,13 @@ var MaillistServicesInterface = new function() {
     OBJECT: 'maillist',
     // --- (actions)
     ACTION: {
-	    GET_MAILLIST_BY_ID:'byid';
-		GET_ALL_MAILLIST:'all';
-		SUBSCRIBE:'subscribe';
-		UNSUBSCRIBE:'unsubscribe';
-		INSERT:'insert';
-		UPDATE:'update';
-		DELETE:'delete';
+	    GET_MAILLIST_BY_ID:'byid',
+		  GET_ALL_MAILLIST:'all',
+		  SUBSCRIBE:'subscribe',
+		  UNSUBSCRIBE:'unsubscribe',
+		  INSERT:'insert',
+		  UPDATE:'update',
+		  DELETE:'delete'
     }
   };
 
@@ -74,53 +74,39 @@ var DocTemplateServicesInterface = new function() {
     OBJECT: 'document_template',
     // --- (actions)
     ACTION: {
-	    GET_MAILLIST_BY_ID:'byid';
-		GET_ALL_MAILLIST:'all';
-		SUBSCRIBE:'subscribe';
-		UNSUBSCRIBE:'unsubscribe';
-		INSERT:'insert';
-		UPDATE:'update';
-		DELETE:'delete';
+	    GET_DOCTEMPLATE_BY_ID:'byid',
+      GET_ALL_DOCTEMPLATE:'all',
+      INSERT:'insert',
+      UPDATE:'update',
+      DELETE:'delete'
     }
   };
 
   this.getAll = function(successHandler) {
-   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_MAILLIST, {}, successHandler); 
+   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_DOCTEMPLATE, {}, successHandler); 
   }
   this.getById = function(id, successHandler) {
     return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_MAILLIST_BY_ID, 
+            this.meta.OBJECT, this.meta.ACTION.GET_DOCTEMPLATE_BY_ID, 
             { id: id }, 
             successHandler); 
   }
-  this.subscribe = function(maillistId, successHandler) {
-    return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.SUBSCRIBE, 
-            { maillistId: maillistId }, 
-            successHandler); 
-  }
-  this.unsubscribe = function(maillistId, successHandler) {
-    return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.UNSUBSCRIBE, 
-            { maillistId: maillistId }, 
-            successHandler); 
-  }
-  this.insert = function(name, canSubscribe, successHandler) {
+  this.insert = function(uploadId, name, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT, 
             {
-              name:name,
-              canSubscribe:canSubscribe
+              uploadId:uploadId,
+              name:name
             }, 
             successHandler); 
   }
-  this.update = function(id, name, canSubscribe, successHandler) {
+  this.update = function(id, uploadId, name, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE, 
             {
               id:id,
-              name:name,
-              canSubscribe:canSubscribe
+              uploadId:uploadId,
+              name:name
             }, 
             successHandler);
   }
