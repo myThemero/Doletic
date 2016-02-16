@@ -200,12 +200,14 @@ var DoleticMasterInterface = new function() {
    *  Shows Doletic confirmation standard modal
    */
   this.hideConfirmModal = function() {
-    $('#confirm_modal_header').html('');
-    $('#confirm_modal_icon').html('');
-    $('#confirm_modal_description').html('');
-    $('#confirm_modal_no').click(function(){});
-    $('#confirm_modal_yes').click(function(){});
     $('#confirm_modal').modal('hide');
+    setTimeout(function(){
+      $('#confirm_modal_header').html('');
+      $('#confirm_modal_icon').html('');
+      $('#confirm_modal_description').html('');
+      $('#confirm_modal_no').click(function(){});
+      $('#confirm_modal_yes').click(function(){});
+    }, 200);
   }
   /**
    *  Shows about Doletic modal

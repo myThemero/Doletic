@@ -68,6 +68,7 @@ class MailingListServices extends AbstractObjectServices {
 	// -- consts
 	// --- params
 	const PARAM_ID 				= "id";
+	const PARAM_USER_ID			= "userId";
 	const PARAM_MAILLIST_ID		= "maillistId";
 	const PARAM_CAN_SUBSCRIBE	= "canSubscribe";
 	const PARAM_NAME 			= "name";
@@ -79,6 +80,8 @@ class MailingListServices extends AbstractObjectServices {
 	const INSERT 		   		= "insert";
 	const UPDATE           		= "update";
 	const DELETE          		= "delete";
+	// --- test actions
+	const AFFECT 				= "affect";
 
 	// -- functions
 
@@ -112,6 +115,10 @@ class MailingListServices extends AbstractObjectServices {
 		} else if(!strcmp($action, MailingListServices::UNSUBSCRIBE)) {
 			$data = $this->__unsubscribe(
 				$params[MailingListServices::PARAM_MAILLIST_ID]);
+		} else if(!strcmp($action, MailingListServices::AFFECT)) {
+			$data = $this->__affect(
+				$params[MailingListServices::PARAM_USER_ID],
+				$params[MailingListServices::PARAM_MAILLIST_ID]);
 		}
 		return $data;
 	}
@@ -134,7 +141,7 @@ class MailingListServices extends AbstractObjectServices {
 			if( ($row = $pdos->fetch()) !== false) {
 				$maillist = new MailingList(
 					$row[MailingListDBObject::COL_ID], 
-					$row[MailingListDBObject::COL_CAN_SUBSCRIBE], 
+					($row[MailingListDBObject::COL_CAN_SUBSCRIBE] === "0" ? false : true), 
 					$row[MailingListDBObject::COL_NAME]);
 			}
 		}
@@ -152,7 +159,7 @@ class MailingListServices extends AbstractObjectServices {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($maillists, new MailingList(
 					$row[MailingListDBObject::COL_ID], 
-					$row[MailingListDBObject::COL_CAN_SUBSCRIBE], 
+					($row[MailingListDBObject::COL_CAN_SUBSCRIBE] === "0" ? false : true), 
 					$row[MailingListDBObject::COL_NAME]));
 			}
 		}
@@ -166,6 +173,17 @@ class MailingListServices extends AbstractObjectServices {
 		$sql_params = array(":".MailingListDBObject::COL_ID => "NULL",
 							":".MailingListDBObject::COL_MAILLIST_ID => $maillistId,
 							":".MailingListDBObject::COL_USER_ID => $this->getCurrentUser()->GetId());
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(MailingListDBObject::TABL_USER_MAILLIST)->GetINSERTQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+	private function __affect($userId, $maillistId) {
+		// create sql params array
+		$sql_params = array(":".MailingListDBObject::COL_ID => "NULL",
+							":".MailingListDBObject::COL_MAILLIST_ID => $maillistId,
+							":".MailingListDBObject::COL_USER_ID => $userId);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(MailingListDBObject::TABL_USER_MAILLIST)->GetINSERTQuery();
 		// execute query
@@ -186,7 +204,7 @@ class MailingListServices extends AbstractObjectServices {
 	private function __insert_maillist($canSubscribe, $name) {
 		// create sql params array
 		$sql_params = array(":".MailingListDBObject::COL_ID => "NULL",
-							":".MailingListDBObject::COL_CAN_SUBSCRIBE => $canSubscribe,
+							":".MailingListDBObject::COL_CAN_SUBSCRIBE => ($canSubscribe === "true" ? 1 : 0),
 							":".MailingListDBObject::COL_NAME => $name);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(MailingListDBObject::TABL_MAILLIST)->GetINSERTQuery();
@@ -198,7 +216,7 @@ class MailingListServices extends AbstractObjectServices {
 		// create sql params
 		$sql_params = array(
 			":".MailingListDBObject::COL_ID => $id,
-			":".MailingListDBObject::COL_CAN_SUBSCRIBE => $canSubscribe,
+			":".MailingListDBObject::COL_CAN_SUBSCRIBE => ($canSubscribe === "true" ? 1 : 0),
 			":".MailingListDBObject::COL_NAME => $name);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(MailingListDBObject::TABL_MAILLIST)->GetUPDATEQuery();
@@ -242,7 +260,7 @@ class MailingListDBObject extends AbstractDBObject {
 	const OBJ_NAME = "maillist";
 	// --- tables
 	const TABL_MAILLIST = "dol_maillist";
-	const TABL_USER_MAILLIST = "dol_user_maillist";
+	const TABL_USER_MAILLIST = "dol_maillist_user";
 	// --- columns
 	const COL_ID = "id";
 	const COL_MAILLIST_ID = "maillist_id";

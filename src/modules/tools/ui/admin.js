@@ -1,3 +1,5 @@
+debugger;
+
 var DoleticUIModule = new function() {
 	/**
 	 *	Parent abstract module
@@ -12,6 +14,10 @@ var DoleticUIModule = new function() {
 		$('.menu .item').tab();
 		// activate checkboxes
 		$('.ui.checkbox').checkbox();
+		// refresh mailing lists
+		this.refreshMaillistList();
+		// refresh doc templates lists
+		this.refreshDocTemplateList();
 	}
 	/**
 	 *	Override build function
@@ -33,24 +39,6 @@ var DoleticUIModule = new function() {
 					  		<div class=\"ui attached segment\"> \
 					  			<div id=\"doc_templates\" class=\"ui celled selection list\"> \
 									<!-- DOC TEMPLATES WILL GO HERE --> \
-									<div class=\"item\"> \
-										Proposition commerciale \
-										<div class=\"ui small basic icon right floated buttons\"> \
-										  <button class=\"ui red button\"><i class=\"red trash icon\"></i></button> \
-										</div> \
-									</div> \
-									<div class=\"item\"> \
-										 Bulletin de Livraison \
-										 <div class=\"ui small basic icon right floated buttons\"> \
-										  <button class=\"ui red button\"><i class=\"red trash icon\"></i></button> \
-										</div> \
-									</div> \
-									<div class=\"item\"> \
-										 Bulletin de Versement \
-										 <div class=\"ui small basic icon right floated buttons\"> \
-										  <button class=\"ui red button\"><i class=\"red trash icon\"></i></button> \
-										</div> \
-									</div> \
 							  	</div> \
 					  		</div> \
 					  		<div class=\"ui bottom attached blue button\" onClick=\"alert('not implemented yet');\">Ajouter un document modèle</div> \
@@ -62,38 +50,6 @@ var DoleticUIModule = new function() {
 				  		<div class=\"ui attached segment\"> \
 				  			<div id=\"mailing_lists\" class=\"ui celled selection list\"> \
 								<!-- MAILING LISTS WILL GO HERE --> \
-								<div class=\"item\"> \
-									<div class=\"ui red horizontal label\">privée</div> \
-									CA (<a href=\"mailto:ca@etic-insa.com\">ca@etic-insa.com</a>) \
-									<div class=\"ui small basic icon right floated buttons\"> \
-									  <button class=\"ui button\"><i class=\"table icon\"></i></button> \
-									  <button class=\"ui red button\"><i class=\"red trash icon\"></i></button> \
-									</div> \
-								</div> \
-								<div class=\"item\"> \
-									<div class=\"ui red horizontal label\">privée</div> \
-									Membres (<a href=\"mailto:membres@etic-insa.com\">membres@etic-insa.com</a>) \
-									<div class=\"ui small basic icon right floated buttons\"> \
-									  <button class=\"ui button\"><i class=\"table icon\"></i></button> \
-									  <button class=\"ui red button\"><i class=\"red trash icon\"></i></button> \
-									</div> \
-								</div> \
-								<div class=\"item\"> \
-									<div class=\"ui green horizontal label\">ouverte</div> \
-									Intervenants (<a href=\"mailto:intervenants@etic-insa.com\">intervenants@etic-insa.com</a>) \
-									<div class=\"ui small basic icon right floated buttons\"> \
-									  <button class=\"ui button\"><i class=\"table icon\"></i></button> \
-									  <button class=\"ui red button\"><i class=\"red trash icon\"></i></button> \
-									</div> \
-								</div> \
-								<div class=\"item\"> \
-									<div class=\"ui red horizontal label\">privée</div> \
-									Clients (<a href=\"mailto:clients@etic-insa.com\">clients@etic-insa.com</a>) \
-									<div class=\"ui small basic icon right floated buttons\"> \
-									  <button class=\"ui button\"><i class=\"table icon\"></i></button> \
-									  <button class=\"ui red button\"><i class=\"red trash icon\"></i></button> \
-									</div> \
-								</div> \
 						  	</div> \
 				  		</div> \
 				  		<div class=\"ui bottom attached blue button\" onClick=\"$('#maillist_modal').modal('show');\">Ajouter une mailing liste</div> \
@@ -118,7 +74,7 @@ var DoleticUIModule = new function() {
 					  </div> \
 					  <div class=\"field\"> \
 					    <div id=\"can_subscribe_cb\" class=\"ui checkbox\"> \
-					      <input class=\"hidden\" tabindex=\"0\" type=\"checkbox\"> \
+					      <input id=\"can_subscribe_input\" class=\"hidden\" tabindex=\"0\" type=\"checkbox\"> \
 					      <label>Inscription autorisée</label> \
 					    </div> \
 					  </div> \
@@ -148,23 +104,41 @@ var DoleticUIModule = new function() {
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
+// -------- mailing lists functions
+
 	this.refreshMaillistList = function() {
 		// clear current list
 		$('#mailing_lists').html('');
 		// call service to retrieve lists
 		MaillistServicesInterface.getAll(function(data){
 			if(data.code == 0) {
-				alert('we are currently working on it...');
+				if(data.object == "[]") {
+					$('#mailing_lists').append("<div class=\"item\">Aucune mailing liste à afficher.</div>");
+				} else {
+					for (var i = data.object.length - 1; i >= 0; i--) {
+						DoleticUIModule.appendMaillistListRecord(
+							data.object[i].id, 
+							data.object[i].name, 
+							data.object[i].can_subscribe
+							);
+					}
+				}
 			} else {
 				DoleticServicesInterface.handleServiceError(data);
 			}
 		});
 	}
 
-	this.appendMaillistListRecord = function(id, name) {
-		var email = this.formatName($('#name_input').val())+DoleticConfig.JE.mail_domain;
+	this.appendMaillistListRecord = function(id, name, canSubscribe) {
+		var email = this.formatName(name)+DoleticConfig.JE.mail_domain;
+		var tag_color = 'red';
+		var tag_content = 'privée';
+		if(canSubscribe) {
+			tag_color = 'green';
+			tag_content = 'ouverte';
+		}
 		var html_record = "<div class=\"item\"> \
-								<div class=\"ui red horizontal label\">privée</div> \
+								<div class=\"ui "+tag_color+" horizontal label\">"+tag_content+"</div> \
 								"+name+" (<a href=\"mailto:"+email+"\">"+email+"</a>) \
 								<div class=\"ui small basic icon right floated buttons\"> \
 								  <button class=\"ui button\" onClick=\"DoleticUIModule.detailsMaillist("+id+");\"><i class=\"table icon\"></i></button> \
@@ -184,7 +158,7 @@ var DoleticUIModule = new function() {
 	this.addMaillist = function() {
 		// retrieve and check input
 		var name = $('#name_input').val();
-		var canSubscribe = $('#can_subscribe_cb')[0].checked;
+		var canSubscribe = $('#can_subscribe_input').prop('checked');
 		// call service to add a mailing list
 		MaillistServicesInterface.insert(name, canSubscribe, function(data){
 			if(data.code == 0) {
@@ -195,14 +169,38 @@ var DoleticUIModule = new function() {
 		});
 		// reset modal form
 		this.resetMaillist();
+		// refresh list
+		this.refreshMaillistList();
 	}
 
 	this.detailsMaillist = function(id) {
+		debugger;
 		alert('we are currently working on it...');
 	}
 
 	this.trashMaillist = function(id) {
-		alert('we are currently working on it...');
+		DoleticMasterInterface.showConfirmModal(
+			'Suppresion ?', '<i class="help icon"></i>', 
+			'<p><b>Voulez-vous vraiment supprimer cette liste ?</b></p>', 
+			function(){
+				debugger;
+				// call service to add a mailing list
+				MaillistServicesInterface.delete(id, function(data){
+					if(data.code == 0) {
+						// show success message
+						DoleticMasterInterface.showSuccess("Suppresion réussie !", "La mailing liste a été supprimée.");
+						// refresh list
+						DoleticUIModule.refreshMaillistList();
+						// hide confirm modal
+						DoleticMasterInterface.hideConfirmModal();
+					} else {
+						DoleticServicesInterface.handleServiceError(data);
+					}
+				});
+			}, 
+			function(){
+				DoleticMasterInterface.hideConfirmModal();
+			});
 	}
 
 	this.updateMaillistForm = function() {
@@ -211,5 +209,41 @@ var DoleticUIModule = new function() {
 
 	this.formatName = function(name) {
 		return name.replace(' ', '-').toLowerCase();
+	}
+
+// -------- document templates functions
+
+	this.refreshDocTemplateList = function() {
+		// clear current list
+		$('#doc_templates').html('');
+		// call service to retrieve lists
+		DocTemplateServicesInterface.getAll(function(data){
+			if(data.code == 0) {
+				if(data.object == "[]") {
+					$('#doc_templates').append("<div class=\"item\">Aucun modèle de document à afficher.</div>");
+				} else {
+					debugger;
+					alert('we are currently working on it...');
+				}
+			} else {
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.appendDocTemplateListRecord = function(id, name) {
+		var html_record = "<div class=\"item\"> \
+								"+name+" \
+								<div class=\"ui small basic icon right floated buttons\"> \
+								  <button class=\"ui red button\" onClick=\"DoleticUIModule.trashDocTemplate("+id+")\"><i class=\"red trash icon\"></i></button> \
+								</div> \
+							</div>";
+		// append record to list
+		$('#doc_templates').append(html_record);
+	}
+
+	this.trashDocTemplate = function(id) {
+		debugger;
+		alert('we are currently working on it...');
 	}
 }

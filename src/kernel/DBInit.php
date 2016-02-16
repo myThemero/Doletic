@@ -82,83 +82,119 @@ class FakeDataFunction extends AbstractFunction {
 		// SA account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT, array(
-					UserDataServices::PARAM_USER_ID => 1,
-					UserDataServices::PARAM_GENDER_ID => 1,
-					UserDataServices::PARAM_FIRSTNAME => "SuperAdmin",
-					UserDataServices::PARAM_LASTNAME => "Doe", 
-					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
-					UserDataServices::PARAM_TEL => "0600000000", 	
-					UserDataServices::PARAM_EMAIL => "super-admin.doe@gmail.com",  
-					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
-					UserDataServices::PARAM_COUNTRY_ID => 153,
-					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
-					UserDataServices::PARAM_INSA_DEPT_ID => 10 
+					UserDataServices::PARAM_USER_ID 		=> 1,
+					UserDataServices::PARAM_GENDER_ID 		=> 1,
+					UserDataServices::PARAM_FIRSTNAME 		=> "SuperAdmin",
+					UserDataServices::PARAM_LASTNAME 		=> "Doe", 
+					UserDataServices::PARAM_BIRTHDATE 		=> "1994-02-13",
+					UserDataServices::PARAM_TEL 			=> "0600000000", 	
+					UserDataServices::PARAM_EMAIL 			=> "super-admin.doe@gmail.com",  
+					UserDataServices::PARAM_ADDRESS 		=> "1 avenue Doletic",
+					UserDataServices::PARAM_COUNTRY_ID 		=> 153,
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> "4ème",
+					UserDataServices::PARAM_INSA_DEPT_ID 	=> 10 
 						));
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
-					UserDataServices::PARAM_USER_ID => 1,
-					UserDataServices::PARAM_POSITION_ID => 6
+					UserDataServices::PARAM_USER_ID 		=> 1,
+					UserDataServices::PARAM_POSITION_ID 	=> 6
 					));
 		// A account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT, array(
-					UserDataServices::PARAM_USER_ID => 2,
-					UserDataServices::PARAM_GENDER_ID => 1,
-					UserDataServices::PARAM_FIRSTNAME => "Admin",
-					UserDataServices::PARAM_LASTNAME => "Doe", 
-					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
-					UserDataServices::PARAM_TEL => "0600000000", 	
-					UserDataServices::PARAM_EMAIL => "admin.doe@gmail.com",  
-					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
-					UserDataServices::PARAM_COUNTRY_ID => 153,
-					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
-					UserDataServices::PARAM_INSA_DEPT_ID => 10 
+					UserDataServices::PARAM_USER_ID 		=> 2,
+					UserDataServices::PARAM_GENDER_ID 		=> 1,
+					UserDataServices::PARAM_FIRSTNAME 		=> "Admin",
+					UserDataServices::PARAM_LASTNAME 		=> "Doe", 
+					UserDataServices::PARAM_BIRTHDATE 		=> "1994-02-13",
+					UserDataServices::PARAM_TEL 			=> "0600000000", 	
+					UserDataServices::PARAM_EMAIL 			=> "admin.doe@gmail.com",  
+					UserDataServices::PARAM_ADDRESS 		=> "1 avenue Doletic",
+					UserDataServices::PARAM_COUNTRY_ID 		=> 153,
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> "4ème",
+					UserDataServices::PARAM_INSA_DEPT_ID 	=> 10 
 						));
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
-					UserDataServices::PARAM_USER_ID => 2,
-					UserDataServices::PARAM_POSITION_ID => 1
+					UserDataServices::PARAM_USER_ID 		=> 2,
+					UserDataServices::PARAM_POSITION_ID 	=> 1
 					));
 		// U account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT, array(
-					UserDataServices::PARAM_USER_ID => 3,
-					UserDataServices::PARAM_GENDER_ID => 1,
-					UserDataServices::PARAM_FIRSTNAME => "User",
-					UserDataServices::PARAM_LASTNAME => "Doe", 
-					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
-					UserDataServices::PARAM_TEL => "0600000000", 	
-					UserDataServices::PARAM_EMAIL => "user.doe@gmail.com",  
-					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
-					UserDataServices::PARAM_COUNTRY_ID => 153,
-					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
-					UserDataServices::PARAM_INSA_DEPT_ID => 10 
+					UserDataServices::PARAM_USER_ID 		=> 3,
+					UserDataServices::PARAM_GENDER_ID 		=> 1,
+					UserDataServices::PARAM_FIRSTNAME 		=> "User",
+					UserDataServices::PARAM_LASTNAME 		=> "Doe", 
+					UserDataServices::PARAM_BIRTHDATE 		=> "1994-02-13",
+					UserDataServices::PARAM_TEL 			=> "0600000000", 	
+					UserDataServices::PARAM_EMAIL 			=> "user.doe@gmail.com",  
+					UserDataServices::PARAM_ADDRESS 		=> "1 avenue Doletic",
+					UserDataServices::PARAM_COUNTRY_ID 		=> 153,
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> "4ème",
+					UserDataServices::PARAM_INSA_DEPT_ID 	=> 10 
 						));
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
-					UserDataServices::PARAM_USER_ID => 3,
-					UserDataServices::PARAM_POSITION_ID => 11
+					UserDataServices::PARAM_USER_ID 		=> 3,
+					UserDataServices::PARAM_POSITION_ID 	=> 11
 					));
 		// G account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT, array(
-					UserDataServices::PARAM_USER_ID => 4,
-					UserDataServices::PARAM_GENDER_ID => 1,
-					UserDataServices::PARAM_FIRSTNAME => "Guest",
-					UserDataServices::PARAM_LASTNAME => "Doe", 
-					UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
-					UserDataServices::PARAM_TEL => "0600000000", 	
-					UserDataServices::PARAM_EMAIL => "guest.doe@gmail.com",  
-					UserDataServices::PARAM_ADDRESS => "1 avenue Doletic",
-					UserDataServices::PARAM_COUNTRY_ID => 153,
-					UserDataServices::PARAM_SCHOOL_YEAR => "4ème",
-					UserDataServices::PARAM_INSA_DEPT_ID => 10 
+					UserDataServices::PARAM_USER_ID 		=> 4,
+					UserDataServices::PARAM_GENDER_ID 		=> 1,
+					UserDataServices::PARAM_FIRSTNAME 		=> "Guest",
+					UserDataServices::PARAM_LASTNAME 		=> "Doe", 
+					UserDataServices::PARAM_BIRTHDATE 		=> "1994-02-13",
+					UserDataServices::PARAM_TEL 			=> "0600000000", 	
+					UserDataServices::PARAM_EMAIL 			=> "guest.doe@gmail.com",  
+					UserDataServices::PARAM_ADDRESS 		=> "1 avenue Doletic",
+					UserDataServices::PARAM_COUNTRY_ID 		=> 153,
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> "4ème",
+					UserDataServices::PARAM_INSA_DEPT_ID 	=> 10 
 						));
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
-					UserDataServices::PARAM_USER_ID => 4,
-					UserDataServices::PARAM_POSITION_ID => 16
+					UserDataServices::PARAM_USER_ID 		=> 4,
+					UserDataServices::PARAM_POSITION_ID 	=> 16
 					));
+		// --------------------------------------------------------------
+		parent::endlog("done !");
+		// --- fill maillist
+		parent::info("Filling mailing list object related tables...", true);
+		// --------------------------------------------------------------
+		// membres-ca@...
+		$kernel->GetDBObject(MailingListDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(MailingListServices::INSERT, array(
+			MailingListServices::PARAM_CAN_SUBSCRIBE 	=> "false",
+			MailingListServices::PARAM_NAME 			=> "Membres CA"));
+		// membres-ca@...
+		$kernel->GetDBObject(MailingListDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(MailingListServices::INSERT, array(
+			MailingListServices::PARAM_CAN_SUBSCRIBE 	=> "true",
+			MailingListServices::PARAM_NAME 			=> "Newsletter"));
+		// attach users to mailing lists
+		$kernel->GetDBObject(MailingListDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(MailingListServices::AFFECT, array(
+			MailingListServices::PARAM_MAILLIST_ID 	=> 1,
+			MailingListServices::PARAM_USER_ID 		=> 1));
+				$kernel->GetDBObject(MailingListDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(MailingListServices::AFFECT, array(
+			MailingListServices::PARAM_MAILLIST_ID 	=> 1,
+			MailingListServices::PARAM_USER_ID 		=> 2));
+				$kernel->GetDBObject(MailingListDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(MailingListServices::AFFECT, array(
+			MailingListServices::PARAM_MAILLIST_ID 	=> 2,
+			MailingListServices::PARAM_USER_ID 		=> 1));
+				$kernel->GetDBObject(MailingListDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(MailingListServices::AFFECT, array(
+			MailingListServices::PARAM_MAILLIST_ID 	=> 2,
+			MailingListServices::PARAM_USER_ID 		=> 3));
+				$kernel->GetDBObject(MailingListDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(MailingListServices::AFFECT, array(
+			MailingListServices::PARAM_MAILLIST_ID 	=> 2,
+			MailingListServices::PARAM_USER_ID 		=> 4));
 		// --------------------------------------------------------------
 		parent::endlog("done !");
 		// --- disconnect database
