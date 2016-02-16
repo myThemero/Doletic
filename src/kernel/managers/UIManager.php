@@ -72,11 +72,11 @@ class UIManager extends AbstractManager {
 		$html_fragment = "";
 		// add css entries
 		foreach ($css as $value) {
-			$html_fragment .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"$value\" />\n";
+			$html_fragment .= "<link class=\"doletic_subscript\" rel=\"stylesheet\" type=\"text/css\" href=\"$value\" />\n";
 		}
 		// add js entries
 		foreach ($js as $value) {
-			$html_fragment .= "<script src=\"$value\" type=\"text/javascript\"></script>\n";	
+			$html_fragment .= "<script class=\"doletic_subscript\" src=\"$value\" type=\"text/javascript\"></script>\n";	
 		}
 		return json_encode(array("module_scripts" => $html_fragment));
 	}

@@ -148,6 +148,33 @@ var DoleticUIModule = new function() {
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
+	this.refreshMaillistList = function() {
+		// clear current list
+		$('#mailing_lists').html('');
+		// call service to retrieve lists
+		MaillistServicesInterface.getAll(function(data){
+			if(data.code == 0) {
+				alert('we are currently working on it...');
+			} else {
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.appendMaillistListRecord = function(id, name) {
+		var email = this.formatName($('#name_input').val())+DoleticConfig.JE.mail_domain;
+		var html_record = "<div class=\"item\"> \
+								<div class=\"ui red horizontal label\">privée</div> \
+								"+name+" (<a href=\"mailto:"+email+"\">"+email+"</a>) \
+								<div class=\"ui small basic icon right floated buttons\"> \
+								  <button class=\"ui button\" onClick=\"DoleticUIModule.detailsMaillist("+id+");\"><i class=\"table icon\"></i></button> \
+								  <button class=\"ui red button\" onClick=\"DoleticUIModule.trashMaillist("+id+");\"><i class=\"red trash icon\"></i></button> \
+								</div> \
+							</div>";
+		// append new record to list
+		$('#mailing_lists').append(html_record);
+	}
+
 	this.resetMaillist = function() {
 		$('#maillist_form')[0].reset();
 		$('#mailing_mail').html('');
@@ -155,8 +182,27 @@ var DoleticUIModule = new function() {
 	}
 
 	this.addMaillist = function() {
-		alert('not implemented yet');
+		// retrieve and check input
+		var name = $('#name_input').val();
+		var canSubscribe = $('#can_subscribe_cb')[0].checked;
+		// call service to add a mailing list
+		MaillistServicesInterface.insert(name, canSubscribe, function(data){
+			if(data.code == 0) {
+				DoleticMasterInterface.showSuccess("Création réussie !", "La mailing liste '"+name+"' a été créée avec succès.");
+			} else {
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+		// reset modal form
 		this.resetMaillist();
+	}
+
+	this.detailsMaillist = function(id) {
+		alert('we are currently working on it...');
+	}
+
+	this.trashMaillist = function(id) {
+		alert('we are currently working on it...');
 	}
 
 	this.updateMaillistForm = function() {

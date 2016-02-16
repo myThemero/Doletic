@@ -43,9 +43,6 @@ var DoleticMasterInterface = new function() {
   this.build = function() {
     var html = " \
     <a id=\"doletic_download\" href=\"\" download=\"\" hidden></a><!-- DO NOT REMOVE : download link --> \
-    <div id=\"doletic_ui_scripts\"> \
-      <!-- DOLETIC SPECIFIC PAGE SCRIPT GOES HERE --> \
-    </div> \
     <div id=\"left_menu\" class=\"ui vertical sticky menu fixed top\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
                   <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.getUIHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
                   <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>À propos de Doletic</a> \
@@ -121,8 +118,10 @@ var DoleticMasterInterface = new function() {
   }
 
   this.loadModule = function(data) {
-    // replace old scripts with new ones
-    $('#doletic_ui_scripts').html(data.module_scripts);
+    // remove old scripts
+    $('.doletic_subscript').remove();
+    // add new ones
+    $('head').append(data.module_scripts);
     // load new module
     if(DoleticUIModule != null) {
       if(DoleticUIModule.super.meta.name != 'Login_UIModule' && 
