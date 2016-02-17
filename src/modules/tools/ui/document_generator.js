@@ -10,6 +10,8 @@ var DoleticUIModule = new function() {
 		this.super.render(htmlNode, this);
 		// fill document types 
 		this.fillDocumentTypes();
+		// fill study identifiers
+		this.fillStudyIdentifiers();
 	}
 	/**
 	 *	Override build function
@@ -34,15 +36,13 @@ var DoleticUIModule = new function() {
   								<!-- AVAILABLE DOCUMENTS WILL BE ADDED HERE --> \
 							</div> \
 							<div class=\"ui horizontal divider\"><i class=\"suitcase icon\"></i> Choix de l'étude</div> \
-							<div> \
-								<div class=\"ui search\"> \
-  									<div class=\"ui icon input\"> \
-    									<input class=\"prompt\" placeholder=\"Numéro ou titre...\" type=\"text\"> \
-    									<i class=\"search icon\"></i> \
-  									</div> \
-  									<div class=\"results\"></div> \
-								</div> \
-							</div> \
+							<div class=\"ui form\"> \
+ 							  <div class=\"field\"> \
+							    <select id=\"study_number\"> \
+							      <!-- OPTIONS (STUDY IDENTIFIERS) WILL GO HERE --> \
+							    </select> \
+							  </div> \
+                            </div> \
 							<div class=\"ui horizontal divider\"><i class=\"download icon\"></i> Téléchargement</div> \
 							<button class=\"fluid ui button\">Télécharger les documents</button> \
 						</div> \
@@ -86,6 +86,14 @@ var DoleticUIModule = new function() {
 		});
 	}
 
+	this.fillStudyIdentifiers = function() {
+		// clear
+		$('#study_number').html('');
+		// fill it with study numbers
+		/// \todo implement here
+		alert('Still working on it... module study must be developped');
+	}
+
 	this.fillAvailableDocuments = function(type) {
 		// clear
 		$('#available_docs').html('');
@@ -97,12 +105,12 @@ var DoleticUIModule = new function() {
 				} else {
 					for (var i = data.object.length - 1; i >= 0; i--) {
 						// create html list item
-						var html = "<div class=\"item\"> \
-  									  <div class=\"ui checkbox\"> \
-  										<input type=\"checkbox\" name=\"data.object[i].id\"> \
-  										<label>data.object[i].name</label> \
+						var html = '<div class="item"> \
+  									  <div class="ui checkbox"> \
+  										<input type="checkbox" name="'+data.object[i].id+'"> \
+  										<label>'+data.object[i].name+'</label> \
   									  </div> \
-  								    </div>";
+  								    </div>';
   						// append document to list
 						$('#available_docs').append(html);
 					}

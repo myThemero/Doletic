@@ -354,3 +354,27 @@ var UserServicesInterface = new function() {
   }  
 
 }
+
+// ----------------------- UPLOAD INTERFACE SERVICES CLASS ----------------------------------
+
+  var UploadServicesInterface = new function() {
+
+  this.meta = {
+    // --- (object)
+    OBJECT: 'upload',
+    // --- (actions)
+    ACTION: {
+      GET_UPLOAD_BY_ID:'byid'
+    }
+  };
+
+  this.getById = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, 
+            this.meta.ACTION.GET_UPLOAD_BY_ID, 
+            {
+              id: id
+            }, 
+            successHandler); 
+  }
+}

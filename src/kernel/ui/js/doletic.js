@@ -119,6 +119,8 @@ var DoleticMasterInterface = new function() {
   }
 
   this.loadModule = function(data) {
+    // clear message zone
+    $('.dol_message').remove();
     // remove old scripts
     $('.doletic_subscript').remove();
     // add new ones
@@ -163,16 +165,22 @@ var DoleticMasterInterface = new function() {
 // ----------------------- DOLETIC INTERFACE COMMON FUNCTIONS ----------------------------------
 
   /**
-   *  Removes logout button (usefull for login and logout interfaces)
+   *  Adds general buttons such as logout and preferences
    */
   this.addGeneralButtons = function() {
-    // remove old buttons 
-    $('#menu_logout').remove();
-    $('#menu_preferences_doletic').remove();
-    // put new ones
+    this.removeGeneralButtons();
+    // add new buttons
     $('#menu_about_doletic').after(" \
       <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.logout();\"><i class=\"power icon\"></i>Déconnexion</a> \
       <a id=\"menu_preferences_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showSettingsModal();\"><i class=\"settings icon\"></i>Préférences</a>");
+  }
+  /**
+   *  Removes general buttons such as logout and preferences
+   */
+  this.removeGeneralButtons = function() {
+    // remove buttons 
+    $('#menu_logout').remove();
+    $('#menu_preferences_doletic').remove();
   }
   /**
    *  Shows about Doletic modal
@@ -231,7 +239,7 @@ var DoleticMasterInterface = new function() {
   this.showMessage = function(type, header, content) {
     $('#'+this.master_container_id).append(
     "<div class=\"column\"> \
-      <div class=\"ui " + type + " message\"> \
+      <div class=\"ui " + type + " message dol_message\"> \
         <i class=\"close icon\" onClick=\"this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);\" ></i> \
         <div class=\"header\">" + header + "</div>" + 
         content + 

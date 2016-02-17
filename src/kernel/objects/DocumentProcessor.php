@@ -10,6 +10,11 @@ class DocumentProcessor {
 	// --- file types
 	const TYPE_WORD 	= "Word";
 	const TYPE_LATEX 	= "LaTeX";
+	// --- tags
+	const OPEN_TAG_LATEX 	= "\it{DT-";
+	const CLOSE_TAG_LATEX 	= "-DT}";
+	const OPEN_TAG_WORD 	= "\${";
+	const CLOSE_TAG_WORD 	= "}\$"; 
 	// --- document processor errors
 	const ERROR_MKDIR_FAILED 		= "Can't make user tmp folder.";
 	const ERROR_COPY_FAILED 		= "Can't copy template to user tmp folder.";
@@ -84,7 +89,7 @@ class DocumentProcessor {
 		$ok = true;
 		switch ($type) {
 			case DocumentProcessor::TYPE_LATEX:
-				$this->__substitute_text($filename, $dictionary);
+				$this->__substitute_text($filename, $dictionary, DocumentProcessor::OPEN_TAG_LATEX, DocumentProcessor::CLOSE_TAG_LATEX);
 				break;
 			case DocumentProcessor::TYPE_WORD:
 				$this->__substitute_word($filename, $dictionary);
@@ -96,12 +101,15 @@ class DocumentProcessor {
 		return $ok;
 	}
 
-	private function __substitute_text($filename, $dictionary) {
+	private function __substitute_text($filename, $dictionary, $openTag, $closeTag) {
 		// read file content
 		$content = file_get_contents($filename);
 		// execute substitution for each word
 		foreach ($dictionary as $target => $replacement) {
-			$content = str_replace($target, $replacement, $content);
+			$content = str_replace(
+				$openTag.$target.$openTag, 
+				$replacement, 
+				$content);
 		}
 		// write file content
 		file_put_contents($filename, $content);
@@ -114,6 +122,7 @@ class DocumentProcessor {
 		$template = $phpword->loadTemplate($filename);
 		// execute substitution for each word
 		foreach ($dictionary as $target => $replacement) {
+			$target = DocumentProcessor::OPEN_TAG_WORD.$target.DocumentProcessor::CLOSE_TAG_WORD; 
 			$template->setValue($target, $replacement);
 		}
 		// write file with replaced content

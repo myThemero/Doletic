@@ -8,8 +8,10 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
-
+		// remove useless menus when disconnected
 		DoleticMasterInterface.clearModuleSubmenu();
+		// remove useless buttons when disconnected
+		DoleticMasterInterface.removeGeneralButtons();
 	}
 	/**
 	 *	Override build function

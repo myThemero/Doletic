@@ -3,6 +3,7 @@
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
 require_once "objects/DBTable.php"; 
+require_once "objects/DocumentProcessor.php";
 
 /**
  * @brief Upload object
@@ -10,12 +11,18 @@ require_once "objects/DBTable.php";
 class Upload implements \JsonSerializable {
 	
 	// -- consts
+	const PROP_FILETYPE = "filetype";
+	const PROP_BASENAME = "basename";
+
 	// -- attributes
 	private $id;
 	private $user_id;			// user who uploaded the file
 	private $timestamp;
 	private $filename;			// can be displayed to user
 	private $storage_filename; // storage filename : it's sensless to display it
+	// -- non persistent attributes
+	private $basename;
+	private $filetype; 
 
 	/**
 	*	@brief Constructs an upload
@@ -34,15 +41,19 @@ class Upload implements \JsonSerializable {
 		$this->timestamp = $timestamp;
 		$this->filename = $filename;
 		$this->storage_filename = $storageFilename;
+		$this->basename = explode('.', $filename)[0];
+		$this->filetype = $this->__get_file_type($filename);
 	}
 
-public function jsonSerialize() {
+	public function jsonSerialize() {
 		return [
 			UploadDBObject::COL_ID => $this->id,
-			UploadDBObject::COL_USER_ID => $this->userId,
+			UploadDBObject::COL_USER_ID => $this->user_id,
 			UploadDBObject::COL_TIMESTAMP => $this->timestamp,
 			UploadDBObject::COL_FILENAME => $this->filename,
-			UploadDBObject::COL_STOR_FNAME => $this->storageFilename
+			UploadDBObject::COL_STOR_FNAME => $this->storage_filename,
+			Upload::PROP_FILETYPE => $this->filetype,
+			Upload::PROP_BASENAME => $this->basename
 		];
 	}
 
@@ -77,6 +88,17 @@ public function jsonSerialize() {
 	public function GetStorageFilename() {
 		return $this->storage_filename;
 	}
+
+# PROTECTED & PRIVATE ####################################################
+
+	private function __get_file_type($filename) {
+		switch (end(explode('.', $filename))) {
+			case 'tex':		return DocumentProcessor::TYPE_LATEX;
+			case 'docx': 	return DocumentProcessor::TYPE_WORD;
+			default: 		return 'unknown';
+		}
+	}
+
 }
 
 /**

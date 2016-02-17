@@ -38,9 +38,9 @@ class ToolsModule extends AbstractModule {
 				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::GET_ALL_DOCTEMPLATE  	=> RightsMap::U_RMASK,
 				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::GET_DOCUMENT_TYPES  	=> RightsMap::G_RMASK,
 				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::GET_DOCS_BY_TYPE		=> RightsMap::G_RMASK,
-				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::INSERT 		   		=> RightsMap::SA_RMASK,
-				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::UPDATE           		=> RightsMap::SA_RMASK,
-				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::DELETE          		=> RightsMap::SA_RMASK
+				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::INSERT 		   		=> RightsMap::A_RMASK,
+				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::UPDATE           		=> RightsMap::A_RMASK,
+				DocumentTemplateDBObject::OBJ_NAME.':'.DocumentTemplateServices::DELETE          		=> RightsMap::A_RMASK
 				),
 				false, // disable ui links
 				array('kernel') // kernel is always a dependency

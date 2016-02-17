@@ -3,55 +3,9 @@
 require_once "DoleticKernel.php";
 require_once "objects/RightsMap.php";
 require_once "objects/DocumentProcessor.php";
-
-class ServiceResponse implements \JsonSerializable {
-	
-	// -- consts
-	// --- service errors
-	const ERR_NO_ERROR 				= 0x00;
-	const ERR_MISSING_PARAMS		= 0x01;
-	const ERR_MISSING_OBJ 			= 0x02;
-	const ERR_MISSING_ACT 			= 0x03;
-	const ERR_MISSING_SERVICE   	= 0x04;
-	const ERR_SERVICE_FAILED 		= 0x05;
-	const ERR_INSUFFICIENT_RIGHTS 	= 0x06;
-	// --- upload errors
-	const ERR_UP_INVALID_PARAMS = 0x10;
-	const ERR_UP_NO_FILE 		= 0x11;
-	const ERR_UP_FILE_TOO_BIG 	= 0x12;
-	const ERR_UP_UNKNOWN		= 0x13;
-	const ERR_UP_FORBID_FORMAT	= 0x14;
-	const ERR_UP_FILESYSTEM		= 0x15;
-	// --- download errors
-	const ERR_DL_MISSING_ID		= 0x20;
-	const ERR_DL_MISSING_FILE   = 0x21;
-	const ERR_DL_COPY		    = 0x23;
-	const ERR_DL_MAX		    = 0x24;
-
-	// -- attributes
-	private $code;
-	private $err_string;
-	private $object;
-
-	// -- functions
-	/**
-	 *
-	 */
-	public function __construct($responseData, $responseCode = ServiceResponse::ERR_NO_ERROR, $responseErrString = "RAS") {
-		$this->code = $responseCode;
-		$this->err_string = $responseErrString;
-		$this->object = $responseData;
-	}
-	/**
-	 *
-	 */
-	public function jsonSerialize() {
-       return [
-           'code' => $this->code,
-           'error' => $this->err_string,
-           'object' => $this->object];
-   	}
-}
+require_once "services/components/ServiceResponse.php";
+require_once "services/components/UploadComponent.php";
+require_once "services/components/DownloadComponent.php";
 
 /**
 * 
@@ -78,26 +32,7 @@ class Services {
 	const PKEY_STUDY_ID		= "studyId";
 	const PKEY_TEMPLATE_IDS	= "templateIds";
 	const PKEY_DOC_TYPE		= "documentType";
-	// --- upload related consts
-	const UKEY_FILE			= "file";
-	const UKEY_ERROR		= "error";
-	const UKEY_SIZE			= "size";
-	const UKEY_TMP_NAME		= "tmp_name";
-	const UKEY_NAME			= "name";
-	const UPL_MAX_FILE_SIZE = 4194304;	// size in bytes (4 Mo)
-	const UPL_ALLOWED_EXTS  = array( 
-	// format is 'ext' => 'associated_mime_type' 
-		'jpeg' => 'image/jpeg',
-		'jpg' => 'image/jpeg',
-		'png' => 'image/png',
-		'svg' => 'image/svg',
-		'pdf' => 'application/pdf',
-		'zip' => 'application/zip',
-		'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		'tex' => 'application/x-tex',
-		'gz' => 'application/x-gzip');
-	// --- filesystem related consts
-	const UPLOAD_FOLDER 	= "/uploads";
+	
 
 	// -- attributes
 	private $kernel;
@@ -128,9 +63,9 @@ class Services {
 			if($this->__check_rights_service($post[Services::PPARAM_ACT])) {
 				// find which service is called
 				if($post[Services::PPARAM_ACT] === Services::SERVICE_UPLOAD) {
-					$response = $this->__service_upload($post);
+					$response = UploadComponent::execute($this->kernel);
 				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_DOWNLOAD) {
-					$response = $this->__service_download($post);
+					$response = DownloadComponent::execute($this->kernel, $post[Services::PPARAM_PARAMS][Services::PKEY_ID]);
 				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_UI_LINKS) {
 					$response = $this->__service_uis();
 				} else if($post[Services::PPARAM_ACT] === Services::SERVICE_GET_USER) {
@@ -208,130 +143,6 @@ class Services {
 	 */
 	private function __check_rights_module($module, $action) {
 		return $module->CheckRights($this->kernel->GetCurrentUserRGCode(), $action);	
-	}
-
-	private function __service_upload($post) {
-		// initialize response with null
-		$response = null;	
-		// simple upload without check for now...
-		try {
-   
-		    // Undefined | Multiple Files | $_FILES Corruption Attack
-		    // If this request falls under any of them, treat it invalid.
-		    if (!isset($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR]) ||
-		        is_array($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR])
-		    ) {
-		        throw new RuntimeException('Paramètres invalides', ServiceResponse::ERR_UP_INVALID_PARAMS);
-		    }
-
-		    // Check $_FILES['upfile']['error'] value. ====> PHP . INI related errors
-		    switch ($_FILES[Services::UKEY_FILE][Services::UKEY_ERROR]) {
-		        case UPLOAD_ERR_OK:
-		            break;
-		        case UPLOAD_ERR_NO_FILE:
-		            throw new RuntimeException('Aucun fichier envoyé.', ServiceResponse::ERR_UP_NO_FILE);
-		        case UPLOAD_ERR_INI_SIZE:
-		        case UPLOAD_ERR_FORM_SIZE:
-		            throw new RuntimeException('Taille limite de fichier dépassée.', ServiceResponse::ERR_UP_FILE_TOO_BIG);
-		        default:
-		            throw new RuntimeException('Erreur inconnue.', ServiceResponse::ERR_UP_UNKNOWN);
-		    }
-
-		    // You should also check filesize here.
-		    if ($_FILES[Services::UKEY_FILE][Services::UKEY_SIZE] > Services::UPL_MAX_FILE_SIZE) {
-		        throw new RuntimeException('Taille limite de fichier dépassée.', ServiceResponse::ERR_UP_FILE_TOO_BIG);
-		    }
-
-		    // DO NOT TRUST $_FILES['upfile']['mime'] VALUE !!
-		    // Check MIME Type by yourself.
-		    $finfo = new finfo(FILEINFO_MIME_TYPE);
-		    if (false === $ext = array_search(
-		        $finfo->file($_FILES[Services::UKEY_FILE][Services::UKEY_TMP_NAME]),
-		        Services::UPL_ALLOWED_EXTS,
-		        true
-		    )) {
-		        throw new RuntimeException('Format de fichier interdit.', ServiceResponse::ERR_UP_FORBID_FORMAT);
-		    }
-
-			// retrieve filename
-		    $filename = $_FILES[Services::UKEY_FILE][Services::UKEY_NAME];
-		    // Obtain safe unique name from its binary data plus date part.
-		    $destfname = sprintf('/%s_%s.%s', 
-		    	sha1_file($_FILES[Services::UKEY_FILE][Services::UKEY_TMP_NAME]), 
-		    	date('Y_m_d_H_i_s'),
-		    	$ext);
-		    // full dest (prepend absolute path)
-		    $dest = rtrim($this->kernel->SettingValue(SettingsManager::KEY_DOLETIC_DIR)," /").Services::UPLOAD_FOLDER.$destfname;
-		    // move uploaded file and throw error if it fails
-		    if (!move_uploaded_file(
-		        $_FILES[Services::UKEY_FILE][Services::UKEY_TMP_NAME],
-		        $dest
-		    )) {
-		        throw new RuntimeException('Echec du déplacement du fichier reçu.', ServiceResponse::ERR_UP_FILESYSTEM);
-		    }
-
-		    $id = null;
-		    $upload_params = array(
-		    			UploadServices::PARAM_USER_ID => $this->kernel->GetCurrentUser()->GetId(),
-		    			UploadServices::PARAM_FNAME => $filename,
-		    			UploadServices::PARAM_STOR_FNAME => $destfname);
-		    // write upload in database and retrieve its id
-		    if(!$this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-		    	->GetResponseData(UploadServices::INSERT, $upload_params)) {
-		    	throw new RuntimeException("Erreur d'enregistrement dans la base de données.", ServiceResponse::ERR_UP_FILESYSTEM);
-		    }
-		    // retrieve user
-	    	$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-	    				->GetResponseData(UploadServices::GET_UPLOAD_BY_STOR_FNAME, array(
-	    					UploadServices::PARAM_STOR_FNAME => $destfname));
-	    	if($upload === null) {
-	    		throw new RuntimeException("Impossible de retrouver l'identifiant de l'upload.", ServiceResponse::ERR_UP_FILESYSTEM);
-	    	}
-	    	// retrieve upload's id
-	    	$id = $upload->GetId();
-		    // create service response
-		    $response = new ServiceResponse($id);
-		} catch (RuntimeException $e) {
-		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
-		}
-		// return response
-		return $response;
-	}
-
-	private function __service_download($post) {
-		// initialize response with null
-		$response = null;	
-		// simple upload without check for now...
-		try {
-			// retrieve upload record 
-			$upload = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-						->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
-							UploadServices::PARAM_ID => $post[Services::PPARAM_PARAMS][Services::PKEY_ID]));
-			// check if valid upload is recieved
-			if($upload === null) {
-				// throw service exception
-				throw new RuntimeException("Le service n'a pas réussi à retrouver le fichier dans la base.", ServiceResponse::ERR_DL_MISSING_ID);
-			}   
-			// set url
-			$url = sprintf("%s%s",Services::UPLOAD_FOLDER,$upload->GetStorageFilename());
-			// set src
-			$src = sprintf("%s%s", 
-						rtrim($this->kernel->SettingValue(SettingsManager::KEY_DOLETIC_DIR)," /"),
-						$url);
-			// set basename
-			$basename = $upload->GetFilename(); 
-			// if all goes as planned, send file directly and stop script execution
-			if (!file_exists($src)) {
-				// throw service exception
-				throw new RuntimeException("Le service n'a pas réussi à retrouver le fichier sur le disque.", ServiceResponse::ERR_DL_MISSING_FILE);
-			}
-			// Everything is ok build and send link
-			$response = new ServiceResponse(array("url" => $url, "basename" => $basename));
-		} catch (RuntimeException $e) {
-		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
-		}
-		// return response if no download
-		return $response;
 	}
 
 	private function __service_uis() {
