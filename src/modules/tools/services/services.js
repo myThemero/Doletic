@@ -83,6 +83,8 @@ var DocTemplateServicesInterface = new function() {
     ACTION: {
 	    GET_DOCTEMPLATE_BY_ID:'byid',
       GET_ALL_DOCTEMPLATE:'all',
+      GET_DOCUMENT_TYPES:'doctypes',
+      GET_DOCS_BY_TYPE:'docsbytype',
       INSERT:'insert',
       UPDATE:'update',
       DELETE:'delete'
@@ -98,22 +100,33 @@ var DocTemplateServicesInterface = new function() {
             { id: id }, 
             successHandler); 
   }
-  this.insert = function(uploadId, name, successHandler) {
+  this.getDocumentTypes = function(successHandler) {
+    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_DOCUMENT_TYPES, {}, successHandler); 
+  }
+  this.getDocumentsByType = function(type, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_DOCS_BY_TYPE, 
+            { type: type }, 
+            successHandler); 
+  }
+  this.insert = function(uploadId, name, type, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT, 
             {
               uploadId:uploadId,
-              name:name
+              name:name,
+              type:type
             }, 
             successHandler); 
   }
-  this.update = function(id, uploadId, name, successHandler) {
+  this.update = function(id, uploadId, name, type, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE, 
             {
               id:id,
               uploadId:uploadId,
-              name:name
+              name:name,
+              type:type
             }, 
             successHandler);
   }

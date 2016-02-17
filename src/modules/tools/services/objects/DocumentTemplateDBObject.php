@@ -3,6 +3,7 @@
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
 require_once "objects/DBTable.php"; 
+require_once "objects/DocumentProcessor.php";
 
 /**
  * @brief Ticket object
@@ -13,6 +14,7 @@ class DocumentTemplate implements \JsonSerializable {
 	private $id;
 	private $upload_id;
 	private $name;
+	private $type;
 
 	/**
 	*	@brief Constructs a DocumentTemplate
@@ -23,17 +25,19 @@ class DocumentTemplate implements \JsonSerializable {
 	*	@param int $name
 	*		Name of the template
 	*/
-	public function __construct($id, $uploadId, $name) {
+	public function __construct($id, $uploadId, $name, $type) {
 		$this->id = intval($id);
 		$this->upload_id = intval($uploadId);
 		$this->name = $name;
+		$this->type = $type;
 	}
 
 	public function jsonSerialize() {
 		return [
 			DocumentTemplateDBObject::COL_ID => $this->id,
 			DocumentTemplateDBObject::COL_UPLOAD_ID => $this->upload_id,
-			DocumentTemplateDBObject::COL_NAME => $this->name
+			DocumentTemplateDBObject::COL_NAME => $this->name,
+			DocumentTemplateDBObject::COL_TYPE => $this->type
 		];
 	}
 
@@ -57,10 +61,8 @@ class DocumentTemplate implements \JsonSerializable {
 		return $this->name;
 	}
 
-	public static function GetTypes() {
-		return array(
-			DocumentTemplate::TYPE_WORD, 
-			DocumentTemplate::TYPE_LATEX);
+	public function GetType() {
+		return $this->type;
 	}
 }
 
@@ -74,9 +76,12 @@ class DocumentTemplateServices extends AbstractObjectServices {
 	const PARAM_ID 				= "id";
 	const PARAM_UPLOAD_ID		= "uploadId";
 	const PARAM_NAME 			= "name";
+	const PARAM_TYPE  			= "type";
 	// --- actions
 	const GET_DOCTEMPLATE_BY_ID = "byid";
 	const GET_ALL_DOCTEMPLATE  	= "all";
+	const GET_DOCUMENT_TYPES  	= "doctypes";
+	const GET_DOCS_BY_TYPE      = "docsbytype";
 	const INSERT 		   		= "insert";
 	const UPDATE           		= "update";
 	const DELETE          		= "delete";
@@ -97,16 +102,22 @@ class DocumentTemplateServices extends AbstractObjectServices {
 		} else if(!strcmp($action, DocumentTemplateServices::INSERT)) {
 			$data = $this->__insert_document_template(
 				$params[DocumentTemplateServices::PARAM_UPLOAD_ID],
-				$params[DocumentTemplateServices::PARAM_NAME]
+				$params[DocumentTemplateServices::PARAM_NAME],
+				$params[DocumentTemplateServices::PARAM_TYPE]
 				);
 		} else if(!strcmp($action, DocumentTemplateServices::UPDATE)) {
 			$data = $this->__update_document_template(
 				$params[DocumentTemplateServices::PARAM_ID],
 				$params[DocumentTemplateServices::PARAM_UPLOAD_ID],
-				$params[DocumentTemplateServices::PARAM_NAME]
+				$params[DocumentTemplateServices::PARAM_NAME],
+				$params[DocumentTemplateServices::PARAM_TYPE]
 				);
 		} else if(!strcmp($action, DocumentTemplateServices::DELETE)) {
 			$data = $this->__delete_document_template($params[DocumentTemplateServices::PARAM_ID]);
+		} else if(!strcmp($action, DocumentTemplateServices::GET_DOCUMENT_TYPES)) {
+			$data = $this->__get_document_types();
+		} else if(!strcmp($action, DocumentTemplateServices::GET_DOCS_BY_TYPE)) {
+			$data = $this->__get_documents_by_type($params[DocumentTemplateServices::PARAM_TYPE]);
 		}
 		return $data;
 	}
@@ -130,7 +141,8 @@ class DocumentTemplateServices extends AbstractObjectServices {
 				$document_template = new DocumentTemplate(
 					$row[DocumentTemplateDBObject::COL_ID], 
 					$row[DocumentTemplateDBObject::COL_UPLOAD_ID], 
-					$row[DocumentTemplateDBObject::COL_NAME]);
+					$row[DocumentTemplateDBObject::COL_NAME],
+					$row[DocumentTemplateDBObject::COL_TYPE]);
 			}
 		}
 		return $document_template;
@@ -148,31 +160,62 @@ class DocumentTemplateServices extends AbstractObjectServices {
 				array_push($document_templates, new DocumentTemplate(
 					$row[DocumentTemplateDBObject::COL_ID], 
 					$row[DocumentTemplateDBObject::COL_UPLOAD_ID], 
-					$row[DocumentTemplateDBObject::COL_NAME]));
+					$row[DocumentTemplateDBObject::COL_NAME],
+					$row[DocumentTemplateDBObject::COL_TYPE]));
 			}
 		}
 		return $document_templates;
 	}
 
+	private function __get_documents_by_type($type) {
+		$sql_params = array(DocumentTemplateDBObject::COL_TYPE => $type);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(DocumentTemplateDBObject::TABL_DOCTEMPLATE)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(DocumentTemplateDBObject::COL_TYPE));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create document_templates var
+		$document_templates = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($document_templates, new DocumentTemplate(
+					$row[DocumentTemplateDBObject::COL_ID], 
+					$row[DocumentTemplateDBObject::COL_UPLOAD_ID], 
+					$row[DocumentTemplateDBObject::COL_NAME],
+					$row[DocumentTemplateDBObject::COL_TYPE]));
+			}
+		}
+		return $document_templates;
+	}
+
+	private function __get_document_types() {
+		return array(
+			DocumentProcessor::TYPE_WORD, 
+			DocumentProcessor::TYPE_LATEX
+			);
+	}
+
 	// --- modify
 
-	private function __insert_document_template($uploadId, $name) {
+	private function __insert_document_template($uploadId, $name, $type) {
 		// create sql params array
 		$sql_params = array(":".DocumentTemplateDBObject::COL_ID => "NULL",
 							":".DocumentTemplateDBObject::COL_UPLOAD_ID => $uploadId,
-							":".DocumentTemplateDBObject::COL_NAME => $name);
+							":".DocumentTemplateDBObject::COL_NAME => $name,
+							":".DocumentTemplateDBObject::COL_TYPE => $type);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(DocumentTemplateDBObject::TABL_DOCTEMPLATE)->GetINSERTQuery();
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function __update_document_template($id, $uploadId, $name) {
+	private function __update_document_template($id, $uploadId, $name, $type) {
 		// create sql params
 		$sql_params = array(
 			":".DocumentTemplateDBObject::COL_ID => $id,
 			":".DocumentTemplateDBObject::COL_UPLOAD_ID => $uploadId,
-			":".DocumentTemplateDBObject::COL_NAME => $name);
+			":".DocumentTemplateDBObject::COL_NAME => $name,
+			":".DocumentTemplateDBObject::COL_TYPE => $type);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(DocumentTemplateDBObject::TABL_DOCTEMPLATE)->GetUPDATEQuery();
 		// execute query
@@ -219,6 +262,7 @@ class DocumentTemplateDBObject extends AbstractDBObject {
 	const COL_ID = "id";
 	const COL_NAME = "name";
 	const COL_UPLOAD_ID = "upload_id";
+	const COL_TYPE = "type";
 	// -- attributes
 
 	// -- functions
@@ -232,6 +276,7 @@ class DocumentTemplateDBObject extends AbstractDBObject {
 		$dol_document_template->AddColumn(DocumentTemplateDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$dol_document_template->AddColumn(DocumentTemplateDBObject::COL_UPLOAD_ID, DBTable::DT_INT, 11, false);
 		$dol_document_template->AddColumn(DocumentTemplateDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
+		$dol_document_template->AddColumn(DocumentTemplateDBObject::COL_TYPE, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_document_template);

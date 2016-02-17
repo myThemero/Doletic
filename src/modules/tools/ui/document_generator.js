@@ -8,6 +8,8 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
+		// fill document types 
+		this.fillDocumentTypes();
 	}
 	/**
 	 *	Override build function
@@ -19,32 +21,17 @@ var DoleticUIModule = new function() {
 				  <div class=\"row\"> \
 				  	<div class=\"six centered wide column\"> \
 				  		<div class=\"ui segment\"> \
+					  		<div class=\"ui horizontal divider\"><i class=\"file outline icon\"></i> Format du documents</div> \
+							<div class=\"ui form\"> \
+ 							  <div class=\"field\"> \
+							    <select id=\"doc_types\" onChange=\"DoleticUIModule.fillAvailableDocuments($(this).val());\"> \
+							      <!-- OPTIONS (DOCUMENT TYPES) WILL GO HERE --> \
+							    </select> \
+							  </div> \
+                            </div> \
 					  		<div class=\"ui horizontal divider\"><i class=\"file text outline icon\"></i> Choix des documents</div> \
-				  			<div class=\"ui list\"> \
-  								<div class=\"item\"> \
-  									<div class=\"ui checkbox\"> \
-  										<input type=\"checkbox\"> \
-  										<label>Document A</label> \
-  									</div> \
-  								</div> \
-  								<div class=\"item\"> \
-  									<div class=\"ui checkbox\"> \
-  										<input type=\"checkbox\"> \
-  										<label>Document B</label> \
-  									</div> \
-  								</div> \
-  								<div class=\"item\"> \
-  									<div class=\"ui checkbox\"> \
-  										<input type=\"checkbox\"> \
-  										<label>Document C</label> \
-  									</div> \
-  								</div> \
-  								<div class=\"item\"> \
-  									<div class=\"ui checkbox\"> \
-  										<input type=\"checkbox\"> \
-  										<label>Document D</label> \
-  									</div> \
-  								</div> \
+				  			<div id=\"available_docs\" class=\"ui list\"> \
+  								<!-- AVAILABLE DOCUMENTS WILL BE ADDED HERE --> \
 							</div> \
 							<div class=\"ui horizontal divider\"><i class=\"suitcase icon\"></i> Choix de l'étude</div> \
 							<div> \
@@ -81,5 +68,49 @@ var DoleticUIModule = new function() {
   	}
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
+
+	this.fillDocumentTypes = function() {
+		// clear
+		$('#doc_types').html('');
+		// fill it with available values
+		DocTemplateServicesInterface.getDocumentTypes(function(data){
+			if(data.code == 0) {
+				for (var i = data.object.length - 1; i >= 0; i--) {
+					$('#doc_types').append('<option value="'+data.object[i]+'">'+data.object[i]+'</option>');
+				}
+				// init document list
+				DoleticUIModule.fillAvailableDocuments($('#doc_types').val());
+			} else {
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.fillAvailableDocuments = function(type) {
+		// clear
+		$('#available_docs').html('');
+		// call service to retrieve files
+		DocTemplateServicesInterface.getDocumentsByType(type, function(data){
+			if(data.code == 0) {
+				if(data.object == '[]') {
+					$('#available_docs').html('<div class=\"item\">Aucun document pour ce format.</div>');
+				} else {
+					for (var i = data.object.length - 1; i >= 0; i--) {
+						// create html list item
+						var html = "<div class=\"item\"> \
+  									  <div class=\"ui checkbox\"> \
+  										<input type=\"checkbox\" name=\"data.object[i].id\"> \
+  										<label>data.object[i].name</label> \
+  									  </div> \
+  								    </div>";
+  						// append document to list
+						$('#available_docs').append(html);
+					}
+				}
+			} else {
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
 
 }

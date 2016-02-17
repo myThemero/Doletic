@@ -85,12 +85,17 @@ class Services {
 	const UKEY_TMP_NAME		= "tmp_name";
 	const UKEY_NAME			= "name";
 	const UPL_MAX_FILE_SIZE = 4194304;	// size in bytes (4 Mo)
-	const UPL_ALLOWED_EXTS  = array(
+	const UPL_ALLOWED_EXTS  = array( 
+	// format is 'ext' => 'associated_mime_type' 
 		'jpeg' => 'image/jpeg',
 		'jpg' => 'image/jpeg',
 		'png' => 'image/png',
 		'svg' => 'image/svg',
-		'pdf' => 'application/pdf');
+		'pdf' => 'application/pdf',
+		'zip' => 'application/zip',
+		'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'tex' => 'application/x-tex',
+		'gz' => 'application/x-gzip');
 	// --- filesystem related consts
 	const UPLOAD_FOLDER 	= "/uploads";
 

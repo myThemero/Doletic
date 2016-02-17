@@ -275,6 +275,10 @@ var DoleticMasterInterface = new function() {
     });           
   }
 
+  this.clearModuleSubmenu = function() {
+    $('#module_submenu').html('');
+  }
+
 }
 
 // ------------------------ DOLETIC DOCUMENT REDAY FUNCTION ------------------------------------

@@ -8,6 +8,8 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
+
+		DoleticMasterInterface.clearModuleSubmenu();
 	}
 	/**
 	 *	Override build function

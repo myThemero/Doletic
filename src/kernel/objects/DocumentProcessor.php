@@ -8,8 +8,8 @@ class DocumentProcessor {
 	const RESULT_STATUS = "status";
 	const RESULT_DATA = "data";
 	// --- file types
-	const TYPE_WORD 	= "word";
-	const TYPE_TEXT 	= "text";
+	const TYPE_WORD 	= "Word";
+	const TYPE_LATEX 	= "LaTeX";
 	// --- document processor errors
 	const ERROR_MKDIR_FAILED 		= "Can't make user tmp folder.";
 	const ERROR_COPY_FAILED 		= "Can't copy template to user tmp folder.";
@@ -83,7 +83,7 @@ class DocumentProcessor {
 	private function __substitute($filename, $dictionary, $type) {
 		$ok = true;
 		switch ($type) {
-			case DocumentProcessor::TYPE_TEXT:
+			case DocumentProcessor::TYPE_LATEX:
 				$this->__substitute_text($filename, $dictionary);
 				break;
 			case DocumentProcessor::TYPE_WORD:
