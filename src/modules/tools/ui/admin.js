@@ -35,24 +35,32 @@ var DoleticUIModule = new function() {
 						<div class=\"ui bottom attached tab segment active\" data-tab=\"documentgen\"> \
 						  <div class=\"ui top attached segment\"> \
 				  			<h3><i class=\"file text outline icon\"></i> Gestion des modèles de documents</h3> \
-					  		</div> \
-					  		<div class=\"ui attached segment\"> \
-					  			<div id=\"doc_templates\" class=\"ui celled selection list\"> \
-									<!-- DOC TEMPLATES WILL GO HERE --> \
-							  	</div> \
-					  		</div> \
-					  		<div class=\"ui bottom attached blue button\" onClick=\"alert('not implemented yet');\">Ajouter un document modèle</div> \
+					  	  </div> \
+					  	  <div class=\"ui attached segment\"> \
+					  		<div id=\"doc_templates\" class=\"ui celled selection list\"> \
+							  <!-- DOC TEMPLATES WILL GO HERE --> \
 							</div> \
+					  	  </div> \
+					  	  <div class=\"ui bottom attached blue button\" onClick=\"alert('not implemented yet');\">Ajouter un document modèle</div> \
+					    </div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"mail\"> \
-						<div class=\"ui top attached segment\"> \
-				  			<h3><i class=\"mail outline icon\"></i> Gestion des mailing listes</h3> \
-				  		</div> \
-				  		<div class=\"ui attached segment\"> \
+						  <div class=\"ui top attached segment\"> \
+				  		  	<h3><i class=\"mail outline icon\"></i> Gestion des mailing listes</h3> \
+				  		  </div> \
+				  		  <div class=\"ui attached segment\"> \
 				  			<div id=\"mailing_lists\" class=\"ui celled selection list\"> \
 								<!-- MAILING LISTS WILL GO HERE --> \
 						  	</div> \
-				  		</div> \
-				  		<div class=\"ui bottom attached blue button\" onClick=\"$('#maillist_modal').modal('show');\">Ajouter une mailing liste</div> \
+				  		  </div> \
+				  		  <div class=\"ui bottom attached blue button\" onClick=\"$('#maillist_modal').modal('show');\">Ajouter une mailing liste</div> \
+				  		  <div class=\"ui top attached segment\"> \
+				  		  	<h3>Détails</h3> \
+				  		  </div> \
+				  		  <div class=\"ui attached segment\"> \
+				  			<div id=\"mailing_details\" class=\"ui celled selection list\"> \
+								<!-- SUBSCRIBERS ADRESSES WILL GO HERE --> \
+						  	</div> \
+				  		  </div> \
 						</div> \
 					</div> \
 				  </div> \
@@ -107,6 +115,8 @@ var DoleticUIModule = new function() {
 // -------- mailing lists functions
 
 	this.refreshMaillistList = function() {
+		// clear details
+		$('#mailing_details').html('');
 		// clear current list
 		$('#mailing_lists').html('');
 		// call service to retrieve lists
@@ -127,6 +137,7 @@ var DoleticUIModule = new function() {
 				DoleticServicesInterface.handleServiceError(data);
 			}
 		});
+		
 	}
 
 	this.appendMaillistListRecord = function(id, name, canSubscribe) {
@@ -174,8 +185,26 @@ var DoleticUIModule = new function() {
 	}
 
 	this.detailsMaillist = function(id) {
-		debugger;
-		alert('we are currently working on it...');
+		// clear details
+		$('#mailing_details').html('');
+		// retrieve users
+		MaillistServicesInterface.subscribed(id, function(data) {
+			if(data.code == 0) {
+				// for each id retreive user
+				for (var i = data.object.length - 1; i >= 0; i--) {
+					UserServicesInterface.getById(data.object[i], function(data){
+						if(data.code == 0) {
+							var email = data.object.username + DoleticConfig.JE.mail_domain;
+							$('#mailing_details').append('<div class=\"item\"><a href=\"mailto:'+email+'\">'+email+'</a></div>');
+						} else {
+							DoleticServicesInterface.handleServiceError(data);
+						}
+					});
+				}
+			} else {
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 
 	this.trashMaillist = function(id) {
@@ -183,7 +212,6 @@ var DoleticUIModule = new function() {
 			'Suppresion ?', '<i class="help icon"></i>', 
 			'<p><b>Voulez-vous vraiment supprimer cette liste ?</b></p>', 
 			function(){
-				debugger;
 				// call service to add a mailing list
 				MaillistServicesInterface.delete(id, function(data){
 					if(data.code == 0) {

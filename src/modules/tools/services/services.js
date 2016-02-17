@@ -9,6 +9,7 @@ var MaillistServicesInterface = new function() {
     ACTION: {
 	    GET_MAILLIST_BY_ID:'byid',
 		  GET_ALL_MAILLIST:'all',
+      SUBSCRIBED:'subscribed',
 		  SUBSCRIBE:'subscribe',
 		  UNSUBSCRIBE:'unsubscribe',
 		  INSERT:'insert',
@@ -24,6 +25,12 @@ var MaillistServicesInterface = new function() {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_MAILLIST_BY_ID, 
             { id: id }, 
+            successHandler); 
+  }
+  this.subscribed = function(maillistId, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.SUBSCRIBED, 
+            { maillistId: maillistId }, 
             successHandler); 
   }
   this.subscribe = function(maillistId, successHandler) {

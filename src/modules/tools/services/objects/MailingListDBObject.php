@@ -75,6 +75,7 @@ class MailingListServices extends AbstractObjectServices {
 	// --- actions
 	const GET_MAILLIST_BY_ID 	= "byid";
 	const GET_ALL_MAILLIST  	= "all";
+	const SUBSCRIBED 			= "subscribed";
 	const SUBSCRIBE 			= "subscribe";
 	const UNSUBSCRIBE 			= "unsubscribe";
 	const INSERT 		   		= "insert";
@@ -111,6 +112,9 @@ class MailingListServices extends AbstractObjectServices {
 			$data = $this->__delete_maillist($params[MailingListServices::PARAM_ID]);
 		} else if(!strcmp($action, MailingListServices::SUBSCRIBE)) {
 			$data = $this->__subscribe(
+				$params[MailingListServices::PARAM_MAILLIST_ID]);
+		} else if(!strcmp($action, MailingListServices::SUBSCRIBED)) {
+			$data = $this->__subscribed(
 				$params[MailingListServices::PARAM_MAILLIST_ID]);
 		} else if(!strcmp($action, MailingListServices::UNSUBSCRIBE)) {
 			$data = $this->__unsubscribe(
@@ -164,6 +168,23 @@ class MailingListServices extends AbstractObjectServices {
 			}
 		}
 		return $maillists;
+	}
+
+	private function __subscribed($maillistId) {
+		$sql_params = array(":".MailingListDBObject::COL_MAILLIST_ID => $maillistId);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(MailingListDBObject::TABL_USER_MAILLIST)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(MailingListDBObject::COL_MAILLIST_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create maillists var
+		$userIds = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($userIds, $row[MailingListDBObject::COL_USER_ID]);
+			}
+		}
+		return $userIds;
 	}
 
 	// --- modify

@@ -27,6 +27,9 @@ class ToolsModule extends AbstractModule {
 				// ---- maillist object services
 				MailingListDBObject::OBJ_NAME.':'.MailingListServices::GET_MAILLIST_BY_ID 	=> RightsMap::A_RMASK,	// only admins and above
 				MailingListDBObject::OBJ_NAME.':'.MailingListServices::GET_ALL_MAILLIST 	=> RightsMap::U_RMASK,	// only members and above
+				MailingListDBObject::OBJ_NAME.':'.MailingListServices::SUBSCRIBED 			=> RightsMap::A_RMASK,	// only admins and above
+				MailingListDBObject::OBJ_NAME.':'.MailingListServices::SUBSCRIBE 			=> RightsMap::G_RMASK,  // only admins and above
+				MailingListDBObject::OBJ_NAME.':'.MailingListServices::UNSUBSCRIBE 			=> RightsMap::G_RMASK,  // only admins and above
 				MailingListDBObject::OBJ_NAME.':'.MailingListServices::INSERT 				=> RightsMap::A_RMASK,  // only admins and above
 				MailingListDBObject::OBJ_NAME.':'.MailingListServices::UPDATE 				=> RightsMap::A_RMASK,  // only admins and above
 				MailingListDBObject::OBJ_NAME.':'.MailingListServices::DELETE 				=> RightsMap::A_RMASK,	// only admins and above
