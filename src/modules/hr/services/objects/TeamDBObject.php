@@ -404,7 +404,7 @@ class TeamDBObject extends AbstractDBObject {
 	// --- tables
 	const TABL_TEAM = "dol_team";
 	const TABL_MEMBERS = "dol_team_member";
-	const TABL_DIV = "dol_division";
+	const TABL_DIV = "com_division";
 	// --- columns
 	const COL_ID = "id";
 	const COL_NAME = "name";
@@ -426,21 +426,21 @@ class TeamDBObject extends AbstractDBObject {
 		$dol_team->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$dol_team->AddColumn(TeamDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
 		$dol_team->AddColumn(TeamDBObject::COL_LEADER_ID, DBTable::DT_INT, 11, false);
-		$dol_team->AddColumn(TeamDBObject::COL_CREATION_DATE, DBTable::DT_DATE, 11, false);
+		$dol_team->AddColumn(TeamDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false);
 		$dol_team->AddColumn(TeamDBObject::COL_DIVISION, DBTable::DT_INT, 11, false);
 		// --- dol_team_member
 		$dol_team_member = new DBTable(TeamDBObject::TABL_MEMBERS);
 		$dol_team_member->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", false, false);
 		$dol_team_member->AddColumn(TeamDBObject::COL_MEMBER_ID, DBTable::DT_INT, 11, false, false);
-		// --- dol_division table
-		$dol_team_division = new DBTable(TeamDBObject::TABL_DIV);
-		$dol_team_division->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_team_division->AddColumn(TeamDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false);
+		// --- com_division table
+		$com_team_division = new DBTable(TeamDBObject::TABL_DIV);
+		$com_team_division->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		$com_team_division->AddColumn(TeamDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_team);
 		parent::addTable($dol_team_member);
-		parent::addTable($dol_team_division);
+		parent::addTable($com_team_division);
 	}
 	/**
 	 *	@brief Returns all services associated with this object
