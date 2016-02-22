@@ -180,7 +180,7 @@ class Services {
 			$result = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 						->GetResponseData(UserDataServices::UPDATE_AVATAR, $post[Services::PPARAM_PARAMS]);
 			// -- treat result
-			if(!isset(null)) {
+			if(!isset($result)) {
 				throw new RuntimeException("Echec d'ajout du nouvel avatar.", ServiceResponse::ERR_SERVICE_FAILED);
 			}
 			// create service response
