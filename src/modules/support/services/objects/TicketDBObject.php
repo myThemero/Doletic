@@ -17,13 +17,13 @@ class Ticket implements \JsonSerializable {
 	const STATUS_SOLVED = 3;
 
 	// -- attributes
-	private $id;
-	private $sender_id;
-	private $receiver_id;
-	private $category_id;
-	private $status_id;
-	private $data;
-	private $subject;
+	private $id = null;
+	private $sender_id = null;
+	private $receiver_id = null;
+	private $category_id = null;
+	private $status_id = null;
+	private $data = null;
+	private $subject = null;
 
 	/**
 	*	@brief Constructs a ticket

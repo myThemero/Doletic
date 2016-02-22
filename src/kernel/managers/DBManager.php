@@ -9,7 +9,7 @@ require_once "objects/DB.php";
 class DBManager extends AbstractManager {
 
 	// -- attributes
-	private $databases;
+	private $databases = null;
 
 	// -- function
 	/**

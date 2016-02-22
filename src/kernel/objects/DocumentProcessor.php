@@ -20,7 +20,7 @@ class DocumentProcessor {
 	const ERROR_COPY_FAILED 		= "Can't copy template to user tmp folder.";
 	const ERROR_SUBSTITUTION_FAILED = "Can't substitute in file.";
 	// -- attributes
-	private $kernel;
+	private $kernel = null;
 
 	// -- functions
 

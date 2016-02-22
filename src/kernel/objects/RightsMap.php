@@ -35,8 +35,8 @@ class RightsMap {
 	const KO = "KO";
 	
 	// -- attributes
-	private $groups;	// allowed groups its a OR combination of groups values
-	private $rules;		// rules <=> map[<action>] = rights_mask
+	private $groups = null;	// allowed groups its a OR combination of groups values
+	private $rules = null;		// rules <=> map[<action>] = rights_mask
 
 	// -- functions
 	public function __construct($groups = RightsMap::D_G, $rules = array()) {

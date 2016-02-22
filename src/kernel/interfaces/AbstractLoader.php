@@ -6,8 +6,8 @@
 abstract class AbstractLoader {
 
 	// -- attributes
-	private $kernel;
-	private $manager;
+	private $kernel = null;
+	private $manager = null;
 	
 	// -- functions
 

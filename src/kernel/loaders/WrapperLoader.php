@@ -23,6 +23,8 @@ class WrapperLoader extends AbstractLoader {
 	public function __construct(&$kernel, &$manager) {
 		// -- construct parent
 		parent::__construct($kernel, $manager);
+		// -- connect wrappers to kernel
+		$this->__connect_wrappers_to_kernel($kernel);
 	}
 
 	/**
@@ -37,4 +39,12 @@ class WrapperLoader extends AbstractLoader {
 	public static function RegisterWrapper($wrapper) {
 		WrapperLoader::$_WRAPPERS[$wrapper->GetName()] = $wrapper;
 	}
+
+# PROTECTED & PRIVATE #####################################################
+
+		private function __connect_wrappers_to_kernel($kernel) {
+			foreach (WrapperLoader::$_WRAPPERS as $wrapper) {
+				$wrapper->SetKernel($kernel);
+			}
+		}
 }

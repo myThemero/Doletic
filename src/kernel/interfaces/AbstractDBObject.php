@@ -10,10 +10,10 @@ require_once "managers/SettingsManager.php";
 abstract class AbstractDBObject {
 
 	// -- attributes
-	private $module;
-	private $db_connection;
-	private $name;
-	private $tables;
+	private $module = null;
+	private $db_connection = null;
+	private $name = null;
+	private $tables = null;
 
 	// -- functions
 

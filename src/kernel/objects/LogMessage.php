@@ -10,10 +10,10 @@ class LogMessage {
 	const string LVL_INFO = "INFO";
 	const string LVL_DEBUG = "DEBUG";
 	// -- attributes
-	private $sender;
-	private $content;
-	private $level;
-	private $date;
+	private $sender = null;
+	private $content = null;
+	private $level = null;
+	private $date = null;
 
 	// -- function
 

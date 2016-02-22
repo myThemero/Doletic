@@ -8,11 +8,11 @@ abstract class AbstractFunction {
 	// -- consts
 	const LOG_TIME_FORMAT = 'H:i:s';
 	// -- attributes
-	private $script;	// reference to parent script (in order to access flag shared between functions)
-	private $name;		// function name
-	private $short_opt; // short opt, example '-h' for help function
-	private $long_opt;	// long opt, example '--help' for help function
-	private $description;
+	private $script = null;	// reference to parent script (in order to access flag shared between functions)
+	private $name = null;		// function name
+	private $short_opt = null; // short opt, example '-h' for help function
+	private $long_opt = null;	// long opt, example '--help' for help function
+	private $description = null;
 	// -- functions
 
 	public function __construct($script, $name, $shortOpt, $longOpt = "", $description = "no-description") {

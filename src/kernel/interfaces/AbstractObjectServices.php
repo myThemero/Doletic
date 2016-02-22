@@ -4,9 +4,9 @@
 abstract class AbstractObjectServices {
 
 	// -- attributes
-	private $current_user;
-	private $db_object;
-	private $db_connection;
+	private $current_user = null;
+	private $db_object = null;
+	private $db_connection = null;
 
 	// -- functions
 

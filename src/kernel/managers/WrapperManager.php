@@ -8,7 +8,7 @@ require_once "interfaces/AbstractManager.php";
 class WrapperManager extends AbstractManager {
 
 	// -- attributes
-	private $wrappers;
+	private $wrappers = null;
 
 	// -- functions
 

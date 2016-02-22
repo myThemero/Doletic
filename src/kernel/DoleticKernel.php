@@ -18,23 +18,23 @@ require_once "loaders/DBObjectLoader.php";
 class DoleticKernel {
 
 	// -- consts
-
+	const SESSION_KEY = 'doletic_kernel';
 	// -- attributes
 	// --- managers
-	private $log_mgr;
-	private $cron_mgr;
-	private $db_mgr;
-	private $module_mgr;
-	private $wrapper_mgr;
-	private $settings_mgr;
-	private $authentication_mgr;
-	private $ui_mgr;
+	private $log_mgr = null;
+	private $cron_mgr = null;
+	private $db_mgr = null;
+	private $module_mgr = null;
+	private $wrapper_mgr = null;
+	private $settings_mgr = null;
+	private $authentication_mgr = null;
+	private $ui_mgr = null;
 	// --- loaders
-	private $module_ldr;
-	private $dbobject_ldr;
-	private $wrapper_ldr;
+	private $module_ldr = null;
+	private $dbobject_ldr = null;
+	private $wrapper_ldr = null;
 	// --- flags
-	private $initialized;
+	private $initialized = null;
 
 	// -- functions
 

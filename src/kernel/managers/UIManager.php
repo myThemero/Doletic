@@ -17,8 +17,8 @@ class UIManager extends AbstractManager {
 	const INTERFACE_TEST = "kernel:test";
 
 	// -- attributes 
-	private $internal_css;
-	private $internal_js;
+	private $internal_css = null;
+	private $internal_js = null;
 	// -- functions
 	/**
 	 *

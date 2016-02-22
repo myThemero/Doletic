@@ -13,9 +13,9 @@ class Setting implements \JsonSerializable {
 
 	// -- attributes
 	// --- persistent
-	private $id;
-	private $key;
-	private $value;
+	private $id = null;
+	private $key = null;
+	private $value = null;
 
 	/**
 	*	@brief Constructs a setting

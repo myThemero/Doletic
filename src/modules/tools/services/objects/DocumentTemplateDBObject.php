@@ -11,10 +11,10 @@ require_once "objects/DocumentProcessor.php";
 class DocumentTemplate implements \JsonSerializable {
 
 	// -- attributes
-	private $id;
-	private $upload_id;
-	private $name;
-	private $type;
+	private $id = null;
+	private $upload_id = null;
+	private $name = null;
+	private $type = null;
 
 	/**
 	*	@brief Constructs a DocumentTemplate

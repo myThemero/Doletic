@@ -26,21 +26,32 @@ class SettingsManager extends AbstractManager {
 
 	// --- database keys
 	// ---- OVH wrapper keys
-	const DBKEY_OVH_API_APP_KEY = "ovh_api_app_key";
-	const DBKEY_OVH_API_APP_SEC = "ovh_api_app_sec";
-	const DBKEY_OVH_API_APP_ENDPOINT = "ovh_api_app_endpoint";
-	const DBKEY_OVH_API_CONSUMER_KEY = "ovh_api_consumer_key";
+	const DBKEY_OVH_API_APP_KEY 		= "ovh_api_app_key";
+	const DBKEY_OVH_API_APP_SEC 		= "ovh_api_app_sec";
+	const DBKEY_OVH_API_APP_ENDPOINT 	= "ovh_api_app_endpoint";
+	const DBKEY_OVH_API_CONSUMER_KEY 	= "ovh_api_consumer_key";
+	// ---- JE keys
+	const DBKEY_JE_NAME 				= "je_name";
+	const DBKEY_JE_WEBSITE_URL			= "je_website_url";
+	const DBKEY_JE_LOGO_URL				= "je_logo_url";
+	const DBKEY_JE_SCHOOL_NAME			= "je_school_name";
+	const DBKEY_JE_DOMAIN 				= "je_domain";
 
 	// -- database keys
 	const DB_DEFAULT_SETTINGS = array(
-		SettingsManager::DBKEY_OVH_API_APP_KEY => 'NULL',
-		SettingsManager::DBKEY_OVH_API_APP_SEC => 'NULL',
+		SettingsManager::DBKEY_OVH_API_APP_KEY 		=> 'NULL',
+		SettingsManager::DBKEY_OVH_API_APP_SEC 		=> 'NULL',
 		SettingsManager::DBKEY_OVH_API_APP_ENDPOINT => 'NULL',
-		SettingsManager::DBKEY_OVH_API_CONSUMER_KEY => 'NULL'
+		SettingsManager::DBKEY_OVH_API_CONSUMER_KEY => 'NULL',
+		SettingsManager::DBKEY_JE_NAME 				=> 'ETIC INSA Technologies',
+		SettingsManager::DBKEY_JE_WEBSITE_URL 		=> 'http://www.etic-insa.com',
+		SettingsManager::DBKEY_JE_LOGO_URL 			=> 'http://www.etic-insa.com/assets/logo-etic.png',
+		SettingsManager::DBKEY_JE_SCHOOL_NAME 		=> 'INSA Lyon',
+		SettingsManager::DBKEY_JE_DOMAIN 			=> '@etic-insa.com'
 	);
 
 	// -- attributes
-	private $ini_settings;
+	private $ini_settings = null;
 
 	// -- functions
 	/**

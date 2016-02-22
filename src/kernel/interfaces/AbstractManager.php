@@ -6,7 +6,7 @@
 abstract class AbstractManager {
 
 	// -- attributes
-	private $kernel;
+	private $kernel = null;
 	
 	// -- functions
 

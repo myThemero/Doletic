@@ -27,9 +27,9 @@ class DBTable {
 	const ORDER_DESC = "DESC";
 	const ORDER_ASC = "ASC";
 	// -- attributes
-	private $name;
-	private $engine;
-	private $columns;
+	private $name = null;
+	private $engine = null;
+	private $columns = null;
 	// -- functions
 
 	/**

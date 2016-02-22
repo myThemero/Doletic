@@ -8,7 +8,7 @@ require_once "interfaces/AbstractManager.php";
 class CronManager extends AbstractManager {
 
 	// -- attributes 
-	private $tasks;
+	private $tasks = null;
 
 	// -- functions
 

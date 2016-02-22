@@ -5,12 +5,20 @@
 abstract class AbstractWrapperFunction {
 
 	// -- attributes
-	private $wrapper;
+	private $wrapper = null;
+	private $name = null;
+	private $result = null;
 
 	// -- functions
 
-	public function __construct($wrapper) { 
+	public function __construct($wrapper, $name) { 
 		$this->wrapper = $wrapper;
+		$this->name = $name;
+		$this->result = null;
+	}
+
+	public function GetResult() {
+		return $this->result;
 	}
 
 	/**
@@ -22,6 +30,20 @@ abstract class AbstractWrapperFunction {
 	 */
 	abstract public function Run($args = array());
 
+# PROTECTED & PRIVATE ###################################################
+
+	protected function updateLastError($lastError) {
+		$this->wrapper->SetLastError($this->name.":".$lastError);
+	}
+
+	protected function setResult($result) {
+		$this->result = $result;
+	}
+
+	protected function wrapper() {
+		return $this->wrapper;
+	}
+
 }
 
 /**
@@ -31,13 +53,21 @@ abstract class AbstractWrapper {
 	// -- consts
 
 	// -- attributes
+	private $kernel;
 	private $name;
 	private $version;
 	private $authors;
+	private $last_error;
 	private $functions;
 
 	// -- functions
 
+	public function GetKernel() {
+		return $this->kernel;
+	}
+	public function SetKernel($kernel) {
+		$this->kernel = $kernel;
+	}
 	public function GetName() {
 		return $this->name;
 	}
@@ -46,6 +76,15 @@ abstract class AbstractWrapper {
 	}
 	public function GetAuthors() {
 		return $this->authors;
+	}
+	public function GetLastError() {
+		return $this->last_error;
+	}
+	/**
+	 *
+	 */
+	public function SetLastError($lastError) {
+		$this->last_error = $this->name.":".$lastError;
 	}
 	/**
 	 *
@@ -60,9 +99,9 @@ abstract class AbstractWrapper {
 	/**
 	 *
 	 */
-	public function RunFunction($name, $args) {
+	public function GetFunction($name) {
 		if(array_key_exists($name, $this->functions)) {
-			return $this->functions[$name]->Run($args);
+			return $this->functions[$name];
 		}
 		return null;
 	}
