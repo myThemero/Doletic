@@ -199,7 +199,12 @@ class SettingServices extends AbstractObjectServices {
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
 
 	public function ResetStaticData() {
-		// default settings if needed
+		// -- init gender table --------------------------------------------------------------------
+		$settings = SettingsManager::DB_DEFAULT_SETTINGS;
+		// --- insert
+		foreach ($settings as $key => $value) {
+			$this->__insert_setting($key, $value);
+		}
 	}
 }
 

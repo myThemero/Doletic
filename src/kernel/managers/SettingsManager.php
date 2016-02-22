@@ -10,7 +10,7 @@ class SettingsManager extends AbstractManager {
 	// -- consts
 	// --- files
 	const CONFIGURATION_FILE = "settings.ini";
-	// --- keys
+	// --- settings.ini keys
 	// ---- kernel related keys
 	const KEY_KERN_DEBUG = "kern_debug";
 	const KEY_KERN_LOG = "kern_log";
@@ -24,8 +24,23 @@ class SettingsManager extends AbstractManager {
 	const KEY_DBPWD = "db_pwd";
 	const KEY_DBDEBUG = "db_debug";
 
+	// --- database keys
+	// ---- OVH wrapper keys
+	const DBKEY_OVH_API_APP_KEY = "ovh_api_app_key";
+	const DBKEY_OVH_API_APP_SEC = "ovh_api_app_sec";
+	const DBKEY_OVH_API_APP_ENDPOINT = "ovh_api_app_endpoint";
+	const DBKEY_OVH_API_CONSUMER_KEY = "ovh_api_consumer_key";
+
+	// -- database keys
+	const DB_DEFAULT_SETTINGS = array(
+		SettingsManager::DBKEY_OVH_API_APP_KEY => 'NULL',
+		SettingsManager::DBKEY_OVH_API_APP_SEC => 'NULL',
+		SettingsManager::DBKEY_OVH_API_APP_ENDPOINT => 'NULL',
+		SettingsManager::DBKEY_OVH_API_CONSUMER_KEY => 'NULL'
+	);
+
 	// -- attributes
-	private $settings;
+	private $ini_settings;
 
 	// -- functions
 	/**
@@ -33,7 +48,7 @@ class SettingsManager extends AbstractManager {
 	 */
 	public function __construct(&$kernel) {
 		parent::__construct($kernel);
-		$this->settings = array();
+		$this->ini_settings = array();
 	}
 	/**
 	 *
@@ -46,7 +61,7 @@ class SettingsManager extends AbstractManager {
 	 */
 	public function Reload() {
 		if(file_exists(SettingsManager::CONFIGURATION_FILE)) {
-			$this->settings = parse_ini_file(SettingsManager::CONFIGURATION_FILE);
+			$this->ini_settings = parse_ini_file(SettingsManager::CONFIGURATION_FILE);
 		} else {
 			die("Configuration file is missing or can't be parsed !");
 		}
@@ -56,8 +71,8 @@ class SettingsManager extends AbstractManager {
 	 */
 	public function RegisterSetting($key, $value) {
 		$ok = false;
-		if($this->settings[$key] == null) {
-			$this->setting[$key] = $value;
+		if(!array_key_exists($key, $this->ini_settings)) {
+			$this->ini_settings[$key] = $value;
 			$ok = true;
 		}
 		return $ok;
@@ -66,24 +81,32 @@ class SettingsManager extends AbstractManager {
 	 *
 	 */
 	public function OverrideSetting($key, $value) {
-		$this->setting[$key] = $value;
+		$this->ini_settings[$key] = $value;
 	}
 	/**
 	 *
 	 */
 	public function UnregisterSetting($key) {
-		$this->settings[$key] = null;
+		$this->ini_settings[$key] = null;
 	}
 	/**
 	 *
 	 */
 	public function GetSettingValue($key) {
-		return $this->settings[$key];
+		$value = null;
+		if(array_key_exists($key, $this->ini_settings)) {
+			$value = $this->ini_settings[$key];
+		} else {
+			$value = parent::kernel()->GetDBObject(SettingDBObject::OBJ_NAME)->GetServices(parent::kernel()->GetCurrentUser())
+						->GetResponseData(SettingServices::GET_SETTING_BY_KEY, array(
+							SettingServices::PARAM_KEY => $key));
+		}
+		return $value; 
 	}
 	/**
 	 *
 	 */
 	public function GetAllSettings() {
-		return $this->settings;
+		return $this->ini_settings;
 	}
 }

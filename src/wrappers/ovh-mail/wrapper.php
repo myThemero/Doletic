@@ -1,7 +1,7 @@
 <?php
 
 require_once "interfaces/AbstractWrapper.php";
-require_once "../wrappers/utils/php-ovh/src/Api.php";
+require_once "../wrappers/utils/DoleticOVHAPIConnector.php";
 
 /**
  *	Interface principale du wrapper de couplage avec OVH concernant les mails
