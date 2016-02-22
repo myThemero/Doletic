@@ -150,6 +150,12 @@ var DoleticServicesInterface = new function() {
       });
   }
   /**
+   *
+   */
+  this.comment = function(content, successHandler) {
+    alert('we are working on it...');
+  }
+  /**
    *  Require a download
    */
    this.download = function(fileId) {

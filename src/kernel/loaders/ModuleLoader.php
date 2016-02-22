@@ -5,7 +5,7 @@ require_once "interfaces/AbstractLoader.php";
 foreach (new DirectoryIterator(ModuleLoader::MODS_DIR) as $fileInfo) {
 	if($fileInfo->isDot()) continue;
 	if($fileInfo->isDir()) {
-		require_once "../modules/".$fileInfo->getFilename()."/module.php";
+		require_once ModuleLoader::MODS_DIR."/".$fileInfo->getFilename()."/module.php";
 	}
 }
 
