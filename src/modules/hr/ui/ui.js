@@ -8,7 +8,10 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
-		console.log("I got here but did nothing");
+		// activate items in tabs
+		$('.menu .item').tab();
+		// hide user details tab
+		$('#det').hide();
 		// fill user list
 		//DoleticUIModule.fillUsersList();
 		// fill team list
@@ -23,6 +26,36 @@ var DoleticUIModule = new function() {
 	 */
 	this.build = function() {
 		return "<div class=\"ui two column grid container\"> \
+				  <div class=\"row\"> \
+				  </div> \
+				  <div class=\"row\"> \
+				  	<div class=\"sixteen wide column\"> \
+				  		<div class=\"ui top attached tabular menu\"> \
+  							<a class=\"item active\" data-tab=\"stats\">Statistiques</a> \
+  							<a class=\"item\" data-tab=\"memberlist\">Liste des membres</a> \
+  							<a class=\"item\" data-tab=\"teamlist\">Liste des équipes</a> \
+  							<a class=\"item\" id=\"det\" data-tab=\"userdetails\">Détails de l'utilisateur</a> \
+						</div> \
+						<div class=\"ui bottom attached tab segment active\" data-tab=\"stats\"> \
+				  			<p>Cette portion est encore en développpement...</p>\
+					    </div> \
+						<div class=\"ui bottom attached tab segment\" data-tab=\"memberlist\"> \
+						  <p>Cette portion est encore en développpement......</p>\
+						</div> \
+						<div class=\"ui bottom attached tab segment\" data-tab=\"teamlist\"> \
+						  <p>Cette portion est encore en développpement.........</p>\
+						</div> \
+						<div class=\"ui bottom attached tab segment\" data-tab=\"userdetails\"> \
+						  <p>Cette portion est encore en développpement et ne devrait même pas s'afficher...</p>\
+						</div> \
+					</div> \
+				  </div> \
+				  <div class=\"row\"> \
+				  </div> \
+				  <div class=\"row\"> \
+				  </div> \
+				</div>";
+		/*return "<div class=\"ui two column grid container\"> \
 				  <div class=\"row\"> \
 				  </div> \
 				  <div class=\"row\"> \
@@ -73,7 +106,7 @@ var DoleticUIModule = new function() {
 				  </div> \
 				  <div class=\"row\"> \
 				  </div> \
-				</div>";
+				</div>";*/
 	}
 	/**
 	 *	Override uploadSuccessHandler
