@@ -25,9 +25,9 @@ class ServiceResponse implements \JsonSerializable {
 	const ERR_DL_MAX		    = 0x24;
 
 	// -- attributes
-	private $code;
-	private $err_string;
-	private $object;
+	private $code = null;
+	private $err_string = null;
+	private $object = null;
 
 	// -- functions
 	/**

@@ -8,7 +8,7 @@ require_once "interfaces/AbstractManager.php";
 class ModuleManager extends AbstractManager {
 
 	// -- attributes
-	private $modules;
+	private $modules = null;
 
 	// -- functions
 

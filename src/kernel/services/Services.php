@@ -35,8 +35,8 @@ class Services {
 	
 
 	// -- attributes
-	private $kernel;
-	private $rights_map;
+	private $kernel = null;
+	private $rights_map = null;
 
 	// -- functions
 	public function __construct(&$kernel) {

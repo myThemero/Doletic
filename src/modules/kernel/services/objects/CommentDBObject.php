@@ -13,10 +13,10 @@ class Comment implements \JsonSerializable {
 
 	// -- attributes
 	// --- persistent
-	private $id;
-	private $user_id;
-	private $date;
-	private $data;
+	private $id = null;
+	private $user_id = null;
+	private $date = null;
+	private $data = null;
 
 	/**
 	*	@brief Constructs a comment

@@ -10,7 +10,7 @@ class DBObjectLoader extends AbstractLoader {
 	// -- consts
 
 	// -- attributes
-	private $objects;
+	private $objects = null;
 
 	// -- functions
 

@@ -8,13 +8,13 @@ require_once "managers/DBManager.php";
 class DB {
 
 	// -- attributes
-	private $dbmanager;
-	private $dns;
-	private $name;
-	private $username;
-	private $passwd;
-	private $pdo;
-	private $connected;
+	private $dbmanager = null;
+	private $dns = null;
+	private $name = null;
+	private $username = null;
+	private $passwd = null;
+	private $pdo = null;
+	private $connected = null;
 
 	// -- functions
 

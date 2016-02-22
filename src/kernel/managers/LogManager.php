@@ -8,7 +8,7 @@ require_once "interfaces/AbstractManager.php";
 class LogManager extends AbstractManager {
 	
 	// -- attributes
-	private $loggers;
+	private $loggers = null;
 
 	// -- functions
 

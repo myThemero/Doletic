@@ -13,19 +13,19 @@ class UserData implements \JsonSerializable {
 	// -- consts
 
 	// -- attributes
-	private $id;
-	private $user_id;
-	private $gender_id;
-	private $firstname;
-	private $lastname;
-	private $birthdate;
-	private $tel;
-	private $email;
-	private $address;
-	private $country_id;
-	private $school_year;
-	private $insa_dept_id;
-	private $avatar_id;
+	private $id = null;
+	private $user_id = null;
+	private $gender_id = null;
+	private $firstname = null;
+	private $lastname = null;
+	private $birthdate = null;
+	private $tel = null;
+	private $email = null;
+	private $address = null;
+	private $country_id = null;
+	private $school_year = null;
+	private $insa_dept_id = null;
+	private $avatar_id = null;
 
 	/**
 	*	@brief Constructs a udata

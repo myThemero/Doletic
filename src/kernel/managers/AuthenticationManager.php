@@ -9,8 +9,8 @@ require_once "loaders/DBObjectLoader.php";
 class AuthenticationManager extends AbstractManager {
 
 	// -- attributes 
-	private $user;
-	private $rgcode;
+	private $user = null;
+	private $rgcode = null;
 
 	// -- functions
 	public function __construct(&$kernel) {

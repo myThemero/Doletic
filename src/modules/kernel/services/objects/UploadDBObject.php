@@ -15,14 +15,14 @@ class Upload implements \JsonSerializable {
 	const PROP_BASENAME = "basename";
 
 	// -- attributes
-	private $id;
-	private $user_id;			// user who uploaded the file
-	private $timestamp;
-	private $filename;			// can be displayed to user
-	private $storage_filename; // storage filename : it's sensless to display it
+	private $id = null;
+	private $user_id = null;			// user who uploaded the file
+	private $timestamp = null;
+	private $filename = null;			// can be displayed to user
+	private $storage_filename = null; // storage filename : it's sensless to display it
 	// -- non persistent attributes
-	private $basename;
-	private $filetype; 
+	private $basename = null;
+	private $filetype = null; 
 
 	/**
 	*	@brief Constructs an upload

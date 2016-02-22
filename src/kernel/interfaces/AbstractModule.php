@@ -9,15 +9,15 @@ require_once "objects/RightsMap.php";
 abstract class AbstractModule {
 	
 	// -- attributes
-	private $mod_code;
-	private $name;
-	private $version;
-	private $authors;
-	private $dependencies;
-	private $db_objects;
-	private $uis;
-	private $rights_map;
-	private $ui_disabled;
+	private $mod_code = null;
+	private $name = null;
+	private $version = null;
+	private $authors = null;
+	private $dependencies = null;
+	private $db_objects = null;
+	private $uis = null;
+	private $rights_map = null;
+	private $ui_disabled = null;
 
 	// -- functions
 	public function GetCode() {

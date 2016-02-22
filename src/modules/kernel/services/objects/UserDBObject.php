@@ -13,12 +13,12 @@ class User implements \JsonSerializable {
 
 	// -- attributes
 	// --- persistent
-	private $id;
-	private $username;
-	private $last_connection_timestamp;
-	private $sign_up_timestamp;
+	private $id = null;
+	private $username = null;
+	private $last_connection_timestamp = null;
+	private $sign_up_timestamp = null;
 	// --- non-persistent
-	private $timestamp_update_failed;
+	private $timestamp_update_failed = null;
 
 	/**
 	*	@brief Constructs a user

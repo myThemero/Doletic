@@ -4,10 +4,12 @@ require_once "managers/LogManager.php";
 require_once "managers/CronManager.php";
 require_once "managers/DBManager.php";
 require_once "managers/ModuleManager.php";
+require_once "managers/WrapperManager.php";
 require_once "managers/SettingsManager.php";
 require_once "managers/AuthenticationManager.php";
 require_once "managers/UIManager.php";
 require_once "loaders/ModuleLoader.php";
+require_once "loaders/WrapperLoader.php";
 require_once "loaders/DBObjectLoader.php";
 
 /**
@@ -16,21 +18,23 @@ require_once "loaders/DBObjectLoader.php";
 class DoleticKernel {
 
 	// -- consts
-
+	const SESSION_KEY = 'doletic_kernel';
 	// -- attributes
 	// --- managers
-	private $log_mgr;
-	private $cron_mgr;
-	private $db_mgr;
-	private $module_mgr;
-	private $settings_mgr;
-	private $authentication_mgr;
-	private $ui_mgr;
+	private $log_mgr = null;
+	private $cron_mgr = null;
+	private $db_mgr = null;
+	private $module_mgr = null;
+	private $wrapper_mgr = null;
+	private $settings_mgr = null;
+	private $authentication_mgr = null;
+	private $ui_mgr = null;
 	// --- loaders
-	private $module_ldr;
-	private $dbobject_ldr;
+	private $module_ldr = null;
+	private $dbobject_ldr = null;
+	private $wrapper_ldr = null;
 	// --- flags
-	private $initialized;
+	private $initialized = null;
 
 	// -- functions
 
@@ -40,12 +44,14 @@ class DoleticKernel {
 		$this->cron_mgr = new CronManager($this);
 		$this->db_mgr = new DBManager($this);
 	 	$this->module_mgr = new ModuleManager($this);
+	 	$this->wrapper_mgr = new WrapperManager($this);
 	 	$this->settings_mgr = new SettingsManager($this);
 	 	$this->authentication_mgr = new AuthenticationManager($this);
 	 	$this->ui_mgr = new UIManager($this);
 	 	// -- create loggers
 	 	$this->module_ldr = new ModuleLoader($this, $this->module_mgr);
 	 	$this->dbobject_ldr = new DBObjectLoader($this, $this->db_mgr);
+	 	$this->wrapper_ldr = new WrapperLoader($this, $this->wrapper_mgr);
 	 	// -- unset initialized flag
 	 	$this->initialized = false;
 	}
@@ -74,10 +80,16 @@ class DoleticKernel {
 		 	// -7- initialize db objects loader (load db objects including modules db objects)
 		 	$this->dbobject_ldr->Init($this->module_mgr->GetModulesDBObjects());
 		 	$this->__info("Database Object Loader initialized.");
-		 	// -8- initialize authentication manager
+		 	// -8- initialize wrapper manager
+		 	$this->wrapper_mgr->Init();
+		 	$this->__info("Wrapper Manager initialized.");
+		 	// -9- initialize wrapper loader (load installed modules)
+		 	$this->wrapper_ldr->Init();
+		 	$this->__info("Wrapper Loader initialized.");
+		 	// -10- initialize authentication manager
 		 	$this->authentication_mgr->Init();
 		 	$this->__info("Authentication Manager initialized.");
-		 	// -9- initialize UI manager
+		 	// -11- initialize UI manager
 		 	$this->ui_mgr->Init($this->module_mgr->GetModulesJSServices());
 		 	$this->__info("User Interface Manager initialized.");
 

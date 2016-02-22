@@ -13,12 +13,12 @@ class Module implements \JsonSerializable {
 
 	// -- attributes
 	// --- persistent
-	private $id;
-	private $name;
-	private $version;
-	private $authors;
-	private $dependencies;
-	private $enabled;
+	private $id = null;
+	private $name = null;
+	private $version = null;
+	private $authors = null;
+	private $dependencies = null;
+	private $enabled = null;
 
 	/**
 	*	@brief Constructs a module

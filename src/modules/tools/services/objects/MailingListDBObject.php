@@ -12,9 +12,9 @@ class MailingList implements \JsonSerializable {
 	// -- consts
 
 	// -- attributes
-	private $id;
-	private $can_subscribe;
-	private $name;
+	private $id = null;
+	private $can_subscribe = null;
+	private $name = null;
 
 	/**
 	*	@brief Constructs a MailingList
