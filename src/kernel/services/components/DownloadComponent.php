@@ -15,7 +15,7 @@ class DownloadComponent {
 						->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
 							UploadServices::PARAM_ID => $uploadId));
 			// check if valid upload is recieved
-			if($upload === null) {
+			if(!isset($upload)) {
 				// throw service exception
 				throw new RuntimeException("Le service n'a pas réussi à retrouver le fichier dans la base.", ServiceResponse::ERR_DL_MISSING_ID);
 			}   

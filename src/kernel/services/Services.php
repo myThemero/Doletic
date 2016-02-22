@@ -86,7 +86,7 @@ class Services {
 			$response = null;
 			// retreive db object
 			$obj = $this->kernel->GetDBObject($post[Services::PPARAM_OBJ]);
-			if($obj != null) {
+			if(isset($obj)) {
 				// check rights
 				if($this->__check_rights_module($obj->GetModule(), $post[Services::PPARAM_OBJ].':'.$post[Services::PPARAM_ACT])) {
 					// retrieve services
@@ -101,7 +101,7 @@ class Services {
 										$post[Services::PPARAM_ACT], 
 										array());
 					}
-					if($data != null) {
+					if(isset($data)) {
 						$response = new ServiceResponse($data);
 					} else {
 						$response = new ServiceResponse("[]"); // empty return from service
@@ -164,7 +164,7 @@ class Services {
 			$udata = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 						->GetResponseData(UserDataServices::GET_CURRENT_USER_DATA, array());
 			// -- remove current avatar if needed
-			if($udata === null) {
+			if(!isset($udata)) {
 				throw new RuntimeException("Echec de récupération des données de l'utilisateur courant", ServiceResponse::ERR_SERVICE_FAILED);
 			}
 			// if user data avatar id is not 0
@@ -172,7 +172,7 @@ class Services {
 				$result = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 							->GetResponseData(UploadServices::DELETE_OWNER_CHECK, array(
 								UploadServices::PARAM_ID => $udata->GetAvatarId()));	
-				if($result === null) {
+				if(!isset($result)) {
 					throw new RuntimeException("Echec de suppression de l'avatar courant", ServiceResponse::ERR_SERVICE_FAILED);
 				}
 			}
@@ -180,7 +180,7 @@ class Services {
 			$result = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 						->GetResponseData(UserDataServices::UPDATE_AVATAR, $post[Services::PPARAM_PARAMS]);
 			// -- treat result
-			if($result === null) {
+			if(!isset(null)) {
 				throw new RuntimeException("Echec d'ajout du nouvel avatar.", ServiceResponse::ERR_SERVICE_FAILED);
 			}
 			// create service response
@@ -201,7 +201,7 @@ class Services {
 			$udata = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 							->GetResponseData(UserDataServices::GET_CURRENT_USER_DATA, array());
 			// if user data has been retrieved
-			if($udata === null) {
+			if(!isset($udata)) {
 				throw new RuntimeException("Echec de récupération des données de l'utilisateur courant", ServiceResponse::ERR_SERVICE_FAILED);
 			}
 			// if avatar id is not 0 => meaning not default avatar
@@ -209,7 +209,7 @@ class Services {
 				$avatar = $this->kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 						->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
 							UploadServices::PARAM_ID => $udata->GetAvatarId()));	
-				if($avatar === null) {
+				if(!isset($avatar)) {
 					throw new RuntimeException("Echec de recupération de l'avatar courant.", ServiceResponse::ERR_SERVICE_FAILED);
 				}
 				// create service response
@@ -234,7 +234,7 @@ class Services {
 			$study = $this->kernel->GetDBObject(StudyDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
 						->GetResponseData(StudyServices::GET_STUDY_BY_ID, array(
 							StudyServices::PARAM_ID => $post[Services::PPARAM_PARAMS][Services::PKEY_STUDY_ID]));
-			if($study === null) {
+			if(!isset($study)) {
 				throw new RuntimeException("Echec de récupération de l'étude.", ServiceResponse::ERR_SERVICE_FAILED);
 			}
 			$templates = array();
@@ -245,7 +245,7 @@ class Services {
 					->GetResponseData(UploadServices::GET_UPLOAD_BY_ID, array(
 						UploadServices::PARAM_ID => $id));
 				// if upload record is not null
-				if($upload === null) {
+				if(!isset($upload)) {
 					throw new RuntimeException("Echec de récupération d'un template.", ServiceResponse::ERR_SERVICE_FAILED);		
 				}
 				// push templates array

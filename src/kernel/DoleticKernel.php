@@ -174,12 +174,12 @@ class DoleticKernel {
 		$module = $this->module_mgr->GetModule($exploded[0]);
 		//
 		$found = false;										// initialize found flag down
-		if($module != null) {								// if module exists
+		if(isset($module)) {								// if module exists
 			// if user has sufficient rights to access required ui
 			if($module->CheckRights($this->GetCurrentUserRGCode(), $exploded[1])) {
 				$js = $module->GetJS($exploded[1]);				// retrieve js array
 				$css = $module->GetCSS($exploded[1]);			// retrieve css array
-				if($css != null && $css != null) {				// if both css and js are valid arrays
+				if(isset($css) && isset($js)) {				// if both css and js are valid arrays
 					$fragment = $this->ui_mgr->MakeUI($js, $css); 	// affect fragment content		
 					$found = true; 								// raise found flag
 				}
@@ -226,6 +226,12 @@ class DoleticKernel {
 	}
 	public function GetDBObject($objKey) {
 		return $this->dbobject_ldr->GetDBObject($objKey);
+	}
+
+	// --- wrappers management -------------------------------------------------------------------
+
+	public function GetWrapper($name) {
+		return $this->wrapper_mgr->GetWrapper($name);
 	}
 
 # PROTECTED & PRIVATE #################################################################################

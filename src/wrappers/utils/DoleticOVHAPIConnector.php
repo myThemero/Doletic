@@ -1,6 +1,6 @@
 <?php
 
-require_once "../wrappers/utils/php-ovh/src/Api.php";
+require_once "../wrappers/utils/ovh-php/src/Api.php";
 
 class DoleticOVHAPIConnector {
 	// -- consts
@@ -17,10 +17,10 @@ class DoleticOVHAPIConnector {
         $endpoint = $kernel->SettingValue(SettingsManager::DBKEY_OVH_API_APP_ENDPOINT);
         $consumer_key = $kernel->SettingValue(SettingsManager::DBKEY_OVH_API_CONSUMER_KEY);
         // check settings
-        if( strlen($application_key) > 0 &&
-        	strlen($application_secret) > 0 && 
-        	strlen($endpoint) > 0 &&
-        	strlen($consumer_key) > 0) 
+        if( isset($application_key) && strlen($application_key) > 0 &&
+        	isset($application_secret) && strlen($application_secret) > 0 && 
+        	isset($endpoint) && strlen($endpoint) > 0 &&
+        	isset($consumer_key) && strlen($consumer_key) > 0) 
         {
         	// create api object
 			$this->api = new Api(    

@@ -101,7 +101,7 @@ class UploadComponent {
 	    	$upload = $kernel->GetDBObject(UploadDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 	    				->GetResponseData(UploadServices::GET_UPLOAD_BY_STOR_FNAME, array(
 	    					UploadServices::PARAM_STOR_FNAME => $destfname));
-	    	if($upload === null) {
+	    	if(!isset($upload)) {
 	    		throw new RuntimeException("Impossible de retrouver l'identifiant de l'upload.", ServiceResponse::ERR_UP_FILESYSTEM);
 	    	}
 	    	// retrieve upload's id

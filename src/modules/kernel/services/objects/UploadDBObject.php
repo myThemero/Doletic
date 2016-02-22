@@ -167,7 +167,7 @@ class UploadServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create upload var
 		$upload = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$upload = new Upload(
 					$row[UploadDBObject::COL_ID], 
@@ -190,7 +190,7 @@ class UploadServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create upload var
 		$upload = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$upload = new Upload(
 					$row[UploadDBObject::COL_ID], 
@@ -210,7 +210,7 @@ class UploadServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for uploads and fill it
 		$uploads = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($uploads, new Upload(
 					$row[UploadDBObject::COL_ID], 

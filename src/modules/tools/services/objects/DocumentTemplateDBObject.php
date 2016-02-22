@@ -136,7 +136,7 @@ class DocumentTemplateServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create document_template var
 		$document_template = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$document_template = new DocumentTemplate(
 					$row[DocumentTemplateDBObject::COL_ID], 
@@ -155,7 +155,7 @@ class DocumentTemplateServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create document_templates var
 		$document_templates = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($document_templates, new DocumentTemplate(
 					$row[DocumentTemplateDBObject::COL_ID], 
@@ -176,7 +176,7 @@ class DocumentTemplateServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create document_templates var
 		$document_templates = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($document_templates, new DocumentTemplate(
 					$row[DocumentTemplateDBObject::COL_ID], 

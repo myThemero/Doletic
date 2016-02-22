@@ -111,7 +111,7 @@ class SettingServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create setting var
 		$setting = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$setting = new Setting(
 					$row[SettingDBObject::COL_ID], 
@@ -132,7 +132,7 @@ class SettingServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create setting var
 		$setting = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$setting = new Setting(
 					$row[SettingDBObject::COL_ID], 
@@ -150,7 +150,7 @@ class SettingServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for settings and fill it
 		$settings = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($settings, new Setting(
 					$row[SettingDBObject::COL_ID], 

@@ -47,7 +47,7 @@ class SettingsManager extends AbstractManager {
 		SettingsManager::DBKEY_JE_WEBSITE_URL 		=> 'http://www.etic-insa.com',
 		SettingsManager::DBKEY_JE_LOGO_URL 			=> 'http://www.etic-insa.com/assets/logo-etic.png',
 		SettingsManager::DBKEY_JE_SCHOOL_NAME 		=> 'INSA Lyon',
-		SettingsManager::DBKEY_JE_DOMAIN 			=> '@etic-insa.com'
+		SettingsManager::DBKEY_JE_DOMAIN 			=> 'etic-insa.com'
 	);
 
 	// -- attributes

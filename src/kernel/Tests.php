@@ -356,6 +356,37 @@ class ServiceUILinksTestFunction extends AbstractFunction {
 		parent::info("-- test - ends --");
 	}
 }
+// ---------------------------------------------------------------------------------------------------
+//	WRAPPERS RELATED TEST FUNCTIONS
+// ---------------------------------------------------------------------------------------------------
+class OVHMailWrapperTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'OVH Mail Wrapper Test', 
+			'-omw', 
+			'--ovh-mail-wrapper', 
+			"Test OVH Mail Wrapper functions");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		$kernel = new DoleticKernel(); 	// instanciate
+		$kernel->Init();				// initialize
+		$kernel->ConnectDB();			// connect database
+		// ----------- start --------------
+		$wrapper = $kernel->GetWrapper(OVHMailWrapper::NAME); 
+		$func = $wrapper->GetFunction(OVHMailWrapper::FUNC_LIST_MAILLIST);
+		if($func->Run(array(OVHMailWrapper::ARG_DOMAIN => 'etic-insa.com'))) {
+			var_dump($func->GetResult());
+		} else {
+			var_dump($wrapper->GetLastError());
+		}
+
+		// ----------- end --------------
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
+	}
+}
 //________________________________________________________________________________________________________________________
 // ------------- declare script in itself --------------------------------------------------------------------------------
 
@@ -381,6 +412,8 @@ class TestScript extends AbstractScript {
 		parent::addFunction(new UILinksTestFunction($this));
 		// ----- service tests
 		parent::addFunction(new ServiceUILinksTestFunction($this));
+		// ----- wrappers tests
+		parent::addFunction(new OVHMailWrapperTestFunction($this));
 	}
 }
 

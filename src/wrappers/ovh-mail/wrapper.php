@@ -17,6 +17,8 @@ class OVHMailWrapper extends AbstractWrapper {
 		);
 	// --- wrapper functions related consts
 	const FUNC_LIST_MAILLIST = "list_maillist";
+	// --- functions expected arguments
+	const ARG_DOMAIN = "domain"; 
 
 	// --functions
 
@@ -38,23 +40,19 @@ class OVHMailWrapper extends AbstractWrapper {
 class ListMaillistFunction extends AbstractWrapperFunction {
 	
 	// -- consts
-	// --- function name
-	const FUNC_NAME = "ListMaillistFunction";
-	// --- function expected arguments
-	const ARG_DOMAIN = "domain"; 
 	// -- attributes
 
 	// -- functions
 
 	public function __construct($wrapper) {
-		parent::__construct($wrapper, ListMaillistFunction::FUNC_NAME);
+		parent::__construct($wrapper, get_class($this));
 	}
 
 	/**
 	 *	@override
 	 */
 	public function ExpectedArgs() {
-		return array(ListMaillistFunction::ARG_DOMAIN);
+		return array(OVHMailWrapper::ARG_DOMAIN);
 	}
 	/**
 	 *	@override
@@ -64,9 +62,9 @@ class ListMaillistFunction extends AbstractWrapperFunction {
 		try {
 			$connector = new DoleticOVHAPIConnector(parent::wrapper()->GetKernel());
 			// retrieve args
-			$domain = $args[ListMaillistFunction::ARG_DOMAIN];
+			$domain = $args[OVHMailWrapper::ARG_DOMAIN];
 			// execute request
-			$mailists = $connector->get("/email/domain/".$domain."/mailingList");
+			$mailists = $connector->GetAPI()->get("/email/domain/".$domain."/mailingList");
 			// store results
 			parent::setResult($mailists);
 			// set ok flag up

@@ -191,7 +191,7 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create ticket var
 		$ticket = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$ticket = new Ticket(
 					$row[TicketDBObject::COL_ID], 
@@ -216,7 +216,7 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create ticket var
 		$tickets = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($tickets, new Ticket(
 					$row[TicketDBObject::COL_ID], 
@@ -257,7 +257,7 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for tickets and fill it
 		$category = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$category = $row[TicketDBObject::COL_LABEL];
 			}
@@ -272,7 +272,7 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for tickets and fill it
 		$tickets = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($tickets, new Ticket(
 					$row[TicketDBObject::COL_ID], 
@@ -297,7 +297,7 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for tickets and fill it
 		$tickets = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($tickets, new Ticket(
 					$row[TicketDBObject::COL_ID], 
@@ -319,7 +319,7 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for tickets and fill it
 		$statuses = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($statuses, $row[TicketDBObject::COL_LABEL]);
 			}
@@ -334,7 +334,7 @@ class TicketServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for tickets and fill it
 		$categories = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($categories, $row[TicketDBObject::COL_LABEL]);
 			}

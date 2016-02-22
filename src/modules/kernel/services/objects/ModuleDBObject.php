@@ -156,7 +156,7 @@ class ModuleServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create module var
 		$module = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$module = new Module(
 					$row[ModuleDBObject::COL_ID], 
@@ -180,7 +180,7 @@ class ModuleServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create module var
 		$module = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$module = new Module(
 					$row[ModuleDBObject::COL_ID], 
@@ -201,7 +201,7 @@ class ModuleServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for modules and fill it
 		$modules = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($modules, new Module(
 					$row[ModuleDBObject::COL_ID], 

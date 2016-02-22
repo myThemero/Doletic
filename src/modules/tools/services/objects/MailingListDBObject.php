@@ -141,7 +141,7 @@ class MailingListServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create maillist var
 		$maillist = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$maillist = new MailingList(
 					$row[MailingListDBObject::COL_ID], 
@@ -159,7 +159,7 @@ class MailingListServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create maillists var
 		$maillists = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($maillists, new MailingList(
 					$row[MailingListDBObject::COL_ID], 
@@ -179,7 +179,7 @@ class MailingListServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create maillists var
 		$userIds = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($userIds, $row[MailingListDBObject::COL_USER_ID]);
 			}

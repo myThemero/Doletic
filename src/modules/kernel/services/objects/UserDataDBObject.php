@@ -276,7 +276,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create udata var
 		$udata = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$udata = new UserData(
 					$row[UserDataDBObject::COL_ID],
@@ -307,7 +307,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create udata var
 		$udata = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$udata = new UserData(
 					$row[UserDataDBObject::COL_ID],
@@ -338,7 +338,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create udata var
 		$gender = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$gender = $row[UserDataDBObject::COL_LABEL];
 			}
@@ -356,7 +356,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create udata var
 		$country = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$country = $row[UserDataDBObject::COL_LABEL];
 			}
@@ -374,7 +374,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create udata var
 		$insa_dept = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$insa_dept = array(
 					UserDataDBObject::COL_LABEL => $row[UserDataDBObject::COL_LABEL],
@@ -394,7 +394,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create udata var
 		$position = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$position = $row[UserDataDBObject::COL_LABEL];
 			}
@@ -413,20 +413,20 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for udata and fill it
 		$positionId = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$positionId = $row[UserDataDBObject::COL_POSITION_ID];
 			}
 		}
 		$position = null;
-		if($positionId != null) {
+		if(isset($positionId)) {
 			$sql_params = array(":".UserDataDBObject::COL_ID => $positionId);
 			$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
 						array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
 			// execute SQL query and save result
 			$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 			// create an empty array for udata and fill it
-			if($pdos != null) {
+			if(isset($pdos)) {
 				if( ($row = $pdos->fetch()) !== false) {
 					$position = array();
 					$position[UserDataDBObject::COL_ID] = $row[UserDataDBObject::COL_ID];
@@ -441,7 +441,7 @@ class UserDataServices extends AbstractObjectServices {
 	private function __get_user_rgcode() {
 		$position = $this->__get_user_last_position(parent::getCurrentUser()->GetId());
 		$rgcode = null;
-		if($position != null) {
+		if(isset($position)) {
 			$rgcode = $position[UserDataDBObject::COL_RG_CODE];
 		}
 		return $rgcode;
@@ -454,7 +454,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for udata and fill it
 		$udata = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($udata, new UserData(
 					$row[UserDataDBObject::COL_ID],
@@ -482,7 +482,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for labels and fill it
 		$labels = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
 			}
@@ -497,7 +497,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for labels and fill it
 		$labels = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
 			}
@@ -512,7 +512,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for labels and fill it
 		$labels = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($labels, array(
 					UserDataDBObject::COL_LABEL => $row[UserDataDBObject::COL_LABEL],
@@ -529,7 +529,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for labels and fill it
 		$labels = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
 			}
@@ -547,7 +547,7 @@ class UserDataServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create udata var
 		$udata = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$udata = new UserData(
 					$row[UserDataDBObject::COL_ID],

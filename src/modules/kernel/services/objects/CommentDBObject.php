@@ -122,7 +122,7 @@ class CommentServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create ticket var
 		$comment = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$comment = new Comment(
 					$row[CommentDBObject::COL_ID], 
@@ -141,7 +141,7 @@ class CommentServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for tickets and fill it
 		$comments = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($comments, new Comment(
 					$row[CommentDBObject::COL_ID],  

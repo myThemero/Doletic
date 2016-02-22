@@ -141,7 +141,7 @@ class UserServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create ticket var
 		$user = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$user = new User(
 					$row[UserDBObject::COL_ID], 
@@ -168,7 +168,7 @@ class UserServices extends AbstractObjectServices {
 		$timestamp = date(DateTime::ISO8601);
 		// create ticket var
 		$user = null;
-		if($pdos != null) {
+		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
 				$user = new User(
 					$row[UserDBObject::COL_ID], 
@@ -178,7 +178,7 @@ class UserServices extends AbstractObjectServices {
 			}
 		}
 		// check if user is valid and update last connection timestamp
-		if($user != null) {
+		if(isset($user)) {
 			$sql_params = array(UserDBObject::COL_ID => $user->GetId(), UserDBObject::COL_LAST_CON_TSMP => $timestamp);
 			$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetUPDATEQuery(array(UserDBObject::COL_LAST_CON_TSMP));
 			if(!parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
@@ -196,7 +196,7 @@ class UserServices extends AbstractObjectServices {
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for tickets and fill it
 		$users = array();
-		if($pdos != null) {
+		if(isset($pdos)) {
 			while( ($row = $pdos->fetch()) !== false) {
 				array_push($users, new User(
 					$row[UserDBObject::COL_ID], 

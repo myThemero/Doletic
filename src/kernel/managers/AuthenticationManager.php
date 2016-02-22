@@ -28,7 +28,7 @@ class AuthenticationManager extends AbstractManager {
 	 *	Returns true if a valid user is registered
 	 */
 	public function HasValidUser() {
-		return ($this->user != null);
+		return isset($this->user);
 	}
 	/**
 	 *	Returns true if a valid user has been retrieved
@@ -57,7 +57,7 @@ class AuthenticationManager extends AbstractManager {
 							UserServices::PARAM_TOKEN => $token
 							));
 		// if token has been created
-		if($new_pass != null) {
+		if(isset($new_pass)) {
 			/// \todo send new_pass using user mail
 			var_dump($new_pass); // DEBUG
 			$ok = true;
@@ -73,14 +73,14 @@ class AuthenticationManager extends AbstractManager {
 							UserDataServices::PARAM_EMAIL => $mail
 							));
 		// if mail exists 
-		if($udata != null) {
+		if(isset($udata)) {
 			// create token using service
 			$token = parent::kernel()->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($this->GetCurrentUser())
 						->GetResponseData(UserServices::UPDATE_TOKEN, array(
 							UserServices::PARAM_ID => $udata->GetUserId()
 							));
 			// if token has been created
-			if($token != null) {
+			if(isset($token)) {
 				/// \todo send token using user mail
 				var_dump($token); // DEBUG
 				$ok = true;
@@ -90,7 +90,7 @@ class AuthenticationManager extends AbstractManager {
 	}
 
 	public function GetCurrentUser() {
-		if($this->user != null) {
+		if(isset($this->user)) {
 			return $this->user;						// return current user
 		} else {
 			return new User(-1, "invalid", "", ""); // return invalid user
@@ -98,7 +98,7 @@ class AuthenticationManager extends AbstractManager {
 	}
 
 	public function GetCurrentUserRGCode() {
-		if($this->rgcode != null) {
+		if(isset($this->rgcode)) {
 			return $this->rgcode;						// return current user
 		} else {
 			return (RightsMap::G_R | RightsMap::D_G);  	// return guest and default group
