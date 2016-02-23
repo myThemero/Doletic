@@ -3,6 +3,10 @@ var DoleticUIModule = new function() {
 	 *	Parent abstract module
 	 */
 	this.super = new AbstractDoleticUIModule('HR_UIModule', 'Nicolas Sorin', '1.0dev');
+	//test
+	/*var DoleticUIModule.position_list = new Array();
+	var DoleticUIModule.INSADept_list = new Array();
+	var DoleticUIModule.country_list = new Array();*/
 	/**
 	 *	Override render function
 	 */
@@ -13,12 +17,20 @@ var DoleticUIModule = new function() {
 		// hide user details tab
 		$('#det').hide();
 		// fill user list
-		//DoleticUIModule.fillUsersList();
+		DoleticUIModule.fillUsersList();
 		// fill team list
 		//DoleticUIModule.fillTeamsList();
 		// fill country field
-		//DoleticUIModule.fillCountrySelector();
-		// fill division field
+		DoleticUIModule.fillCountrySelector();
+		// fill gender field
+		DoleticUIModule.fillGenderSelector();
+		// fill INSA dept field
+		DoleticUIModule.fillINSADeptSelector();
+		// fill position field
+		DoleticUIModule.fillPositionSelector();
+		// fill school year field
+		DoleticUIModule.fillSchoolYearSelector();
+		//fill division field
 		//DoleticUIModule.fillDivisionSelector();
 	}
 	/**
@@ -46,9 +58,18 @@ var DoleticUIModule = new function() {
 							  <div class=\"row\"> \
 							  <div class=\"ten wide column\"> \
 								<div class=\"ui horizontal divider\">Membres inscrits</div> \
-									  <div id=\"ticket_list\" class=\"ui very relaxed celled selection list\"> \
-										<!-- USER TICKETS WILL GO HERE --> \
-									  </div> \
+									<table class=\"ui very basic collapsing celled table\" id=\"user_table\"> \
+  										<thead> \
+    										<tr><th>Membre</th> \
+    										<th>Email</th> \
+    										<th>Téléphone</th> \
+    										<th>Département</th> \
+    										<th>Actions</th> \
+  										</tr></thead>\
+  										<tbody id=\"user_body\"> \
+  											<!-- USER LIST WILL GO THERE --> \
+  										</tbody> \
+									</table> \
 								</div> \
 								<div class=\"six wide column\"> \
 								  <form id=\"user_form\" class=\"ui form segment\"> \
@@ -125,7 +146,8 @@ var DoleticUIModule = new function() {
 			  								<div class=\"twelve wide required field\"> \
 									      		<label>Intervenant</label> \
 			      						  		<select id=\"interv\" class=\"ui search dropdown\"> \
-			      								<!-- INTERVS WILL GO HERE --> \
+			      								<option value=\"0\">Non</option> \
+			      								<option value=\"1\">Oui</option> \
 			    						  		</select> \
 			  								</div> \
 			  						    </div> \
@@ -154,58 +176,6 @@ var DoleticUIModule = new function() {
 				  <div class=\"row\"> \
 				  </div> \
 				</div>";
-		/*return "<div class=\"ui two column grid container\"> \
-				  <div class=\"row\"> \
-				  </div> \
-				  <div class=\"row\"> \
-				  <div class=\"ten wide column\"> \
-					<div class=\"ui horizontal divider\">Mes tickets</div> \
-						  <div id=\"open_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème n'a pas encore été pris en charge.</div> \
-						  </div> \
-						  <div id=\"work_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème est en cours de résolution.</div> \
-						  </div> \
-						  <div id=\"done_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème est résolu.</div> \
-						  </div> \
-						  <div id=\"undefined_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">L'etat de ce ticket est étrange. Merci de prévenir les développeurs.</div> \
-						  </div> \
-						  <div id=\"ticket_list\" class=\"ui very relaxed celled selection list\"> \
-							<!-- USER TICKETS WILL GO HERE --> \
-						  </div> \
-					</div> \
-					<div class=\"six wide column\"> \
-					  <form id=\"support_form\" class=\"ui form segment\"> \
-					    <h4 class=\"ui dividing header\">Création d'un nouveau ticket</h4> \
-				  	    <div class=\"fields\"> \
-						    <div id=\"subject_field\" class=\"twelve wide required field\"> \
-						      <label>Sujet</label> \
-						      <input id=\"subject\" placeholder=\"Sujet\" type=\"text\"/> \
-						    </div> \
-						    <div class=\"field\"> \
-						      <label>Catégorie</label> \
-      						  <select id=\"category\" class=\"ui search dropdown\"> \
-      							<!-- CATEGORIES WILL GO HERE --> \
-    						  </select> \
-  							</div> \
-						  </div> \
-						  <div id=\"data_field\" class=\"required field\"> \
-    						<label>Description</label> \
-    						<textarea id=\"data\"></textarea> \
-  						  </div> \
-  						  <div class=\"ui support_center small buttons\"> \
-							<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
-							<div class=\"or\" data-text=\"ou\"></div> \
-							<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Envoyer</div> \
-						  </div> \
-				      </form> \
-					</div> \
-				  </div> \
-				  <div class=\"row\"> \
-				  </div> \
-				</div>";*/
 	}
 	/**
 	 *	Override uploadSuccessHandler
@@ -240,12 +210,83 @@ var DoleticUIModule = new function() {
 			if(data.code == 0) {
 				// create content var to build html
 				var content = "";
+				//DoleticUIModule.country_list = data.object;
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
 					content += "<option value=\""+(i+1)+"\">"+data.object[i]+"</option>\n";
 				};
 				// insert html content
 				$('#country').html(content);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.fillGenderSelector = function() {
+		UserDataServicesInterface.getAllGenders(function(data) {
+			// if no service error
+			if(data.code == 0) {
+				// create content var to build html
+				var content = "";
+				// iterate over values to build options
+				for (var i = 0; i < data.object.length; i++) {
+					content += "<option value=\""+(i+1)+"\">"+data.object[i]+"</option>\n";
+				};
+				// insert html content
+				$('#gender').html(content);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.fillINSADeptSelector = function() {
+		UserDataServicesInterface.getAllINSADepts(function(data) {
+			// if no service error
+			if(data.code == 0) {
+				// create content var to build html
+				var content = "";
+				//DoleticUIModule.INSADept_list = data.object;
+				// iterate over values to build options
+				for (var i = 0; i < data.object.length; i++) {
+					content += "<option value=\""+(i+1)+"\">"+data.object[i].label+"</option>\n";
+				};
+				// insert html content
+				$('#dept').html(content);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.fillSchoolYearSelector = function() {
+		// create content var to build html
+		var content = "";
+		// iterate over values to build options
+		for (var i = 0; i < 8; i++) {
+			content += "<option value=\""+(i+1)+"\">"+(i+1)+"</option>\n";
+		};
+		// insert html content
+		$('#schoolyear').html(content);
+	}
+
+	this.fillPositionSelector = function() {
+		UserDataServicesInterface.getAllPositions(function(data) {
+			// if no service error
+			if(data.code == 0) {
+				// create content var to build html
+				//DoleticUIModule.position_list = data.object;
+				var content = "";
+				// iterate over values to build options
+				for (var i = 0; i < data.object.length; i++) {
+					content += "<option value=\""+(i+1)+"\">"+data.object[i]+"</option>\n";
+				};
+				// insert html content
+				$('#position').html(content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -276,41 +317,55 @@ var DoleticUIModule = new function() {
 		UserDataServicesInterface.getAll(function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
-				// create content var to build html
-				var content = "";
 				// iterate over values to build options
+				var content = {html:""};
 				for (var i = 0; i < data.object.length; i++) {
-					var status, popup_selector;
-					var id = "popup_trigger_"+i;
-					switch (data.object[i].status_id) {
-					  case 1:
-					  	status = "red radio";
-					  	popup_selector = "#open_popup";
-					    break;
-					  case 2:
-					  	status = "orange spinner";
-					  	popup_selector = "#work_popup";
-					    break;
-					  case 3:
-					  	status = "green selected radio";
-					  	popup_selector = "#done_popup";
-					    break;
-					  default:
-					  	status = "blue help";
-					  	popup_selector = "#undefined_popup";
-					    break;
-					}
-					content += "<div class=\"item\"> \
-								  <i id=\""+id+"\" class=\""+status+" big icon link\"></i> \
-								  <div class=\"middle aligned content\"> \
-								    <a class=\"header\">"+data.object[i].subject+"</a> \
-								    <div class=\"description\">"+data.object[i].data+"</div>  \
-								  </div> \
-								  <script>$('#"+id+"').popup({popup:'"+popup_selector+"'});</script> \
-								</div>";
+					content.html += "<tr> \
+      						<td> \
+        				<h4 class=\"ui image header\"> \
+          				<img src=\"/resources/image.png\" class=\"ui mini rounded image\"> \
+          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
+            			"<div class=\"sub header\">";
+            		// Get position label            		
+            		UserDataServicesInterface.getUserLastPos(data.object[i].user_id, function(data, content){
+            			if(data.code == 0 && data.object != "[]") {
+            				/*UserDataServicesInterface.getINSADeptById(data.object.id, function(data, content) {
+            					if(data.code == 0 && data.object != "[]") {
+            						content.html += data.object;
+            						//$('#user_body').append(data.object);
+            					} else {
+            						// use default service service error handler
+									DoleticServicesInterface.handleServiceError(data);		
+            					}
+            				});*/
+            			} else {
+            				// use default service service error handler
+							DoleticServicesInterface.handleServiceError(data);
+						}
+					});
+          			content.html += "</div> \
+        				</div> \
+      					</h4></td> \
+      					<td>" + data.object[i].email+         				
+      					"</td> \
+      					<td>" + data.object[i].tel+         				
+      					"</td> \
+      					<td>"; // + DoleticUIModule.INSADept_list[data.object[i].insa_dept_id].label;
+    				/*UserDataServicesInterface.getINSADeptById(data.object[i].insa_dept_id, function(data, content) {
+    					if(data.code == 0 && data.object != "[]") {
+            				content.html += data.object.label;
+            			} else {
+            				// use default service service error handler
+							DoleticServicesInterface.handleServiceError(data);		
+            			}
+    				});*/
+    				content.html += "</td> \
+    				<td> \
+    				</td> \
+    				</tr>"; 
 				};
-				// insert html content
-				$('#user_list').html(content);
+				$('#user_body').html(content.html);
+				
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);

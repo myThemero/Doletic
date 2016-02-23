@@ -202,9 +202,9 @@ var UserDataServicesInterface = new function() {
             successHandler); 
   }
 
-  this.getINSADeptById = function(id, successHandler) {
+  this.getPositionById = function(id, successHandler) {
     return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_INSA_DEPT_BY_ID, 
+            this.meta.OBJECT, this.meta.ACTION.GET_POSITION_BY_ID, 
             { id: id }, 
             successHandler); 
   }  
@@ -268,7 +268,7 @@ var UserDataServicesInterface = new function() {
             }, 
             successHandler);
   }
-  this.updateUserPosition = function(avatarId, successHandler) {
+  this.updateUserAvatar = function(avatarId, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE_AVATAR, 
             { 

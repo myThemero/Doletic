@@ -492,7 +492,7 @@ class UserDataServices extends AbstractObjectServices {
 
 	private function __get_all_countries() {
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery();
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_COUNTRY)->GetSELECTQuery();
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for labels and fill it
@@ -507,7 +507,7 @@ class UserDataServices extends AbstractObjectServices {
 
 	private function __get_all_INSA_depts() {
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery();
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_INSA_DEPT)->GetSELECTQuery();
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for labels and fill it
@@ -524,7 +524,7 @@ class UserDataServices extends AbstractObjectServices {
 
 	private function __get_all_positions() {
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetSELECTQuery();
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery();
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
 		// create an empty array for labels and fill it
