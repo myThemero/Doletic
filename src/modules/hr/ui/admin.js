@@ -318,53 +318,24 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				// iterate over values to build options
-				var content = {html:""};
+				var content = "";
 				for (var i = 0; i < data.object.length; i++) {
-					content.html += "<tr> \
+					content += "<tr> \
       						<td> \
         				<h4 class=\"ui image header\"> \
           				<img src=\"/resources/image.png\" class=\"ui mini rounded image\"> \
           				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
-            			"<div class=\"sub header\">";
-            		// Get position label            		
-            		UserDataServicesInterface.getUserLastPos(data.object[i].user_id, function(data, content){
-            			if(data.code == 0 && data.object != "[]") {
-            				/*UserDataServicesInterface.getINSADeptById(data.object.id, function(data, content) {
-            					if(data.code == 0 && data.object != "[]") {
-            						content.html += data.object;
-            						//$('#user_body').append(data.object);
-            					} else {
-            						// use default service service error handler
-									DoleticServicesInterface.handleServiceError(data);		
-            					}
-            				});*/
-            			} else {
-            				// use default service service error handler
-							DoleticServicesInterface.handleServiceError(data);
-						}
-					});
-          			content.html += "</div> \
+            			"<div class=\"sub header\">" + data.object[i].last_pos.label + "</div> \
         				</div> \
       					</h4></td> \
-      					<td>" + data.object[i].email+         				
-      					"</td> \
-      					<td>" + data.object[i].tel+         				
-      					"</td> \
-      					<td>" + data.object[i].insa_dept; // + DoleticUIModule.INSADept_list[data.object[i].insa_dept_id].label;
-    				/*UserDataServicesInterface.getINSADeptById(data.object[i].insa_dept_id, function(data, content) {
-    					if(data.code == 0 && data.object != "[]") {
-            				content.html += data.object.label;
-            			} else {
-            				// use default service service error handler
-							DoleticServicesInterface.handleServiceError(data);		
-            			}
-    				});*/
-    				content.html += "</td> \
+      					<td>" + data.object[i].email + "</td> \
+      					<td>" + data.object[i].tel + "</td> \
+      					<td>" + data.object[i].insa_dept + "</td> \
     				<td> \
     				</td> \
-    				</tr>"; 
+    				</tr>";
 				};
-				$('#user_body').html(content.html);
+				$('#user_body').html(content);
 				
 			} else {
 				// use default service service error handler
