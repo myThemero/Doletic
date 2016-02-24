@@ -97,7 +97,7 @@ class FakeDataFunction extends AbstractFunction {
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
 					UserDataServices::PARAM_USER_ID 		=> 1,
-					UserDataServices::PARAM_POSITION 	=> 6
+					UserDataServices::PARAM_POSITION 	=> "Responsable DSI"
 					));
 		// A account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
@@ -117,7 +117,7 @@ class FakeDataFunction extends AbstractFunction {
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
 					UserDataServices::PARAM_USER_ID 		=> 2,
-					UserDataServices::PARAM_POSITION 	=> 1
+					UserDataServices::PARAM_POSITION 	=> "Responsable DSI"
 					));
 		// U account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())

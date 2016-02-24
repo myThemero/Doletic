@@ -412,24 +412,24 @@ class UserDataServices extends AbstractObjectServices {
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for udata and fill it
-		$position = null;
+		$position_label = null;
 		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
-				$position = $row[UserDataDBObject::COL_POSITION];
+				$position_label = $row[UserDataDBObject::COL_POSITION];
 			}
 		}
 		$position = null;
-		if(isset($position)) {
-			$sql_params = array(":".UserDataDBObject::COL_ID => $position);
+		if(isset($position_label)) {
+			$sql_params = array(":".UserDataDBObject::COL_LABEL => $position_label);
 			$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
-						array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
+						array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_LABEL));
 			// execute SQL query and save result
 			$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 			// create an empty array for udata and fill it
 			if(isset($pdos)) {
 				if( ($row = $pdos->fetch()) !== false) {
 					$position = array();
-					$position[UserDataDBObject::COL_ID] = $row[UserDataDBObject::COL_ID];
+					//$position[UserDataDBObject::COL_ID] = $row[UserDataDBObject::COL_ID];
 					$position[UserDataDBObject::COL_LABEL] = $row[UserDataDBObject::COL_LABEL];
 					$position[UserDataDBObject::COL_RG_CODE] = $row[UserDataDBObject::COL_RG_CODE];
 				}
