@@ -15,36 +15,36 @@ class UserData implements \JsonSerializable {
 	// -- attributes
 	private $id = null;
 	private $user_id = null;
-	private $gender_id = null;
+	private $gender = null;
 	private $firstname = null;
 	private $lastname = null;
 	private $birthdate = null;
 	private $tel = null;
 	private $email = null;
 	private $address = null;
-	private $country_id = null;
+	private $country = null;
 	private $school_year = null;
-	private $insa_dept_id = null;
+	private $insa_dept = null;
 	private $avatar_id = null;
 
 	/**
 	*	@brief Constructs a udata
 	*/
-	public function __construct($id, $userId, $genderId, $firstname, $lastname, $birthdate, 
-								$tel, $email, $address, $countryId, $schoolYear, 
-								$insaDeptId, $avatarId) {
+	public function __construct($id, $userId, $gender, $firstname, $lastname, $birthdate, 
+								$tel, $email, $address, $country, $schoolYear, 
+								$insaDept, $avatarId) {
 		$this->id = intval($id);
 		$this->user_id = intval($userId);
-		$this->gender_id = intval($genderId);
+		$this->gender = $gender;
 		$this->firstname = $firstname;
 		$this->lastname = $lastname;
 		$this->birthdate = $birthdate;
 		$this->tel = $tel;
 		$this->email = $email;
 		$this->address = $address;
-		$this->country_id = intval($countryId);
+		$this->country = $country;
 		$this->school_year = $schoolYear;
-		$this->insa_dept_id = intval($insaDeptId);
+		$this->insa_dept = $insaDept;
 		$this->avatar_id = intval($avatarId);
 	}
 
@@ -52,16 +52,16 @@ class UserData implements \JsonSerializable {
 		return [
 			UserDataDBObject::COL_ID => $this->id,
 			UserDataDBObject::COL_USER_ID => $this->user_id,
-			UserDataDBObject::COL_GENDER_ID => $this->gender_id,
+			UserDataDBObject::COL_GENDER => $this->gender,
 			UserDataDBObject::COL_FIRSTNAME => $this->firstname,
 			UserDataDBObject::COL_LASTNAME => $this->lastname,
 			UserDataDBObject::COL_BIRTHDATE => $this->birthdate,
 			UserDataDBObject::COL_TEL => $this->tel,
 			UserDataDBObject::COL_EMAIL => $this->email,
 			UserDataDBObject::COL_ADDRESS => $this->address,
-			UserDataDBObject::COL_COUNTRY_ID => $this->country_id,
+			UserDataDBObject::COL_COUNTRY => $this->country,
 			UserDataDBObject::COL_SCHOOL_YEAR => $this->school_year,
-			UserDataDBObject::COL_INSA_DEPT_ID => $this->insa_dept_id,
+			UserDataDBObject::COL_INSA_DEPT => $this->insa_dept,
 			UserDataDBObject::COL_AVATAR_ID => $this->avatar_id
 		];
 	}
@@ -81,8 +81,8 @@ class UserData implements \JsonSerializable {
 	/**
 	*	@brief Returns UserData id
 	*/
-	public function GetGenderId() {
-		return $this->gender_id;
+	public function GetGender() {
+		return $this->gender;
 	}
 	/**
 	*	@brief Returns UserData id
@@ -123,8 +123,8 @@ class UserData implements \JsonSerializable {
 	/**
 	*	@brief Returns UserData id
 	*/
-	public function GetCountryId() {
-		return $this->country_id;
+	public function GetCountry() {
+		return $this->country;
 	}
 	/**
 	*	@brief Returns UserData school year
@@ -135,8 +135,8 @@ class UserData implements \JsonSerializable {
 	/**
 	*	@brief Returns UserData INSA departement id
 	*/
-	public function GetINSADeptId() {
-		return $this->insa_dept_id;
+	public function GetINSADept() {
+		return $this->insa_dept;
 	}
 	/**
 	*	@brief Returns UserData avatar id
@@ -153,25 +153,25 @@ class UserDataServices extends AbstractObjectServices {
 	// --- params keys
 	const PARAM_ID 				= "id";
 	const PARAM_USER_ID			= "userId";
-	const PARAM_GENDER_ID		= "genderId";
+	const PARAM_GENDER		= "gender";
 	const PARAM_FIRSTNAME 		= "firstname";
 	const PARAM_LASTNAME  		= "lastname";
 	const PARAM_BIRTHDATE  		= "birthdate";
 	const PARAM_TEL 			= "tel";
 	const PARAM_EMAIL  			= "email";
 	const PARAM_ADDRESS  		= "address";
-	const PARAM_COUNTRY_ID 		= "countryId";
+	const PARAM_COUNTRY 		= "country";
 	const PARAM_SCHOOL_YEAR 	= "schoolYear";
-	const PARAM_INSA_DEPT_ID 	= "insaDeptId";
-	const PARAM_POSITION_ID  	= "positionId";
+	const PARAM_INSA_DEPT 	= "insaDept";
+	const PARAM_POSITION  	= "position";
 	const PARAM_AVATAR_ID  		= "avatarId";
 	// --- internal services (actions)
 	const GET_USER_DATA_BY_ID 	= "byidud";
 	const GET_CURRENT_USER_DATA	= "currud";
-	const GET_GENDER_BY_ID      = "byidg";
-	const GET_COUNTRY_BY_ID     = "byidc";
-	const GET_INSA_DEPT_BY_ID   = "byiddept";
-	const GET_POSITION_BY_ID    = "byidpos";
+	//const GET_GENDER_BY_ID      = "byidg";
+	//const GET_COUNTRY_BY_ID     = "byidc";
+	//const GET_INSA_DEPT_BY_ID   = "byiddept";
+	//const GET_POSITION_BY_ID    = "byidpos";
 	const GET_USER_LAST_POS     = "lastpos";
 	const GET_USER_RG_CODE      = "rgcode";
 	const GET_ALL_USER_DATA 	= "allud";
@@ -198,14 +198,14 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__get_user_data_by_id($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_CURRENT_USER_DATA)) {
 			$data = $this->__get_current_user_data();
-		} else if(!strcmp($action, UserDataServices::GET_GENDER_BY_ID)) {
+		/*} else if(!strcmp($action, UserDataServices::GET_GENDER_BY_ID)) {
 			$data = $this->__get_gender_by_id($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_COUNTRY_BY_ID)) {
 			$data = $this->__get_country_by_id($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_INSA_DEPT_BY_ID)) {
 			$data = $this->__get_INSA_dept_by_id($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_POSITION_BY_ID)) {
-			$data = $this->__get_position_by_id($params[UserDataServices::PARAM_ID]);
+			$data = $this->__get_position_by_id($params[UserDataServices::PARAM_ID]);*/
 		} else if(!strcmp($action, UserDataServices::GET_USER_LAST_POS)) {
 			$data = $this->__get_user_last_position($params[UserDataServices::PARAM_USER_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_USER_RG_CODE)) {
@@ -225,34 +225,34 @@ class UserDataServices extends AbstractObjectServices {
 		} else if(!strcmp($action, UserDataServices::INSERT)) {
 			$data = $this->__insert_user_data(
 				$params[UserDataServices::PARAM_USER_ID],
-				$params[UserDataServices::PARAM_GENDER_ID],
+				$params[UserDataServices::PARAM_GENDER],
 				$params[UserDataServices::PARAM_FIRSTNAME],
 				$params[UserDataServices::PARAM_LASTNAME], 
 				$params[UserDataServices::PARAM_BIRTHDATE],
 				$params[UserDataServices::PARAM_TEL], 	
 				$params[UserDataServices::PARAM_EMAIL],  
 				$params[UserDataServices::PARAM_ADDRESS],
-				$params[UserDataServices::PARAM_COUNTRY_ID],
+				$params[UserDataServices::PARAM_COUNTRY],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
-				$params[UserDataServices::PARAM_INSA_DEPT_ID]);
+				$params[UserDataServices::PARAM_INSA_DEPT]);
 		} else if(!strcmp($action, UserDataServices::UPDATE)) {
 			$data = $this->__update_user_data(
 				$params[UserDataServices::PARAM_ID],
 				$params[UserDataServices::PARAM_USER_ID],
-				$params[UserDataServices::PARAM_GENDER_ID],
+				$params[UserDataServices::PARAM_GENDER],
 				$params[UserDataServices::PARAM_FIRSTNAME],
 				$params[UserDataServices::PARAM_LASTNAME], 
 				$params[UserDataServices::PARAM_BIRTHDATE],
 				$params[UserDataServices::PARAM_TEL], 	
 				$params[UserDataServices::PARAM_EMAIL],  
 				$params[UserDataServices::PARAM_ADDRESS],
-				$params[UserDataServices::PARAM_COUNTRY_ID],
+				$params[UserDataServices::PARAM_COUNTRY],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
-				$params[UserDataServices::PARAM_INSA_DEPT_ID]);
+				$params[UserDataServices::PARAM_INSA_DEPT]);
 		} else if(!strcmp($action, UserDataServices::UPDATE_POSTION)) {
 			$data = $this->__update_user_position(
 				$params[UserDataServices::PARAM_USER_ID],
-				$params[UserDataServices::PARAM_POSITION_ID]);
+				$params[UserDataServices::PARAM_POSITION]);
 		} else if(!strcmp($action, UserDataServices::UPDATE_AVATAR)) {
 			$data = $this->__update_user_avatar(
 				$params[UserDataServices::PARAM_AVATAR_ID]);
@@ -281,16 +281,16 @@ class UserDataServices extends AbstractObjectServices {
 				$udata = new UserData(
 					$row[UserDataDBObject::COL_ID],
 					$row[UserDataDBObject::COL_USER_ID],
-					$row[UserDataDBObject::COL_GENDER_ID],
+					$row[UserDataDBObject::COL_GENDER],
 					$row[UserDataDBObject::COL_FIRSTNAME],
 					$row[UserDataDBObject::COL_LASTNAME],
 					$row[UserDataDBObject::COL_BIRTHDATE],
 					$row[UserDataDBObject::COL_TEL],
 					$row[UserDataDBObject::COL_EMAIL],
 					$row[UserDataDBObject::COL_ADDRESS],
-					$row[UserDataDBObject::COL_COUNTRY_ID],
+					$row[UserDataDBObject::COL_COUNTRY],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
-					$row[UserDataDBObject::COL_INSA_DEPT_ID],
+					$row[UserDataDBObject::COL_INSA_DEPT],
 					$row[UserDataDBObject::COL_AVATAR_ID]);
 			}
 		}
@@ -312,23 +312,23 @@ class UserDataServices extends AbstractObjectServices {
 				$udata = new UserData(
 					$row[UserDataDBObject::COL_ID],
 					$row[UserDataDBObject::COL_USER_ID],
-					$row[UserDataDBObject::COL_GENDER_ID],
+					$row[UserDataDBObject::COL_GENDER],
 					$row[UserDataDBObject::COL_FIRSTNAME],
 					$row[UserDataDBObject::COL_LASTNAME],
 					$row[UserDataDBObject::COL_BIRTHDATE],
 					$row[UserDataDBObject::COL_TEL],
 					$row[UserDataDBObject::COL_EMAIL],
 					$row[UserDataDBObject::COL_ADDRESS],
-					$row[UserDataDBObject::COL_COUNTRY_ID],
+					$row[UserDataDBObject::COL_COUNTRY],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
-					$row[UserDataDBObject::COL_INSA_DEPT_ID],
+					$row[UserDataDBObject::COL_INSA_DEPT],
 					$row[UserDataDBObject::COL_AVATAR_ID]);
 			}
 		}
 		return $udata;
 	}
 
-	private function __get_gender_by_id($id) {
+	/*private function __get_gender_by_id($id) {
 		// create sql params array
 		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
 		// create sql request
@@ -400,7 +400,7 @@ class UserDataServices extends AbstractObjectServices {
 			}
 		}
 		return $position;
-	}
+	}*/
 
 	private function __get_user_last_position($userId) {
 		// create sql params array
@@ -412,15 +412,15 @@ class UserDataServices extends AbstractObjectServices {
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for udata and fill it
-		$positionId = null;
+		$position = null;
 		if(isset($pdos)) {
 			if( ($row = $pdos->fetch()) !== false) {
-				$positionId = $row[UserDataDBObject::COL_POSITION_ID];
+				$position = $row[UserDataDBObject::COL_POSITION];
 			}
 		}
 		$position = null;
-		if(isset($positionId)) {
-			$sql_params = array(":".UserDataDBObject::COL_ID => $positionId);
+		if(isset($position)) {
+			$sql_params = array(":".UserDataDBObject::COL_ID => $position);
 			$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
 						array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_ID));
 			// execute SQL query and save result
@@ -459,16 +459,16 @@ class UserDataServices extends AbstractObjectServices {
 				array_push($udata, new UserData(
 					$row[UserDataDBObject::COL_ID],
 					$row[UserDataDBObject::COL_USER_ID],
-					$row[UserDataDBObject::COL_GENDER_ID],
+					$row[UserDataDBObject::COL_GENDER],
 					$row[UserDataDBObject::COL_FIRSTNAME],
 					$row[UserDataDBObject::COL_LASTNAME],
 					$row[UserDataDBObject::COL_BIRTHDATE],
 					$row[UserDataDBObject::COL_TEL],
 					$row[UserDataDBObject::COL_EMAIL],
 					$row[UserDataDBObject::COL_ADDRESS],
-					$row[UserDataDBObject::COL_COUNTRY_ID],
+					$row[UserDataDBObject::COL_COUNTRY],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
-					$row[UserDataDBObject::COL_INSA_DEPT_ID],
+					$row[UserDataDBObject::COL_INSA_DEPT],
 					$row[UserDataDBObject::COL_AVATAR_ID]));
 			}
 		}
@@ -552,16 +552,16 @@ class UserDataServices extends AbstractObjectServices {
 				$udata = new UserData(
 					$row[UserDataDBObject::COL_ID],
 					$row[UserDataDBObject::COL_USER_ID],
-					$row[UserDataDBObject::COL_GENDER_ID],
+					$row[UserDataDBObject::COL_GENDER],
 					$row[UserDataDBObject::COL_FIRSTNAME],
 					$row[UserDataDBObject::COL_LASTNAME],
 					$row[UserDataDBObject::COL_BIRTHDATE],
 					$row[UserDataDBObject::COL_TEL],
 					$row[UserDataDBObject::COL_EMAIL],
 					$row[UserDataDBObject::COL_ADDRESS],
-					$row[UserDataDBObject::COL_COUNTRY_ID],
+					$row[UserDataDBObject::COL_COUNTRY],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
-					$row[UserDataDBObject::COL_INSA_DEPT_ID],
+					$row[UserDataDBObject::COL_INSA_DEPT],
 					$row[UserDataDBObject::COL_AVATAR_ID]);
 			}
 		}
@@ -570,23 +570,23 @@ class UserDataServices extends AbstractObjectServices {
 
 	// -- modify
 
-	private function __insert_user_data($userId, $genderId, $firstname, $lastname, $birthdate, 
-									$tel, $email, $address, $countryId, $schoolYear, 
-									$insaDeptId) {
+	private function __insert_user_data($userId, $gender, $firstname, $lastname, $birthdate, 
+									$tel, $email, $address, $country, $schoolYear, 
+									$insaDept) {
 		// create sql params
 		$sql_params = array(
 			":".UserDataDBObject::COL_ID => "NULL",
 			":".UserDataDBObject::COL_USER_ID => $userId,
-			":".UserDataDBObject::COL_GENDER_ID => $genderId,
+			":".UserDataDBObject::COL_GENDER => $gender,
 			":".UserDataDBObject::COL_FIRSTNAME => $firstname,
 			":".UserDataDBObject::COL_LASTNAME => $lastname,
 			":".UserDataDBObject::COL_BIRTHDATE => $birthdate,
 			":".UserDataDBObject::COL_TEL => $tel,
 			":".UserDataDBObject::COL_EMAIL => $email,
 			":".UserDataDBObject::COL_ADDRESS => $address,
-			":".UserDataDBObject::COL_COUNTRY_ID => $countryId,
+			":".UserDataDBObject::COL_COUNTRY => $country,
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
-			":".UserDataDBObject::COL_INSA_DEPT_ID => $insaDeptId,
+			":".UserDataDBObject::COL_INSA_DEPT => $insaDept,
 			":".UserDataDBObject::COL_AVATAR_ID => "NULL");
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetINSERTQuery();
@@ -594,23 +594,23 @@ class UserDataServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	} 
 
-	private function __update_user_data($id, $userId, $genderId, $firstname, $lastname, $birthdate, 
-									$tel, $email, $address, $countryId, $schoolYear, 
-									$insaDeptId, $positionId) {
+	private function __update_user_data($id, $userId, $gender, $firstname, $lastname, $birthdate, 
+									$tel, $email, $address, $country, $schoolYear, 
+									$insaDept, $position) {
 		// create sql params
 		$sql_params = array(
 			":".UserDataDBObject::COL_ID => $id,
 			":".UserDataDBObject::COL_USER_ID => $userId,
-			":".UserDataDBObject::COL_GENDER_ID => $genderId,
+			":".UserDataDBObject::COL_GENDER => $gender,
 			":".UserDataDBObject::COL_FIRSTNAME => $firstname,
 			":".UserDataDBObject::COL_LASTNAME => $lastname,
 			":".UserDataDBObject::COL_BIRTHDATE => $birthdate,
 			":".UserDataDBObject::COL_TEL => $tel,
 			":".UserDataDBObject::COL_EMAIL => $email,
 			":".UserDataDBObject::COL_ADDRESS => $address,
-			":".UserDataDBObject::COL_COUNTRY_ID => $countryId,
+			":".UserDataDBObject::COL_COUNTRY => $country,
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
-			":".UserDataDBObject::COL_INSA_DEPT_ID => $insaDeptId,
+			":".UserDataDBObject::COL_INSA_DEPT => $insaDept,
 			":".UserDataDBObject::COL_AVATAR_ID => "NULL");
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery();
@@ -618,12 +618,12 @@ class UserDataServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function __update_user_position($userId, $positionId) {
+	private function __update_user_position($userId, $position) {
 		// create sql params
 		$sql_params = array(
 			":".UserDataDBObject::COL_ID => "NULL",
 			":".UserDataDBObject::COL_USER_ID => $userId,
-			":".UserDataDBObject::COL_POSITION_ID => $positionId,
+			":".UserDataDBObject::COL_POSITION => $position,
 			":".UserDataDBObject::COL_SINCE => date('Y-m-d H:i:s'));
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetINSERTQuery();
@@ -670,7 +670,7 @@ class UserDataServices extends AbstractObjectServices {
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetINSERTQuery();
 		foreach ($genders as $gender) {
 			// --- create param array
-			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
+			$sql_params = array(/*":".UserDataDBObject::COL_ID => "NULL",*/
 								":".UserDataDBObject::COL_LABEL => $gender);
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
@@ -703,7 +703,7 @@ class UserDataServices extends AbstractObjectServices {
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_COUNTRY)->GetINSERTQuery();
 		foreach ($countries as $country) {
 			// --- create param array
-			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
+			$sql_params = array(/*":".UserDataDBObject::COL_ID => "NULL",*/
 								":".UserDataDBObject::COL_LABEL => $country);
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
@@ -726,7 +726,7 @@ class UserDataServices extends AbstractObjectServices {
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_INSA_DEPT)->GetINSERTQuery();
 		foreach ($depts as $dept => $detail) {
 			// --- create param array
-			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
+			$sql_params = array(/*":".UserDataDBObject::COL_ID => "NULL",*/
 								":".UserDataDBObject::COL_LABEL => $dept,
 								":".UserDataDBObject::COL_DETAIL => $detail);
 			// --- execute SQL query
@@ -756,7 +756,7 @@ class UserDataServices extends AbstractObjectServices {
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetINSERTQuery();
 		foreach ($positions as $position => $rgcode) {
 			// --- create param array
-			$sql_params = array(":".UserDataDBObject::COL_ID => "NULL",
+			$sql_params = array(/*":".UserDataDBObject::COL_ID => "NULL",*/
 								":".UserDataDBObject::COL_LABEL => $position,
 								":".UserDataDBObject::COL_RG_CODE => $rgcode);
 			// --- execute SQL query
@@ -784,17 +784,17 @@ class UserDataDBObject extends AbstractDBObject {
 	// --- columns
 	const COL_ID 			= "id";
 	const COL_USER_ID  		= "user_id";
-	const COL_GENDER_ID 	= "gender_id";
+	const COL_GENDER 	= "gender";
 	const COL_FIRSTNAME 	= "firstname";
 	const COL_LASTNAME  	= "lastname";
 	const COL_BIRTHDATE  	= "birthdate";
 	const COL_TEL 			= "tel";
 	const COL_EMAIL  		= "email";
 	const COL_ADDRESS  		= "address";
-	const COL_COUNTRY_ID 	= "country_id";
+	const COL_COUNTRY 	= "country";
 	const COL_SCHOOL_YEAR 	= "school_year";
-	const COL_INSA_DEPT_ID 	= "insa_dept_id";
-	const COL_POSITION_ID  	= "position_id";
+	const COL_INSA_DEPT 	= "insa_dept";
+	const COL_POSITION  	= "position";
 	const COL_LABEL			= "label";
 	const COL_DETAIL		= "detail";
 	const COL_SINCE			= "since";
@@ -812,40 +812,40 @@ class UserDataDBObject extends AbstractDBObject {
 		$dol_udata = new DBTable(UserDataDBObject::TABL_USER_DATA);
 		$dol_udata->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$dol_udata->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_GENDER_ID, DBTable::DT_INT, 11, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_GENDER, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_FIRSTNAME, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_LASTNAME, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_BIRTHDATE, DBTable::DT_DATE, -1, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_TEL, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_COUNTRY_ID, DBTable::DT_INT, 11, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_SCHOOL_YEAR, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_INSA_DEPT_ID, DBTable::DT_INT, 11, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_INSA_DEPT, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, false, "-1");
 		// --- dol_udata_position table
 		$dol_udata_position = new DBTable(UserDataDBObject::TABL_USER_POSITION);
 		$dol_udata_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$dol_udata_position->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "");
-		$dol_udata_position->AddColumn(UserDataDBObject::COL_POSITION_ID, DBTable::DT_INT, 11, false, "");
+		$dol_udata_position->AddColumn(UserDataDBObject::COL_POSITION, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata_position->AddColumn(UserDataDBObject::COL_SINCE, DBTable::DT_DATETIME, -1, false, "");
 		// --- com_gender table
 		$com_gender = new DBTable(UserDataDBObject::TABL_COM_GENDER);
-		$com_gender->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$com_gender->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "");
+		//$com_gender->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		$com_gender->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		// --- com_country table
 		$com_country = new DBTable(UserDataDBObject::TABL_COM_COUNTRY);
-		$com_country->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$com_country->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "");
+		//$com_country->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		$com_country->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		// --- com_insa_dept table
 		$com_insa_dept = new DBTable(UserDataDBObject::TABL_COM_INSA_DEPT);
-		$com_insa_dept->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$com_insa_dept->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "");
+		//$com_insa_dept->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		$com_insa_dept->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		$com_insa_dept->AddColumn(UserDataDBObject::COL_DETAIL, DBTable::DT_VARCHAR, 255, false, "");
 		// --- com_position table
 		$com_position = new DBTable(UserDataDBObject::TABL_COM_POSITION);
-		$com_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$com_position->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "");
+		//$com_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		$com_position->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		$com_position->AddColumn(UserDataDBObject::COL_RG_CODE, DBTable::DT_INT, 11, false, "");
 
 		// -- add tables

@@ -136,10 +136,10 @@ var UserDataServicesInterface = new function() {
     // --- (actions)
     ACTION: {
       GET_USER_DATA_BY_ID:"byidud",
-      GET_GENDER_BY_ID:"byidg",
-      GET_COUNTRY_BY_ID:"byidc",
-      GET_INSA_DEPT_BY_ID:"byiddept",
-      GET_POSITION_BY_ID:"byidpos",
+    //  GET_GENDER_BY_ID:"byidg",
+    //  GET_COUNTRY_BY_ID:"byidc",
+    //  GET_INSA_DEPT_BY_ID:"byiddept",
+    //  GET_POSITION_BY_ID:"byidpos",
       GET_USER_LAST_POS:"lastpos",
       GET_ALL_USER_DATA:"allud",
       GET_ALL_GENDERS:"allg",
@@ -181,7 +181,7 @@ var UserDataServicesInterface = new function() {
             successHandler); 
   }
 
-  this.getGenderById = function(id, successHandler) {
+  /*this.getGenderById = function(id, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_GENDER_BY_ID, 
             { id: id }, 
@@ -207,7 +207,7 @@ var UserDataServicesInterface = new function() {
             this.meta.OBJECT, this.meta.ACTION.GET_POSITION_BY_ID, 
             { id: id }, 
             successHandler); 
-  }  
+  }  */
 
   this.getUserLastPos = function(userId, successHandler) {
     return DoleticServicesInterface.callService(
@@ -216,55 +216,55 @@ var UserDataServicesInterface = new function() {
             successHandler);
   }
 
-  this.insert = function(userId, genderId, firstname, lastname, birthdate, tel, email, address, countryId, schoolYear, insaDeptId, positionId, successHandler) {
+  this.insert = function(userId, gender, firstname, lastname, birthdate, tel, email, address, country, schoolYear, insaDept, position, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, 
             this.meta.ACTION.INSERT, 
             {
               userId:userId,
-              genderId:genderId,
+              gender:gender,
               firstname:firstname,
               lastname:lastname,
               birthdate:birthdate,
               tel:tel,
               email:email,
               address:address,
-              countryId:countryId,
+              country:country,
               schoolYear:schoolYear,
-              insaDeptId:insaDeptId,
-              positionId:positionId
+              insaDept:insaDept,
+              position:position
             }, 
             successHandler); 
   }
 
-  this.update = function(id, userId, genderId, firstname, lastname, birthdate, tel, email, address, countryId, schoolYear, insaDeptId, positionId, password, successHandler) {
+  this.update = function(id, userId, gender, firstname, lastname, birthdate, tel, email, address, country, schoolYear, insaDept, position, password, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, 
             this.meta.ACTION.UPDATE, 
             {
               id: id,
               userId:userId,
-              genderId:genderId,
+              gender:gender,
               firstname:firstname,
               lastname:lastname,
               birthdate:birthdate,
               tel:tel,
               email:email,
               address:address,
-              countryId:countryId,
+              country:country,
               schoolYear:schoolYear,
-              insaDeptId:insaDeptId,
-              positionId:positionId
+              insaDept:insaDept,
+              position:position
             }, 
             successHandler); 
   }
 
-  this.updateUserPosition = function(userId, positionId, successHandler) {
+  this.updateUserPosition = function(userId, position, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE_POSTION, 
             { 
               userId: userId,
-              positionId: positionId
+              position: position
             }, 
             successHandler);
   }

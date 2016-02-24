@@ -8,7 +8,7 @@ var TeamServicesInterface = new function() {
     // --- (actions)
     ACTION: {
       GET_TEAM_BY_ID:'byidt',
-      GET_TEAM_BY_DIV:'bystt',
+      GET_TEAM_BY_DIV:'bydivt',
       GET_TEAM_MEMBERS:'memt',
       GET_ALL_TEAMS:'allt',
       GET_USER_TEAMS:'allut',

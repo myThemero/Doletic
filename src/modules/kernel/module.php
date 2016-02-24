@@ -66,10 +66,10 @@ class KernelModule extends AbstractModule {
 				UserDBObject::OBJ_NAME.':'.UserServices::DELETE 						=> RightsMap::SA_RMASK,	// only super admin
 				// ---- user data object services
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_USER_DATA_BY_ID 	=> RightsMap::G_RMASK,	// everyone
-				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_GENDER_BY_ID 		=> RightsMap::G_RMASK,	// everyone
-				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_COUNTRY_BY_ID 		=> RightsMap::G_RMASK,	// everyone
-				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_INSA_DEPT_BY_ID 	=> RightsMap::G_RMASK,	// everyone
-				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_POSITION_BY_ID 	=> RightsMap::G_RMASK,	// everyone
+				//UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_GENDER_BY_ID 		=> RightsMap::G_RMASK,	// everyone
+				//UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_COUNTRY_BY_ID 		=> RightsMap::G_RMASK,	// everyone
+				//UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_INSA_DEPT_BY_ID 	=> RightsMap::G_RMASK,	// everyone
+				//UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_POSITION_BY_ID 	=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_USER_LAST_POS 		=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_USER_RG_CODE 		=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_USER_DATA 		=> RightsMap::G_RMASK,	// everyone

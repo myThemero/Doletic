@@ -350,7 +350,7 @@ var DoleticUIModule = new function() {
       					"</td> \
       					<td>" + data.object[i].tel+         				
       					"</td> \
-      					<td>"; // + DoleticUIModule.INSADept_list[data.object[i].insa_dept_id].label;
+      					<td>" + data.object[i].insa_dept; // + DoleticUIModule.INSADept_list[data.object[i].insa_dept_id].label;
     				/*UserDataServicesInterface.getINSADeptById(data.object[i].insa_dept_id, function(data, content) {
     					if(data.code == 0 && data.object != "[]") {
             				content.html += data.object.label;

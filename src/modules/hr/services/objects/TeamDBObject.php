@@ -258,7 +258,7 @@ class TeamServices extends AbstractObjectServices {
 		$divisions = array();
 		if($pdos != null) {
 			while( ($row = $pdos->fetch()) !== false) {
-				$divisions[$row[TeamDBObject::COL_ID]] = $row[TeamDBObject::COL_LABEL];
+				array_push($divisions,$row[TeamDBObject::COL_LABEL]); 
 			}
 		}
 		return $divisions;
@@ -384,7 +384,7 @@ class TeamServices extends AbstractObjectServices {
 		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_DIV)->GetINSERTQuery();
 		foreach ($divisions as $division) {
 			// --- create param array
-			$sql_params = array(":".TeamDBObject::COL_ID => "NULL",
+			$sql_params = array(/*":".TeamDBObject::COL_ID => "NULL",*/
 								":".TeamDBObject::COL_LABEL => $division);
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
@@ -434,8 +434,8 @@ class TeamDBObject extends AbstractDBObject {
 		$dol_team_member->AddColumn(TeamDBObject::COL_MEMBER_ID, DBTable::DT_INT, 11, false, false);
 		// --- com_division table
 		$com_team_division = new DBTable(TeamDBObject::TABL_DIV);
-		$com_team_division->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$com_team_division->AddColumn(TeamDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false);
+		//$com_team_division->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		$com_team_division->AddColumn(TeamDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 
 		// -- add tables
 		parent::addTable($dol_team);
