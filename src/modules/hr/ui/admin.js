@@ -63,7 +63,7 @@ var DoleticUIModule = new function() {
     										<tr><th>Membre</th> \
     										<th>Email</th> \
     										<th>Téléphone</th> \
-    										<th>Département</th> \
+    										<th>Dept.</th> \
     										<th>Actions</th> \
   										</tr></thead>\
   										<tbody id=\"user_body\"> \
@@ -332,6 +332,17 @@ var DoleticUIModule = new function() {
       					<td>" + data.object[i].tel + "</td> \
       					<td>" + data.object[i].insa_dept + "</td> \
     				<td> \
+    					<div class=\"ui icon buttons\"> \
+	    					<button class=\"ui icon button\"> \
+	  							<i class=\"write icon\"></i> \
+							</button> \
+							<button class=\"ui icon button\"> \
+	  							<i class=\"archive icon\"></i> \
+							</button> \
+							<button class=\"ui icon button\"> \
+	  							<i class=\"remove user icon\"></i> \
+							</button> \
+						</div> \
     				</td> \
     				</tr>";
 				};
