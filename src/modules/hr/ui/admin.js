@@ -14,6 +14,7 @@ var DoleticUIModule = new function() {
 		this.super.render(htmlNode, this);
 		// activate items in tabs
 		$('.menu .item').tab();
+		$('.dropdown').dropdown();
 		// hide user details tab
 		$('#det').hide();
 		// fill user list
@@ -57,10 +58,12 @@ var DoleticUIModule = new function() {
 							  </div> \
 							  <div class=\"row\"> \
 							  <div class=\"ten wide column\"> \
-								<div class=\"ui horizontal divider\">Membres inscrits</div> \
+								<div class=\"ui horizontal divider\"> \
+									Tous les membres <!-- PLACER FILTRE ICI -->\
+								</div> \
 									<table class=\"ui very basic collapsing celled table\" id=\"user_table\"> \
   										<thead> \
-    										<tr><th>Membre</th> \
+    										<tr><th></th><th>Nom</th> \
     										<th>Email</th> \
     										<th>Téléphone</th> \
     										<th>Dept.</th> \
@@ -145,7 +148,7 @@ var DoleticUIModule = new function() {
 			  								</div> \
 			  								<div class=\"twelve wide required field\"> \
 									      		<label>Intervenant</label> \
-			      						  		<select id=\"interv\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"interv\" class=\"ui dropdown\"> \
 			      								<option value=\"0\">Non</option> \
 			      								<option value=\"1\">Oui</option> \
 			    						  		</select> \
@@ -167,7 +170,66 @@ var DoleticUIModule = new function() {
 						  <p>Cette portion est encore en développpement.........</p>\
 						</div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"userdetails\"> \
-						  <p>Cette portion est encore en développpement et ne devrait même pas s'afficher...</p>\
+						  	<div class=\"ui three column grid container\"> \
+						  	  <div class=\"row\"> \
+						  	  	<div class=\"ui relaxed divided list\"> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">Nom complet</div> \
+								      <div class=\"description\" id=\"det_name\">undefined</div> \
+								    </div> \
+								  </div> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">Poste actuel</div> \
+								      <div class=\"description\" id=\"det_pos\">undefined</div> \
+								    </div> \
+								  </div> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">Date de naissance</div> \
+								      <div class=\"description\" id=\"det_birth\">undefined</div> \
+								    </div> \
+								  </div> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">Année</div> \
+								      <div class=\"description\" id=\"det_year\">undefined</div> \
+								    </div> \
+								  </div> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">Téléphone</div> \
+								      <div class=\"description\" id=\"det_tel\">undefined</div> \
+								    </div> \
+								  </div> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">Email</div> \
+								      <div class=\"description\" id=\"det_mail\">undefined</div> \
+								    </div> \
+								  </div> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">Adresse</div> \
+								      <div class=\"description\" id=\"det_add\">undefined</div> \
+								      <div class=\"description\" id=\"det_postal\">undefined</div> \
+								      <div class=\"description\" id=\"det_city\">undefined</div> \
+								    </div> \
+								  </div> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">Nationalité</div> \
+								      <div class=\"description\" id=\"det_country\">undefined</div> \
+								    </div> \
+								  </div> \
+								</div> \
+						  	  </div> \
+						  	  <div class=\"row\"> \
+						  	  </div> \
+						  	  <div class=\"row\"> \
+						  	  </div> \
+							</div> \
 						</div> \
 					</div> \
 				  </div> \
@@ -280,6 +342,7 @@ var DoleticUIModule = new function() {
 			if(data.code == 0) {
 				// create content var to build html
 				//DoleticUIModule.position_list = data.object;
+				//var extra_content = "<option value=\"0\">Tous</option>";
 				var content = "";
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
@@ -287,6 +350,7 @@ var DoleticUIModule = new function() {
 				};
 				// insert html content
 				$('#position').html(content);
+				//$('#user_filter').html(extra_content + content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -322,8 +386,11 @@ var DoleticUIModule = new function() {
 				for (var i = 0; i < data.object.length; i++) {
 					content += "<tr> \
       						<td> \
-        				<h4 class=\"ui image header\"> \
-          				<img src=\"/resources/image.png\" class=\"ui mini rounded image\"> \
+      						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
+	  							<i class=\"user icon\"></i> \
+							</button> \
+							</td><td> \
+        				<h4 class=\"ui header\"> \
           				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
             			"<div class=\"sub header\">" + data.object[i].last_pos.label + "</div> \
         				</div> \
@@ -399,6 +466,31 @@ var DoleticUIModule = new function() {
 				DoleticServicesInterface.handleServiceError(data);
 			}
 		});
+	}
+
+	this.fillUserDetails = function(userId) {
+		UserDataServicesInterface.getById(userId, function(data) {
+			// if no service error
+			if(data.code == 0 && data.object != "[]") {
+				$('#det_name').html(data.object.gender + " " + data.object.firstname + " " + data.object.lastname);
+				$('#det_pos').html(data.object.last_pos);
+				$('#det_birth').html(data.object.birthdate);
+				$('#det_country').html(data.object.country);
+				//$('#det_city').html(data.object.city);
+				$('#det_add').html(data.object.address);
+				//$('#det_postal').html();
+				$('#det_tel').html(data.object.tel);
+				$('#det_mail').html(data.object.email);
+				$('#det_year').html(data.object.schoolyear + data.object.insa_dept);
+				$('#det').show();
+				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
+				$('#det').click();
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+
 	}
 
 	this.clearNewTicketForm = function() {
