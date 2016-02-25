@@ -39,6 +39,7 @@ class Main {
 		if(array_key_exists(Main::RPARAM_QUERY, $_GET)) { 
 			// GET query is about logout
 			if(!strcmp($_GET[Main::RPARAM_QUERY], "reset")) {
+				print_r($_SESSION[Main::SPARAM_DOL_KERN]);
 				$this->__display_logout();
 			}
 		}
