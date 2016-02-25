@@ -30,6 +30,12 @@
 
 namespace Ovh;
 
+// Load Guzzle dependencies ...
+require_once "../wrappers/utils/guzzle/src/Client.php";
+require_once "../wrappers/utils/guzzle-psr7/src/Request.php";
+
+// Use Guzzle namespaces
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
