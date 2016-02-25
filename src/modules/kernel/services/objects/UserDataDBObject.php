@@ -22,6 +22,8 @@ class UserData implements \JsonSerializable {
 	private $tel = null;
 	private $email = null;
 	private $address = null;
+	private $city = null;
+	private $postal_code = null;
 	private $country = null;
 	private $school_year = null;
 	private $insa_dept = null;
@@ -32,7 +34,7 @@ class UserData implements \JsonSerializable {
 	*	@brief Constructs a udata
 	*/
 	public function __construct($id, $userId, $gender, $firstname, $lastname, $birthdate, 
-								$tel, $email, $address, $country, $schoolYear, 
+								$tel, $email, $address, $city, $postalCode, $country, $schoolYear, 
 								$insaDept, $avatarId, $lastPos) {
 		$this->id = intval($id);
 		$this->user_id = intval($userId);
@@ -43,8 +45,10 @@ class UserData implements \JsonSerializable {
 		$this->tel = $tel;
 		$this->email = $email;
 		$this->address = $address;
+		$this->city = $city;
+		$this->postal_code = intval($postalCode);
 		$this->country = $country;
-		$this->school_year = $schoolYear;
+		$this->school_year = intval($schoolYear);
 		$this->insa_dept = $insaDept;
 		$this->avatar_id = intval($avatarId);
 		$this->last_pos = $lastPos;
@@ -61,6 +65,8 @@ class UserData implements \JsonSerializable {
 			UserDataDBObject::COL_TEL => $this->tel,
 			UserDataDBObject::COL_EMAIL => $this->email,
 			UserDataDBObject::COL_ADDRESS => $this->address,
+			UserDataDBObject::COL_CITY => $this->city,
+			UserDataDBObject::COL_POSTAL_CODE => $this->postal_code,
 			UserDataDBObject::COL_COUNTRY => $this->country,
 			UserDataDBObject::COL_SCHOOL_YEAR => $this->school_year,
 			UserDataDBObject::COL_INSA_DEPT => $this->insa_dept,
@@ -126,6 +132,18 @@ class UserData implements \JsonSerializable {
 	/**
 	*	@brief Returns UserData id
 	*/
+	public function GetCity() {
+		return $this->city;
+	}
+	/**
+	*	@brief Returns UserData id
+	*/
+	public function GetPostalCode() {
+		return $this->postal_code;
+	}
+	/**
+	*	@brief Returns UserData id
+	*/
 	public function GetCountry() {
 		return $this->country;
 	}
@@ -169,6 +187,8 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_TEL 			= "tel";
 	const PARAM_EMAIL  			= "email";
 	const PARAM_ADDRESS  		= "address";
+	const PARAM_CITY			="city";
+	const PARAM_POSTAL_CODE		="postalCode";
 	const PARAM_COUNTRY 		= "country";
 	const PARAM_SCHOOL_YEAR 	= "schoolYear";
 	const PARAM_INSA_DEPT 	= "insaDept";
@@ -229,6 +249,8 @@ class UserDataServices extends AbstractObjectServices {
 				$params[UserDataServices::PARAM_TEL], 	
 				$params[UserDataServices::PARAM_EMAIL],  
 				$params[UserDataServices::PARAM_ADDRESS],
+				$params[UserDataServices::PARAM_CITY],
+				$params[UserDataServices::PARAM_POSTAL_CODE],
 				$params[UserDataServices::PARAM_COUNTRY],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
 				$params[UserDataServices::PARAM_INSA_DEPT]);
@@ -243,6 +265,8 @@ class UserDataServices extends AbstractObjectServices {
 				$params[UserDataServices::PARAM_TEL], 	
 				$params[UserDataServices::PARAM_EMAIL],  
 				$params[UserDataServices::PARAM_ADDRESS],
+				$params[UserDataServices::PARAM_CITY],
+				$params[UserDataServices::PARAM_POSTAL_CODE],
 				$params[UserDataServices::PARAM_COUNTRY],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
 				$params[UserDataServices::PARAM_INSA_DEPT]);
@@ -285,6 +309,8 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_TEL],
 					$row[UserDataDBObject::COL_EMAIL],
 					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_CITY],
+					$row[UserDataDBObject::COL_POSTAL_CODE],
 					$row[UserDataDBObject::COL_COUNTRY],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
 					$row[UserDataDBObject::COL_INSA_DEPT],
@@ -317,6 +343,8 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_TEL],
 					$row[UserDataDBObject::COL_EMAIL],
 					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_CITY],
+					$row[UserDataDBObject::COL_POSTAL_CODE],
 					$row[UserDataDBObject::COL_COUNTRY],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
 					$row[UserDataDBObject::COL_INSA_DEPT],
@@ -390,6 +418,8 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_TEL],
 					$row[UserDataDBObject::COL_EMAIL],
 					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_CITY],
+					$row[UserDataDBObject::COL_POSTAL_CODE],
 					$row[UserDataDBObject::COL_COUNTRY],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
 					$row[UserDataDBObject::COL_INSA_DEPT],
@@ -484,6 +514,8 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_TEL],
 					$row[UserDataDBObject::COL_EMAIL],
 					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_CITY],
+					$row[UserDataDBObject::COL_POSTAL_CODE],
 					$row[UserDataDBObject::COL_COUNTRY],
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
 					$row[UserDataDBObject::COL_INSA_DEPT],
@@ -497,7 +529,7 @@ class UserDataServices extends AbstractObjectServices {
 	// -- modify
 
 	private function __insert_user_data($userId, $gender, $firstname, $lastname, $birthdate, 
-									$tel, $email, $address, $country, $schoolYear, 
+									$tel, $email, $address, $city, $postalCode, $country, $schoolYear, 
 									$insaDept) {
 		// create sql params
 		$sql_params = array(
@@ -510,6 +542,8 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_TEL => $tel,
 			":".UserDataDBObject::COL_EMAIL => $email,
 			":".UserDataDBObject::COL_ADDRESS => $address,
+			":".UserDataDBObject::COL_CITY => $city,
+			":".UserDataDBObject::COL_POSTAL_CODE => $postalCode,
 			":".UserDataDBObject::COL_COUNTRY => $country,
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
 			":".UserDataDBObject::COL_INSA_DEPT => $insaDept,
@@ -521,7 +555,7 @@ class UserDataServices extends AbstractObjectServices {
 	} 
 
 	private function __update_user_data($id, $userId, $gender, $firstname, $lastname, $birthdate, 
-									$tel, $email, $address, $country, $schoolYear, 
+									$tel, $email, $address, $city, $postalCode, $country, $schoolYear, 
 									$insaDept, $position) {
 		// create sql params
 		$sql_params = array(
@@ -534,6 +568,8 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_TEL => $tel,
 			":".UserDataDBObject::COL_EMAIL => $email,
 			":".UserDataDBObject::COL_ADDRESS => $address,
+			":".UserDataDBObject::COL_CITY => $city,
+			":".UserDataDBObject::COL_POSTAL_CODE => $postalCode,
 			":".UserDataDBObject::COL_COUNTRY => $country,
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
 			":".UserDataDBObject::COL_INSA_DEPT => $insaDept,
@@ -713,6 +749,8 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_TEL 			= "tel";
 	const COL_EMAIL  		= "email";
 	const COL_ADDRESS  		= "address";
+	const COL_CITY 			= "city";
+	const COL_POSTAL_CODE	= "postal_code";
 	const COL_COUNTRY 	= "country";
 	const COL_SCHOOL_YEAR 	= "school_year";
 	const COL_INSA_DEPT 	= "insa_dept";
@@ -742,8 +780,10 @@ class UserDataDBObject extends AbstractDBObject {
 		$dol_udata->AddColumn(UserDataDBObject::COL_TEL, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_CITY, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_POSTAL_CODE, DBTable::DT_INT, 11, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_SCHOOL_YEAR, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_SCHOOL_YEAR, DBTable::DT_INT, 11, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_INSA_DEPT, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, false, "-1");
 		// --- dol_udata_position table

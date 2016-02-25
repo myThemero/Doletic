@@ -136,10 +136,6 @@ var UserDataServicesInterface = new function() {
     // --- (actions)
     ACTION: {
       GET_USER_DATA_BY_ID:"byidud",
-    //  GET_GENDER_BY_ID:"byidg",
-    //  GET_COUNTRY_BY_ID:"byidc",
-    //  GET_INSA_DEPT_BY_ID:"byiddept",
-    //  GET_POSITION_BY_ID:"byidpos",
       GET_USER_LAST_POS:"lastpos",
       GET_ALL_USER_DATA:"allud",
       GET_ALL_GENDERS:"allg",

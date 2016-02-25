@@ -476,9 +476,9 @@ var DoleticUIModule = new function() {
 				$('#det_pos').html(data.object.last_pos);
 				$('#det_birth').html(data.object.birthdate);
 				$('#det_country').html(data.object.country);
-				//$('#det_city').html(data.object.city);
+				$('#det_city').html(data.object.city);
 				$('#det_add').html(data.object.address);
-				//$('#det_postal').html();
+				$('#det_postal').html();
 				$('#det_tel').html(data.object.tel);
 				$('#det_mail').html(data.object.email);
 				$('#det_year').html(data.object.schoolyear + data.object.insa_dept);

@@ -90,8 +90,10 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_TEL 			=> "0600000000", 	
 					UserDataServices::PARAM_EMAIL 			=> "super-admin.doe@gmail.com",  
 					UserDataServices::PARAM_ADDRESS 		=> "1 avenue Doletic",
+					UserDataServices::PARAM_CITY	 		=> "Etic",
+					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
-					UserDataServices::PARAM_SCHOOL_YEAR 	=> "4ème",
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
 					UserDataServices::PARAM_INSA_DEPT 		=> "IF"
 						));
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
@@ -110,8 +112,10 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_TEL 			=> "0600000000", 	
 					UserDataServices::PARAM_EMAIL 			=> "admin.doe@gmail.com",  
 					UserDataServices::PARAM_ADDRESS 		=> "1 avenue Doletic",
+					UserDataServices::PARAM_CITY	 		=> "Etic",
+					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
-					UserDataServices::PARAM_SCHOOL_YEAR 	=> "4ème",
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
 					UserDataServices::PARAM_INSA_DEPT 		=> "IF" 
 						));
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
@@ -130,8 +134,10 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_TEL 			=> "0600000000", 	
 					UserDataServices::PARAM_EMAIL 			=> "user.doe@gmail.com",  
 					UserDataServices::PARAM_ADDRESS 		=> "1 avenue Doletic",
+					UserDataServices::PARAM_CITY	 		=> "Etic",
+					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
-					UserDataServices::PARAM_SCHOOL_YEAR 	=> "4ème",
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
 					UserDataServices::PARAM_INSA_DEPT 		=> "IF" 
 						));
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
@@ -150,8 +156,10 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_TEL 			=> "0600000000", 	
 					UserDataServices::PARAM_EMAIL 			=> "guest.doe@gmail.com",  
 					UserDataServices::PARAM_ADDRESS 		=> "1 avenue Doletic",
+					UserDataServices::PARAM_CITY	 		=> "Etic",
+					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
-					UserDataServices::PARAM_SCHOOL_YEAR 	=> "4ème",
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
 					UserDataServices::PARAM_INSA_DEPT 		=> "IF" 
 						));
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
