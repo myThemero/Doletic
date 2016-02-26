@@ -27,7 +27,7 @@ abstract class AbstractOVHWrapper {
 			// set kernel
 			$this->kernel = $kernel;
 			// initialize connector
-			$this->connector = new OVHAPIConnector($this->kernel);
+			//$this->connector = new OVHAPIConnector($this->kernel);
 			// raise kernel set flag
 			$this->kernel_set = true;
 		}

@@ -38,19 +38,21 @@ class DoleticKernel {
 
 	// -- functions
 
-	public function __construct() {
+	public function __construct() { // <!> Construction order matters <!>
 		// -- create managers
 		$this->log_mgr = new LogManager($this);
 		$this->cron_mgr = new CronManager($this);
 		$this->db_mgr = new DBManager($this);
-	 	$this->module_mgr = new ModuleManager($this);
-	 	$this->wrapper_mgr = new WrapperManager($this);
 	 	$this->settings_mgr = new SettingsManager($this);
 	 	$this->authentication_mgr = new AuthenticationManager($this);
 	 	$this->ui_mgr = new UIManager($this);
-	 	// -- create loggers
+	 	// -- create module loader before db object loader
+	 	$this->module_mgr = new ModuleManager($this);
 	 	$this->module_ldr = new ModuleLoader($this, $this->module_mgr);
+	 	// -- create db object loader after module loader
 	 	$this->dbobject_ldr = new DBObjectLoader($this, $this->db_mgr);
+	 	// -- create wrapper objects after db object loader
+	 	$this->wrapper_mgr = new WrapperManager($this);
 	 	$this->wrapper_ldr = new WrapperLoader($this, $this->wrapper_mgr);
 	 	// -- unset initialized flag
 	 	$this->initialized = false;

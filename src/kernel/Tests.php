@@ -369,10 +369,12 @@ class OVHMailWrapperTestFunction extends AbstractFunction {
 	}
 	public function Execute() {
 		parent::info("-- test - starts --");
+		echo "before kernel construction\n"; // DEBUG
 		$kernel = new DoleticKernel(); 	// instanciate
+		echo "before kernel initialization\n"; // DEBUG
 		$kernel->Init();				// initialize
+		echo "before kernel connect to db\n"; // DEBUG
 		$kernel->ConnectDB();			// connect database
-		var_dump($kernel);
 		// ----------- start --------------
 		$wrapper = $kernel->GetWrapper(OVHMailWrapper::NAME); 
 		if(isset($wrapper)) {

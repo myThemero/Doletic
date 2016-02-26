@@ -108,9 +108,12 @@ class SettingsManager extends AbstractManager {
 		if(array_key_exists($key, $this->ini_settings)) {
 			$value = $this->ini_settings[$key];
 		} else {
-			$value = parent::kernel()->GetDBObject(SettingDBObject::OBJ_NAME)->GetServices(parent::kernel()->GetCurrentUser())
+			$object = parent::kernel()->GetDBObject(SettingDBObject::OBJ_NAME);
+			if(isset($object)) {
+				$value = $object->GetServices(parent::kernel()->GetCurrentUser())
 						->GetResponseData(SettingServices::GET_SETTING_BY_KEY, array(
 							SettingServices::PARAM_KEY => $key));
+			}
 		}
 		return $value; 
 	}
