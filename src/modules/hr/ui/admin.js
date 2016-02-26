@@ -16,7 +16,7 @@ var DoleticUIModule = new function() {
 		// fill user list
 		DoleticUIModule.fillUsersList();
 		// fill team list
-		//DoleticUIModule.fillTeamsList();
+		DoleticUIModule.fillTeamsList();
 		// fill country field
 		DoleticUIModule.fillCountrySelector();
 		// fill gender field
@@ -171,15 +171,15 @@ var DoleticUIModule = new function() {
 								<div class=\"ui horizontal divider\"> \
 									Toutes les équipes <!-- PLACER FILTRE ICI -->\
 								</div> \
-									<table class=\"ui very basic collapsing celled table\" id=\"user_table\"> \
+									<table class=\"ui very basic collapsing celled table\" id=\"team_table\"> \
   										<thead> \
-    										<tr><th></th><th>Nom</th> \
+    										<tr><th>Nom</th> \
     										<th>Chef d'équipe</th> \
     										<th>Pôle</th> \
     										<th>Membres</th> \
     										<th>Actions</th> \
   										</tr></thead>\
-  										<tbody id=\"user_body\"> \
+  										<tbody id=\"team_body\"> \
   											<!-- TEAM LIST WILL GO THERE --> \
   										</tbody> \
 									</table> \
@@ -473,44 +473,30 @@ var DoleticUIModule = new function() {
 	}
 
 	this.fillTeamsList = function() {
-		HrServicesInterface.getAllTeams(function(data) {
+		TeamServicesInterface.getAll(function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				// create content var to build html
 				var content = "";
 				// iterate over values to build options
-				/*for (var i = 0; i < data.object.length; i++) {
-					var status, popup_selector;
-					var id = "popup_trigger_"+i;
-					switch (data.object[i].status_id) {
-					  case 1:
-					  	status = "red radio";
-					  	popup_selector = "#open_popup";
-					    break;
-					  case 2:
-					  	status = "orange spinner";
-					  	popup_selector = "#work_popup";
-					    break;
-					  case 3:
-					  	status = "green selected radio";
-					  	popup_selector = "#done_popup";
-					    break;
-					  default:
-					  	status = "blue help";
-					  	popup_selector = "#undefined_popup";
-					    break;
-					}
-					content += "<div class=\"item\"> \
-								  <i id=\""+id+"\" class=\""+status+" big icon link\"></i> \
-								  <div class=\"middle aligned content\"> \
-								    <a class=\"header\">"+data.object[i].subject+"</a> \
-								    <div class=\"description\">"+data.object[i].data+"</div>  \
-								  </div> \
-								  <script>$('#"+id+"').popup({popup:'"+popup_selector+"'});</script> \
-								</div>";
-				};*/
+				for (var i = 0; i < data.object.length; i++) {
+					/*var status, popup_selector;
+					var id = "popup_trigger_"+i;*/
+					content += "<tr><td>"+data.object[i].name+"</td> \
+								<td>"+data.object[i].leader_id +"</td> \
+								<td>" + data.object[i].division + "</td> \
+								<td>TEMP</td> \
+								<td> \
+									<button class=\"ui icon button\"> \
+	  									<i class=\"write icon\"></i> \
+									</button> \
+									<button class=\"ui icon button\"> \
+	  									<i class=\"remove user icon\"></i> \
+									</button></td> \
+								</tr>";
+				};
 				// insert html content
-				$('#team_list').html(content);
+				$('#team_body').html(content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);

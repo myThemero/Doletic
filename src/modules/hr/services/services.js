@@ -21,7 +21,7 @@ var TeamServicesInterface = new function() {
     }
   };
 
-  this.getAllTeams = function(successHandler) {
+  this.getAll = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_TEAMS, {}, successHandler); 
   }
   this.getAllDivisions = function(successHandler) {
@@ -108,7 +108,7 @@ var AdmMembershipServicesInterface = new function() {
     }
   };
 
-  this.getAllAdmMemberships = function(successHandler) {
+  this.getAll = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_ADM_MEMBERSHIPS, {}, successHandler); 
   }
   this.getUserAdmMemberships = function(successHandler) {
@@ -174,7 +174,7 @@ var AdmMembershipServicesInterface = new function() {
     }
   };
 
-  this.getAllIntMemberships = function(successHandler) {
+  this.getAll = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_INT_MEMBERSHIPS, {}, successHandler); 
   }
   this.getUserIntMemberships = function(successHandler) {
