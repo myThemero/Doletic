@@ -372,15 +372,12 @@ class OVHMailWrapperTestFunction extends AbstractFunction {
 		$kernel = new DoleticKernel(); 	// instanciate
 		$kernel->Init();				// initialize
 		$kernel->ConnectDB();			// connect database
+		var_dump($kernel);
 		// ----------- start --------------
 		$wrapper = $kernel->GetWrapper(OVHMailWrapper::NAME); 
-		$func = $wrapper->GetFunction(OVHMailWrapper::FUNC_LIST_MAILLIST);
-		if($func->Run(array(OVHMailWrapper::ARG_DOMAIN => 'etic-insa.com'))) {
-			var_dump($func->GetResult());
-		} else {
-			var_dump($wrapper->GetLastError());
+		if(isset($wrapper)) {
+			echo $wrapper->Execute(OVHMailWrapper::FUNC_LIST_DOMAINS);
 		}
-
 		// ----------- end --------------
 		$kernel->DisconnectDB();
 		$kernel = null;

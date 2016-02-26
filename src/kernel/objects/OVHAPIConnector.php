@@ -6,7 +6,7 @@ require_once "../wrappers/utils/ovh-php/src/Exceptions/NotLoggedException.php";
 require_once "../wrappers/utils/ovh-php/src/Api.php";
 use \Ovh\Api;
 
-class DoleticOVHAPIConnector {
+class OVHAPIConnector {
 	// -- consts
 
 	// -- attributes 
