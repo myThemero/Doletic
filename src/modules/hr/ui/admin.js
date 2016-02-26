@@ -473,15 +473,15 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				$('#det_name').html(data.object.gender + " " + data.object.firstname + " " + data.object.lastname);
-				$('#det_pos').html(data.object.last_pos);
+				$('#det_pos').html(data.object.last_pos.label);
 				$('#det_birth').html(data.object.birthdate);
 				$('#det_country').html(data.object.country);
 				$('#det_city').html(data.object.city);
 				$('#det_add').html(data.object.address);
-				$('#det_postal').html();
+				$('#det_postal').html(data.object.postal_code);
 				$('#det_tel').html(data.object.tel);
 				$('#det_mail').html(data.object.email);
-				$('#det_year').html(data.object.schoolyear + data.object.insa_dept);
+				$('#det_year').html(data.object.school_year + data.object.insa_dept);
 				$('#det').show();
 				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
 				$('#det').click();
