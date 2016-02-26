@@ -378,7 +378,7 @@ class OVHMailWrapperTestFunction extends AbstractFunction {
 		// ----------- start --------------
 		$wrapper = $kernel->GetWrapper(OVHMailWrapper::NAME); 
 		if(isset($wrapper)) {
-			echo $wrapper->Execute(OVHMailWrapper::FUNC_LIST_DOMAINS);
+			var_dump($wrapper->Execute(OVHMailWrapper::FUNC_LIST_DOMAINS));
 		}
 		// ----------- end --------------
 		$kernel->DisconnectDB();

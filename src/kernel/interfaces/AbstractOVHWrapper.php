@@ -26,8 +26,6 @@ abstract class AbstractOVHWrapper {
 		if(isset($kernel) && !$this->kernel_set) {
 			// set kernel
 			$this->kernel = $kernel;
-			// initialize connector
-			//$this->connector = new OVHAPIConnector($this->kernel);
 			// raise kernel set flag
 			$this->kernel_set = true;
 		}
@@ -70,10 +68,11 @@ abstract class AbstractOVHWrapper {
 	 *	Retourne l'instance Api du connecteur OVH
 	 */
 	protected function getAPI() {
-		if(isset($connector)) {
-			return $connector->GetAPI();	
+		if(!isset($this->connector)) {
+			// initialize connector
+			$this->connector = new OVHAPIConnector($this->kernel);
 		}
-		return null;
+		return $this->connector->GetAPI();	
 	}
 
 }
