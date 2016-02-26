@@ -3,10 +3,6 @@ var DoleticUIModule = new function() {
 	 *	Parent abstract module
 	 */
 	this.super = new AbstractDoleticUIModule('HR_UIModule', 'Nicolas Sorin', '1.0dev');
-	//test
-	/*var DoleticUIModule.position_list = new Array();
-	var DoleticUIModule.INSADept_list = new Array();
-	var DoleticUIModule.country_list = new Array();*/
 	/**
 	 *	Override render function
 	 */
@@ -32,7 +28,7 @@ var DoleticUIModule = new function() {
 		// fill school year field
 		DoleticUIModule.fillSchoolYearSelector();
 		//fill division field
-		//DoleticUIModule.fillDivisionSelector();
+		DoleticUIModule.fillDivisionSelector();
 	}
 	/**
 	 *	Override build function
@@ -167,7 +163,57 @@ var DoleticUIModule = new function() {
 							</div> \
 						  </div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"teamlist\"> \
-						  <p>Cette portion est encore en développpement.........</p>\
+						  <div class=\"ui two column grid container\"> \
+							  <div class=\"row\"> \
+							  </div> \
+							  <div class=\"row\"> \
+							  <div class=\"ten wide column\"> \
+								<div class=\"ui horizontal divider\"> \
+									Toutes les équipes <!-- PLACER FILTRE ICI -->\
+								</div> \
+									<table class=\"ui very basic collapsing celled table\" id=\"user_table\"> \
+  										<thead> \
+    										<tr><th></th><th>Nom</th> \
+    										<th>Chef d'équipe</th> \
+    										<th>Pôle</th> \
+    										<th>Membres</th> \
+    										<th>Actions</th> \
+  										</tr></thead>\
+  										<tbody id=\"user_body\"> \
+  											<!-- TEAM LIST WILL GO THERE --> \
+  										</tbody> \
+									</table> \
+								</div> \
+								<div class=\"six wide column\"> \
+								  <form id=\"user_form\" class=\"ui form segment\"> \
+								    <h4 class=\"ui dividing header\">Ajout d'une équipe</h4> \
+			  							<div id=\"tname_field\" class=\"twelve wide required field\"> \
+									      <label>Nom</label> \
+									      <input id=\"tname\" placeholder=\"Nom d'équipe...\" type=\"text\"/> \
+									    </div> \
+			  						    <div class=\"twelve wide required field\"> \
+									      		<label>Chef d'équipe</label> \
+			      						  		<select id=\"leader\" class=\"ui search dropdown\"> \
+			      								<!-- LEADERS WILL GO HERE --> \
+			    						  		</select> \
+			  							</div> \
+			  							<div class=\"twelve wide required field\"> \
+									      		<label>Pôle associé</label> \
+			      						  		<select id=\"division\" class=\"ui search dropdown\"> \
+			      								<!-- DIVISIONS WILL GO HERE --> \
+			    						  		</select> \
+			  							</div> \
+			  						  <div class=\"ui hr_center small buttons\"> \
+										<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
+										<div class=\"or\" data-text=\"ou\"></div> \
+										<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+									  </div> \
+							      </form> \
+								</div> \
+							  </div> \
+							  <div class=\"row\"> \
+							  </div> \
+							</div> \
 						</div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"userdetails\"> \
 						  	<div class=\"ui three column grid container\"> \
@@ -359,7 +405,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.fillDivisionSelector = function() {
-		HrServicesInterface.getAllDivisions(function(data) {
+		TeamServicesInterface.getAllDivisions(function(data) {
 			// if no service error
 			if(data.code == 0) {
 				// create content var to build html
@@ -383,6 +429,7 @@ var DoleticUIModule = new function() {
 			if(data.code == 0 && data.object != "[]") {
 				// iterate over values to build options
 				var content = "";
+				var selector_content = "";
 				for (var i = 0; i < data.object.length; i++) {
 					content += "<tr> \
       						<td> \
@@ -412,8 +459,11 @@ var DoleticUIModule = new function() {
 						</div> \
     				</td> \
     				</tr>";
+    				selector_content += "<option value=\""+data.object[i].user_id+"\">"
+    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
 				};
 				$('#user_body').html(content);
+				$('#leader').html(selector_content);
 				
 			} else {
 				// use default service service error handler
