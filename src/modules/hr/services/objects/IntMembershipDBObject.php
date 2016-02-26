@@ -328,8 +328,6 @@ class IntMembershipDBObject extends AbstractDBObject {
 	const OBJ_NAME = "int_membership";
 	// --- tables
 	const TABL_INT_MEMBERSHIP = "dol_int_membership";
-	const TABL_MEMBERS = "dol_int_membership_member";
-	const TABL_DIV = "com_division";
 	// --- columns
 	const COL_ID = "id";
 	const COL_USER_ID = "user_id";

@@ -309,8 +309,6 @@ class AdmMembershipDBObject extends AbstractDBObject {
 	const OBJ_NAME = "adm_membership";
 	// --- tables
 	const TABL_ADM_MEMBERSHIP = "dol_adm_membership";
-	const TABL_MEMBERS = "dol_adm_membership_member";
-	const TABL_DIV = "com_division";
 	// --- columns
 	const COL_ID = "id";
 	const COL_USER_ID = "user_id";
