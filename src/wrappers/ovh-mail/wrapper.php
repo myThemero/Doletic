@@ -2,6 +2,7 @@
 
 require_once "interfaces/functions.php";
 require_once "interfaces/AbstractOVHWrapper.php";
+require_once "../wrappers/ovh-mail/types.php";
 
 /**
  *	Interface principale du wrapper de couplage avec OVH concernant les mails
@@ -16,7 +17,7 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		"Paul Dautry"
 		);
 	// --- wrapper functions related consts
-	// ---- GET
+	// ---- GET --------------------------------
 	const FUNC_LIST_DOMAINS 				= "_func_available_services";			// List available services
 	const FUNC_DOMAIN_PROPERTIES 			= "_func_domain_properties";				// Get this object properties
 	const FUNC_LIST_ACCOUNTS 				= "_func_list_accounts";					// Get accounts
@@ -53,12 +54,12 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 	const FUNC_REDIRECTION_TASK_PROPERTIES 	= "_func_redirection_task_properties";	// Get this object properties
 	const FUNC_LIST_RESPONDER_TASKS 		= "_func_list_responder_tasks";			// Get responder tasks
 	const FUNC_RESPONDER_TASK_PROPERTIES 	= "_func_responder_task_properties";		// Get this object properties
-	// ---- PUT
+	// ---- PUT --------------------------------
 	const FUNC_UPDATE_ACCOUNT 				= "_func_update_account";				// Alter this object properties
 	const FUNC_UPDATE_MAILLIST 				= "_func_update_maillist";				// Alter this object properties
 	const FUNC_UPDATE_RESPONDER 			= "_func_update_responder";				// Alter this object properties
 	const FUNC_UPDATE_SERVICES_INFO 		= "_func_update_services_info";			// Alter this object properties
-	// ---- POST
+	// ---- POST ------------------------------
 	const FUNC_CREATE_MAILBOX 				= "_func_create_mailbox"; 					// Create new mailbox in server
 	const FUNC_CHANGE_MAILBOX_PWD 			= "_func_change_mailbox_pwd"; 				// Change mailbox password (length in [9;30], trimmed, no accent)
 	const FUNC_CREATE_FILTER 				= "_func_create_filter"; 					// Create new filter for account
@@ -78,7 +79,7 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 	const FUNC_CREATE_REDIRECTION 			= "_func_create_redirection"; 				// Create new redirection in server
 	const FUNC_CHANGE_REDIRECTION 			= "_func_change_redirection"; 				// Change redirection
 	const FUNC_CREATE_RESPONDER 			= "_func_create_responder"; 				// Create new responder in server
-	// ---- DELETE
+	// ---- DELETE ----------------------------
 	const FUNC_REMOVE_MAILBOX 				= "_func_remove_mailbox"; 		// Delete an existing mailbox in server
 	const FUNC_REMOVE_FILTER 				= "_func_remove_filter"; 		// Delete an existing filter
 	const FUNC_REMOVE_RULE 					= "_func_remove_rule"; 			// Delete an existing rule
@@ -88,14 +89,33 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 	const FUNC_REMOVE_SUBSCRIBER 			= "_func_remove_subscriber"; 	// Delete existing subscriber
 	const FUNC_REMOVE_REDIRECTION 			= "_func_remove_redirection"; 	// Delete an existing redirection in server
 	const FUNC_REMOVE_RESPONDER 			= "_func_remove_responder"; 	// Delete an existing responder in server
-	// --- commands substitution arguments
+	// --- commands substitution arguments ----
 	const ARG_DOMAIN 		= "{domain}";
-	const ARG_ACCOUNT_NAME 	= "{accountName}"; 
 	const ARG_NAME  		= "{name}";
 	const ARG_ID 			= "{id}";
-	const ARG_ACCOUNT_ID    = "{accountId}";
 	const ARG_EMAIL			= "{email}";
 	const ARG_ACCOUNT       = "{account}";
+	const ARG_ACCOUNT_ID    = "{accountId}";
+	const ARG_ACCOUNT_NAME 	= "{accountName}"; 
+	// --- const params -----------------------
+	const P_DESCRIPTION     	 	= "description";
+	const P_PWD					 	= "password";
+	const P_SIZE 				 	= "size"; //(in bytes/en octets)
+	const P_ACTIVITY			 	= "activity";
+	const P_PRIORITY             	= "priority";
+	const P_TO 						= "to";
+	const P_CREATE_FILTER_CONFIG 	= "create_filter_config";
+	const P_CREATE_RULE_CONFIG 		= "create_rule_config";
+	const P_CONTACT_CONFIG		 	= "contact_config";
+	const P_MXFILTER_CONFIG			= "mxfilter_config";
+	const P_CREATE_MAILLIST_CONFIG  = "maillist_config";
+	const P_MAILLIST_OPTIONS		= "maillist_options";
+	const P_REDIRECTION_CONFIG		= "redirection_config";
+	const P_RESPONDER_CONFIG		= "responder_config";
+	const P_UPDATE_ACCOUNT			= "update_account_config";
+	const P_UPDATE_MAILLIST			= "update_maillist_config";
+	const P_UPDATE_RESPONDER		= "update_responder_config";
+	const P_UPDATE_SERVICE_INFO		= "update_service_info_config";
 	// --- commands dictionaries sorted by GET, PUT, POST, DELETE
 	const GET_COMMANDS = array(
 		OVHMailWrapper::FUNC_LIST_DOMAINS					=> "/email/domain", 
@@ -289,114 +309,141 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 
 # PROTECTED & PRIVATE ################################################################################
 
+		// -----------------------------------------------------------------------------------------------------------------------------------
+		//  GET RELATED FUNCTIONS
+		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_available_services 			($params) {
 			return $this->_get(OVHMailWrapper::FUNC_LIST_DOMAINS, $params);
 		}
 		private function _func_domain_properties 			($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_DOMAIN_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN));
 		}				
 		private function _func_list_accounts 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_ACCOUNTS, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN));
 		}				
 		private function _func_account_properties 			($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_ACCOUNT_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME));
 		}
 		private function _func_list_filters 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_FILTERS, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME));
 		}		
 		private function _func_filter_properties 			($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_FILTER_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME));
 		}				
 		private function _func_list_rules 					($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_RULES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME));
 		}				
 		private function _func_rule_properties 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_RULE_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_ID));
 		}			
 		private function _func_account_usage 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_ACCOUNT_USAGE, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME));
 		}				
 		private function _func_list_acl 					($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_ACL, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}
 		private function _func_acl_properties 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_ACL_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_ID));
 		}				
 		private function _func_list_mxfilters 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_MXFILTERS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}				
 		private function _func_list_mxrecords 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_MXRECORDS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}				
 		private function _func_list_maillists 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_MAILLISTS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}				
 		private function _func_maillist_properties 			($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_MAILLIST_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		}		
 		private function _func_list_moderators 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_MODERATORS, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		}				
 		private function _func_moderator_properties 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_MODERATOR_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_EMAIL));
 		}			
 		private function _func_list_subscribers 			($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_SUBSCRIBERS, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		}				
 		private function _func_subscriber_properties 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_SUBSCRIBER_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_EMAIL));
 		}			
 		private function _func_list_quotas 					($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_QUOTAS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}
 		private function _func_list_redirections 	 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_REDIRECTIONS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}				
 		private function _func_redirection_properties 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_REDIRECTION_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		}		
 		private function _func_list_responders 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_RESPONDERS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}				
-		private function _func_responder_properties  		($params) {
-
+		private function _func_responder_properties  		($params) {	
+			return $this->_get(OVHMailWrapper::FUNC_RESPONDER_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT));
 		}			
 		private function _func_services_info 				($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_SERVICES_INFO, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}
 		private function _func_summary 						($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_SUMMARY, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}
 		private function _func_list_account_tasks 	 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_ACCOUNT_TASKS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}			
 		private function _func_account_task_properties 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_ACCOUNT_TASK_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		}		
 		private function _func_list_filter_tasks 			($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_FILTER_TASKS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}				
 		private function _func_filter_task_properties 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_FILTER_TASK_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		}		
 		private function _func_list_maillist_tasks 			($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_MAILLIST_TASKS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}			
 		private function _func_maillist_task_properties 	($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_MAILLIST_TASK_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		}		
 		private function _func_list_redirection_tasks 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_REDIRECTION_TASKS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}		
 		private function _func_redirection_task_properties 	($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_REDIRECTION_TASK_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		}
 		private function _func_list_responder_tasks 		($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_LIST_RESPONDER_TASKS, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}			
 		private function _func_responder_task_properties 	($params) {
-
+			return $this->_get(OVHMailWrapper::FUNC_RESPONDER_TASK_PROPERTIES, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		}		
+		// -----------------------------------------------------------------------------------------------------------------------------------
+		//  PUT RELATED FUNCTIONS
+		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_update_account 				($params) {
 
 		}			
@@ -409,6 +456,9 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		private function _func_update_services_info 		($params) {
 
 		}		
+		// -----------------------------------------------------------------------------------------------------------------------------------
+		//  POST RELATED FUNCTIONS
+		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_create_mailbox 				($params) {
 
 		} 			
@@ -466,6 +516,9 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		private function _func_create_responder 			($params) {
 
 		} 	
+		// -----------------------------------------------------------------------------------------------------------------------------------
+		//  DELETE RELATED FUNCTIONS
+		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_remove_mailbox 				($params) {
 
 		} 		
@@ -495,16 +548,25 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		}
 
 		/**
-		 *	Injecte les paramètres attendu dans l'url présents dans le tableau
+		 *	Injecte les paramètres attendus dans l'url présents dans le tableau 
+		 *  et retourne le tableau sans ces paramètres.
 		 */
-		private function _bind($url_params, $url) {
+		private function _bind(&$params, $url, $binding_keys) {
+			// check if expected binded params exists, bind and extract from array
 			$binded = $url;
-			// replace params
-			foreach ($url_params as $key => $value) {
-				$binded = str_replace($key, $value, $binded);
+			foreach ($binding_keys as $key) {
+				if(array_key_exists($key, $params)) {
+					// bind
+					$binded = str_replace($key, $params[$key], $binded);
+					// extract
+					unset($params[$key]);
+				} else {
+					$binded = null;
+					break;
+				}
 			}
 			// check if params remain
-			if(str_contains('{', $binded)) {
+			if(isset($binded) && str_contains('{', $binded)) {
 				$binded = null; // return null binded
 			}
 			return $binded;
@@ -513,9 +575,9 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		/**
 		 *
 		 */
-		private function _get($function, $params) {
+		private function _get($function, $params = array(), $binding_keys = array()) {
 			$url = OVHMailWrapper::GET_COMMANDS[$function];
-			$binded = $this->_bind($params, $url);
+			$binded = $this->_bind($params, $url, $binding_keys);
 			if(!isset($binded)) {
 				return null;
 			}
