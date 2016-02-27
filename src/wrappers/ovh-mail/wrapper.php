@@ -203,23 +203,14 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		);
 	const DELETE_COMMANDS = array(
 		OVHMailWrapper::FUNC_REMOVE_MAILBOX		=> "/email/domain/{domain}/account/{accountName}",
-		// params(domain,accountName)
 		OVHMailWrapper::FUNC_REMOVE_FILTER		=> "/email/domain/{domain}/account/{accountName}/filter/{name}",
-		// params(domain,name,accountName)
 		OVHMailWrapper::FUNC_REMOVE_RULE		=> "/email/domain/{domain}/account/{accountName}/filter/{name}/rule/{id}",
-		// params(domain,id,name,accountName)
 		OVHMailWrapper::FUNC_REMOVE_ACL			=> "/email/domain/{domain}/acl/{accountId}",
-		// params(domain,accountId)
 		OVHMailWrapper::FUNC_REMOVE_MAILLIST	=> "/email/domain/{domain}/mailingList/{name}",
-		// params(domain,name)
 		OVHMailWrapper::FUNC_REMOVE_MODERATOR	=> "/email/domain/{domain}/mailingList/{name}/moderator/{email}",
-		// params(domain,name,email)
 		OVHMailWrapper::FUNC_REMOVE_SUBSCRIBER	=> "/email/domain/{domain}/mailingList/{name}/subscriber/{email}",
-		// params(domain,name,email)
 		OVHMailWrapper::FUNC_REMOVE_REDIRECTION	=> "/email/domain/{domain}/redirection/{id}",
-		// params(domain,id)
 		OVHMailWrapper::FUNC_REMOVE_RESPONDER	=> "/email/domain/{domain}/responder/{account}"
-		// params(domain,account)
 		);
 
 	// --functions
@@ -445,106 +436,129 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		//  PUT RELATED FUNCTIONS
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_update_account 				($params) {
-
+			return $this->_put(OVHMailWrapper::FUNC_UPDATE_ACCOUNT, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME));
 		}			
 		private function _func_update_maillist				($params) {
-
+			return $this->_put(OVHMailWrapper::FUNC_UPDATE_MAILLIST, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		}			
 		private function _func_update_responder				($params) {
-
+			return $this->_put(OVHMailWrapper::FUNC_UPDATE_RESPONDER, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT));
 		}			
 		private function _func_update_services_info 		($params) {
-
+			return $this->_put(OVHMailWrapper::FUNC_UPDATE_SERVICES_INFO, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}		
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		//  POST RELATED FUNCTIONS
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_create_mailbox 				($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CREATE_MAILBOX, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 			
 		private function _func_change_mailbox_pwd 			($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CHANGE_MAILBOX_PWD, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN , OVHMailWrapper::ARG_ACCOUNT_NAME));
 		} 		
 		private function _func_create_filter 				($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CREATE_FILTER, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN , OVHMailWrapper::ARG_ACCOUNT_NAME));
 		} 			
 		private function _func_change_filter_activity 		($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CHANGE_FILTER_ACTIVITY, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN , OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME));
 		}
 		private function _func_change_filter_priority 		($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CHANGE_FILTER_PRIORITY, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN , OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME));
 		}
 		private function _func_create_rule 					($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CREATE_RULE, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN , OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME));
 		} 			
 		private function _func_update_account_usage 		($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_UPDATE_ACCOUNT_USAGE, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN , OVHMailWrapper::ARG_ACCOUNT_NAME));
 		} 
 		private function _func_create_acl 					($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CREATE_ACL, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 			
 		private function _func_change_contact 				($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CHANGE_CONTACT, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 		
 		private function _func_change_mxfilter 				($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CHANGE_MXFILTER, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 		
 		private function _func_create_maillist 				($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CREATE_MAILLIST, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 		
 		private function _func_change_maillist_opts 		($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CHANGE_MAILLIST_OPTS, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		} 
 		private function _func_add_moderator 				($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_ADD_MODERATOR, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		} 		
 		private function _func_send_maillist_by_mail 		($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_SEND_MAILLIST_BY_MAIL, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		}
 		private function _func_add_subscriber 				($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_ADD_SUBSCRIBER, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		} 		
 		private function _func_create_domain_deleg 			($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CREATE_DOMAIN_DELEG, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 	
 		private function _func_create_redirection 			($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CREATE_REDIRECTION, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 	
 		private function _func_change_redirection 			($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CHANGE_REDIRECTION, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		} 	
 		private function _func_create_responder 			($params) {
-
+			return $this->_post(OVHMailWrapper::FUNC_CREATE_RESPONDER, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 	
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		//  DELETE RELATED FUNCTIONS
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_remove_mailbox 				($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME));
 		} 		
 		private function _func_remove_filter 				($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME));
 		} 		
 		private function _func_remove_rule 					($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_ID));
 		} 			
 		private function _func_remove_acl 					($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_ID));
 		} 			
 		private function _func_remove_maillist 				($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		} 		
 		private function _func_remove_moderator 			($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_EMAIL));
 		} 	
 		private function _func_remove_subscriber 			($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_EMAIL));
 		} 	
 		private function _func_remove_redirection 			($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		} 	
 		private function _func_remove_responder 			($params) {
-
+			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
+				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT));
 		}
 
 		/**
@@ -573,7 +587,7 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		}
 
 		/**
-		 *
+		 *	Execute une requete HTTP GET sur l'API OVH en utilisant l'interface Api développée par OVH
 		 */
 		private function _get($function, $params = array(), $binding_keys = array()) {
 			$url = OVHMailWrapper::GET_COMMANDS[$function];
@@ -582,6 +596,42 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 				return null;
 			}
 			return parent::getAPI()->get($binded);
+		}
+
+		/**
+		 *	Execute une requete HTTP PUT sur l'API OVH en utilisant l'interface Api développée par OVH
+		 */
+		private function _put($function, $params = array(), $binding_keys = array()) {
+			$url = OVHMailWrapper::GET_COMMANDS[$function];
+			$binded = $this->_bind($params, $url, $binding_keys);
+			if(!isset($binded)) {
+				return null;
+			}
+			return parent::getAPI()->put($binded, $params);
+		}
+
+		/**
+		 *	Execute une requete HTTP POST sur l'API OVH en utilisant l'interface Api développée par OVH
+		 */
+		private function _post($function, $params = array(), $binding_keys = array()) {
+			$url = OVHMailWrapper::GET_COMMANDS[$function];
+			$binded = $this->_bind($params, $url, $binding_keys);
+			if(!isset($binded)) {
+				return null;
+			}
+			return parent::getAPI()->post($binded, $params);
+		}
+
+		/**
+		 *	Execute une requete HTTP DELETE sur l'API OVH en utilisant l'interface Api développée par OVH
+		 */
+		private function _delete($function, $params = array(), $binding_keys = array()) {
+			$url = OVHMailWrapper::GET_COMMANDS[$function];
+			$binded = $this->_bind($params, $url, $binding_keys);
+			if(!isset($binded)) {
+				return null;
+			}
+			return parent::getAPI()->delete($binded);
 		}
 }
 
