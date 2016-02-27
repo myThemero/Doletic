@@ -149,6 +149,8 @@ class AdmMembershipServices extends AbstractObjectServices {
 			$data = $this->__get_adm_membership_by_id($params[AdmMembershipServices::PARAM_ID]);
 		} else if(!strcmp($action, AdmMembershipServices::GET_ALL_ADM_MEMBERSHIPS)) {
 			$data = $this->__get_all_adm_memberships();
+		} else if(!strcmp($action, AdmMembershipServices::GET_ALL_AGS)) {
+			$data = $this->__get_all_ags();
 		} else if(!strcmp($action, AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS)) {
 			$data = $this->__get_current_user_adm_memberships();
 		} else if(!strcmp($action, AdmMembershipServices::INSERT)) {
@@ -253,6 +255,21 @@ class AdmMembershipServices extends AbstractObjectServices {
 			}
 		}
 		return $adm_memberships;
+	}
+
+	private function __get_all_ags() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_AG)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for teams and fill it
+		$ags = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($ags,$row[AdmMembershipDBObject::COL_AG]); 
+			}
+		}
+		return $ags;
 	}
 
 	// --- modify

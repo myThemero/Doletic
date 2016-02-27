@@ -29,6 +29,8 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.fillSchoolYearSelector();
 		//fill division field
 		DoleticUIModule.fillDivisionSelector();
+		//fill ag field
+		DoleticUIModule.fillAGSelector();
 	}
 	/**
 	 *	Override build function
@@ -326,6 +328,12 @@ var DoleticUIModule = new function() {
 										      <label>Date de fin</label> \
 										      <input id=\"edate\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
 										    </div> \
+										    <div class=\"twelve wide required field\"> \
+									      		<label>AG de recrutement</label> \
+			      						  		<select id=\"ag\" class=\"ui search dropdown\"> \
+			      								<!-- AGS WILL GO HERE --> \
+			    						  		</select> \
+			  								</div> \
 				  						    <div class=\"twelve wide required field\"> \
 										      		<label>Documents présents</label> \
 				      						  		<select name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
@@ -507,6 +515,24 @@ var DoleticUIModule = new function() {
 				};
 				// insert html content
 				$('#division').html(content);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+	this.fillAGSelector = function() {
+		AdmMembershipServicesInterface.getAllAgs(function(data) {
+			// if no service error
+			if(data.code == 0) {
+				// create content var to build html
+				var content = "";
+				// iterate over values to build options
+				for (var i = 0; i < data.object.length; i++) {
+					content += "<option value=\""+(i+1)+"\">"+data.object[i]+"</option>\n";
+				};
+				// insert html content
+				$('#ag').html(content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);

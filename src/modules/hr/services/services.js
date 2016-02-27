@@ -162,7 +162,7 @@ var AdmMembershipServicesInterface = new function() {
 
 // ----------------------- INT_MEMBERSHIP INTERFACE SERVICES CLASS ----------------------------------
 
-var AdmMembershipServicesInterface = new function() {
+var IntMembershipServicesInterface = new function() {
 
   this.meta = {
     // --- (object)
