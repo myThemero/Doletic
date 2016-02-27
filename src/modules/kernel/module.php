@@ -7,6 +7,7 @@ require_once "../modules/kernel/services/objects/SettingDBObject.php";
 require_once "../modules/kernel/services/objects/UploadDBObject.php";
 require_once "../modules/kernel/services/objects/UserDBObject.php";
 require_once "../modules/kernel/services/objects/UserDataDBObject.php";
+require_once "../modules/kernel/services/objects/OVHWrapperDBObject.php";
 
 class KernelModule extends AbstractModule {
 
@@ -87,6 +88,7 @@ class KernelModule extends AbstractModule {
 		parent::addDBObject(new UploadDBObject($this));
 		parent::addDBObject(new UserDBObject($this));
 		parent::addDBObject(new UserDataDBObject($this));
+		parent::addDBObject(new OVHWrapperDBObject($this));
 		// -- add module specific ui
 		parent::addUI('Home','home');	// refer to couple (home.js, home.css)
 		parent::addUI('Login','login');	// refer to couple (login.js, login.css)

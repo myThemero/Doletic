@@ -378,7 +378,10 @@ class OVHMailWrapperTestFunction extends AbstractFunction {
 		// ----------- start --------------
 		$wrapper = $kernel->GetWrapper(OVHMailWrapper::NAME); 
 		if(isset($wrapper)) {
+			// liste des domaines d'ETIC
 			var_dump($wrapper->Execute(OVHMailWrapper::FUNC_LIST_DOMAINS));
+			// liste des mailing listes
+			var_dump($wrapper->Execute(OVHMailWrapper::FUNC_LIST_MAILLISTS, array(OVHMailWrapper::ARG_DOMAIN => "etic-insa.com")));
 		}
 		// ----------- end --------------
 		$kernel->DisconnectDB();

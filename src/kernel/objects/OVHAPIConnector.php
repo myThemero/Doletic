@@ -14,16 +14,16 @@ class OVHAPIConnector {
 
 	// -- functions
 
-	public function __construct($kernel, $httpClient = null) {
+	public function __construct($wrapperConfig, $httpClient = null) {
 		// retrieve api settings
-		$application_key = $kernel->SettingValue(SettingsManager::DBKEY_OVH_API_APP_KEY)->GetValue();
-        $application_secret = $kernel->SettingValue(SettingsManager::DBKEY_OVH_API_APP_SEC)->GetValue();
-        $endpoint = $kernel->SettingValue(SettingsManager::DBKEY_OVH_API_APP_ENDPOINT)->GetValue();
-        $consumer_key = $kernel->SettingValue(SettingsManager::DBKEY_OVH_API_CONSUMER_KEY)->GetValue();
-		var_dump($application_key);
-        var_dump($application_secret);
-        var_dump($endpoint);
-        var_dump($consumer_key);
+		$endpoint = $wrapperConfig->GetEndpoint();
+		$application_key = $wrapperConfig->GetApplicationKey();
+        $application_secret = $wrapperConfig->GetApplicationSecret();
+        $consumer_key = $wrapperConfig->GetConsumerKey();		
+        var_dump($application_key);
+		var_dump($application_secret);
+		var_dump($endpoint);
+		var_dump($consumer_key);
         // check settings
         if( isset($application_key) && strlen($application_key) > 0 &&
         	isset($application_secret) && strlen($application_secret) > 0 && 

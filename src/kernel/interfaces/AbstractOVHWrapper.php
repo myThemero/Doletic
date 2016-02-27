@@ -69,8 +69,22 @@ abstract class AbstractOVHWrapper {
 	 */
 	protected function getAPI() {
 		if(!isset($this->connector)) {
-			// initialize connector
-			$this->connector = new OVHAPIConnector($this->kernel);
+			// retrieve wrapper config
+			$object = $this->kernel->GetDBObject(OVHWrapperDBObject::OBJ_NAME);
+			if(isset($object)) {
+				// retrieve wrapper config
+				$wrapperConfig = $object->GetServices($this->kernel->GetCurrentUser())
+									->GetResponseData(OVHWrapperServices::GET_BY_NAME, 
+									array(OVHWrapperServices::PARAM_NAME => $this->name));
+				// test if object has effectively been retrieved
+				if(isset($wrapperConfig)) {
+					// initialize connector
+					$this->connector = new OVHAPIConnector($wrapperConfig);
+				} else {
+					// critical error -> terminate explicitly or a call on a null object will occur
+					die("AbstractOVHWrapper : Can't configure connector, configuration is missing for '".$this->name."' wrapper.");
+				}
+			}
 		}
 		return $this->connector->GetAPI();	
 	}
