@@ -29,6 +29,8 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.fillSchoolYearSelector();
 		//fill division field
 		DoleticUIModule.fillDivisionSelector();
+		//fill ag field
+		DoleticUIModule.fillAGSelector();
 	}
 	/**
 	 *	Override build function
@@ -122,13 +124,13 @@ var DoleticUIModule = new function() {
 			    						  		</select> \
 			  							</div> \
 			  							<div class=\"fields\"> \
-									    	<div class=\"twelve wide required field\"> \
+									    	<div class=\"eight wide required field\"> \
 									      		<label>Année d'étude</label> \
 			      						  		<select id=\"schoolyear\" class=\"ui search dropdown\"> \
 			      								<!-- SCHOOLYEARS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
-			  								<div class=\"twelve wide required field\"> \
+			  								<div class=\"eight wide required field\"> \
 									      		<label>Département</label> \
 			      						  		<select id=\"dept\" class=\"ui search dropdown\"> \
 			      								<!-- DEPTS WILL GO HERE --> \
@@ -136,13 +138,13 @@ var DoleticUIModule = new function() {
 			  								</div> \
 			  						    </div> \
 			  						    <div class=\"fields\"> \
-									    	<div class=\"twelve wide required field\"> \
+									    	<div class=\"eight wide required field\"> \
 									      		<label>Position</label> \
 			      						  		<select id=\"position\" class=\"ui search dropdown\"> \
 			      								<!-- POSITIONS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
-			  								<div class=\"twelve wide required field\"> \
+			  								<div class=\"eight wide required field\"> \
 									      		<label>Intervenant</label> \
 			      						  		<select id=\"interv\" class=\"ui dropdown\"> \
 			      								<option value=\"0\">Non</option> \
@@ -185,7 +187,7 @@ var DoleticUIModule = new function() {
 									</table> \
 								</div> \
 								<div class=\"six wide column\"> \
-								  <form id=\"user_form\" class=\"ui form segment\"> \
+								  <form id=\"team_form\" class=\"ui form segment\"> \
 								    <h4 class=\"ui dividing header\">Ajout d'une équipe</h4> \
 			  							<div id=\"tname_field\" class=\"twelve wide required field\"> \
 									      <label>Nom</label> \
@@ -215,9 +217,12 @@ var DoleticUIModule = new function() {
 							  </div> \
 							</div> \
 						</div> \
+						 \
+						 	<!-- 		USER DETAILS 		--> \
+						 	\
 						<div class=\"ui bottom attached tab segment\" data-tab=\"userdetails\"> \
-						  	<div class=\"ui three column grid container\"> \
-						  	  <div class=\"row\"> \
+						  	<div class=\"ui two column grid container\"> \
+						  	  <div class=\"four wide column\"> \
 						  	  	<div class=\"ui relaxed divided list\"> \
 								  <div class=\"item\"> \
 								    <div class=\"content\"> \
@@ -271,9 +276,103 @@ var DoleticUIModule = new function() {
 								  </div> \
 								</div> \
 						  	  </div> \
-						  	  <div class=\"row\"> \
+						  	  <div class=\"eight wide column\"> \
+						  	  	<div class=\"ui horizontal divider\"> \
+									Adhésions administrateur \
+								</div> \
+						  	  	<table class=\"ui very basic collapsing celled table\" id=\"team_table\"> \
+  									<thead> \
+    								<tr><th>Date de début</th> \
+    									<th>Date de fin</th> \
+    									<th>Cotis.</th> \
+    									<th>Fiche</th> \
+    									<th>Certif.</th> \
+    									<th>AG</th> \
+    									<th>Actions</th> \
+  									</tr></thead>\
+  										<tbody id=\"admm_body\"> \
+  											<!-- ADM MEMBERSHIP LIST WILL GO THERE --> \
+  										</tbody> \
+								</table> \
+								<div class=\"ui horizontal divider\"> \
+									Adhésions intervenant \
+								</div> \
+						  	  	<table class=\"ui very basic collapsing celled table\" id=\"team_table\"> \
+  									<thead> \
+    								<tr><th>Date de début</th> \
+    									<th>Cotis.</th> \
+    									<th>Fiche</th> \
+    									<th>Certif.</th> \
+    									<th>RIB</th> \
+    									<th>Pièce id.</th> \
+    									<th>Actions</th> \
+  									</tr></thead>\
+  										<tbody id=\"admm_body\"> \
+  											<!-- ADM MEMBERSHIP LIST WILL GO THERE --> \
+  										</tbody> \
+								</table> \
 						  	  </div> \
-						  	  <div class=\"row\"> \
+						  	  <div class=\"four wide column\"> \
+						  	  <div class=\"ui top attached tabular menu\"> \
+						  	  	<a class=\"item active\" data-tab=\"admm\" id=\"admm_tab\">Administrateur</a> \
+  								<a class=\"item\" data-tab=\"intm\">Intervenant</a> \
+  							  </div> \
+  									<div class=\"ui bottom attached tab segment\" data-tab=\"admm\"> \
+							  	  	   <form id=\"admm_form\" class=\"ui form segment\"> \
+									    <h4 class=\"ui dividing header\">Ajout d'une adhésion</h4> \
+				  							<div id=\"sdate_field\" class=\"twelve wide required field\"> \
+										      <label>Date de début</label> \
+										      <input id=\"sdate\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
+										    </div> \
+										    <div id=\"edate_field\" class=\"twelve wide required field\"> \
+										      <label>Date de fin</label> \
+										      <input id=\"edate\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
+										    </div> \
+										    <div class=\"twelve wide required field\"> \
+									      		<label>AG de recrutement</label> \
+			      						  		<select id=\"ag\" class=\"ui search dropdown\"> \
+			      								<!-- AGS WILL GO HERE --> \
+			    						  		</select> \
+			  								</div> \
+				  						    <div class=\"twelve wide required field\"> \
+										      		<label>Documents présents</label> \
+				      						  		<select name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
+				      									<option value=\"0\">Cotisation</option> \
+														<option value=\"1\">Fiche d'inscription</option> \
+														<option value=\"2\">Certificat de scolarité</option> \
+				    						  		</select> \
+				  							</div> \
+				  						  <div class=\"ui hr_center small buttons\"> \
+											<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
+											<div class=\"or\" data-text=\"ou\"></div> \
+											<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+										  </div> \
+								      </form> \
+								    </div> \
+								    <div class=\"ui bottom attached tab segment\" data-tab=\"intm\"> \
+								    	<form id=\"intm_form\" class=\"ui form segment\"> \
+									    	<h4 class=\"ui dividing header\">Ajout d'une adhésion</h4> \
+				  							<div id=\"sdate_field\" class=\"twelve wide required field\"> \
+										      <label>Date de début</label> \
+										      <input id=\"sdate\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
+										    </div> \
+				  						    <div class=\"twelve wide required field\"> \
+										      		<label>Documents présents</label> \
+				      						  		<select name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
+				      									<option value=\"0\">Cotisation</option> \
+														<option value=\"1\">Fiche d'inscription</option> \
+														<option value=\"2\">Certificat de scolarité</option> \
+														<option value=\"3\">RIB</option> \
+														<option value=\"4\">Pièce d'identité</option> \
+				    						  		</select> \
+				  							</div> \
+				  						  <div class=\"ui hr_center small buttons\"> \
+											<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
+											<div class=\"or\" data-text=\"ou\"></div> \
+											<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+										  </div> \
+								      </form> \
+								    </div> \
 						  	  </div> \
 							</div> \
 						</div> \
@@ -422,6 +521,24 @@ var DoleticUIModule = new function() {
 			}
 		});
 	}
+	this.fillAGSelector = function() {
+		AdmMembershipServicesInterface.getAllAgs(function(data) {
+			// if no service error
+			if(data.code == 0) {
+				// create content var to build html
+				var content = "";
+				// iterate over values to build options
+				for (var i = 0; i < data.object.length; i++) {
+					content += "<option value=\""+(i+1)+"\">"+data.object[i]+"</option>\n";
+				};
+				// insert html content
+				$('#ag').html(content);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
 
 	this.fillUsersList = function() {
 		UserDataServicesInterface.getAll(function(data) {
@@ -487,12 +604,14 @@ var DoleticUIModule = new function() {
 								<td>" + data.object[i].division + "</td> \
 								<td>TEMP</td> \
 								<td> \
+									<div class=\"ui icon buttons\"> \
 									<button class=\"ui icon button\"> \
 	  									<i class=\"write icon\"></i> \
 									</button> \
 									<button class=\"ui icon button\"> \
 	  									<i class=\"remove user icon\"></i> \
 									</button></td> \
+									</div> \
 								</tr>";
 				};
 				// insert html content
@@ -521,6 +640,7 @@ var DoleticUIModule = new function() {
 				$('#det').show();
 				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
 				$('#det').click();
+				$('#admm_tab').click();
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
