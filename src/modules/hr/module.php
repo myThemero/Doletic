@@ -41,9 +41,10 @@ class HrModule extends AbstractModule {
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_ADM_MEMBERSHIP_BY_ID => RightsMap::A_RMASK,	// only super admin 
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_ALL_ADM_MEMBERSHIPS 	=> RightsMap::G_RMASK,	// everyone 
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS => RightsMap::G_RMASK,  // everyone
-				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::INSERT 				=> RightsMap::A_RMASK,  // admin 
-				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::UPDATE 				=> RightsMap::A_RMASK,	// admin 
-				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::DELETE 				=> RightsMap::A_RMASK,  // admin
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_ALL_AGS 	=> RightsMap::G_RMASK,  // everyone
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::INSERT 		=> RightsMap::A_RMASK,  // admin 
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::UPDATE 		=> RightsMap::A_RMASK,	// admin 
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::DELETE 		=> RightsMap::A_RMASK,  // admin
 
 				// ---- adm_membership object services
 				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::GET_INT_MEMBERSHIP_BY_ID => RightsMap::A_RMASK,	// only super admin 
@@ -59,6 +60,9 @@ class HrModule extends AbstractModule {
 			);
 		// -- add module specific dbo objects
 		parent::addDBObject(new TeamDBObject($this));
+		parent::addDBObject(new AdmMembershipDBObject($this));
+		parent::addDBObject(new IntMembershipDBObject($this));
+
 		// -- add module specific ui
 		parent::addUI('Administration','admin');	// refer to couple (admin.js, admin.css)
 		parent::addUI('Membres','ui'); 	// refer to couple (ui.js, ui.css)

@@ -102,6 +102,7 @@ var AdmMembershipServicesInterface = new function() {
       GET_ADM_MEMBERSHIP_BY_ID:'byidam',
       GET_ALL_ADM_MEMBERSHIP:'allam',
       GET_USER_ADM_MEMBERSHIP:'alluam',
+      GET_ALL_AGS:'allag',
       INSERT:'insert',
       UPDATE:'update',
       DELETE:'delete'
@@ -153,6 +154,9 @@ var AdmMembershipServicesInterface = new function() {
             { id: id }, 
             successHandler); 
   } 
+  this.getAllAgs = function(successHandler) {
+    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_AGS, {}, successHandler); 
+  }
 
 }
 

@@ -436,7 +436,6 @@ class TeamDBObject extends AbstractDBObject {
 		$dol_team_member->AddColumn(TeamDBObject::COL_MEMBER_ID, DBTable::DT_INT, 11, false, false);
 		// --- com_division table
 		$com_team_division = new DBTable(TeamDBObject::TABL_DIV);
-		//$com_team_division->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$com_team_division->AddColumn(TeamDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 
 		// -- add tables
