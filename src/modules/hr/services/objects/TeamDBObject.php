@@ -33,7 +33,7 @@ class Team implements \JsonSerializable {
 	*   @param user[] $members
 	*		Team members
 	*/
-	public function __construct($id, $leaderId, $creationDate, $division, $members) {
+	public function __construct($id, $name, $leaderId, $creationDate, $division, $members) {
 		$this->id = intval($id);
 		$this->name = $name;
 		$this->leader_id = intval($leaderId);
@@ -101,8 +101,8 @@ class TeamServices extends AbstractObjectServices {
 	// --- params
 	const PARAM_ID 			= "id";
 	const PARAM_NAME	 	= "name";
-	const PARAM_LEADER		= "leaderId";
-	const PARAM_CREATION 	= "creationDate";
+	const PARAM_LEADER_ID		= "leaderId";
+	const PARAM_CREATION_DATE 	= "creationDate";
 	const PARAM_DIVISION	= "division";
 	const PARAM_MEMBER_ID   = "memberId";
 	// --- actions
@@ -146,13 +146,13 @@ class TeamServices extends AbstractObjectServices {
 		} else if(!strcmp($action, TeamServices::INSERT)) {
 			$data = $this->__insert_team(
 				$params[TeamServices::PARAM_NAME],
-				$params[TeamServices::PARAM_LEADER],
+				$params[TeamServices::PARAM_LEADER_ID],
 				$params[TeamServices::PARAM_DIVISION]);
 		} else if(!strcmp($action, TeamServices::UPDATE)) {
 			$data = $this->__update_team(
 				$params[TeamServices::PARAM_ID],
 				$params[TeamServices::PARAM_NAME],
-				$params[TeamServices::PARAM_LEADER],
+				$params[TeamServices::PARAM_LEADER_ID],
 				$params[TeamServices::PARAM_DIVISION]);
 		} else if(!strcmp($action, TeamServices::DELETE)) {
 			$data = $this->__delete_team($params[TeamServices::PARAM_ID]);
@@ -182,7 +182,7 @@ class TeamServices extends AbstractObjectServices {
 					$row[TeamDBObject::COL_LEADER_ID], 
 					$row[TeamDBObject::COL_CREATION_DATE], 
 					$row[TeamDBObject::COL_DIVISION],  
-					__get_team_members($row[TeamDBObject::COL_ID]));
+					$this->__get_team_members($row[TeamDBObject::COL_ID]));
 			}
 		}
 		return $team;
@@ -206,7 +206,7 @@ class TeamServices extends AbstractObjectServices {
 					$row[TeamDBObject::COL_LEADER_ID], 
 					$row[TeamDBObject::COL_CREATION_DATE], 
 					$row[TeamDBObject::COL_DIVISION],  
-					__get_team_members($row[TeamDBObject::COL_ID])));
+					$this->__get_team_members($row[TeamDBObject::COL_ID])));
 			}
 		}
 		return $teams;
@@ -243,7 +243,7 @@ class TeamServices extends AbstractObjectServices {
 					$row[TeamDBObject::COL_LEADER_ID], 
 					$row[TeamDBObject::COL_CREATION_DATE], 
 					$row[TeamDBObject::COL_DIVISION],  
-					__get_team_members($row[TeamDBObject::COL_ID])));
+					$this->__get_team_members($row[TeamDBObject::COL_ID])));
 			}
 		}
 		return $teams;
@@ -276,7 +276,7 @@ class TeamServices extends AbstractObjectServices {
 		$teams = array();
 		if($pdos != null) {
 			while( ($row = $pdos->fetch()) !== false) {
-				array_push($teams, __get_team_by_id($row[TeamDBObject::COL_ID]));
+				array_push($teams, $this->__get_team_by_id($row[TeamDBObject::COL_ID]));
 			}
 		}
 		return $Teams;
@@ -321,8 +321,10 @@ class TeamServices extends AbstractObjectServices {
 			// Add leader as member
 			$params = array(":".TeamDBObject::COL_NAME => $name);
 			$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_TEAM)->GetSELECTQuery();
+			// execute SQL query and save result
+			$pdos = parent::getDBConnection()->ResultFromQuery($sql, $params);
 			if( ($row = $pdos->fetch()) !== false) {
-				return __insert_member($row[TeamDBObject::COL_ID], $leaderId);
+				return $this->__insert_member($row[TeamDBObject::COL_ID], $leaderId);
 			}
 		}
 		return FALSE;
@@ -336,13 +338,13 @@ class TeamServices extends AbstractObjectServices {
 			":".TeamDBObject::COL_LEADER_ID => $leaderId,
 			":".TeamDBObject::COL_DIVISION => $division);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_Team)->GetUPDATEQuery();
+		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_TEAM)->GetUPDATEQuery();
 		// execute query
 		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
 			// Add leader as member if not already there
-			$members = __get_team_members($id);
+			$members = $this->__get_team_members($id);
 			if(!in_array($leaderId, $members)) {
-				return __insert_member($id, $leaderId);
+				return $this->__insert_member($id, $leaderId);
 			}
 			return TRUE;
 		}
@@ -357,9 +359,9 @@ class TeamServices extends AbstractObjectServices {
 		// execute query
 		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
 			// Delete members
-			$members = __get_team_members($id);
+			$members = $this->__get_team_members($id);
 			foreach($members as $member) {
-				__delete_member($id, $member);
+				$this->__delete_member($id, $member);
 			}
 			return TRUE;
 		}
@@ -427,7 +429,7 @@ class TeamDBObject extends AbstractDBObject {
 		$dol_team->AddColumn(TeamDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
 		$dol_team->AddColumn(TeamDBObject::COL_LEADER_ID, DBTable::DT_INT, 11, false);
 		$dol_team->AddColumn(TeamDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false);
-		$dol_team->AddColumn(TeamDBObject::COL_DIVISION, DBTable::DT_INT, 11, false);
+		$dol_team->AddColumn(TeamDBObject::COL_DIVISION, DBTable::DT_VARCHAR, 255, false);
 		// --- dol_team_member
 		$dol_team_member = new DBTable(TeamDBObject::TABL_MEMBERS);
 		$dol_team_member->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", false, false);

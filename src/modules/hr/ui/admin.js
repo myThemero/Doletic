@@ -3,10 +3,6 @@ var DoleticUIModule = new function() {
 	 *	Parent abstract module
 	 */
 	this.super = new AbstractDoleticUIModule('HR_UIModule', 'Nicolas Sorin', '1.0dev');
-	//test
-	/*var DoleticUIModule.position_list = new Array();
-	var DoleticUIModule.INSADept_list = new Array();
-	var DoleticUIModule.country_list = new Array();*/
 	/**
 	 *	Override render function
 	 */
@@ -20,7 +16,7 @@ var DoleticUIModule = new function() {
 		// fill user list
 		DoleticUIModule.fillUsersList();
 		// fill team list
-		//DoleticUIModule.fillTeamsList();
+		DoleticUIModule.fillTeamsList();
 		// fill country field
 		DoleticUIModule.fillCountrySelector();
 		// fill gender field
@@ -32,7 +28,7 @@ var DoleticUIModule = new function() {
 		// fill school year field
 		DoleticUIModule.fillSchoolYearSelector();
 		//fill division field
-		//DoleticUIModule.fillDivisionSelector();
+		DoleticUIModule.fillDivisionSelector();
 	}
 	/**
 	 *	Override build function
@@ -167,7 +163,57 @@ var DoleticUIModule = new function() {
 							</div> \
 						  </div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"teamlist\"> \
-						  <p>Cette portion est encore en développpement.........</p>\
+						  <div class=\"ui two column grid container\"> \
+							  <div class=\"row\"> \
+							  </div> \
+							  <div class=\"row\"> \
+							  <div class=\"ten wide column\"> \
+								<div class=\"ui horizontal divider\"> \
+									Toutes les équipes <!-- PLACER FILTRE ICI -->\
+								</div> \
+									<table class=\"ui very basic collapsing celled table\" id=\"team_table\"> \
+  										<thead> \
+    										<tr><th>Nom</th> \
+    										<th>Chef d'équipe</th> \
+    										<th>Pôle</th> \
+    										<th>Membres</th> \
+    										<th>Actions</th> \
+  										</tr></thead>\
+  										<tbody id=\"team_body\"> \
+  											<!-- TEAM LIST WILL GO THERE --> \
+  										</tbody> \
+									</table> \
+								</div> \
+								<div class=\"six wide column\"> \
+								  <form id=\"user_form\" class=\"ui form segment\"> \
+								    <h4 class=\"ui dividing header\">Ajout d'une équipe</h4> \
+			  							<div id=\"tname_field\" class=\"twelve wide required field\"> \
+									      <label>Nom</label> \
+									      <input id=\"tname\" placeholder=\"Nom d'équipe...\" type=\"text\"/> \
+									    </div> \
+			  						    <div class=\"twelve wide required field\"> \
+									      		<label>Chef d'équipe</label> \
+			      						  		<select id=\"leader\" class=\"ui search dropdown\"> \
+			      								<!-- LEADERS WILL GO HERE --> \
+			    						  		</select> \
+			  							</div> \
+			  							<div class=\"twelve wide required field\"> \
+									      		<label>Pôle associé</label> \
+			      						  		<select id=\"division\" class=\"ui search dropdown\"> \
+			      								<!-- DIVISIONS WILL GO HERE --> \
+			    						  		</select> \
+			  							</div> \
+			  						  <div class=\"ui hr_center small buttons\"> \
+										<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
+										<div class=\"or\" data-text=\"ou\"></div> \
+										<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+									  </div> \
+							      </form> \
+								</div> \
+							  </div> \
+							  <div class=\"row\"> \
+							  </div> \
+							</div> \
 						</div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"userdetails\"> \
 						  	<div class=\"ui three column grid container\"> \
@@ -359,7 +405,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.fillDivisionSelector = function() {
-		HrServicesInterface.getAllDivisions(function(data) {
+		TeamServicesInterface.getAllDivisions(function(data) {
 			// if no service error
 			if(data.code == 0) {
 				// create content var to build html
@@ -383,6 +429,7 @@ var DoleticUIModule = new function() {
 			if(data.code == 0 && data.object != "[]") {
 				// iterate over values to build options
 				var content = "";
+				var selector_content = "";
 				for (var i = 0; i < data.object.length; i++) {
 					content += "<tr> \
       						<td> \
@@ -412,8 +459,11 @@ var DoleticUIModule = new function() {
 						</div> \
     				</td> \
     				</tr>";
+    				selector_content += "<option value=\""+data.object[i].user_id+"\">"
+    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
 				};
 				$('#user_body').html(content);
+				$('#leader').html(selector_content);
 				
 			} else {
 				// use default service service error handler
@@ -423,44 +473,30 @@ var DoleticUIModule = new function() {
 	}
 
 	this.fillTeamsList = function() {
-		HrServicesInterface.getAllTeams(function(data) {
+		TeamServicesInterface.getAll(function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				// create content var to build html
 				var content = "";
 				// iterate over values to build options
-				/*for (var i = 0; i < data.object.length; i++) {
-					var status, popup_selector;
-					var id = "popup_trigger_"+i;
-					switch (data.object[i].status_id) {
-					  case 1:
-					  	status = "red radio";
-					  	popup_selector = "#open_popup";
-					    break;
-					  case 2:
-					  	status = "orange spinner";
-					  	popup_selector = "#work_popup";
-					    break;
-					  case 3:
-					  	status = "green selected radio";
-					  	popup_selector = "#done_popup";
-					    break;
-					  default:
-					  	status = "blue help";
-					  	popup_selector = "#undefined_popup";
-					    break;
-					}
-					content += "<div class=\"item\"> \
-								  <i id=\""+id+"\" class=\""+status+" big icon link\"></i> \
-								  <div class=\"middle aligned content\"> \
-								    <a class=\"header\">"+data.object[i].subject+"</a> \
-								    <div class=\"description\">"+data.object[i].data+"</div>  \
-								  </div> \
-								  <script>$('#"+id+"').popup({popup:'"+popup_selector+"'});</script> \
-								</div>";
-				};*/
+				for (var i = 0; i < data.object.length; i++) {
+					/*var status, popup_selector;
+					var id = "popup_trigger_"+i;*/
+					content += "<tr><td>"+data.object[i].name+"</td> \
+								<td>"+data.object[i].leader_id +"</td> \
+								<td>" + data.object[i].division + "</td> \
+								<td>TEMP</td> \
+								<td> \
+									<button class=\"ui icon button\"> \
+	  									<i class=\"write icon\"></i> \
+									</button> \
+									<button class=\"ui icon button\"> \
+	  									<i class=\"remove user icon\"></i> \
+									</button></td> \
+								</tr>";
+				};
 				// insert html content
-				$('#team_list').html(content);
+				$('#team_body').html(content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -473,15 +509,15 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				$('#det_name').html(data.object.gender + " " + data.object.firstname + " " + data.object.lastname);
-				$('#det_pos').html(data.object.last_pos);
+				$('#det_pos').html(data.object.last_pos.label);
 				$('#det_birth').html(data.object.birthdate);
 				$('#det_country').html(data.object.country);
 				$('#det_city').html(data.object.city);
 				$('#det_add').html(data.object.address);
-				$('#det_postal').html();
+				$('#det_postal').html(data.object.postal_code);
 				$('#det_tel').html(data.object.tel);
 				$('#det_mail').html(data.object.email);
-				$('#det_year').html(data.object.schoolyear + data.object.insa_dept);
+				$('#det_year').html(data.object.school_year + data.object.insa_dept);
 				$('#det').show();
 				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
 				$('#det').click();

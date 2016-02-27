@@ -167,6 +167,13 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_USER_ID 		=> 4,
 					UserDataServices::PARAM_POSITION 	=> "Trésorier"
 					));
+		$kernel->GetDBObject(TeamDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(TeamServices::INSERT, array(
+					TeamServices::PARAM_LEADER_ID 			=> 1,
+					TeamServices::PARAM_NAME 				=> "Doletic",
+					TeamServices::PARAM_CREATION_DATE		=> date('Y-m-d'),
+					TeamServices::PARAM_DIVISION 			=> "DSI" 
+					));
 		// --------------------------------------------------------------
 		parent::endlog("done !");
 		// --- fill maillist
