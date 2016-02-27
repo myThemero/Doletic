@@ -11,6 +11,7 @@ require_once "managers/UIManager.php";
 require_once "loaders/ModuleLoader.php";
 require_once "loaders/WrapperLoader.php";
 require_once "loaders/DBObjectLoader.php";
+require_once "loaders/CronTaskLoader.php";
 
 /**
 * 	@brief
@@ -21,31 +22,34 @@ class DoleticKernel {
 	const SESSION_KEY = 'doletic_kernel';
 	// -- attributes
 	// --- managers
-	private $log_mgr = null;
-	private $cron_mgr = null;
-	private $db_mgr = null;
-	private $module_mgr = null;
-	private $wrapper_mgr = null;
-	private $settings_mgr = null;
+	private $log_mgr 			= null;
+	private $cron_mgr 			= null;
+	private $db_mgr 			= null;
+	private $module_mgr 		= null;
+	private $wrapper_mgr 		= null;
+	private $settings_mgr 		= null;
 	private $authentication_mgr = null;
-	private $ui_mgr = null;
+	private $ui_mgr 			= null;
 	// --- loaders
-	private $module_ldr = null;
-	private $dbobject_ldr = null;
-	private $wrapper_ldr = null;
+	private $cron_ldr 		= null;
+	private $module_ldr 	= null;
+	private $dbobject_ldr 	= null;
+	private $wrapper_ldr 	= null;
 	// --- flags
-	private $initialized = null;
+	private $initialized 	= null;
 
 	// -- functions
 
 	public function __construct() { // <!> Construction order matters <!>
 		// -- create managers
 		$this->log_mgr = new LogManager($this);
-		$this->cron_mgr = new CronManager($this);
 		$this->db_mgr = new DBManager($this);
 	 	$this->settings_mgr = new SettingsManager($this);
 	 	$this->authentication_mgr = new AuthenticationManager($this);
 	 	$this->ui_mgr = new UIManager($this);
+	 	// -- create cron manager & loader
+	 	$this->cron_mgr = new CronManager($this);
+	 	$this->cron_ldr = new CronTaskLoader($this, $this->cron_mgr);
 	 	// -- create module loader before db object loader
 	 	$this->module_mgr = new ModuleManager($this);
 	 	$this->module_ldr = new ModuleLoader($this, $this->module_mgr);
@@ -73,25 +77,28 @@ class DoleticKernel {
 			// -4- initialize cron manager
 			$this->cron_mgr->Init();
 			$this->__info("Cron Manager initialized.");
-			// -5- initialize module manager
+			// -5- initialize cron task loader
+			$this->cron_ldr->Init();
+			$this->__info("Cron Task Loader initialized.");
+			// -6- initialize module manager
 		 	$this->module_mgr->Init();
 		 	$this->__info("Module Manager initialized.");
-		 	// -6- initialize module loader (load installed modules)
+		 	// -7- initialize module loader (load installed modules)
 		 	$this->module_ldr->Init();
 		 	$this->__info("Module Loader initialized.");
-		 	// -7- initialize db objects loader (load db objects including modules db objects)
+		 	// -8- initialize db objects loader (load db objects including modules db objects)
 		 	$this->dbobject_ldr->Init($this->module_mgr->GetModulesDBObjects());
 		 	$this->__info("Database Object Loader initialized.");
-		 	// -8- initialize wrapper manager
+		 	// -9- initialize wrapper manager
 		 	$this->wrapper_mgr->Init();
 		 	$this->__info("Wrapper Manager initialized.");
-		 	// -9- initialize wrapper loader (load installed modules)
+		 	// -10- initialize wrapper loader (load installed modules)
 		 	$this->wrapper_ldr->Init();
 		 	$this->__info("Wrapper Loader initialized.");
-		 	// -10- initialize authentication manager
+		 	// -11- initialize authentication manager
 		 	$this->authentication_mgr->Init();
 		 	$this->__info("Authentication Manager initialized.");
-		 	// -11- initialize UI manager
+		 	// -12- initialize UI manager
 		 	$this->ui_mgr->Init($this->module_mgr->GetModulesJSServices());
 		 	$this->__info("User Interface Manager initialized.");
 
@@ -199,6 +206,12 @@ class DoleticKernel {
 		$this->__info("Cron running tasks.");
 		// -- run cron tasks
 		$this->cron_mgr->RunTasks();
+	}
+
+	public function ListCronTasks() {
+		$this->__info("Cron running tasks.");
+		// -- run cron tasks
+		$this->cron_mgr->ListTasks();	
 	}
 
 	// --- database management --------------------------------------------------------------------
