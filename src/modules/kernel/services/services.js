@@ -212,7 +212,7 @@ var UserDataServicesInterface = new function() {
             successHandler);
   }
 
-  this.insert = function(userId, gender, firstname, lastname, birthdate, tel, email, address, country, schoolYear, insaDept, position, successHandler) {
+  this.insert = function(userId, gender, firstname, lastname, birthdate, tel, email, address, city, postalCode, country, schoolYear, insaDept, position, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, 
             this.meta.ACTION.INSERT, 
@@ -225,6 +225,8 @@ var UserDataServicesInterface = new function() {
               tel:tel,
               email:email,
               address:address,
+              city:city,
+              postalCode:postalCode,
               country:country,
               schoolYear:schoolYear,
               insaDept:insaDept,
@@ -293,6 +295,7 @@ var UserServicesInterface = new function() {
     ACTION: {
       GET_USER_BY_ID:'byid',
       GET_ALL_USERS: 'all',
+      GENERATE_CREDENTIALS:'gencred',
       INSERT: 'insert',
       UPDATE: 'update',
       DELETE: 'delete'
@@ -313,6 +316,17 @@ var UserServicesInterface = new function() {
             this.meta.ACTION.GET_USER_BY_ID, 
             {
               id: id
+            }, 
+            successHandler); 
+  }
+
+  this.generateCredentials = function(firstname, lastname, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, 
+            this.meta.ACTION.GENERATE_CREDENTIALS, 
+            {
+              firstname: firstname,
+              lastname: lastname
             }, 
             successHandler); 
   }
