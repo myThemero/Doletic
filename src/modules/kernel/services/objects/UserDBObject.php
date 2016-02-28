@@ -93,6 +93,7 @@ class UserServices extends AbstractObjectServices {
 	const GET_USER_BY_ID 	= "byid";
 	const GET_USER_BY_UNAME = "byuname";
 	const GET_ALL_USERS 	= "all";
+	const GENERATE_CREDENTIALS	="gencred";
 	const INSERT			= "insert";
 	const UPDATE			= "update";
 	const UPDATE_TOKEN		= "updatetok";
@@ -113,6 +114,9 @@ class UserServices extends AbstractObjectServices {
 			$data = $this->__get_user_by_username_and_hash($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
 		} else if(!strcmp($action, UserServices::GET_ALL_USERS)) {
 			$data = $this->__get_all_users();
+		} else if(!strcmp($action, UserServices::GENERATE_CREDENTIALS)) {
+			// TEMP
+			$data = $this->__generate_credentials($params[UserDataServices::PARAM_FIRSTNAME], $params[UserDataServices::PARAM_LASTNAME]);
 		} else if(!strcmp($action, UserServices::INSERT)) {
 			$data = $this->__insert_user($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
 		} else if(!strcmp($action, UserServices::UPDATE)) {
@@ -208,6 +212,30 @@ class UserServices extends AbstractObjectServices {
 		return $users;
 	}
 
+private function __generate_credentials($firstname, $lastname) {
+		$creds = array();
+		$username = strtolower(str_replace(" ", "-", $firstname) .".".str_replace(" ", "-", $lastname));
+		/*var_dump($username);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery();
+		$sql_params = array(":".UserDBObject::COL_USERNAME => $username);
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// check if username already exists
+		while( ($row = $pdos->fetch()) !== false) {
+			$username .= "-a";
+			// create sql request
+			$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery();
+			$sql_params = array(":".UserDBObject::COL_USERNAME => $username);
+			// execute SQL query and save result
+			$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		}*/
+		$pass = $this->generateRandomString(16);
+		$creds['username'] = $username;
+		$creds['pass'] = $pass;
+		return $creds;
+	}
+
 	// -- modify
 
 	private function __insert_user($username, $hash) {
@@ -222,7 +250,11 @@ class UserServices extends AbstractObjectServices {
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetINSERTQuery();
 		// execute query
-		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+			return $this->__get_user_by_username_and_hash($username, $hash)->GetId();
+		} else {
+			return 0;
+		}
 	} 
 
 	private function __update_user_password($id, $hash) {
