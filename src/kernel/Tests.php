@@ -389,6 +389,39 @@ class OVHMailWrapperTestFunction extends AbstractFunction {
 		parent::info("-- test - ends --");
 	}
 }
+// ---------------------------------------------------------------------------------------------------
+//	MAILER RELATED TEST FUNCTIONS
+// ---------------------------------------------------------------------------------------------------
+class MailerTestFunction extends AbstractFunction {
+	public function __construct($script) {
+		parent::__construct($script, 
+			'Mailer Test', 
+			'-m', 
+			'--mailer', 
+			"Test Mailer functions");
+	}
+	public function Execute() {
+		parent::info("-- test - starts --");
+		echo "before kernel construction\n"; // DEBUG
+		$kernel = new DoleticKernel(); 	// instanciate
+		echo "before kernel initialization\n"; // DEBUG
+		$kernel->Init();				// initialize
+		echo "before kernel connect to db\n"; // DEBUG
+		$kernel->ConnectDB();			// connect database
+		// ----------- start --------------
+		echo "You must edit the source and add an email address to run this test !";
+                /*$kernel->SendMail(array("your-test@email.com"), new WelcomeMail(), 
+			array(
+				"PRENOM" => "John",
+				"URL" => "www.google.com"
+			)
+		);*/
+		// ----------- end --------------
+		$kernel->DisconnectDB();
+		$kernel = null;
+		parent::info("-- test - ends --");
+	}
+}
 //________________________________________________________________________________________________________________________
 // ------------- declare script in itself --------------------------------------------------------------------------------
 
@@ -416,6 +449,8 @@ class TestScript extends AbstractScript {
 		parent::addFunction(new ServiceUILinksTestFunction($this));
 		// ----- wrappers tests
 		parent::addFunction(new OVHMailWrapperTestFunction($this));
+		// ----- mailer tests
+		parent::addFunction(new MailerTestFunction($this));
 	}
 }
 

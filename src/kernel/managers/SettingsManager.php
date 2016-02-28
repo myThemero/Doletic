@@ -25,7 +25,11 @@ class SettingsManager extends AbstractManager {
 	const KEY_DBDEBUG = "db_debug";
 
 	// --- database keys
-	// ---- JE keys
+	// ---- mail related keys
+	const DBKEY_MAIL_SMTP = "mail_smtp";
+	const DBKEY_MAIL_USER = "mail_user";
+	const DBKEY_MAIL_PASS  = "mail_pwd";
+	// ---- JE related keys
 	const DBKEY_JE_NAME 				= "je_name";
 	const DBKEY_JE_WEBSITE_URL			= "je_website_url";
 	const DBKEY_JE_LOGO_URL				= "je_logo_url";
@@ -34,6 +38,9 @@ class SettingsManager extends AbstractManager {
 
 	// -- database keys
 	const DB_DEFAULT_SETTINGS = array(
+		SettingsManager::DBKEY_MAIL_SMTP 			=> 'NULL',
+		SettingsManager::DBKEY_MAIL_USER 			=> 'NULL',
+		SettingsManager::DBKEY_MAIL_PASS 			=> 'NULL',
 		SettingsManager::DBKEY_JE_NAME 				=> 'ETIC INSA Technologies',
 		SettingsManager::DBKEY_JE_WEBSITE_URL 		=> 'http://www.etic-insa.com',
 		SettingsManager::DBKEY_JE_LOGO_URL 			=> 'http://www.etic-insa.com/assets/logo-etic.png',

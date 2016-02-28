@@ -12,6 +12,7 @@ require_once "loaders/ModuleLoader.php";
 require_once "loaders/WrapperLoader.php";
 require_once "loaders/DBObjectLoader.php";
 require_once "loaders/CronTaskLoader.php";
+require_once "objects/mailer/Mailer.php";
 
 /**
 * 	@brief
@@ -101,7 +102,6 @@ class DoleticKernel {
 		 	// -12- initialize UI manager
 		 	$this->ui_mgr->Init($this->module_mgr->GetModulesJSServices());
 		 	$this->__info("User Interface Manager initialized.");
-
 		 	// -- set initialized flag
 		 	$this->initialized = true;	
 		} else {
@@ -247,6 +247,13 @@ class DoleticKernel {
 
 	public function GetWrapper($name) {
 		return $this->wrapper_mgr->GetWrapper($name);
+	}
+
+	// --- mail management -------------------------------------------------------------------	
+
+	public function SendMail($dest, $template, $params) {
+		$mailer = new Mailer($this);
+		$mailer->SendMail($dest, $template, $params);
 	}
 
 # PROTECTED & PRIVATE #################################################################################
