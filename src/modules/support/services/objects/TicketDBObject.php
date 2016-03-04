@@ -48,7 +48,7 @@ class Ticket implements \JsonSerializable {
 		$this->subject = $subject;
 	}
 
-public function jsonSerialize() {
+	public function jsonSerialize() {
 		return [
 			TicketDBObject::COL_ID => $this->id,
 			TicketDBObject::COL_SENDER_ID => $this->sender_id,

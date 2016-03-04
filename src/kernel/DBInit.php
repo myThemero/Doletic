@@ -94,13 +94,9 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
 					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
-					UserDataServices::PARAM_INSA_DEPT 		=> "IF"
+					UserDataServices::PARAM_INSA_DEPT 		=> "IF",
+					UserDataServices::PARAM_POSITION 		=> "Responsable DSI"
 						));
-		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
-				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
-					UserDataServices::PARAM_USER_ID 		=> 1,
-					UserDataServices::PARAM_POSITION 	=> "Responsable DSI"
-					));
 		// A account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT, array(
@@ -116,13 +112,9 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
 					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
-					UserDataServices::PARAM_INSA_DEPT 		=> "IF" 
+					UserDataServices::PARAM_INSA_DEPT 		=> "IF",
+					UserDataServices::PARAM_POSITION 		=> "Secrétaire Général"
 						));
-		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
-				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
-					UserDataServices::PARAM_USER_ID 		=> 2,
-					UserDataServices::PARAM_POSITION 	=> "Responsable DSI"
-					));
 		// U account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT, array(
@@ -138,13 +130,9 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
 					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
-					UserDataServices::PARAM_INSA_DEPT 		=> "IF" 
+					UserDataServices::PARAM_INSA_DEPT 		=> "IF",
+					UserDataServices::PARAM_POSITION 		=> "Junior DSI" 
 						));
-		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
-				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
-					UserDataServices::PARAM_USER_ID 		=> 3,
-					UserDataServices::PARAM_POSITION	 	=> "Responsable DSI"
-					));
 		// G account
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT, array(
@@ -160,13 +148,9 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
 					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
-					UserDataServices::PARAM_INSA_DEPT 		=> "IF" 
+					UserDataServices::PARAM_INSA_DEPT 		=> "IF",
+					UserDataServices::PARAM_POSITION 		=> "Trésorier"
 						));
-		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
-				->GetResponseData(UserDataServices::UPDATE_POSTION, array(
-					UserDataServices::PARAM_USER_ID 		=> 4,
-					UserDataServices::PARAM_POSITION 	=> "Trésorier"
-					));
 		$kernel->GetDBObject(TeamDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(TeamServices::INSERT, array(
 					TeamServices::PARAM_LEADER_ID 			=> 1,
