@@ -142,8 +142,17 @@ class DoleticKernel {
 
 	// --- log management --------------------------------------------------------------------
 
-	public function Log($logger,$logMessage) {
-		$this->log_mgr->Log($logger,$logMessage);
+	public function LogInfo($script, $message) {
+		$this->log_mgr->LogInfo($script, $message);
+	}
+	public function LogWarning($script, $message) {
+		$this->log_mgr->LogWarning($script, $message);
+	}
+	public function LogError($script, $message) {
+		$this->log_mgr->LogError($script, $message);
+	}
+	public function LogFatal($script, $message) {
+		$this->log_mgr->LogFatal($script, $message);
 	}
 
 	// --- settings management ---------------------------------------------------------------

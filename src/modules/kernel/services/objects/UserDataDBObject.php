@@ -180,7 +180,7 @@ class UserDataServices extends AbstractObjectServices {
 	// --- params keys
 	const PARAM_ID 				= "id";
 	const PARAM_USER_ID			= "userId";
-	const PARAM_GENDER		= "gender";
+	const PARAM_GENDER			= "gender";
 	const PARAM_FIRSTNAME 		= "firstname";
 	const PARAM_LASTNAME  		= "lastname";
 	const PARAM_BIRTHDATE  		= "birthdate";
@@ -191,8 +191,8 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_POSTAL_CODE		="postalCode";
 	const PARAM_COUNTRY 		= "country";
 	const PARAM_SCHOOL_YEAR 	= "schoolYear";
-	const PARAM_INSA_DEPT 	= "insaDept";
-	const PARAM_POSITION  	= "position";
+	const PARAM_INSA_DEPT 		= "insaDept";
+	const PARAM_POSITION  		= "position";
 	const PARAM_AVATAR_ID  		= "avatarId";
 	// --- internal services (actions)
 	const GET_USER_DATA_BY_ID 	= "byidud";
