@@ -2,70 +2,55 @@ var DoleticUIModule = new function() {
 	/**
 	 *	Parent abstract module
 	 */
-	this.super = new AbstractDoleticUIModule('GRC_UIModule', '', '1.0dev');
+	this.super = new AbstractDoleticUIModule('GRC_UIModule', 'Olivier Vicente', '1.0dev');
 	/**
 	 *	Override render function
 	 */
 	this.render = function(htmlNode) {
 		this.super.render(htmlNode, this);
+        // activate items in tabs
+		$('.menu .item').tab();
+		// Load HTML templates
+		DoleticUIModule.getContactsTab();
+		DoleticUIModule.getCompaniesTab();
+		DoleticUIModule.getStatsTab();
+		// Fill all the selectors
+		DoleticUIModule.fillCategoriesSelector();
+		DoleticUIModule.fillCompaniesSelector();
+		DoleticUIModule.fillCountriesSelector();
 	}
 	/**
 	 *	Override build function
 	 */
-	this.build = function() {
-		return "<div class=\"ui two column grid container\"> \
-				  <div class=\"row\"> \
-				  </div> \
-				  <div class=\"row\"> \
-				  <div class=\"ten wide column\"> \
-					<div class=\"ui horizontal divider\">Mes tickets</div> \
-						  <div id=\"open_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème n'a pas encore été pris en charge.</div> \
-						  </div> \
-						  <div id=\"work_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème est en cours de résolution.</div> \
-						  </div> \
-						  <div id=\"done_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">Votre problème est résolu.</div> \
-						  </div> \
-						  <div id=\"undefined_popup\" class=\"ui special popup\"> \
-							<div class=\"content\">L'etat de ce ticket est étrange. Merci de prévenir les développeurs.</div> \
-						  </div> \
-						  <div id=\"ticket_list\" class=\"ui very relaxed celled selection list\"> \
-							<!-- USER TICKETS WILL GO HERE --> \
-						  </div> \
-					</div> \
-					<div class=\"six wide column\"> \
-					  <form id=\"support_form\" class=\"ui form segment\"> \
-					    <h4 class=\"ui dividing header\">Création d'un nouveau ticket</h4> \
-				  	    <div class=\"fields\"> \
-						    <div id=\"subject_field\" class=\"twelve wide required field\"> \
-						      <label>Sujet</label> \
-						      <input id=\"subject\" placeholder=\"Sujet\" type=\"text\"/> \
-						    </div> \
-						    <div class=\"field\"> \
-						      <label>Catégorie</label> \
-      						  <select id=\"category\" class=\"ui search dropdown\"> \
-      							<!-- CATEGORIES WILL GO HERE --> \
-    						  </select> \
-  							</div> \
-						  </div> \
-						  <div id=\"data_field\" class=\"required field\"> \
-    						<label>Description</label> \
-    						<textarea id=\"data\"></textarea> \
-  						  </div> \
-  						  <div class=\"ui support_center small buttons\"> \
-							<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
-							<div class=\"or\" data-text=\"ou\"></div> \
-							<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Envoyer</div> \
-						  </div> \
-				      </form> \
-					</div> \
-				  </div> \
-				  <div class=\"row\"> \
-				  </div> \
+     this.build = function() {
+ 		return "<div class=\"ui two column grid container\"> \
+ 				  	<div class=\"row\"> \
+ 				  	</div> \
+ 				  	<div class=\"row\"> \
+ 				  		<div class=\"sixteen wide column\"> \
+ 				  			<div class=\"ui top attached tabular menu\"> \
+   								<a class=\"item active\" data-tab=\"contacts\">Gestion des Contacts</a> \
+   								<a class=\"item\" data-tab=\"companies\">Gestion des Sociétés</a> \
+								<a class=\"item\" data-tab=\"stats\">Statistiques</a> \
+ 							</div> \
+ 							<div class=\"ui bottom attached tab segment active\" data-tab=\"contacts\"> \
+								<div id=\"contactsTab\"> \
+								</div> \
+ 					    	</div> \
+ 							<div class=\"ui bottom attached tab segment\" data-tab=\"companies\"> \
+								<div id=\"companiesTab\"> \
+								</div> \
+                        	</div> \
+							<div class=\"ui bottom attached tab segment\" data-tab=\"stats\"> \
+								<div id=\"statsTab\"> \
+								</div> \
+							</div> \
+						</div> \
+ 					</div> \
+	 				<div class=\"row\"> \
+	 				</div> \
 				</div>";
-	}
+ 	}
 	/**
 	 *	Override uploadSuccessHandler
 	 */
@@ -75,14 +60,118 @@ var DoleticUIModule = new function() {
 
 	this.nightMode = function(on) {
 	    if(on) {
-	      
+
 	    } else {
-	      
+
 	    }
   	}
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
+	/**
+	 *	Load the HTML code of the Contacts Tab
+	 */
+	this.getContactsTab = function() {
+		$('#contactsTab').load("../modules/grc/ui/templates/contactsTab.html");
+	}
 
+	/**
+	 *	Load the HTML code of the Companies Tab
+	 */
+	this.getCompaniesTab = function() {
+		$('#companiesTab').load("../modules/grc/ui/templates/companiesTab.html");
+	}
 
+	/**
+	 *	Load the HTML code of the Stats Tab
+	 */
+	 this.getStatsTab = function() {
+		 $('#statsTab').load("../modules/grc/ui/templates/statsTab.html");
+	 }
+
+	 /**
+ 	 *	Clear all the field from the Contact Form
+ 	 */
+	 this.clearNewContactForm = function() {
+ 		$('#firstname').val('');
+ 		$('#lastname').val('');
+ 		$('#tel').val('');
+ 		$('#mail').val('');
+ 		// clear error
+ 		if(this.hasInputError) {
+ 			// disable has error
+ 			this.hasInputError = false;
+ 			// change input style
+ 			$('#contact_form').attr('class', 'ui form segment');
+ 			$('#firstname_field').attr('class', 'required field');
+ 			$('#lastname_field').attr('class', 'required field');
+			$('#tel_field').attr('class', 'required field');
+ 			$('#email_field').attr('class', 'required field');
+ 			// remove error elements
+ 			$('#subject_error').remove();
+ 			$('#data_error').remove();
+ 		}
+ 	}
+
+	/**
+	*	Add a new Contact
+	*/
+	this.insertNewContact = function() {
+
+	}
+
+	/**
+	*	Clear all the field from the Company Form
+	*/
+	this.clearNewCompanyForm = function() {
+	   $('#firstname').val('');
+	   $('#lastname').val('');
+	   $('#type').val('');
+	   $('#adress').val('');
+	   $('#postalCode').val('');
+	   $('#city').val('');
+	   // clear error
+	   if(this.hasInputError) {
+		   // disable has error
+		   this.hasInputError = false;
+		   // change input style
+		   $('#contact_form').attr('class', 'ui form segment');
+		   $('#firstname_field').attr('class', 'required field');
+		   $('#type_field').attr('class', 'required field');
+		   $('#adress_field').attr('class', 'required field');
+		   $('#postalCode_field').attr('class', 'required field');
+		   $('#city_field').attr('class', 'required field');
+		   // remove error elements
+		   $('#subject_error').remove();
+		   $('#data_error').remove();
+	   }
+   }
+
+	/**
+	*	Add a new Company
+	*/
+	this.insertNewCompany = function() {
+
+	}
+
+	/**
+	*	Fill the categories selector
+	*/
+	this.fillCategoriesSelector = function() {
+
+	}
+
+	/**
+	*	Add the companies selector
+	*/
+	this.fillCompaniesSelector = function() {
+
+	}
+
+	/**
+	*	Add the countries selector
+	*/
+	this.fillCountriesSelector = function() {
+
+	}
 }

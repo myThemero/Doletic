@@ -1,0 +1,69 @@
+<div class="ui two column grid container">
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="ten wide column">
+            <div class="ui horizontal divider">
+                Tous les contacts <!-- PLACER FILTRE ICI -->
+            </div>
+            <table class="ui very basic collapsing celled table" id="contact_table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Nom Complet</th>
+                        <th>Société</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                        <th>Caté<gorie></gorie></th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="contact_body">
+                    <!-- CONTACT LIST WILL GO THERE -->
+                </tbody>
+            </table>
+        </div>
+        <div class="six wide column">
+            <form id="contact_form" class="ui form segment">
+                <h4 class="ui dividing header">Ajout d'un contact</h4>
+                <div id="firstname_field" class="twelve wide required field">
+                    <label>Prénom</label>
+                    <input id="firstname" placeholder="Prénom..." type="text"/>
+                </div>
+                <div id="lastname_field" class="twelve wide required field">
+                    <label>Nom</label>
+                    <input id="lastname" placeholder="Nom..." type="text"/>
+                </div>
+                <div class="fields">
+                    <div class="twelve wide required field">
+                        <label>Catégorie</label>
+                        <select id="categories" class="ui search dropdown">
+                            <!-- CATEGORIES WILL GO HERE -->
+                        </select>
+                    </div>
+                    <div class="twelve wide required field">
+                        <label>Société</label>
+                        <select id="companies" class="ui search dropdown">
+                            <!-- COMPANIES WILL GO HERE -->
+                        </select>
+                    </div>
+                </div>
+                <div id="tel_field" class="twelve wide required field">
+                    <label>Téléphone</label>
+                    <input id="tel" placeholder="0000000000" type="text"/>
+                </div>
+                <div id="email_field" class="twelve wide required field">
+                    <label>Mail</label>
+                    <input id="mail" placeholder="Mail..." type="text"/>
+                </div>
+                <div class="ui hr_center small buttons">
+                    <div id="abort_btn" class="ui button" onClick="DoleticUIModule.clearNewContactForm();">Annuler</div>
+                    <div class="or" data-text="ou"></div>
+                    <div id="send_btn" class="ui green button" onClick="DoleticUIModule.insertNewContact();">Ajouter</div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+    </div>
+</div>"
