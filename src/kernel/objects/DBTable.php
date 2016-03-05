@@ -30,6 +30,7 @@ class DBTable {
 	private $name = null;
 	private $engine = null;
 	private $columns = null;
+	private $foreign = null;
 	// -- functions
 
 	/**
@@ -39,6 +40,7 @@ class DBTable {
 		$this->name = $name;
 		$this->engine = $engine;
 		$this->columns = array();
+		$this->foreign = array();
 	}
 	/**
 	 *
@@ -47,7 +49,7 @@ class DBTable {
 		return $this->name;
 	}
 	/**
-	 *
+	 *	Add a column to SQL table
 	 */
 	public function AddColumn($name, $dataType, $size = -1, $canBeNullFlag = true, $defaultValue = "", 
 							  $autoIncFlag = false, $primaryKeyFlag = false) {
@@ -58,6 +60,12 @@ class DBTable {
 										DBTable::KEY_DEFAULT => $defaultValue,
 										DBTable::KEY_AUTO => $autoIncFlag,
 										DBTable::KEY_PRIMARY => $primaryKeyFlag));
+	}
+	/**
+	 *
+	 */
+	public function AddForeignKey($fkName, $tableColumnName, $refTableName, $refTableColumnName) {
+		array_push($this->foreign, array($fkName, $tableColumnName, $refTableName, $refTableColumnName));
 	}
 	/**
 	 *	Returns SQL CREATE query for this table
@@ -100,6 +108,12 @@ class DBTable {
 				$query = trim($query, ",").")";
 		} else {
 			$query = trim($query, ",");
+		}
+		// add foreign keys
+		if(sizeof($this->foreign) > 0) {
+			foreach ($this->foreign as $foreignKeyRecord) {
+				$query .= ",FOREIGN KEY `".$foreignKeyRecord[0]."`(`".$foreignKeyRecord[1]."`) REFERENCES `".$foreignKeyRecord[2]."`(`".$foreignKeyRecord[3]."`)";
+			}
 		}
 		// table engine
 		$query .= ") ENGINE=".$this->engine." CHARSET=utf8;";
