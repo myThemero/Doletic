@@ -436,19 +436,31 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		//  PUT RELATED FUNCTIONS
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_update_account 				($params) {
-			return $this->_put(OVHMailWrapper::FUNC_UPDATE_ACCOUNT, $params, 
-				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME));
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Update account service called. Yet deactivated for security concerns.");
+			// execute call
+			#return $this->_put(OVHMailWrapper::FUNC_UPDATE_ACCOUNT, $params, 
+			#	array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME));
 		}			
 		private function _func_update_maillist				($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Update mailing list service called.");
+			// execute call
 			return $this->_put(OVHMailWrapper::FUNC_UPDATE_MAILLIST, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		}			
 		private function _func_update_responder				($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Update responder service called.");
+			// execute call
 			return $this->_put(OVHMailWrapper::FUNC_UPDATE_RESPONDER, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT));
 		}			
 		private function _func_update_services_info 		($params) {
-			return $this->_put(OVHMailWrapper::FUNC_UPDATE_SERVICES_INFO, $params, array(OVHMailWrapper::ARG_DOMAIN));
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Update service info service called. Yet deactivated for security concerns.");
+			// execute call
+			#return $this->_put(OVHMailWrapper::FUNC_UPDATE_SERVICES_INFO, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		}		
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		//  POST RELATED FUNCTIONS
@@ -484,7 +496,10 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 			return $this->_post(OVHMailWrapper::FUNC_CREATE_ACL, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 			
 		private function _func_change_contact 				($params) {
-			return $this->_post(OVHMailWrapper::FUNC_CHANGE_CONTACT, $params, array(OVHMailWrapper::ARG_DOMAIN));
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Change contact service called. Yet deactivated for security concerns.");
+			// execute call
+			#return $this->_post(OVHMailWrapper::FUNC_CHANGE_CONTACT, $params, array(OVHMailWrapper::ARG_DOMAIN));
 		} 		
 		private function _func_change_mxfilter 				($params) {
 			return $this->_post(OVHMailWrapper::FUNC_CHANGE_MXFILTER, $params, array(OVHMailWrapper::ARG_DOMAIN));
@@ -525,38 +540,65 @@ class OVHMailWrapper extends AbstractOVHWrapper {
 		//  DELETE RELATED FUNCTIONS
 		// -----------------------------------------------------------------------------------------------------------------------------------
 		private function _func_remove_mailbox 				($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove mailbox service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME));
 		} 		
 		private function _func_remove_filter 				($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove filter service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME));
 		} 		
 		private function _func_remove_rule 					($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove rule service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_NAME, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_ID));
 		} 			
 		private function _func_remove_acl 					($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove ACL service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT_ID));
 		} 			
 		private function _func_remove_maillist 				($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove mailing list service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME));
 		} 		
 		private function _func_remove_moderator 			($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove moderator service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_EMAIL));
 		} 	
 		private function _func_remove_subscriber 			($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove subscriber service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_NAME, OVHMailWrapper::ARG_EMAIL));
 		} 	
 		private function _func_remove_redirection 			($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove redirection service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ID));
 		} 	
 		private function _func_remove_responder 			($params) {
+			// log warning in kernel
+			parent::kernel()->LogWarning(get_class(), "Remove responder service called.");
+			// execute call
 			return $this->_delete(OVHMailWrapper::FUNC_REMOVE_MAILBOX, $params, 
 				array(OVHMailWrapper::ARG_DOMAIN, OVHMailWrapper::ARG_ACCOUNT));
 		}

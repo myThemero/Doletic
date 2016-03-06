@@ -80,9 +80,16 @@ abstract class AbstractOVHWrapper {
 				if(isset($wrapperConfig)) {
 					// initialize connector
 					$this->connector = new OVHAPIConnector($wrapperConfig);
+					// test api connector
+					$api = $this->connector->GetAPI();
+					if(!isset($api)) {
+						$this->kernel->LogError(get_class(), "OVH API Connector configuration failed !");
+					} else {
+						$this->kernel->LogInfo(get_class(), "OVH API Connector successfully configured !");
+					}
 				} else {
 					// critical error -> terminate explicitly or a call on a null object will occur
-					die("AbstractOVHWrapper : Can't configure connector, configuration is missing for '".$this->name."' wrapper.");
+					$this->kernel->LogFatal(get_class(), "Can't configure connector, configuration is missing for '".$this->name."' wrapper.");
 				}
 			}
 		}

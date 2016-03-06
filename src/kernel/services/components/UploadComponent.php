@@ -108,6 +108,8 @@ class UploadComponent {
 	    	$id = $upload->GetId();
 		    // create service response
 		    $response = new ServiceResponse($id);
+		    // Log in kernel
+			$kernel->LogInfo(get_class(), "User '".$kernel->GetCurrentUser()->GetUsername()."' uploaded '".$filename."' as '".$destfname."' successfully.");
 		} catch (RuntimeException $e) {
 		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
 		}

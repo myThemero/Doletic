@@ -47,6 +47,7 @@ class CronManager extends AbstractManager {
 				array_push($scheduled, $task);
 			}
 		}
+		parent::kernel()->LogInfo(get_class(), "Running tasks.");
 		// on exécute les tâches planifiées
 		foreach ($scheduled as $task) {
 			$task->Run();

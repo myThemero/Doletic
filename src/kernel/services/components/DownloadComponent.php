@@ -32,8 +32,10 @@ class DownloadComponent {
 				// throw service exception
 				throw new RuntimeException("Le service n'a pas réussi à retrouver le fichier sur le disque.", ServiceResponse::ERR_DL_MISSING_FILE);
 			}
-			// Everything is ok build and send link
+			// Everything is ok build and send link and log in kernel
 			$response = new ServiceResponse(array("url" => $url, "basename" => $basename));
+			// Log in kernel
+			$kernel->LogInfo(get_class(), "User '".$kernel->GetCurrentUser()->GetUsername()."' downloaded '".$url."' successfully.");
 		} catch (RuntimeException $e) {
 		    $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
 		}

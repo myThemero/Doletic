@@ -3,15 +3,16 @@
 require_once "objects/mailer/phpmailer/class.phpmailer.php";
 require_once "objects/mailer/mail_templates/Templates.php";
 
-function debug($msg) {
-  echo "[DEBUG]".$msg."\n";
-}
+#function debug($msg) {
+#  echo "[DEBUG]".$msg."\n";
+#}
 
 class Mailer {
 
   // -- consts
 
   // -- attributes
+  private $kernel;
   private $mailer;
   private $sender;
   private $host;
@@ -19,11 +20,12 @@ class Mailer {
   // -- functions
 
   public function __construct($kernel) {
+    $this->kernel = $kernel;
     // on récupère les paramètres de configuration en base de données.
     $this->sender   = $kernel->SettingValue(SettingsManager::DBKEY_MAIL_USER)->GetValue();
     $this->host     = $kernel->SettingValue(SettingsManager::DBKEY_MAIL_SMTP)->GetValue();
     $this->password = $kernel->SettingValue(SettingsManager::DBKEY_MAIL_PASS)->GetValue();
-    debug("[NFO] - SMTP config (sender='".$this->sender."',host='".$this->host."',pass='".$this->password."')");
+    #debug("[NFO] - SMTP config (sender='".$this->sender."',host='".$this->host."',pass='".$this->password."')");
     // on initialise le mailer
     $this->mailer = new PHPMailer;
     // SMTP configuration
@@ -69,11 +71,10 @@ class Mailer {
         throw new RuntimeException('Mailer Error: ' . $this->mailer->ErrorInfo, 1);
       }
     } catch (RuntimeException $e) {
-      /// \todo log error when logger is ready to be used !
-      debug("[ERR] - ".$e->getMessage()); //DEBUG
+      $this->kernel()->LogError(get_class(), $e->getMessage());
       return false;
     }
-    debug("[NFO] - Mail should be on his way.");
+    $this->kernel()->LogInfo(get_class(), "Mail envoyé avec succès à ".join(',',$dest));
     return true;
   } // SendMail
 
