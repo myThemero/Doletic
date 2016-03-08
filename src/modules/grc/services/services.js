@@ -1,107 +1,129 @@
-// ----------------------- TICKET INTERFACE SERVICES CLASS ----------------------------------
+// ----------------------- FIRM INTERFACE SERVICES CLASS ----------------------------------
 
-var TicketServicesInterface = new function() {
+var FirmServicesInterface = new function() {
 
   this.meta = {
     // --- (object)
-    OBJECT: 'ticket',
+    OBJECT: 'firm',
     // --- (actions)
     ACTION: {
-      GET_TICKET_BY_ID:'byidt',
-      GET_TICKET_BY_STATUS:'bystt',
-      GET_STATUS_BY_ID:'byids',
-      GET_CATEGO_BY_ID:'byidc',
-      GET_ALL_TICKETS:'allt',
-      GET_USER_TICKETS:'allut',
-      GET_ALL_STATUSES:'alls',
-      GET_ALL_CATEGOS:'allc',
+      GET_FIRM_BY_ID:'byid',
+      GET_ALL_FIRMS:'all',
       INSERT:'insert',
       UPDATE:'update',
-      NEXT_STATUS:'nexts',
-      DELETE:'delete',
-      ARCHIVE:'archive'
+      DELETE:'delete'
     }
   };
 
   this.getAll = function(successHandler) {
-   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_TICKETS, {}, successHandler); 
-  }
-  this.getUserTickets = function(successHandler) {
-   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_TICKETS, {}, successHandler); 
-  }
-  this.getTicketsByStatus = function(statusId, successHandler) {
-   return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_TICKET_BY_STATUS, 
-            { statusId:statusId }, 
-            successHandler); 
-  }
-  this.getAllStatuses = function(successHandler) {
-   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_STATUSES, {}, successHandler); 
-  }
-  this.getAllCategories = function(successHandler) {
-   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_CATEGOS, {}, successHandler); 
+   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_FIRMS, {}, successHandler); 
   }
   this.getById = function(id, successHandler) {
     return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_TICKET_BY_ID, 
+            this.meta.OBJECT, this.meta.ACTION.GET_FIRM_BY_ID, 
             { id: id }, 
             successHandler); 
   }
-  this.getStatusById = function(id, successHandler) {
-    return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_STATUS_BY_ID, 
-            { id: id }, 
-            successHandler); 
-  }
-  this.getCategoryById = function(id, successHandler) {
-    return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_CATEGO_BY_ID, 
-            { id: id }, 
-            successHandler); 
-  }
-  this.insert = function(receiverId, subject, categoryId, data, successHandler) {
+  this.insert = function(siret, name, address, postalCode, city, country, type, lastContact, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT, 
             {
-              receiverId:receiverId,
-              subject:subject,
-              categoryId:categoryId,
-              data:data
+              siret:siret,
+              name:name,
+              address:address,
+              postalCode:postalCode,
+              city:city,
+              country:country,
+              type:type,
+              lastContact:lastContact
             }, 
             successHandler); 
   }
-  this.update = function(id, receiverId, subject, categoryId, data, statusId, successHandler) {
+  this.update = function(id, siret, name, address, postalCode, city, country, type, lastContact, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE, 
             {
               id:id,
-              receiverId:receiverId,
-              subject:subject,
-              categoryId:categoryId,
-              data:data,
-              statusId:statusId
+              siret:siret,
+              name:name,
+              address:address,
+              postalCode:postalCode,
+              city:city,
+              country:country,
+              type:type,
+              lastContact:lastContact
             }, 
             successHandler);
-  }
-  this.nextTicketStatus = function(id, successHandler) {
-    return DoleticServicesInterface.callService(
-      this.meta.OBJECT, this.meta.ACTION.NEXT_STATUS, 
-      { 
-        id:id
-      }, 
-      successHandler);
   }
   this.delete = function(id, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.DELETE, 
             { id: id }, 
             successHandler); 
+  } 
+}
+
+// ----------------------- CONTACT INTERFACE SERVICES CLASS ----------------------------------
+
+var ContactServicesInterface = new function() {
+
+  this.meta = {
+    // --- (object)
+    OBJECT: 'contact',
+    // --- (actions)
+    ACTION: {
+      GET_CONTACT_BY_ID:'byid',
+      GET_ALL_CONTACTS:'all',
+      INSERT:'insert',
+      UPDATE:'update',
+      DELETE:'delete'
+    }
+  };
+
+  this.getAll = function(successHandler) {
+   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_CONTACTS, {}, successHandler); 
   }
-  this.archive = function(id, successHandler) {
+  this.getById = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_CONTACT_BY_ID, 
+            { id: id }, 
+            successHandler); 
+  }
+  this.insert = function(gender, firstname, lastname, firmId, email, phone, categoryId, lastUpdate, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.INSERT, 
+            {
+              gender:gender,
+              firstname:firstname,
+              lastname:lastname,
+              firmId:firmId,
+              email:email,
+              phone:phone,
+              categoryId:categoryId,
+              lastUpdate:lastUpdate
+            }, 
+            successHandler); 
+  }
+  this.update = function(id, gender, firstname, lastname, firmId, email, phone, categoryId, lastUpdate, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.UPDATE, 
+            {
+              id:id,
+              gender:gender,
+              firstname:firstname,
+              lastname:lastname,
+              firmId:firmId,
+              email:email,
+              phone:phone,
+              categoryId:categoryId,
+              lastUpdate:lastUpdate
+            }, 
+            successHandler);
+  }
+  this.delete = function(id, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.DELETE, 
             { id: id }, 
             successHandler); 
   } 
-
 }
