@@ -1,0 +1,95 @@
+%
+% 	LaTeX title page template
+% 	Credits :
+% 		Antoine Chabert
+%       Hugues Verlin
+%  		Paul Dautry
+%
+
+%\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % horizontal lines
+
+\center % Center everything
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\vspace*{2cm}
+
+\textsc{\LARGE Doletic J-ERP}\\[1cm] 
+\textsc{\Large ETIC INSA Technologies}\\[3cm] 
+%\textsc{\large }\\[0.5cm] % 
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.4cm]
+{ \huge \bfseries \mainTitle}\\[0.1cm]
+{\large \bfseries - \secondTitle~-} 
+\HRule \\[2cm]
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT REFERENCE
+%----------------------------------------------------------------------------------------
+
+{\bf{Ref. \documentRef}}\\[2cm] % 
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+
+{\large \today}\\[2cm] % 
+ 
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+%\begin{minipage}{0.4\textwidth}
+\begin{center} \large
+\emph{Auteurs} \\
+\auteurs \\[2cm]
+\end{center}
+%\end{minipage}
+%~
+%\begin{minipage}{0.4\textwidth}
+%\begin{center} \large
+%\emph{Chef de projet} \\
+%\chefDeProjet
+%\end{center}
+%\begin{center} \large
+%\emph{Responsable Qualité} \\
+%\responsableQualite
+%\end{center}
+%\end{minipage}\\[1cm]
+
+%H4401\\[1cm]
+
+%----------------------------------------------------------------------------------------
+%	CARTOUCHE
+%----------------------------------------------------------------------------------------
+
+%\begin{tabular}{|m{0.3\textwidth}|m{0.3\textwidth}|m{0.3\textwidth}|}
+%  \hline
+%  \textbf{Auteurs du document} & \textbf{Relecteur} & \textbf{Responsable qualité} \\
+%  \hline
+%   & & \rule[0cm]{0cm}{5cm} \\
+%  \hline
+%\end{tabular} \\[2cm]
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+\vspace*{4cm}
+\raggedright
+\includegraphics[width=2cm]{figures/logo-doletic.png}\hfill\includegraphics[width=2cm]{figures/logo-etic.png}%
+%\includegraphics[scale=0.2]{figures/logo.png}
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\tableofcontents
+
+%\end{titlepage}
