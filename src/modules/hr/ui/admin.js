@@ -7,6 +7,7 @@ var DoleticUIModule = new function() {
 	 *	Override render function
 	 */
 	this.render = function(htmlNode) {
+
 		this.super.render(htmlNode, this);
 		// activate items in tabs
 		$('.menu .item').tab();
@@ -124,13 +125,13 @@ var DoleticUIModule = new function() {
 			    						  		</select> \
 			  							</div> \
 			  							<div class=\"fields\"> \
-									    	<div class=\"eight wide required field\"> \
+									    	<div class=\"four wide required field\"> \
 									      		<label>Année d'étude</label> \
 			      						  		<select id=\"schoolyear\" class=\"ui search dropdown\"> \
 			      								<!-- SCHOOLYEARS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
-			  								<div class=\"eight wide required field\"> \
+			  								<div class=\"four wide required field\"> \
 									      		<label>Département</label> \
 			      						  		<select id=\"dept\" class=\"ui search dropdown\"> \
 			      								<!-- DEPTS WILL GO HERE --> \
@@ -138,13 +139,13 @@ var DoleticUIModule = new function() {
 			  								</div> \
 			  						    </div> \
 			  						    <div class=\"fields\"> \
-									    	<div class=\"eight wide required field\"> \
+									    	<div class=\"four wide required field\"> \
 									      		<label>Position</label> \
 			      						  		<select id=\"position\" class=\"ui search dropdown\"> \
 			      								<!-- POSITIONS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
-			  								<div class=\"eight wide required field\"> \
+			  								<div class=\"four wide required field\"> \
 									      		<label>Intervenant</label> \
 			      						  		<select id=\"interv\" class=\"ui dropdown\"> \
 			      								<option value=\"0\">Non</option> \
@@ -336,7 +337,7 @@ var DoleticUIModule = new function() {
 			  								</div> \
 				  						    <div class=\"twelve wide required field\"> \
 										      		<label>Documents présents</label> \
-				      						  		<select name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
+				      						  		<select id=\"docs_int\" name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
 				      									<option value=\"0\">Cotisation</option> \
 														<option value=\"1\">Fiche d'inscription</option> \
 														<option value=\"2\">Certificat de scolarité</option> \
@@ -358,7 +359,7 @@ var DoleticUIModule = new function() {
 										    </div> \
 				  						    <div class=\"twelve wide required field\"> \
 										      		<label>Documents présents</label> \
-				      						  		<select name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
+				      						  		<select id=\"docs_int\" name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
 				      									<option value=\"0\">Cotisation</option> \
 														<option value=\"1\">Fiche d'inscription</option> \
 														<option value=\"2\">Certificat de scolarité</option> \
@@ -564,13 +565,13 @@ var DoleticUIModule = new function() {
       					<td>" + data.object[i].insa_dept + "</td> \
     				<td> \
     					<div class=\"ui icon buttons\"> \
-	    					<button class=\"ui icon button\"> \
+	    					<button class=\"ui icon button\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+"); return false;\"> \
 	  							<i class=\"write icon\"></i> \
 							</button> \
-							<button class=\"ui icon button\"> \
+							<button class=\"ui icon button\" onClick=\"DoleticUIModule.archiveUser("+data.object[i].id+"); return false;\"> \
 	  							<i class=\"archive icon\"></i> \
 							</button> \
-							<button class=\"ui icon button\"> \
+							<button class=\"ui icon button\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
 	  							<i class=\"remove user icon\"></i> \
 							</button> \
 						</div> \
@@ -624,6 +625,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.fillUserDetails = function(userId) {
+		this.userId = userId;
 		UserDataServicesInterface.getById(userId, function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
@@ -640,7 +642,7 @@ var DoleticUIModule = new function() {
 				$('#det').show();
 				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
 				$('#det').click();
-				$('#admm_tab').click();
+				$('#admm_tab').click();				
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -650,20 +652,14 @@ var DoleticUIModule = new function() {
 	}
 
 	this.clearNewUserForm = function() {
-		$('#firstname').val('');
-		$('#lastname').val('');
-		$('#birthdate').val('');
-		$('#tel').val('');
-		$('#mail').val('');
-		$('#postalcode').val('');
-		$('#city').val('');
-		$('#address').val('');		
 		/// \todo trouver quelque chose de mieux ici pour le reset du selecteur
 		/*DoleticUIModule.fillCountrySelector();
 		DoleticUIModule.fillPositionSelector();
 		DoleticUIModule.fillINSADeptSelector();
 		DoleticUIModule.fillGenderSelector();
 		DoleticUIModule.fillSchoolYearSelector();*/
+		
+		$('#user_form')[0].reset();
 		// clear error
 		if(this.hasInputError) {
 			// disable has error
@@ -679,7 +675,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.clearNewTeamForm = function() {
-		$('#tname').val('');
+		$('#team_form')[0].reset();
 		/// \todo trouver quelque chose de mieux ici pour le reset du selecteur
 		//DoleticUIModule.fillDivisionSelector();
 		// clear error
@@ -687,56 +683,55 @@ var DoleticUIModule = new function() {
 			// disable has error
 			this.hasInputError = false;
 			// change input style
-			$('#support_form').attr('class', 'ui form segment');
-			$('#subject_field').attr('class', 'required field');
-			$('#data_field').attr('class', 'required field');
+			//$('#support_form').attr('class', 'ui form segment');
+			//$('#subject_field').attr('class', 'required field');
+			//$('#data_field').attr('class', 'required field');
 			// remove error elements
-			$('#subject_error').remove();
-			$('#data_error').remove();
+			//$('#subject_error').remove();
+			//$('#data_error').remove();
 		}
 	}
 
 	this.clearNewAdmMembershipForm = function() {
-		$('#sdatea').val('');
-		$('#edate').val('');
+		$('#admm_form')[0].reset();
 		// reset selector
 		// clear error
 		if(this.hasInputError) {
 			// disable has error
 			this.hasInputError = false;
 			// change input style
-			$('#support_form').attr('class', 'ui form segment');
-			$('#subject_field').attr('class', 'required field');
-			$('#data_field').attr('class', 'required field');
+			//$('#support_form').attr('class', 'ui form segment');
+			//$('#subject_field').attr('class', 'required field');
+			//$('#data_field').attr('class', 'required field');
 			// remove error elements
-			$('#subject_error').remove();
-			$('#data_error').remove();
+			//$('#subject_error').remove();
+			//$('#data_error').remove();
 		}
 	}
 
 	this.clearNewIntMembershipForm = function() {
-		$('#sdatei').val('');
+		$('#intm_form')[0].reset();
 		// reset selector
 		// clear error
 		if(this.hasInputError) {
 			// disable has error
 			this.hasInputError = false;
 			// change input style
-			$('#support_form').attr('class', 'ui form segment');
-			$('#subject_field').attr('class', 'required field');
-			$('#data_field').attr('class', 'required field');
+			//$('#support_form').attr('class', 'ui form segment');
+			//$('#subject_field').attr('class', 'required field');
+			//$('#data_field').attr('class', 'required field');
 			// remove error elements
-			$('#subject_error').remove();
-			$('#data_error').remove();
+			//$('#subject_error').remove();
+			//$('#data_error').remove();
 		}
 	}
 
-	this.showInputError = function() {
+	this.showUserInputError = function() {
 		if(!this.hasInputError) {
 			// raise loginError flag
 			this.hasInputError = true;
 			// show input error elements
-			$('#support_form').attr('class', 'ui form segment error');
+			$('#user_form').attr('class', 'ui form segment error');
 			$('#subject_field').attr('class', 'field error');
 			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
 			$('#data_field').attr('class', 'field error');
@@ -744,7 +739,46 @@ var DoleticUIModule = new function() {
 		}
 	}
 
-	this.sendHandler = function(data) {
+	this.showTeamInputError = function() {
+		if(!this.hasInputError) {
+			// raise loginError flag
+			this.hasInputError = true;
+			// show input error elements
+			$('#team_form').attr('class', 'ui form segment error');
+			$('#subject_field').attr('class', 'field error');
+			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
+			$('#data_field').attr('class', 'field error');
+			$('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
+		}
+	}
+
+	this.showAdmMembershipInputError = function() {
+		if(!this.hasInputError) {
+			// raise loginError flag
+			this.hasInputError = true;
+			// show input error elements
+			$('#admm_form').attr('class', 'ui form segment error');
+			$('#subject_field').attr('class', 'field error');
+			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
+			$('#data_field').attr('class', 'field error');
+			$('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
+		}
+	}
+
+	this.showIntMembershipInputError = function() {
+		if(!this.hasInputError) {
+			// raise loginError flag
+			this.hasInputError = true;
+			// show input error elements
+			$('#intm_form').attr('class', 'ui form segment error');
+			$('#subject_field').attr('class', 'field error');
+			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
+			$('#data_field').attr('class', 'field error');
+			$('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
+		}
+	}
+
+	this.sendUserHandler = function(data) {
 		// if no service error
 		if(data.code == 0) {
 			// clear ticket form
@@ -764,10 +798,8 @@ var DoleticUIModule = new function() {
 		if(DoleticUIModule.checkNewUserForm()) {
 		   	// generate credentials according to db
 			UserServicesInterface.generateCredentials($('#firstname').val().trim(), $('#lastname').val().trim(), function(data) {
-				console.log("USERNAME = " + data.object.username + "\n");
 				// Insert new user in db
 				UserServicesInterface.insert(data.object.username, data.object.pass, function(data) {
-					console.log("ID = " + data.object + "\n");
 					// Insert user data in db SELECT ?
 					UserDataServicesInterface.insert(data.object, 
 													$('#gender option:selected').text(),
@@ -783,68 +815,182 @@ var DoleticUIModule = new function() {
 													$('#schoolyear option:selected').text(),
 													$('#dept option:selected').text(),
 													$('#position option:selected').text(),
-													DoleticUIModule.sendHandler);
+													DoleticUIModule.sendUserHandler);
 				});
 			});
 		} else {
-			DoleticUIModule.showInputError();
+			DoleticUIModule.showUserInputError();
 		}
 	}
 
 	this.insertNewTeam = function() {
-		if($('#subject').val().length > 0 && 
-		   $('#data').val().length > 0) {
+		if(DoleticUIModule.checkNewTeamForm()) {
 		   	// retreive missing information
 		TicketServicesInterface.insert(
 			"-1",
 			$('#subject').val(),
 			$('#category').val(),
 			$('#data').val(),
-			DoleticUIModule.sendHandler
+			DoleticUIModule.sendUserHandler
 			);
 		} else {
-			DoleticUIModule.showInputError();
+			DoleticUIModule.showTeamInputError();
 		}
 	}
 
 	this.insertNewAdmMembership = function() {
-		if($('#subject').val().length > 0 && 
-		   $('#data').val().length > 0) {
+		if(DoleticUIModule.checkNewAdmMembershipForm()) {
 		   	// retreive missing information
-		TicketServicesInterface.insert(
+			var options = document.getElementById("docs_adm").options;
+		AdmMembershipServicesInterface.insert(
 			"-1",
-			$('#subject').val(),
-			$('#category').val(),
-			$('#data').val(),
-			DoleticUIModule.sendHandler
+			DoleticUIModule.fillUserDetails.userId, // Retenir l'utilisateur concerné
+			$('#sdatea').val(),
+			$('#edate').val(),
+			//$('#ag').val(),
+			options[0],
+			options[1],
+			options[2],
+			DoleticUIModule.sendUserHandler
 			);
 		} else {
-			DoleticUIModule.showInputError();
+			DoleticUIModule.showAdmMembershipInputError();
 		}
 	}
 
 	this.insertNewIntMembership = function() {
-		if($('#subject').val().length > 0 && 
-		   $('#data').val().length > 0) {
+		if($('#sdatei').val().length > 0) {
 		   	// retreive missing information
-		TicketServicesInterface.insert(
+			var options = document.getElementById("docs_int").options;
+		IntMembershipServicesInterface.insert(
 			"-1",
-			$('#subject').val(),
-			$('#category').val(),
-			$('#data').val(),
-			DoleticUIModule.sendHandler
+			DoleticUIModule.fillUserDetails.userId, // Retenir l'utilisateur concerné
+			$('#sdatei').val(),
+			options[0],
+			options[1],
+			options[2],
+			options[3],
+			options[4],
+			DoleticUIModule.sendUserHandler
 			);
 		} else {
-			DoleticUIModule.showInputError();
+			DoleticUIModule.showIntMembershipInputError();
 		}
 	}
 
+	this.editUser = function(id, user_id) {
+		UserDataServicesInterface.getById(id, function(data) {
+			// if no service error
+			if(data.code == 0 && data.object != "[]") {
+				$('#firstname').val(data.object.firstname);
+				$('#firstname').prop('readonly', true);
+				$('#lastname').val(data.object.lastname);
+				$('#lastname').prop('readonly', true);
+				$('#birthdate').val(data.object.birthdate);
+				$('#country').val(data.object.country);
+				$('#city').val(data.object.city);
+				$('#address').val(data.object.address);
+				$('#postalcode').val(data.object.postal_code);
+				$('#tel').val(data.object.tel);
+				$('#mail').val(data.object.email);
+				//$('#schoolyear').val(data.object.school_year + data.object.insa_dept);
+				//$('#dept').val();
+				//$('#position').val();
+				//$('#interv').val();
+				$('#send_btn').html("Confirmer");
+				$('#send_btn').attr("onClick", "DoleticUIModule.updateUser("+id+", "+user_id+"); return false;");
+				$('#user_form').transition('pulse');
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.editTeam = function(id) {
+		
+	}
+
+	this.editAdmMembership = function(id) {
+		
+	}
+
+	this.editIntMembership = function(id) {
+		
+	}
+
+	this.updateUser = function(id, user_id) {
+		// ADD OTHER TESTS
+		if(DoleticUIModule.checkNewUserForm()) {
+			// Insert user data in db SELECT ?
+			UserDataServicesInterface.update(id, user_id,
+				$('#gender option:selected').text(),
+				$('#firstname').val(), 
+				$('#lastname').val(),
+				$('#birthdate').val(),
+				$('#tel').val(),
+				$('#mail').val(),
+				$('#address').val(),
+				$('#city').val(),
+				$('#postalcode').val(),
+				$('#country option:selected').text(),
+				$('#schoolyear option:selected').text(),
+				$('#dept option:selected').text(),
+				$('#position option:selected').text(),
+				DoleticUIModule.sendUserHandler);
+		} else {
+			DoleticUIModule.showUserInputError();
+		}
+	}
+
+	this.updateTeam = function(id) {
+		
+	}
+
+	this.updateAdmMembership = function(id) {
+		
+	}
+
+	this.updateIntMembership = function(id) {
+		
+	}
+
+	this.deleteUser = function(id) {
+		
+	}
+
+	this.deleteTeam = function(id) {
+		
+	}
+
+	this.deleteAdmMembership = function(id) {
+		
+	}
+
+	this.deleteIntMembership = function(id) {
+		
+	}
+
 	this.checkNewUserForm = function() {
-		return true;
+		return  $('#firstname').val() != "" &&
+				$('#lastname').val() != "" &&
+				$('#birthdate').val() != "" &&
+				$('#tel').val() != "" &&
+				$('#mail').val() != "" &&
+				$('#address').val() != "" &&
+				$('#city').val() != "" &&
+				$('#postalcode').val() != "" &&
+				$('#country option:selected').text() != "" &&
+				$('#schoolyear option:selected').text() != "" &&
+				$('#dept option:selected').text() != "" &&
+				$('#position option:selected').text() != "";
+
 	}
 
 	this.checkNewTeamForm = function() {
-		return true;
+		return  $('#firstname').val() != "" &&
+		$('#leader option:selected').text() != "" &&
+		$('#division option:selected').text() != "";
 	}
 
 	this.checkNewAdmMembershipForm = function() {

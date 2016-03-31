@@ -270,7 +270,8 @@ class UserDataServices extends AbstractObjectServices {
 				$params[UserDataServices::PARAM_POSTAL_CODE],
 				$params[UserDataServices::PARAM_COUNTRY],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
-				$params[UserDataServices::PARAM_INSA_DEPT]);
+				$params[UserDataServices::PARAM_INSA_DEPT],
+				$params[UserDataServices::PARAM_POSITION]);
 		} else if(!strcmp($action, UserDataServices::UPDATE_POSTION)) {
 			$data = $this->__update_user_position(
 				$params[UserDataServices::PARAM_USER_ID],
@@ -582,7 +583,11 @@ class UserDataServices extends AbstractObjectServices {
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery();
 		// execute query
-		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+		if (parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+			return $this->__update_user_position($userId, $position);
+		} else {
+			return FALSE;
+		}
 	}
 
 	private function __update_user_position($userId, $position) {

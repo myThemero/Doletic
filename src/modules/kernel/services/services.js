@@ -235,7 +235,7 @@ var UserDataServicesInterface = new function() {
             successHandler); 
   }
 
-  this.update = function(id, userId, gender, firstname, lastname, birthdate, tel, email, address, country, schoolYear, insaDept, position, password, successHandler) {
+  this.update = function(id, userId, gender, firstname, lastname, birthdate, tel, email, address, city, postalCode, country, schoolYear, insaDept, position, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, 
             this.meta.ACTION.UPDATE, 
@@ -249,6 +249,8 @@ var UserDataServicesInterface = new function() {
               tel:tel,
               email:email,
               address:address,
+              city:city,
+              postalCode:postalCode,
               country:country,
               schoolYear:schoolYear,
               insaDept:insaDept,
