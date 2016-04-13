@@ -967,8 +967,21 @@ var DoleticUIModule = new function() {
 		
 	}
 
-	this.deleteUser = function(id) {
-		
+	this.deleteUser = function(id, user_id) {
+		// Création fonction de suppression (nécessaire pour passer une référence et nom un retour)
+		var del = function() {
+			UserDataServicesInterface.delete(id, user_id, function() {
+				UserServicesInterface.delete(id, function(id) {
+					DoleticMasterInterface.hideConfirmModal();
+					DoleticMasterInterface.showSuccess("Suppression réussie !", "L'utilisateur a été supprimé avec succès !");
+					DoleticUIModule.fillUsersList();
+					
+				});
+			});
+		};
+		// Confirmation
+		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove user icon\"\>\<\/i\>", 
+			"Etes-vous sûr de vouloir supprimer l'utilisateur ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.deleteTeam = function(id) {

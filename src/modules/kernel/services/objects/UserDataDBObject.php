@@ -280,7 +280,7 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__update_user_avatar(
 				$params[UserDataServices::PARAM_AVATAR_ID]);
 		} else if(!strcmp($action, UserDataServices::DELETE)) {
-			$data = $this->__delete_user_data($params[UserDataServices::PARAM_ID]);
+			$data = $this->__delete_user_data($params[UserDataServices::PARAM_ID], $params[UserDataServices::PARAM_USER_ID]);
 		}
 		return $data;
 	}
@@ -615,13 +615,22 @@ class UserDataServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function __delete_user_data($id) {
+	private function __delete_user_data($id, $userId) {
+		// DELETE POSITIONS HISTORY FIRST
 		// create sql params
-		$sql_params = array(":".UserDataDBObject::COL_ID => $id);
+		$sql_params = array(":".UserDataDBObject::COL_USER_ID => $userId);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetDELETEQuery();
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetDELETEQuery(array(UserDataDBObject::COL_USER_ID));
 		// execute query
-		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+			// create sql params
+			$sql_params_bis = array(":".UserDataDBObject::COL_ID => $id);
+			// create sql request
+			$sql_bis= parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetDELETEQuery();
+			// execute query
+			return parent::getDBConnection()->PrepareExecuteQuery($sql_bis, $sql_params_bis);
+		}
+		return FALSE;
 	}
 
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------

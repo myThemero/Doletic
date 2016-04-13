@@ -277,10 +277,13 @@ var UserDataServicesInterface = new function() {
             successHandler);
   }
 
-  this.delete = function(id, successHandler) {
+  this.delete = function(id, userId, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.DELETE, 
-            { id: id }, 
+            { 
+              id: id,
+              userId: userId
+            }, 
             successHandler); 
   }  
 
