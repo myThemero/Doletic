@@ -338,7 +338,10 @@ class TeamServices extends AbstractObjectServices {
 			":".TeamDBObject::COL_LEADER_ID => $leaderId,
 			":".TeamDBObject::COL_DIVISION => $division);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_TEAM)->GetUPDATEQuery();
+		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_TEAM)->GetUPDATEQuery(array(TeamDBObject::COL_ID,
+																						TeamDBObject::COL_NAME,
+																						TeamDBObject::COL_LEADER_ID,
+																						TeamDBObject::COL_DIVISION));
 		// execute query
 		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
 			// Add leader as member if not already there

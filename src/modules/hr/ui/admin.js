@@ -156,7 +156,7 @@ var DoleticUIModule = new function() {
 			  						  <div class=\"ui hr_center small buttons\"> \
 										<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewUserForm();\">Annuler</div> \
 										<div class=\"or\" data-text=\"ou\"></div> \
-										<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.insertNewUser();\">Ajouter</div> \
+										<div id=\"adduser_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.insertNewUser();\">Ajouter</div> \
 									  </div> \
 							      </form> \
 								</div> \
@@ -209,7 +209,7 @@ var DoleticUIModule = new function() {
 			  						  <div class=\"ui hr_center small buttons\"> \
 										<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTeamForm();\">Annuler</div> \
 										<div class=\"or\" data-text=\"ou\"></div> \
-										<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.insertNewTeam();return false;\">Ajouter</div> \
+										<div id=\"addteam_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.insertNewTeam();return false;\">Ajouter</div> \
 									  </div> \
 							      </form> \
 								</div> \
@@ -346,7 +346,7 @@ var DoleticUIModule = new function() {
 				  						  <div class=\"ui hr_center small buttons\"> \
 											<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
 											<div class=\"or\" data-text=\"ou\"></div> \
-											<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+											<div id=\"adduser_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
 										  </div> \
 								      </form> \
 								    </div> \
@@ -370,7 +370,7 @@ var DoleticUIModule = new function() {
 				  						  <div class=\"ui hr_center small buttons\"> \
 											<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
 											<div class=\"or\" data-text=\"ou\"></div> \
-											<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+											<div id=\"adduser_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
 										  </div> \
 								      </form> \
 								    </div> \
@@ -398,13 +398,13 @@ var DoleticUIModule = new function() {
 	      $('#ticket_list').attr('class', 'ui very relaxed celled selection list inverted');
 	      $('#support_form').attr('class', 'ui form segment inverted');
 	      $('#abort_btn').attr('class', 'ui button inverted');
-		  $('#send_btn').attr('class', 'ui green button inverted');
+		  $('#adduser_btn').attr('class', 'ui green button inverted');
 	    } else {
 	      $('.ui.horizontal.divider.inverted').attr('class', 'ui horizontal divider');
 	      $('#ticket_list').attr('class', 'ui very relaxed celled selection list');
 	      $('#support_form').attr('class', 'ui form segment');
 	      $('#abort_btn').attr('class', 'ui button');
-	      $('#send_btn').attr('class', 'ui green button');
+	      $('#adduser_btn').attr('class', 'ui green button');
 	    }*/
   	}
 
@@ -606,11 +606,11 @@ var DoleticUIModule = new function() {
 								<td>TEMP</td> \
 								<td> \
 									<div class=\"ui icon buttons\"> \
-									<button class=\"ui icon button\"> \
+									<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
 	  									<i class=\"write icon\"></i> \
 									</button> \
-									<button class=\"ui icon button\"> \
-	  									<i class=\"remove user icon\"></i> \
+									<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
+	  									<i class=\"remove icon\"></i> \
 									</button></td> \
 									</div> \
 								</tr>";
@@ -660,8 +660,8 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.fillSchoolYearSelector();*/
 		
 		$('#user_form')[0].reset();
-		$('#send_btn').html("Ajouter");
-		$('#send_btn').attr("onClick", "DoleticUIModule.insertNewUser(); return false;");
+		$('#adduser_btn').html("Ajouter");
+		$('#adduser_btn').attr("onClick", "DoleticUIModule.insertNewUser(); return false;");
 		// clear error
 		if(this.hasInputError) {
 			// disable has error
@@ -678,6 +678,8 @@ var DoleticUIModule = new function() {
 
 	this.clearNewTeamForm = function() {
 		$('#team_form')[0].reset();
+		$('#addteam_btn').html("Ajouter");
+		$('#addteam_btn').attr("onClick", "DoleticUIModule.insertNewTeam(); return false;");
 		/// \todo trouver quelque chose de mieux ici pour le reset du selecteur
 		//DoleticUIModule.fillDivisionSelector();
 		// clear error
@@ -780,7 +782,7 @@ var DoleticUIModule = new function() {
 		}
 	}
 
-	this.sendUserHandler = function(data) {
+	this.addUserHandler = function(data) {
 		// if no service error
 		if(data.code == 0) {
 			// clear ticket form
@@ -795,13 +797,43 @@ var DoleticUIModule = new function() {
 		}
 	}
 
-	this.sendTeamHandler = function(data) {
+	this.editUserHandler = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// clear ticket form
+			DoleticUIModule.clearNewUserForm();
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Edition réussie !", "L'utilisateur a été modifié avec succès !");
+			// fill ticket list
+			DoleticUIModule.fillUsersList();
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
+	this.addTeamHandler = function(data) {
 		// if no service error
 		if(data.code == 0) {
 			// clear ticket form
 			DoleticUIModule.clearNewTeamForm();
 			// alert user that creation is a success
 			DoleticMasterInterface.showSuccess("Création réussie !", "L'équipe a été créée avec succès !");
+			// fill ticket list
+			DoleticUIModule.fillTeamsList();
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
+	this.editTeamHandler = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// clear ticket form
+			DoleticUIModule.clearNewTeamForm();
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Edition réussie !", "L'équipe a été modifiée avec succès !");
 			// fill ticket list
 			DoleticUIModule.fillTeamsList();
 		} else {
@@ -832,7 +864,7 @@ var DoleticUIModule = new function() {
 													$('#schoolyear option:selected').text(),
 													$('#dept option:selected').text(),
 													$('#position option:selected').text(),
-													DoleticUIModule.sendUserHandler);
+													DoleticUIModule.addUserHandler);
 				});
 			});
 		} else {
@@ -847,7 +879,7 @@ var DoleticUIModule = new function() {
 				$('#tname').val(),
 				$('#leader').val(),
 				$('#division option:selected').text(),
-				DoleticUIModule.sendTeamHandler
+				DoleticUIModule.addTeamHandler
 			);
 		} else {
 			DoleticUIModule.showTeamInputError();
@@ -867,7 +899,7 @@ var DoleticUIModule = new function() {
 			options[0],
 			options[1],
 			options[2],
-			DoleticUIModule.sendUserHandler
+			DoleticUIModule.addUserHandler
 			);
 		} else {
 			DoleticUIModule.showAdmMembershipInputError();
@@ -887,7 +919,7 @@ var DoleticUIModule = new function() {
 			options[2],
 			options[3],
 			options[4],
-			DoleticUIModule.sendUserHandler
+			DoleticUIModule.addUserHandler
 			);
 		} else {
 			DoleticUIModule.showIntMembershipInputError();
@@ -922,8 +954,8 @@ var DoleticUIModule = new function() {
 				        break;
 				    }
 				}*/
-				$('#send_btn').html("Confirmer");
-				$('#send_btn').attr("onClick", "DoleticUIModule.updateUser("+id+", "+user_id+"); return false;");
+				$('#adduser_btn').html("Confirmer");
+				$('#adduser_btn').attr("onClick", "DoleticUIModule.updateUser("+id+", "+user_id+"); return false;");
 				$('#user_form').transition('pulse');
 			} else {
 				// use default service service error handler
@@ -933,7 +965,19 @@ var DoleticUIModule = new function() {
 	}
 
 	this.editTeam = function(id) {
-		
+		TeamServicesInterface.getById(id, function(data) {
+			// if no service error
+			if(data.code == 0 && data.object != "[]") {
+				$('#tname').val(data.object.name);
+
+				$('#addteam_btn').html("Confirmer");
+				$('#addteam_btn').attr("onClick", "DoleticUIModule.updateTeam("+id+"); return false;");
+				$('#team_form').transition('pulse');
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 
 	this.editAdmMembership = function(id) {
@@ -962,7 +1006,7 @@ var DoleticUIModule = new function() {
 				$('#schoolyear option:selected').text(),
 				$('#dept option:selected').text(),
 				$('#position option:selected').text(),
-				DoleticUIModule.sendUserHandler);
+				DoleticUIModule.editUserHandler);
 		} else {
 			DoleticUIModule.showUserInputError();
 		}
@@ -970,7 +1014,19 @@ var DoleticUIModule = new function() {
 	}
 
 	this.updateTeam = function(id) {
-		
+		// ADD OTHER TESTS
+		if(DoleticUIModule.checkNewTeamForm()) {
+			// Update team data in DB
+			TeamServicesInterface.update(id,
+				$('#tname').val(),
+				$('#leader').val(),
+				$('#division option:selected').text(),
+				DoleticUIModule.editTeamHandler
+			);
+		} else {
+			DoleticUIModule.showTeamInputError();
+		}
+		DoleticUIModule.clearNewTeamForm();
 	}
 
 	this.updateAdmMembership = function(id) {
