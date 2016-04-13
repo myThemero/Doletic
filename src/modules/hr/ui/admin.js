@@ -565,10 +565,10 @@ var DoleticUIModule = new function() {
       					<td>" + data.object[i].insa_dept + "</td> \
     				<td> \
     					<div class=\"ui icon buttons\"> \
-	    					<button class=\"ui icon button\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+"); return false;\"> \
+	    					<button class=\"ui icon button\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
 	  							<i class=\"write icon\"></i> \
 							</button> \
-							<button class=\"ui icon button\" onClick=\"DoleticUIModule.archiveUser("+data.object[i].id+"); return false;\"> \
+							<button class=\"ui icon button\" onClick=\"DoleticUIModule.archiveUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
 	  							<i class=\"archive icon\"></i> \
 							</button> \
 							<button class=\"ui icon button\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
@@ -660,6 +660,8 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.fillSchoolYearSelector();*/
 		
 		$('#user_form')[0].reset();
+		$('#send_btn').html("Ajouter");
+		$('#send_btn').attr("onClick", "DoleticUIModule.insertNewUser(); return false;");
 		// clear error
 		if(this.hasInputError) {
 			// disable has error
@@ -897,6 +899,15 @@ var DoleticUIModule = new function() {
 				//$('#dept').val();
 				//$('#position').val();
 				//$('#interv').val();
+
+				/* A METTRE DANS UNE FONCTION SEPAREE */
+				/*var genderSelect = document.getElementById('gender');
+				for (var i = 0; i < genderSelect.options.length; i++) {
+				    if (genderSelect.options[i].text === data.object.gender) {
+				        genderSelect.selectedIndex = i;
+				        break;
+				    }
+				}*/
 				$('#send_btn').html("Confirmer");
 				$('#send_btn').attr("onClick", "DoleticUIModule.updateUser("+id+", "+user_id+"); return false;");
 				$('#user_form').transition('pulse');
@@ -941,6 +952,7 @@ var DoleticUIModule = new function() {
 		} else {
 			DoleticUIModule.showUserInputError();
 		}
+		DoleticUIModule.clearNewUserForm();
 	}
 
 	this.updateTeam = function(id) {
