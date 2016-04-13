@@ -207,9 +207,9 @@ var DoleticUIModule = new function() {
 			    						  		</select> \
 			  							</div> \
 			  						  <div class=\"ui hr_center small buttons\"> \
-										<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
+										<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTeamForm();\">Annuler</div> \
 										<div class=\"or\" data-text=\"ou\"></div> \
-										<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+										<div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.insertNewTeam();return false;\">Ajouter</div> \
 									  </div> \
 							      </form> \
 								</div> \
@@ -795,6 +795,21 @@ var DoleticUIModule = new function() {
 		}
 	}
 
+	this.sendTeamHandler = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// clear ticket form
+			DoleticUIModule.clearNewTeamForm();
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Création réussie !", "L'équipe a été créée avec succès !");
+			// fill ticket list
+			DoleticUIModule.fillTeamsList();
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
 	this.insertNewUser = function() {
 		// ADD OTHER TESTS
 		if(DoleticUIModule.checkNewUserForm()) {
@@ -828,12 +843,11 @@ var DoleticUIModule = new function() {
 	this.insertNewTeam = function() {
 		if(DoleticUIModule.checkNewTeamForm()) {
 		   	// retreive missing information
-		TicketServicesInterface.insert(
-			"-1",
-			$('#subject').val(),
-			$('#category').val(),
-			$('#data').val(),
-			DoleticUIModule.sendUserHandler
+			TeamServicesInterface.insert(
+				$('#tname').val(),
+				$('#leader').val(),
+				$('#division option:selected').text(),
+				DoleticUIModule.sendTeamHandler
 			);
 		} else {
 			DoleticUIModule.showTeamInputError();
@@ -1013,9 +1027,9 @@ var DoleticUIModule = new function() {
 	}
 
 	this.checkNewTeamForm = function() {
-		return  $('#firstname').val() != "" &&
-		$('#leader option:selected').text() != "" &&
-		$('#division option:selected').text() != "";
+		return  $('#tname').val() != "" &&
+				$('#leader option:selected').text() != "" &&
+				$('#division option:selected').text() != "";
 	}
 
 	this.checkNewAdmMembershipForm = function() {
