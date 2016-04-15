@@ -602,11 +602,15 @@ var DoleticUIModule = new function() {
 				for (var i = 0; i < data.object.length; i++) {
 					/*var status, popup_selector;
 					var id = "popup_trigger_"+i;*/
+					DoleticUIModule.makeTeamModal(data.object[i]);
 					content += "<tr><td>"+data.object[i].name+"</td> \
 								<td>"+window.user_list[data.object[i].leader_id-1].firstname + " " 
 								+ window.user_list[data.object[i].leader_id-1].lastname +"</td> \
 								<td>" + data.object[i].division + "</td> \
-								<td>TEMP</td> \
+								<td> \
+									<button class=\"ui icon button\" onClick=\"$('#tmodal_"+data.object[i].id+"').modal('show');\"> \
+	  									<i class=\"write icon\"></i>Gérer \
+								</td> \
 								<td> \
 									<div class=\"ui icon buttons\"> \
 									<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
@@ -625,6 +629,57 @@ var DoleticUIModule = new function() {
 				DoleticServicesInterface.handleServiceError(data);
 			}
 		});
+	}
+
+	this.makeTeamModal = function(team) {
+		var modal = "<div class=\"ui modal\" id=\"tmodal_"+team.id+"\" > \
+	  		<div class=\"header\">\
+	    		Gérer les membres\
+	  		</div> <br>\
+	  		<div class=\"ui stackable grid container\"> \
+	  			<div class=\"row\"> \
+	  				<div class=\"ten wide column\"> \
+	  					<table class=\"ui very basic single line striped table\"><tbody>";
+	  	for(var i=0; i<team.member_id.length; i++) {
+	  		modal += "		<tr><td> \
+						  <i class=\"large user middle aligned icon\"></i></td><td>\
+						  <div class=\"content\">\
+						    <div class=\"header\"><strong>"+ window.user_list[team.member_id[i]-1].firstname + " " 
+						    					   + window.user_list[team.member_id[i]-1].lastname;
+			modal +=	    "</strong></div><div class=\"description\">"+window.user_list[team.member_id[i]-1].last_pos.label+"</div>\
+						  </div>";
+			if(team.member_id[i] != team.leader_id) {
+				modal += "<td><button class=\"ui small icon button\"onClick=\"DoleticUIModule.deleteTeamMember("+team.id+", "+team.member_id[i]+"); return false;\"> \
+	  									<i class=\"remove icon\"></i>Retirer \
+							</button></td>";
+			} else {
+				modal += "<td> (Chef d'équipe) </td>";
+			}
+			modal += "</td></tr>";
+	  	}
+	  	modal += "		</tbody></table> \
+	  				</div> \
+	  				<div class=\"six wide column\"> \
+	  					<form class=\"ui form\">\
+ 						 <h4 class=\"ui dividing header\">Ajouter des membres</h4>\
+ 						 <div class=\"required field\"> \
+							<label>Membre à ajouter</label> \
+			      				<select id=\"add_tmember_select"+team.id+"\" class=\"ui search dropdown\" multiple >";
+		for(var i = 0; i<window.user_list.length; i++) {
+ 			modal += "<option value=\""+window.user_list[i].id+"\">"+window.user_list[i].firstname + " " + window.user_list[i].lastname+"</option>";
+ 		}
+		modal +=				"</select> \
+		  				 </div> \
+		  				 <div id=\"add_tmember_btn"+team.id+"\" class=\"ui green button\" onClick=\"DoleticUIModule.insertTeamMember("+team.id+");\">Ajouter</div> \
+ 						</form>\
+	  				</div> \
+	  			</div> \
+	  			<div class=\"row\"></div>\
+	  		</div> \
+		</div>";
+		
+		$("body").append(modal);
+		$("#add_tmember_select"+team.id).dropdown();
 	}
 
 	this.fillUserDetails = function(userId) {
