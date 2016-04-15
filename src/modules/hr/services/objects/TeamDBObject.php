@@ -299,7 +299,7 @@ class TeamServices extends AbstractObjectServices {
 			":".TeamDBObject::COL_ID => $id,
 			":".TeamDBObject::COL_MEMBER_ID => $memberId);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_MEMBERS)->GetDELETEQuery();
+		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_MEMBERS)->GetDELETEQuery(array(TeamDBObject::COL_ID, TeamDBObject::COL_MEMBER_ID));
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
@@ -358,15 +358,17 @@ class TeamServices extends AbstractObjectServices {
 		// create sql params
 		$sql_params = array(":".TeamDBObject::COL_ID => $id);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_Team)->GetDELETEQuery();
+		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_TEAM)->GetDELETEQuery(array(TeamDBObject::COL_ID));
 		// execute query
 		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
 			// Delete members
-			$members = $this->__get_team_members($id);
-			foreach($members as $member) {
-				$this->__delete_member($id, $member);
-			}
-			return TRUE;
+			// create sql params
+			$sql_params_bis = array(":".TeamDBObject::COL_ID => $id);
+			// create sql request
+			$sql_bis = parent::getDBObject()->GetTable(TeamDBObject::TABL_MEMBERS)->GetDELETEQuery(array(TeamDBObject::COL_ID));
+			// execute query
+			return parent::getDBConnection()->PrepareExecuteQuery($sql_bis, $sql_params_bis);
+
 		}
 		return FALSE;
 	}

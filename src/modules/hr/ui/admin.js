@@ -1055,7 +1055,17 @@ var DoleticUIModule = new function() {
 	}
 
 	this.deleteTeam = function(id) {
-		
+		// Création fonction de suppression (nécessaire pour passer une référence et nom un retour)
+		var del = function() {
+			TeamServicesInterface.delete(id, function() {
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'équipe a été supprimée avec succès !");
+				DoleticUIModule.fillTeamsList();
+			});
+		};
+		// Confirmation
+		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
+			"Etes-vous sûr de vouloir supprimer l'équipe ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);	
 	}
 
 	this.deleteAdmMembership = function(id) {
