@@ -545,6 +545,8 @@ var DoleticUIModule = new function() {
 		UserDataServicesInterface.getAll(function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
+				// Store data in global array
+				window.user_list = data.object;
 				// iterate over values to build options
 				var content = "";
 				var selector_content = "";
@@ -601,7 +603,8 @@ var DoleticUIModule = new function() {
 					/*var status, popup_selector;
 					var id = "popup_trigger_"+i;*/
 					content += "<tr><td>"+data.object[i].name+"</td> \
-								<td>"+data.object[i].leader_id +"</td> \
+								<td>"+window.user_list[data.object[i].leader_id-1].firstname + " " 
+								+ window.user_list[data.object[i].leader_id-1].lastname +"</td> \
 								<td>" + data.object[i].division + "</td> \
 								<td>TEMP</td> \
 								<td> \
