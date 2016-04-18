@@ -282,7 +282,7 @@ class TeamServices extends AbstractObjectServices {
 		return $Teams;
 	}
 
-	private function __insert_member($id, $memberId){
+	private function __insert_member($id, $memberIds){
 		// create sql request
 		$sql_params = array(
 			":".TeamDBObject::COL_ID => $id,

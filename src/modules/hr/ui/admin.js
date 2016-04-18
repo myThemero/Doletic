@@ -60,7 +60,7 @@ var DoleticUIModule = new function() {
 								<div class=\"ui horizontal divider\"> \
 									Tous les membres <!-- PLACER FILTRE ICI -->\
 								</div> \
-									<table class=\"ui very basic collapsing celled table\" id=\"user_table\"> \
+									<table class=\"ui very basic celled table\" id=\"user_table\"> \
   										<thead> \
     										<tr><th></th><th>Nom</th> \
     										<th>Email</th> \
@@ -174,7 +174,7 @@ var DoleticUIModule = new function() {
 								<div class=\"ui horizontal divider\"> \
 									Toutes les équipes <!-- PLACER FILTRE ICI -->\
 								</div> \
-									<table class=\"ui very basic collapsing celled table\" id=\"team_table\"> \
+									<table class=\"ui very basic celled table\" id=\"team_table\"> \
   										<thead> \
     										<tr><th>Nom</th> \
     										<th>Chef d'équipe</th> \
@@ -678,7 +678,13 @@ var DoleticUIModule = new function() {
 	  		</div> \
 		</div>";
 		
-		$("body").append(modal);
+		var $mod = $("#something").find("#tmodal_"+team.id);
+		if (!$mod.length) {
+		    $("body").append(modal);
+		} else {
+		    $mod.replaceWith(modal);
+		}
+		//$("body").append(modal);
 		$("#add_tmember_select"+team.id).dropdown();
 	}
 
@@ -1132,6 +1138,17 @@ var DoleticUIModule = new function() {
 
 	this.deleteIntMembership = function(id) {
 		
+	}
+
+	this.deleteTeamMember = function(id, memberId) {
+		TeamServicesInterface.deleteMember(id, memberId, function(data) {
+			if(data.object != -1) {
+				DoleticUIModule.fillTeamsList(); // Changer pour une solution plus légère (juste une équipe)
+			} else {
+				DoleticMasterInterface.showError("Erreur !", "La suppression du membre a échoué.");
+			}
+			
+		});
 	}
 
 	this.checkNewUserForm = function() {
