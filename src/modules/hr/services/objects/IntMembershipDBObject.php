@@ -39,7 +39,7 @@ class IntMembership implements \JsonSerializable {
 	*   @param bool $identity
 	*		User's id card
 	*/
-	public function __construct($id, $usererId, $startDate, $fee, $form, $certif, $rib, $identity) {
+	public function __construct($id, $userId, $startDate, $fee, $form, $certif, $rib, $identity) {
 		$this->id = intval($id);
 		$this->user_id = intval($userId);
 		$this->start_date = $startDate;
@@ -151,7 +151,7 @@ class IntMembershipServices extends AbstractObjectServices {
 		} else if(!strcmp($action, IntMembershipServices::GET_ALL_INT_MEMBERSHIPS)) {
 			$data = $this->__get_all_int_memberships();
 		} else if(!strcmp($action, IntMembershipServices::GET_USER_INT_MEMBERSHIPS)) {
-			$data = $this->__get_current_user_int_memberships();
+			$data = $this->__get_user_int_memberships($params[IntMembershipServices::PARAM_USER]);
 		} else if(!strcmp($action, IntMembershipServices::INSERT)) {
 			$data = $this->__insert_int_membership(
 				$params[IntMembershipServices::PARAM_USER],
@@ -230,9 +230,9 @@ class IntMembershipServices extends AbstractObjectServices {
 		return $int_memberships;
 	}
 
-	private function __get_current_user_int_memberships() {
+	private function __get_user_int_memberships($userId) {
 		// create sql params array
-		$sql_params = array(":".IntMembershipDBObject::COL_USER_ID => parent::getCurrentUser()->GetId());
+		$sql_params = array(":".IntMembershipDBObject::COL_USER_ID => $userId);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(IntMembershipDBObject::TABL_INT_MEMBERSHIP)->GetSELECTQuery(
 			array(DBTable::SELECT_ALL), array(IntMembershipDBObject::COL_USER_ID));

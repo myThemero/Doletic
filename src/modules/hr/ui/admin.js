@@ -281,7 +281,7 @@ var DoleticUIModule = new function() {
 						  	  	<div class=\"ui horizontal divider\"> \
 									Adhésions administrateur \
 								</div> \
-						  	  	<table class=\"ui very basic collapsing celled table\" id=\"team_table\"> \
+						  	  	<table class=\"ui very basic celled table\" id=\"admm_table\"> \
   									<thead> \
     								<tr><th>Date de début</th> \
     									<th>Date de fin</th> \
@@ -298,7 +298,7 @@ var DoleticUIModule = new function() {
 								<div class=\"ui horizontal divider\"> \
 									Adhésions intervenant \
 								</div> \
-						  	  	<table class=\"ui very basic collapsing celled table\" id=\"team_table\"> \
+						  	  	<table class=\"ui very basic collapsing celled table\" id=\"intm_table\"> \
   									<thead> \
     								<tr><th>Date de début</th> \
     									<th>Cotis.</th> \
@@ -308,8 +308,8 @@ var DoleticUIModule = new function() {
     									<th>Pièce id.</th> \
     									<th>Actions</th> \
   									</tr></thead>\
-  										<tbody id=\"admm_body\"> \
-  											<!-- ADM MEMBERSHIP LIST WILL GO THERE --> \
+  										<tbody id=\"intm_body\"> \
+  											<!-- INT MEMBERSHIP LIST WILL GO THERE --> \
   										</tbody> \
 								</table> \
 						  	  </div> \
@@ -337,16 +337,16 @@ var DoleticUIModule = new function() {
 			  								</div> \
 				  						    <div class=\"twelve wide required field\"> \
 										      		<label>Documents présents</label> \
-				      						  		<select id=\"docs_int\" name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
+				      						  		<select id=\"docs_adm\" name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
 				      									<option value=\"0\">Cotisation</option> \
 														<option value=\"1\">Fiche d'inscription</option> \
 														<option value=\"2\">Certificat de scolarité</option> \
 				    						  		</select> \
 				  							</div> \
 				  						  <div class=\"ui hr_center small buttons\"> \
-											<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
+											<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewAdmMembershipForm());\">Annuler</div> \
 											<div class=\"or\" data-text=\"ou\"></div> \
-											<div id=\"adduser_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+											<div id=\"admm_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.insertNewAdmMembership(-1);\">Ajouter</div> \
 										  </div> \
 								      </form> \
 								    </div> \
@@ -370,7 +370,7 @@ var DoleticUIModule = new function() {
 				  						  <div class=\"ui hr_center small buttons\"> \
 											<div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
 											<div class=\"or\" data-text=\"ou\"></div> \
-											<div id=\"adduser_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Ajouter</div> \
+											<div id=\"intm_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.insertNewIntMembership(-1);\">Ajouter</div> \
 										  </div> \
 								      </form> \
 								    </div> \
@@ -706,7 +706,51 @@ var DoleticUIModule = new function() {
 				$('#det').show();
 				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
 				$('#det').click();
-				$('#admm_tab').click();				
+				$('#admm_btn').attr("onClick", "DoleticUIModule.insertNewAdmMembership("+data.object.user_id+"); return false;");
+				$('#intm_btn').attr("onClick", "DoleticUIModule.insertNewIntMembership("+data.object.user_id+"); return false;");
+				$('#admm_tab').click();
+
+				// Fill memberships tables
+				AdmMembershipServicesInterface.getUserAdmMemberships(data.object.user_id, function(data) {
+					var html = "";
+					for(var i=0; i<data.object.length; i++) {
+						if(!(data.object[i].fee && data.object[i].form && data.object[i].certif)) {
+							html += "<tr class=\"warning\">";
+						} else {
+							html += "<tr>";
+						}
+						html += "<td>"+data.object[i].start_date+"</td>";
+						html += "<td>"+data.object[i].end_date+"</td>";
+						html += "<td>"+data.object[i].fee+"</td>";
+						html += "<td>"+data.object[i].form+"</td>";
+						html += "<td>"+data.object[i].certif+"</td>";
+						html += "<td>"+data.object[i].ag+"</td>";
+						html += "<td>temp</td></tr>";
+						html = html.replace(/false/g, "Non");
+						html = html.replace(/true/g, "Oui");
+					}
+					$("#admm_body").html(html);
+				});
+				IntMembershipServicesInterface.getUserIntMemberships(data.object.user_id, function(data) {
+					var html = "";
+					for(var i=0; i<data.object.length; i++) {
+						if(!(data.object[i].fee && data.object[i].form && data.object[i].certif && data.object[i].rib && data.object[i].identity)) {
+							html += "<tr class=\"warning\">";
+						} else {
+							html += "<tr>";
+						}
+						html += "<td>"+data.object[i].start_date+"</td>";
+						html += "<td>"+data.object[i].fee+"</td>";
+						html += "<td>"+data.object[i].form+"</td>";
+						html += "<td>"+data.object[i].certif+"</td>";
+						html += "<td>"+data.object[i].rib+"</td>";
+						html += "<td>"+data.object[i].identity+"</td>";
+						html += "<td>temp</td></tr>";
+						html = html.replace(/false/g, "Non");
+						html = html.replace(/true/g, "Oui");
+					}
+					$("#intm_body").html(html);
+				});
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -950,41 +994,45 @@ var DoleticUIModule = new function() {
 		}
 	}
 
-	this.insertNewAdmMembership = function() {
+	this.insertNewAdmMembership = function(userId) {
 		if(DoleticUIModule.checkNewAdmMembershipForm()) {
 		   	// retreive missing information
+			var handler = function() {
+				DoleticUIModule.fillUserDetails(userId);
+				DoleticUIModule.clearNewAdmMembershipForm();
+			};
 			var options = document.getElementById("docs_adm").options;
-		AdmMembershipServicesInterface.insert(
-			"-1",
-			DoleticUIModule.fillUserDetails.userId, // Retenir l'utilisateur concerné
-			$('#sdatea').val(),
-			$('#edate').val(),
-			//$('#ag').val(),
-			options[0],
-			options[1],
-			options[2],
-			DoleticUIModule.addUserHandler
-			);
+			AdmMembershipServicesInterface.insert(
+				userId, // Retenir l'utilisateur concerné
+				$('#sdatea').val(),
+				$('#edate').val(),
+				options[0].selected,
+				options[1].selected,
+				options[2].selected,
+				$('#ag').val(),
+				handler);
 		} else {
 			DoleticUIModule.showAdmMembershipInputError();
 		}
 	}
 
-	this.insertNewIntMembership = function() {
+	this.insertNewIntMembership = function(userId) {
 		if($('#sdatei').val().length > 0) {
+		   	var handler = function() {
+				DoleticUIModule.fillUserDetails(userId);
+				DoleticUIModule.clearNewIntMembershipForm();
+			};
 		   	// retreive missing information
 			var options = document.getElementById("docs_int").options;
-		IntMembershipServicesInterface.insert(
-			"-1",
-			DoleticUIModule.fillUserDetails.userId, // Retenir l'utilisateur concerné
-			$('#sdatei').val(),
-			options[0],
-			options[1],
-			options[2],
-			options[3],
-			options[4],
-			DoleticUIModule.addUserHandler
-			);
+			IntMembershipServicesInterface.insert(
+				userId,
+				$('#sdatei').val(),
+				options[0].selected,
+				options[1].selected,
+				options[2].selected,
+				options[3].selected,
+				options[4].selected,
+				handler);
 		} else {
 			DoleticUIModule.showIntMembershipInputError();
 		}

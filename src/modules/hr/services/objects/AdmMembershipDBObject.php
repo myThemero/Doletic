@@ -37,7 +37,7 @@ class AdmMembership implements \JsonSerializable {
 	*   @param bool $certif
 	*		School certificate
 	*/
-	public function __construct($id, $usererId, $startDate, $endDate, $fee, $form, $certif, $ag) {
+	public function __construct($id, $userId, $startDate, $endDate, $fee, $form, $certif, $ag) {
 		$this->id = intval($id);
 		$this->user_id = intval($userId);
 		$this->start_date = $startDate;
@@ -152,7 +152,7 @@ class AdmMembershipServices extends AbstractObjectServices {
 		} else if(!strcmp($action, AdmMembershipServices::GET_ALL_AGS)) {
 			$data = $this->__get_all_ags();
 		} else if(!strcmp($action, AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS)) {
-			$data = $this->__get_current_user_adm_memberships();
+			$data = $this->__get_user_adm_memberships($params[AdmMembershipServices::PARAM_USER]);
 		} else if(!strcmp($action, AdmMembershipServices::INSERT)) {
 			$data = $this->__insert_adm_membership(
 				$params[AdmMembershipServices::PARAM_USER],
@@ -231,9 +231,9 @@ class AdmMembershipServices extends AbstractObjectServices {
 		return $adm_memberships;
 	}
 
-	private function __get_current_user_adm_memberships() {
+	private function __get_user_adm_memberships($userId) {
 		// create sql params array
-		$sql_params = array(":".AdmMembershipDBObject::COL_USER_ID => parent::getCurrentUser()->GetId());
+		$sql_params = array(":".AdmMembershipDBObject::COL_USER_ID => $userId);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
 			array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_USER_ID));

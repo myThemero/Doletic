@@ -100,8 +100,8 @@ var AdmMembershipServicesInterface = new function() {
     // --- (actions)
     ACTION: {
       GET_ADM_MEMBERSHIP_BY_ID:'byidam',
-      GET_ALL_ADM_MEMBERSHIP:'allam',
-      GET_USER_ADM_MEMBERSHIP:'alluam',
+      GET_ALL_ADM_MEMBERSHIPS:'allam',
+      GET_USER_ADM_MEMBERSHIPS:'alluam',
       GET_ALL_AGS:'allag',
       INSERT:'insert',
       UPDATE:'update',
@@ -112,8 +112,12 @@ var AdmMembershipServicesInterface = new function() {
   this.getAll = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_ADM_MEMBERSHIPS, {}, successHandler); 
   }
-  this.getUserAdmMemberships = function(successHandler) {
-   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_ADM_MEMBERSHIPS, {}, successHandler); 
+  this.getUserAdmMemberships = function(userId, successHandler) {
+   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_ADM_MEMBERSHIPS, 
+            {
+              userId:userId
+            }, 
+            successHandler); 
   }
   this.getById = function(id, successHandler) {
     return DoleticServicesInterface.callService(
@@ -121,7 +125,7 @@ var AdmMembershipServicesInterface = new function() {
             { id: id }, 
             successHandler); 
   }
-  this.insert = function(userId, startDate, endDate, fee, form, certif, successHandler) {
+  this.insert = function(userId, startDate, endDate, fee, form, certif, ag, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT, 
             {
@@ -130,11 +134,12 @@ var AdmMembershipServicesInterface = new function() {
               endDate:endDate,
               fee:fee,
               form:form,
-              certif:certif
+              certif:certif,
+              ag:ag
             }, 
             successHandler); 
   }
-  this.update = function(id, userId, startDate, endDate, fee, form, certif, successHandler) {
+  this.update = function(id, userId, startDate, endDate, fee, form, certif, ag, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE, 
             {
@@ -144,7 +149,8 @@ var AdmMembershipServicesInterface = new function() {
               endDate:endDate,
               fee:fee,
               form:form,
-              certif:certif
+              certif:certif,
+              ag:ag
             }, 
             successHandler);
   }
@@ -170,8 +176,8 @@ var IntMembershipServicesInterface = new function() {
     // --- (actions)
     ACTION: {
       GET_INT_MEMBERSHIP_BY_ID:'byidim',
-      GET_ALL_INT_MEMBERSHIP:'allim',
-      GET_USER_INT_MEMBERSHIP:'alluim',
+      GET_ALL_INT_MEMBERSHIPS:'allim',
+      GET_USER_INT_MEMBERSHIPS:'alluim',
       INSERT:'insert',
       UPDATE:'update',
       DELETE:'delete'
@@ -181,8 +187,12 @@ var IntMembershipServicesInterface = new function() {
   this.getAll = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_INT_MEMBERSHIPS, {}, successHandler); 
   }
-  this.getUserIntMemberships = function(successHandler) {
-   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_INT_MEMBERSHIPS, {}, successHandler); 
+  this.getUserIntMemberships = function(userId, successHandler) {
+   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_INT_MEMBERSHIPS, 
+            {
+              userId:userId
+            }, 
+            successHandler); 
   }
   this.getById = function(id, successHandler) {
     return DoleticServicesInterface.callService(
