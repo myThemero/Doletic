@@ -990,6 +990,19 @@ var DoleticUIModule = new function() {
 		}
 	}
 
+	this.insertTeamMember = function(id) {
+		var select = document.getElementById("add_tmember_select"+id);
+		var options = new Array();
+		for(var i=0; i<select.options.length; i++) {
+			if(select.options[i].selected) {
+				options.push(select.options[i].value);
+			}
+		}
+		TeamServicesInterface.insertMember(id, options, function() {
+
+		});
+	}
+
 	this.editUser = function(id, user_id) {
 		UserDataServicesInterface.getById(id, function(data) {
 			// if no service error
