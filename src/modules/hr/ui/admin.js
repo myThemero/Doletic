@@ -320,7 +320,7 @@ var DoleticUIModule = new function() {
 						  	  <div class=\"four wide column\"> \
 						  	  <div class=\"ui top attached tabular menu\"> \
 						  	  	<a class=\"item active\" data-tab=\"admm\" id=\"admm_tab\">Administrateur</a> \
-  								<a class=\"item\" data-tab=\"intm\">Intervenant</a> \
+  								<a class=\"item\" data-tab=\"intm\" id=\"intm_tab\">Intervenant</a> \
   							  </div> \
   									<div class=\"ui bottom attached tab segment\" data-tab=\"admm\"> \
 							  	  	   <form id=\"admm_form\" class=\"ui form segment\"> \
@@ -1141,13 +1141,13 @@ var DoleticUIModule = new function() {
 				$('#ag').dropdown("set selected", Number(data.object.ag)-1);
 				var options = new Array();
 				if(data.object.fee == 1) {
-					options.push(0);
+					options.push("0");
 				}
 				if(data.object.form == 1) {
-					options.push(1);
+					options.push("1");
 				}
 				if(data.object.certif == 1) {
-					options.push(2);
+					options.push("2");
 				}
 				$('#docs_adm').dropdown("set exactly", options);
 				$('#admm_btn').html("Confirmer");
@@ -1160,7 +1160,7 @@ var DoleticUIModule = new function() {
 		});
 	}
 
-	this.editIntMembership = function(id) {
+	this.editIntMembership = function(id, userId) {
 		$('#intm_tab').click();
 		IntMembershipServicesInterface.getById(id, function(data) {
 			// if no service error
@@ -1168,23 +1168,23 @@ var DoleticUIModule = new function() {
 				$('#sdatei').val(data.object.start_date);
 				var options = new Array();
 				if(data.object.fee == 1) {
-					options.push(0);
+					options.push("0");
 				}
 				if(data.object.form == 1) {
-					options.push(1);
+					options.push("1");
 				}
 				if(data.object.certif == 1) {
-					options.push(2);
+					options.push("2");
 				}
 				if(data.object.rib == 1) {
-					options.push(3);
+					options.push("3");
 				}
 				if(data.object.identity == 1) {
-					options.push(4);
+					options.push("4");
 				}
 				$('#docs_int').dropdown("set exactly", options);
 				$('#intm_btn').html("Confirmer");
-				$('#intm_btn').attr("onClick", "DoleticUIModule.updateAdmMembership("+id+", "+userId+"); return false;");
+				$('#intm_btn').attr("onClick", "DoleticUIModule.updateIntMembership("+id+", "+userId+"); return false;");
 				$('#intm_form').transition('pulse');
 			} else {
 				// use default service service error handler
@@ -1234,12 +1234,50 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.clearNewTeamForm();
 	}
 
-	this.updateAdmMembership = function(id) {
-		
+	this.updateAdmMembership = function(id, userId) {
+		// ADD OTHER TESTS
+		if(DoleticUIModule.checkNewAdmMembershipForm()) {
+		   	// retreive missing information
+			var handler = function() {
+				DoleticUIModule.fillUserDetails(userId);
+				DoleticUIModule.clearNewAdmMembershipForm(userId);
+			};
+			var options = document.getElementById("docs_adm").options;
+			AdmMembershipServicesInterface.update(id,
+				userId, // Retenir l'utilisateur concerné
+				$('#sdatea').val(),
+				$('#edate').val(),
+				Boolean(options[0].selected),
+				Boolean(options[1].selected),
+				Boolean(options[2].selected),
+				$('#ag').val(),
+				handler);
+		} else {
+			DoleticUIModule.showAdmMembershipInputError();
+		}
 	}
 
-	this.updateIntMembership = function(id) {
-		
+	this.updateIntMembership = function(id, userId) {
+		// ADD OTHER TESTS
+		if(DoleticUIModule.checkNewIntMembershipForm()) {
+		   	// retreive missing information
+			var handler = function() {
+				DoleticUIModule.fillUserDetails(userId);
+				DoleticUIModule.clearNewIntMembershipForm(userId);
+			};
+			var options = document.getElementById("docs_int").options;
+			IntMembershipServicesInterface.update(id,
+				userId, // Retenir l'utilisateur concerné
+				$('#sdatei').val(),
+				Boolean(options[0].selected),
+				Boolean(options[1].selected),
+				Boolean(options[2].selected),
+				Boolean(options[3].selected),
+				Boolean(options[4].selected),
+				handler);
+		} else {
+			DoleticUIModule.showIntMembershipInputError();
+		}
 	}
 
 	this.deleteUser = function(id, user_id) {
