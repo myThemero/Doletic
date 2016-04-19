@@ -76,18 +76,20 @@ var DoleticUIModule = new function() {
 								<div class=\"six wide column\"> \
 								  <form id=\"user_form\" class=\"ui form segment\"> \
 								    <h4 class=\"ui dividing header\">Ajout d'un membre</h4> \
-			  							<div id=\"firstname_field\" class=\"twelve wide required field\"> \
-									      <label>Prénom</label> \
-									      <input id=\"firstname\" placeholder=\"Prénom...\" type=\"text\"/> \
-									    </div> \
-									    <div id=\"lastname_field\" class=\"twelve wide required field\"> \
-									      <label>Nom</label> \
-									      <input id=\"lastname\" placeholder=\"Nom...\" type=\"text\"/> \
-									    </div> \
+			  						  	<div class=\"fields\"> \
+				  							<div id=\"firstname_field\" class=\"eight wide required field\"> \
+										      <label>Prénom</label> \
+										      <input id=\"firstname\" placeholder=\"Prénom...\" type=\"text\"/> \
+										    </div> \
+										    <div id=\"lastname_field\" class=\"eight wide required field\"> \
+										      <label>Nom</label> \
+										      <input id=\"lastname\" placeholder=\"Nom...\" type=\"text\"/> \
+										    </div> \
+										</div>\
 									    <div class=\"fields\"> \
 									    	<div class=\"twelve wide required field\"> \
 									      		<label>Civilité</label> \
-			      						  		<select id=\"gender\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"gender\" class=\"ui fluid search dropdown\"> \
 			      								<!-- GENDERS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
@@ -96,15 +98,17 @@ var DoleticUIModule = new function() {
 									      		<input id=\"birthdate\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
 										    </div> \
 										</div> \
-									    <div id=\"tel_field\" class=\"twelve wide required field\"> \
-									      <label>Numéro de téléphone</label> \
-									      <input id=\"tel\" placeholder=\"0000000000\" type=\"text\"/> \
-									    </div> \
-									    <div id=\"mail_field\" class=\"twelve wide required field\"> \
-									      <label>Adresse mail</label> \
-									      <input id=\"mail\" placeholder=\"exemple@domaine.com\" type=\"text\"/> \
-									    </div> \
-									    <div id=\"address_field\" class=\"twelve wide required field\"> \
+										<div class=\"fields\"> \
+										    <div id=\"tel_field\" class=\"twelve wide required field\"> \
+										      <label>Numéro de téléphone</label> \
+										      <input id=\"tel\" placeholder=\"0000000000\" type=\"text\"/> \
+										    </div> \
+										    <div id=\"mail_field\" class=\"twelve wide required field\"> \
+										      <label>Adresse mail</label> \
+										      <input id=\"mail\" placeholder=\"exemple@domaine.com\" type=\"text\"/> \
+										    </div> \
+										</div>\
+									    <div id=\"address_field\" class=\"sixteen wide required field\"> \
 									      <label>Adresse</label> \
 									      <input id=\"address\" placeholder=\"X rue de ...\" type=\"text\"/> \
 									    </div> \
@@ -118,36 +122,36 @@ var DoleticUIModule = new function() {
 									      		<input id=\"city\" placeholder=\"Ville...\" type=\"text\"/> \
 									    	</div> \
 			  						    </div> \
-			  						    <div class=\"twelve wide required field\"> \
+			  						    <div class=\"sixteen wide required field\"> \
 									      		<label>Pays</label> \
-			      						  		<select id=\"country\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"country\" class=\"ui fluid search dropdown\"> \
 			      								<!-- COUNTRIES WILL GO HERE --> \
 			    						  		</select> \
 			  							</div> \
 			  							<div class=\"fields\"> \
-									    	<div class=\"four wide required field\"> \
+									    	<div class=\"sixteen wide required field\"> \
 									      		<label>Année d'étude</label> \
-			      						  		<select id=\"schoolyear\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"schoolyear\" class=\"ui fluid search dropdown\"> \
 			      								<!-- SCHOOLYEARS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
-			  								<div class=\"four wide required field\"> \
+			  								<div class=\"sixteen wide required field\"> \
 									      		<label>Département</label> \
-			      						  		<select id=\"dept\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"dept\" class=\"ui fluid search dropdown\"> \
 			      								<!-- DEPTS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
 			  						    </div> \
 			  						    <div class=\"fields\"> \
-									    	<div class=\"four wide required field\"> \
+									    	<div class=\"twelve wide required field\"> \
 									      		<label>Position</label> \
-			      						  		<select id=\"position\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"position\" class=\"ui fluid search dropdown\"> \
 			      								<!-- POSITIONS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
 			  								<div class=\"four wide required field\"> \
 									      		<label>Intervenant</label> \
-			      						  		<select id=\"interv\" class=\"ui dropdown\"> \
+			      						  		<select id=\"interv\" class=\"ui fluid dropdown\"> \
 			      								<option value=\"0\">Non</option> \
 			      								<option value=\"1\">Oui</option> \
 			    						  		</select> \
@@ -196,13 +200,13 @@ var DoleticUIModule = new function() {
 									    </div> \
 			  						    <div class=\"twelve wide required field\"> \
 									      		<label>Chef d'équipe</label> \
-			      						  		<select id=\"leader\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"leader\" class=\"ui fluid search dropdown\"> \
 			      								<!-- LEADERS WILL GO HERE --> \
 			    						  		</select> \
 			  							</div> \
 			  							<div class=\"twelve wide required field\"> \
 									      		<label>Pôle associé</label> \
-			      						  		<select id=\"division\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"division\" class=\"ui fluid search dropdown\"> \
 			      								<!-- DIVISIONS WILL GO HERE --> \
 			    						  		</select> \
 			  							</div> \
@@ -321,21 +325,21 @@ var DoleticUIModule = new function() {
   									<div class=\"ui bottom attached tab segment\" data-tab=\"admm\"> \
 							  	  	   <form id=\"admm_form\" class=\"ui form segment\"> \
 									    <h4 class=\"ui dividing header\">Ajout d'une adhésion</h4> \
-				  							<div id=\"sdate_field\" class=\"twelve wide required field\"> \
+				  							<div id=\"sdate_field\" class=\"sixteen wide required field\"> \
 										      <label>Date de début</label> \
 										      <input id=\"sdatea\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
 										    </div> \
-										    <div id=\"edate_field\" class=\"twelve wide required field\"> \
+										    <div id=\"edate_field\" class=\"sixteen wide required field\"> \
 										      <label>Date de fin</label> \
 										      <input id=\"edate\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
 										    </div> \
-										    <div class=\"twelve wide required field\"> \
+										    <div class=\"sixteen wide required field\"> \
 									      		<label>AG de recrutement</label> \
-			      						  		<select id=\"ag\" class=\"ui search dropdown\"> \
+			      						  		<select id=\"ag\" class=\"ui fluid search dropdown\"> \
 			      								<!-- AGS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
-				  						    <div class=\"twelve wide required field\"> \
+				  						    <div class=\"sixteen wide required field\"> \
 										      		<label>Documents présents</label> \
 				      						  		<select id=\"docs_adm\" name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
 				      									<option value=\"0\">Cotisation</option> \
@@ -353,11 +357,11 @@ var DoleticUIModule = new function() {
 								    <div class=\"ui bottom attached tab segment\" data-tab=\"intm\"> \
 								    	<form id=\"intm_form\" class=\"ui form segment\"> \
 									    	<h4 class=\"ui dividing header\">Ajout d'une adhésion</h4> \
-				  							<div id=\"sdate_field\" class=\"twelve wide required field\"> \
+				  							<div id=\"sdate_field\" class=\"sixteen wide required field\"> \
 										      <label>Date de début</label> \
 										      <input id=\"sdatei\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
 										    </div> \
-				  						    <div class=\"twelve wide required field\"> \
+				  						    <div class=\"sixteen wide required field\"> \
 										      		<label>Documents présents</label> \
 				      						  		<select id=\"docs_int\" name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
 				      									<option value=\"0\">Cotisation</option> \
@@ -664,7 +668,7 @@ var DoleticUIModule = new function() {
  						 <h4 class=\"ui dividing header\">Ajouter des membres</h4>\
  						 <div class=\"required field\"> \
 							<label>Membre à ajouter</label> \
-			      				<select id=\"add_tmember_select"+team.id+"\" class=\"ui search dropdown\" multiple >";
+			      				<select id=\"add_tmember_select"+team.id+"\" class=\"ui fluid search dropdown\" multiple >";
 		for(var i = 0; i<window.user_list.length; i++) {
  			modal += "<option value=\""+window.user_list[i].id+"\">"+window.user_list[i].firstname + " " + window.user_list[i].lastname+"</option>";
  		}
@@ -768,6 +772,8 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.fillSchoolYearSelector();*/
 		
 		$('#user_form')[0].reset();
+		$('#user_form .dropdown').dropdown('restore defaults');
+
 		$('#adduser_btn').html("Ajouter");
 		$('#adduser_btn').attr("onClick", "DoleticUIModule.insertNewUser(); return false;");
 		// clear error
@@ -786,6 +792,7 @@ var DoleticUIModule = new function() {
 
 	this.clearNewTeamForm = function() {
 		$('#team_form')[0].reset();
+		$('#team_form .dropdown').dropdown('restore defaults');
 		$('#addteam_btn').html("Ajouter");
 		$('#addteam_btn').attr("onClick", "DoleticUIModule.insertNewTeam(); return false;");
 		/// \todo trouver quelque chose de mieux ici pour le reset du selecteur
@@ -806,6 +813,7 @@ var DoleticUIModule = new function() {
 
 	this.clearNewAdmMembershipForm = function() {
 		$('#admm_form')[0].reset();
+		$('#admm_form .dropdown').dropdown('restore defaults');
 		// reset selector
 		// clear error
 		if(this.hasInputError) {
@@ -823,6 +831,7 @@ var DoleticUIModule = new function() {
 
 	this.clearNewIntMembershipForm = function() {
 		$('#intm_form')[0].reset();
+		$('#intm_form .dropdown').dropdown('restore defaults');
 		// reset selector
 		// clear error
 		if(this.hasInputError) {
