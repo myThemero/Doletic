@@ -292,7 +292,7 @@ class TeamServices extends AbstractObjectServices {
 			$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_MEMBERS)->GetINSERTQuery();
 			// execute query
 			if(!parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
-				return FALSE;
+				// return FALSE;
 			}
 		}
 		return TRUE;
@@ -444,6 +444,7 @@ class TeamDBObject extends AbstractDBObject {
 		$dol_team_member = new DBTable(TeamDBObject::TABL_MEMBERS);
 		$dol_team_member->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", false, false);
 		$dol_team_member->AddColumn(TeamDBObject::COL_MEMBER_ID, DBTable::DT_INT, 11, false, false);
+		$dol_team_member->AddUniqueColumns(array(TeamDBObject::COL_ID, TeamDBObject::COL_MEMBER_ID));
 		// --- com_division table
 		$com_team_division = new DBTable(TeamDBObject::TABL_DIV);
 		$com_team_division->AddColumn(TeamDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);

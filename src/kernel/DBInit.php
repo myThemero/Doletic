@@ -161,7 +161,7 @@ class FakeDataFunction extends AbstractFunction {
 		$kernel->GetDBObject(TeamDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(TeamServices::INSERT_MEMBER, array(
 					TeamServices::PARAM_ID 			=> 1,
-					TeamServices::PARAM_MEMBER_ID 	=> 2
+					TeamServices::PARAM_MEMBER_ID 	=> array(2)
 					));
 		// --------------------------------------------------------------
 		parent::endlog("done !");

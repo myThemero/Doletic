@@ -31,6 +31,7 @@ class DBTable {
 	private $engine = null;
 	private $columns = null;
 	private $foreign = null;
+	private $unique = null;
 	// -- functions
 
 	/**
@@ -41,6 +42,7 @@ class DBTable {
 		$this->engine = $engine;
 		$this->columns = array();
 		$this->foreign = array();
+		$this->unique = array();
 	}
 	/**
 	 *
@@ -66,6 +68,12 @@ class DBTable {
 	 */
 	public function AddForeignKey($fkName, $tableColumnName, $refTableName, $refTableColumnName) {
 		array_push($this->foreign, array($fkName, $tableColumnName, $refTableName, $refTableColumnName));
+	}
+	/**
+	 *
+	 */
+	public function AddUniqueColumns($uniqueColumns) {
+		array_push($this->unique, $uniqueColumns);
 	}
 	/**
 	 *	Returns SQL CREATE query for this table
@@ -113,6 +121,17 @@ class DBTable {
 		if(sizeof($this->foreign) > 0) {
 			foreach ($this->foreign as $foreignKeyRecord) {
 				$query .= ",FOREIGN KEY `".$foreignKeyRecord[0]."`(`".$foreignKeyRecord[1]."`) REFERENCES `".$foreignKeyRecord[2]."`(`".$foreignKeyRecord[3]."`)";
+			}
+		}
+		// add unique columns
+		if(sizeof($this->unique) > 0) {
+			foreach($this->unique as $columns) {
+				$query .= ", UNIQUE(";
+				foreach($columns as $col) {
+					$query .= $col . ",";
+				}
+				$query = rtrim($query, ",");
+				$query .= ")";
 			}
 		}
 		// table engine
