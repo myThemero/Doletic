@@ -30,7 +30,7 @@ var TeamServicesInterface = new function() {
   this.getUserTeams = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_TEAMS, {}, successHandler); 
   }
-  this.getTeamMembers = function(statusId, successHandler) {
+  this.getTeamMembers = function(id, successHandler) {
    return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_TEAM_MEMBERS, 
             { id:id }, 

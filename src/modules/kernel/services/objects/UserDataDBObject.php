@@ -727,7 +727,7 @@ class UserDataServices extends AbstractObjectServices {
 		    "Junior COM" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Chargé d'affaire" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Junior Qualité" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
-		    "Ancien membre" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
+		    "Ancien membre" => 			(RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G), // G  | C | D
 		    "Intervenant" => 			(RightsMap::G_R  | RightsMap::I_G | RightsMap::D_G), // G  | I | D
 		    "Client" => 				(RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G)  // G  | C | D
 		    );

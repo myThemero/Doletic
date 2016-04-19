@@ -550,11 +550,12 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				// Store data in global array
-				window.user_list = data.object;
+				window.user_list = new Array();
 				// iterate over values to build options
 				var content = "";
 				var selector_content = "";
 				for (var i = 0; i < data.object.length; i++) {
+					window.user_list[data.object[i].id] = data.object[i];
 					content += "<tr> \
       						<td> \
       						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
@@ -600,16 +601,17 @@ var DoleticUIModule = new function() {
 		TeamServicesInterface.getAll(function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
+				
+				window.team_list = new Array();
 				// create content var to build html
 				var content = "";
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
-					/*var status, popup_selector;
-					var id = "popup_trigger_"+i;*/
+					window.team_list[data.object[i].id] = data.object[i];
 					DoleticUIModule.makeTeamModal(data.object[i]);
 					content += "<tr><td>"+data.object[i].name+"</td> \
-								<td>"+window.user_list[data.object[i].leader_id-1].firstname + " " 
-								+ window.user_list[data.object[i].leader_id-1].lastname +"</td> \
+								<td>"+window.user_list[data.object[i].leader_id].firstname + " " 
+								+ window.user_list[data.object[i].leader_id].lastname +"</td> \
 								<td>" + data.object[i].division + "</td> \
 								<td> \
 									<button class=\"ui icon button\" onClick=\"$('#tmodal_"+data.object[i].id+"').modal('show');\"> \
@@ -644,14 +646,14 @@ var DoleticUIModule = new function() {
 	  		<div class=\"ui stackable grid container\"> \
 	  			<div class=\"row\"> \
 	  				<div class=\"ten wide column\"> \
-	  					<table class=\"ui very basic single line striped table\"><tbody>";
+	  					<table class=\"ui very basic single line striped table\"><tbody id=\"members_"+team.id+"\">";
 	  	for(var i=0; i<team.member_id.length; i++) {
 	  		modal += "		<tr><td> \
 						  <i class=\"large user middle aligned icon\"></i></td><td>\
 						  <div class=\"content\">\
-						    <div class=\"header\"><strong>"+ window.user_list[team.member_id[i]-1].firstname + " " 
-						    					   + window.user_list[team.member_id[i]-1].lastname;
-			modal +=	    "</strong></div><div class=\"description\">"+window.user_list[team.member_id[i]-1].last_pos.label+"</div>\
+						    <div class=\"header\"><strong>"+ window.user_list[team.member_id[i]].firstname + " " 
+						    					   + window.user_list[team.member_id[i]].lastname;
+			modal +=	    "</strong></div><div class=\"description\">"+window.user_list[team.member_id[i]].last_pos.label+"</div>\
 						  </div>";
 			if(team.member_id[i] != team.leader_id) {
 				modal += "<td><button class=\"ui small icon button\"onClick=\"DoleticUIModule.deleteTeamMember("+team.id+", "+team.member_id[i]+"); return false;\"> \
@@ -671,7 +673,9 @@ var DoleticUIModule = new function() {
 							<label>Membre à ajouter</label> \
 			      				<select id=\"add_tmember_select"+team.id+"\" class=\"ui fluid search dropdown\" multiple >";
 		for(var i = 0; i<window.user_list.length; i++) {
- 			modal += "<option value=\""+window.user_list[i].id+"\">"+window.user_list[i].firstname + " " + window.user_list[i].lastname+"</option>";
+ 			if(typeof user_list[i] !== 'undefined') {
+ 				modal += "<option value=\""+window.user_list[i].id+"\">"+window.user_list[i].firstname + " " + window.user_list[i].lastname+"</option>";
+ 			}
  		}
 		modal +=				"</select> \
 		  				 </div> \
@@ -1076,6 +1080,10 @@ var DoleticUIModule = new function() {
 	}
 
 	this.insertTeamMember = function(id) {
+		var handler = function() {
+			DoleticUIModule.updateTeamModal(id);
+		};
+
 		var select = document.getElementById("add_tmember_select"+id);
 		var options = new Array();
 		for(var i=0; i<select.options.length; i++) {
@@ -1083,9 +1091,7 @@ var DoleticUIModule = new function() {
 				options.push(select.options[i].value);
 			}
 		}
-		TeamServicesInterface.insertMember(id, options, function() {
-
-		});
+		TeamServicesInterface.insertMember(id, options, handler);
 	}
 
 	this.editUser = function(id, user_id) {
@@ -1346,13 +1352,36 @@ var DoleticUIModule = new function() {
 	}
 
 	this.deleteTeamMember = function(id, memberId) {
-		TeamServicesInterface.deleteMember(id, memberId, function(data) {
-			if(data.object != -1) {
-				DoleticUIModule.fillTeamsList(); // Changer pour une solution plus légère (juste une équipe)
-			} else {
-				DoleticMasterInterface.showError("Erreur !", "La suppression du membre a échoué.");
-			}
-			
+		var handler = function() {
+			DoleticUIModule.updateTeamModal(id);
+		};
+
+		TeamServicesInterface.deleteMember(id, memberId, handler);
+	}
+
+	this.updateTeamModal = function(id) {
+		TeamServicesInterface.getTeamMembers(id, function(data) {
+			$("add_tmember_select"+id).dropdown('restore defaults');
+			window.team_list[id].members = data.object;
+			html = "";
+			for(var i=0; i<data.object.length; i++) {
+		  		html += "		<tr><td> \
+							  <i class=\"large user middle aligned icon\"></i></td><td>\
+							  <div class=\"content\">\
+							    <div class=\"header\"><strong>"+ window.user_list[data.object[i]].firstname + " " 
+							    					   + window.user_list[data.object[i]].lastname;
+				html +=	    "</strong></div><div class=\"description\">"+window.user_list[data.object[i]].last_pos.label+"</div>\
+							  </div>";
+				if(data.object[i] != window.team_list[id].leader_id) {
+					html += "<td><button class=\"ui small icon button\"onClick=\"DoleticUIModule.deleteTeamMember("+id+", "+data.object[i]+"); return false;\"> \
+		  									<i class=\"remove icon\"></i>Retirer \
+								</button></td>";
+				} else {
+					html += "<td> (Chef d'équipe) </td>";
+				}
+				html += "</td></tr>";
+				$("#members_" + id).html(html);
+		  	}
 		});
 	}
 
