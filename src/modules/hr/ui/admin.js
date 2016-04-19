@@ -673,7 +673,7 @@ var DoleticUIModule = new function() {
 							<label>Membre à ajouter</label> \
 			      				<select id=\"add_tmember_select"+team.id+"\" class=\"ui fluid search dropdown\" multiple >";
 		for(var i = 0; i<window.user_list.length; i++) {
- 			if(typeof user_list[i] !== 'undefined') {
+ 			if(typeof window.user_list[i] !== 'undefined') {
  				modal += "<option value=\""+window.user_list[i].id+"\">"+window.user_list[i].firstname + " " + window.user_list[i].lastname+"</option>";
  			}
  		}
@@ -1360,8 +1360,8 @@ var DoleticUIModule = new function() {
 	}
 
 	this.updateTeamModal = function(id) {
+		$("#add_tmember_select"+id).dropdown('restore defaults');
 		TeamServicesInterface.getTeamMembers(id, function(data) {
-			$("add_tmember_select"+id).dropdown('restore defaults');
 			window.team_list[id].members = data.object;
 			html = "";
 			for(var i=0; i<data.object.length; i++) {
