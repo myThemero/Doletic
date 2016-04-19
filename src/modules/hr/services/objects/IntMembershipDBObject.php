@@ -264,35 +264,35 @@ class IntMembershipServices extends AbstractObjectServices {
 			":".IntMembershipDBObject::COL_ID => "NULL",
 			":".IntMembershipDBObject::COL_USER_ID => $userId,
 			":".IntMembershipDBObject::COL_START_DATE => $startDate,
-			":".IntMembershipDBObject::COL_FEE => $fee,
-			":".IntMembershipDBObject::COL_FORM => $form,
-			":".IntMembershipDBObject::COL_CERTIF => $certif,
-			":".IntMembershipDBObject::COL_RIB => $rib,
-			":".IntMembershipDBObject::COL_IDENTITY => $identity);
+			":".IntMembershipDBObject::COL_FEE => (int)($fee === 'true'),
+			":".IntMembershipDBObject::COL_FORM => (int)($form === 'true'),
+			":".IntMembershipDBObject::COL_CERTIF => (int)($certif === 'true'),
+			":".IntMembershipDBObject::COL_RIB => (int)($rib === 'true'),
+			":".IntMembershipDBObject::COL_IDENTITY => (int)($identity === 'true'));
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(IntMembershipDBObject::TABL_INT_MEMBERSHIP)->GetINSERTQuery();
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function __update_IntMembership($id, $userId, $startDate, $fee, $form, $certif, $rib, $identity) {
+	private function __update_int_membership($id, $userId, $startDate, $fee, $form, $certif, $rib, $identity) {
 		// create sql params
 		$sql_params = array(
 			":".IntMembershipDBObject::COL_ID => $id,
 			":".IntMembershipDBObject::COL_USER_ID => $userId,
 			":".IntMembershipDBObject::COL_START_DATE => $startDate,
-			":".IntMembershipDBObject::COL_FEE => $fee,
-			":".IntMembershipDBObject::COL_FORM => $form,
-			":".IntMembershipDBObject::COL_CERTIF => $certif,
-			":".IntMembershipDBObject::COL_RIB => $rib,
-			":".IntMembershipDBObject::COL_IDENTITY => $identity);
+			":".IntMembershipDBObject::COL_FEE => (int)($fee === 'true'),
+			":".IntMembershipDBObject::COL_FORM => (int)($form === 'true'),
+			":".IntMembershipDBObject::COL_CERTIF => (int)($certif === 'true'),
+			":".IntMembershipDBObject::COL_RIB => (int)($rib === 'true'),
+			":".IntMembershipDBObject::COL_IDENTITY => (int)($identity === 'true'));
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(IntMembershipDBObject::TABL_INT_MEMBERSHIP)->GetUPDATEQuery();
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}	
 
-	private function __delete_IntMembership($id) {
+	private function __delete_int_membership($id) {
 		// create sql params
 		$sql_params = array(":".IntMembershipDBObject::COL_ID => $id);
 		// create sql request

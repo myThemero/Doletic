@@ -227,7 +227,7 @@ var DoleticUIModule = new function() {
 						 	\
 						<div class=\"ui bottom attached tab segment\" data-tab=\"userdetails\"> \
 						  	<div class=\"ui two column grid container\"> \
-						  	  <div class=\"four wide column\"> \
+						  	  <div class=\"three wide column\"> \
 						  	  	<div class=\"ui relaxed divided list\"> \
 								  <div class=\"item\"> \
 								    <div class=\"content\"> \
@@ -281,7 +281,7 @@ var DoleticUIModule = new function() {
 								  </div> \
 								</div> \
 						  	  </div> \
-						  	  <div class=\"eight wide column\"> \
+						  	  <div class=\"nine wide column\"> \
 						  	  	<div class=\"ui horizontal divider\"> \
 									Adhésions administrateur \
 								</div> \
@@ -302,7 +302,7 @@ var DoleticUIModule = new function() {
 								<div class=\"ui horizontal divider\"> \
 									Adhésions intervenant \
 								</div> \
-						  	  	<table class=\"ui very basic collapsing celled table\" id=\"intm_table\"> \
+						  	  	<table class=\"ui very basic celled table\" id=\"intm_table\"> \
   									<thead> \
     								<tr><th>Date de début</th> \
     									<th>Cotis.</th> \
@@ -617,13 +617,14 @@ var DoleticUIModule = new function() {
 								</td> \
 								<td> \
 									<div class=\"ui icon buttons\"> \
-									<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
-	  									<i class=\"write icon\"></i> \
-									</button> \
-									<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
-	  									<i class=\"remove icon\"></i> \
-									</button></td> \
+										<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
+		  									<i class=\"write icon\"></i> \
+										</button> \
+										<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
+		  									<i class=\"remove icon\"></i> \
+										</button>\
 									</div> \
+								</td> \
 								</tr>";
 				};
 				// insert html content
@@ -729,9 +730,19 @@ var DoleticUIModule = new function() {
 						html += "<td>"+data.object[i].form+"</td>";
 						html += "<td>"+data.object[i].certif+"</td>";
 						html += "<td>"+data.object[i].ag+"</td>";
-						html += "<td>temp</td></tr>";
 						html = html.replace(/false/g, "Non");
 						html = html.replace(/true/g, "Oui");
+						html += "<td>\
+							<div class=\"ui icon buttons\"> \
+								<button class=\"ui icon button\" onClick=\"DoleticUIModule.editAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+		  							<i class=\"write icon\"></i> \
+								</button> \
+								<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+		  							<i class=\"remove icon\"></i> \
+								</button>\
+							</div> \
+						</td></tr>";
+						
 					}
 					$("#admm_body").html(html);
 				});
@@ -749,9 +760,19 @@ var DoleticUIModule = new function() {
 						html += "<td>"+data.object[i].certif+"</td>";
 						html += "<td>"+data.object[i].rib+"</td>";
 						html += "<td>"+data.object[i].identity+"</td>";
-						html += "<td>temp</td></tr>";
 						html = html.replace(/false/g, "Non");
 						html = html.replace(/true/g, "Oui");
+						html += "<td>\
+							<div class=\"ui icon buttons\"> \
+								<button class=\"ui icon button\" onClick=\"DoleticUIModule.editIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+		  							<i class=\"write icon\"></i> \
+								</button> \
+								<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+		  							<i class=\"remove icon\"></i> \
+								</button>\
+							</div> \
+						</td></tr>";
+						
 					}
 					$("#intm_body").html(html);
 				});
@@ -1015,9 +1036,9 @@ var DoleticUIModule = new function() {
 				userId, // Retenir l'utilisateur concerné
 				$('#sdatea').val(),
 				$('#edate').val(),
-				options[0].selected,
-				options[1].selected,
-				options[2].selected,
+				Boolean(options[0].selected),
+				Boolean(options[1].selected),
+				Boolean(options[2].selected),
 				$('#ag').val(),
 				handler);
 		} else {
@@ -1036,11 +1057,11 @@ var DoleticUIModule = new function() {
 			IntMembershipServicesInterface.insert(
 				userId,
 				$('#sdatei').val(),
-				options[0].selected,
-				options[1].selected,
-				options[2].selected,
-				options[3].selected,
-				options[4].selected,
+				Boolean(options[0].selected),
+				Boolean(options[1].selected),
+				Boolean(options[2].selected),
+				Boolean(options[3].selected),
+				Boolean(options[4].selected),
 				handler);
 		} else {
 			DoleticUIModule.showIntMembershipInputError();
@@ -1202,12 +1223,30 @@ var DoleticUIModule = new function() {
 			"Etes-vous sûr de vouloir supprimer l'équipe ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);	
 	}
 
-	this.deleteAdmMembership = function(id) {
-		
+	this.deleteAdmMembership = function(id, userId) {
+		var del = function() {
+			AdmMembershipServicesInterface.delete(id, function() {
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
+				DoleticUIModule.fillUserDetails(userId);
+			});
+		};
+		// Confirmation
+		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
+			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
 	}
 
-	this.deleteIntMembership = function(id) {
-		
+	this.deleteIntMembership = function(id, userId) {
+		var del = function() {
+			IntMembershipServicesInterface.delete(id, function() {
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
+				DoleticUIModule.fillUserDetails(userId);
+			});
+		};
+		// Confirmation
+		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
+			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.deleteTeamMember = function(id, memberId) {

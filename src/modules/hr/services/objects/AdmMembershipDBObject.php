@@ -281,9 +281,9 @@ class AdmMembershipServices extends AbstractObjectServices {
 			":".AdmMembershipDBObject::COL_USER_ID => $userId,
 			":".AdmMembershipDBObject::COL_START_DATE => $startDate,
 			":".AdmMembershipDBObject::COL_END_DATE => $endDate,
-			":".AdmMembershipDBObject::COL_FEE => $fee,
-			":".AdmMembershipDBObject::COL_FORM => $form,
-			":".AdmMembershipDBObject::COL_CERTIF => $certif,
+			":".AdmMembershipDBObject::COL_FEE => (int)($fee === 'true'),
+			":".AdmMembershipDBObject::COL_FORM => (int)($form === 'true'),
+			":".AdmMembershipDBObject::COL_CERTIF => (int)($certif === 'true'),
 			":".AdmMembershipDBObject::COL_AG => $ag);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetINSERTQuery();
@@ -291,16 +291,16 @@ class AdmMembershipServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
-	private function __update_AdmMembership($id, $userId, $startDate, $endDate, $fee, $form, $certif, $ag) {
+	private function __update_adm_membership($id, $userId, $startDate, $endDate, $fee, $form, $certif, $ag) {
 		// create sql params
 		$sql_params = array(
 			":".AdmMembershipDBObject::COL_ID => $id,
 			":".AdmMembershipDBObject::COL_USER_ID => $userId,
 			":".AdmMembershipDBObject::COL_START_DATE => $startDate,
 			":".AdmMembershipDBObject::COL_END_DATE => $endDate,
-			":".AdmMembershipDBObject::COL_FEE => $fee,
-			":".AdmMembershipDBObject::COL_FORM => $form,
-			":".AdmMembershipDBObject::COL_CERTIF => $certif,
+			":".AdmMembershipDBObject::COL_FEE => (int)($fee === 'true'),
+			":".AdmMembershipDBObject::COL_FORM => (int)($form === 'true'),
+			":".AdmMembershipDBObject::COL_CERTIF => (int)($certif === 'true'),
 			":".AdmMembershipDBObject::COL_AG => $ag);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetUPDATEQuery();
@@ -308,7 +308,7 @@ class AdmMembershipServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}	
 
-	private function __delete_AdmMembership($id) {
+	private function __delete_adm_membership($id) {
 		// create sql params
 		$sql_params = array(":".AdmMembershipDBObject::COL_ID => $id);
 		// create sql request
