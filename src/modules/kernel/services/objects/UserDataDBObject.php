@@ -713,7 +713,7 @@ class UserDataServices extends AbstractObjectServices {
 		// -- init ETIC pos table --------------------------------------------------------------------
 		$positions = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
 			"Président" => 				(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-			"Vide-Président" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+			"Vice-Président" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
 			"Secrétaire Général" => 	(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
 			"Trésorier" => 				(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
 			"Comptable" => 				(RightsMap::A_R  | RightsMap::M_G | RightsMap::D_G), // A  | M | D
@@ -727,6 +727,7 @@ class UserDataServices extends AbstractObjectServices {
 		    "Junior COM" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Chargé d'affaire" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Junior Qualité" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
+		    "Ancien membre" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Intervenant" => 			(RightsMap::G_R  | RightsMap::I_G | RightsMap::D_G), // G  | I | D
 		    "Client" => 				(RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G)  // G  | C | D
 		    );
