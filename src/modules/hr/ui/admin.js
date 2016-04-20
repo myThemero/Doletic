@@ -628,8 +628,10 @@ var DoleticUIModule = new function() {
 				var content = "";
 				var selector_content = "";
 				for (var i = 0; i < data.object.length; i++) {
+					window.user_list[data.object[i].id] = data.object[i];
+					selector_content += "<option value=\""+data.object[i].user_id+"\">"
+	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
 					if(data.object[i].last_pos.label.indexOf(pos_filter) > -1 && data.object[i].last_pos.division.indexOf(div_filter) > -1) {
-						window.user_list[data.object[i].id] = data.object[i];
 						content += "<tr> \
 	      						<td> \
 	      						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
@@ -655,8 +657,6 @@ var DoleticUIModule = new function() {
 							</div> \
 	    				</td> \
 	    				</tr>";
-	    				selector_content += "<option value=\""+data.object[i].user_id+"\">"
-	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
 					}
 				};
 				$('#user_body').html(content);
@@ -1405,7 +1405,7 @@ var DoleticUIModule = new function() {
 	this.checkNewTeamForm = function() {
 		$('#team_form .field').removeClass("error");
 		var valid = true;
-		if( !DoleticMasterInterface.checkName($('#tname').val()) ) {
+		if( $('#tname').val() == "" ) {
 			$('#tname_field').addClass("error");
 			valid = false;
 		}
