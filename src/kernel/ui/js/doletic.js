@@ -287,9 +287,41 @@ var DoleticMasterInterface = new function() {
     $('#module_submenu').html('');
   }
 
+  // Check functions
+  /**
+   *  Checks date
+   */
+  this.checkDate = function(str) {
+    return str.match(/^\d{4}\-\d{2}\-\d{2}$/g) != null;
+  }
+  /**
+   *  Checks phone number
+   */
+  this.checkTel = function (str) {
+    return str.match(/^\d{10}$/g) != null;
+  }
+   /**
+   *  Checks postal code
+   */
+  this.checkPostalCode = function (str) {
+    return str.match(/^\d{5}$/g) != null;
+  }
+  /**
+   *  Checks email address
+   */
+  this.checkMail = function(str) {
+    return str.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/g) != null;
+  }
+  /**
+   *  Checks firstname or lastname
+   */
+  this.checkName = function(str) {
+    return str.match(/^[^0-9\_\@\#\"\'\/\\\*\+]+$/) != null;
+  }
+
 }
 
-// ------------------------ DOLETIC DOCUMENT REDAY FUNCTION ------------------------------------
+// ------------------------ DOLETIC DOCUMENT READY FUNCTION ------------------------------------
 
 /**
  *  DOCUMENT READY : entry point

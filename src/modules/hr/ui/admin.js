@@ -87,7 +87,7 @@ var DoleticUIModule = new function() {
 										    </div> \
 										</div>\
 									    <div class=\"fields\"> \
-									    	<div class=\"twelve wide required field\"> \
+									    	<div class=\"twelve wide required field\" id=\"gender_field\"> \
 									      		<label>Civilité</label> \
 			      						  		<select id=\"gender\" class=\"ui fluid search dropdown\"> \
 			      								<!-- GENDERS WILL GO HERE --> \
@@ -122,20 +122,20 @@ var DoleticUIModule = new function() {
 									      		<input id=\"city\" placeholder=\"Ville...\" type=\"text\"/> \
 									    	</div> \
 			  						    </div> \
-			  						    <div class=\"sixteen wide required field\"> \
+			  						    <div class=\"sixteen wide required field\" id=\"country_field\"> \
 									      		<label>Pays</label> \
 			      						  		<select id=\"country\" class=\"ui fluid search dropdown\"> \
 			      								<!-- COUNTRIES WILL GO HERE --> \
 			    						  		</select> \
 			  							</div> \
 			  							<div class=\"fields\"> \
-									    	<div class=\"sixteen wide required field\"> \
+									    	<div class=\"sixteen wide required field\" id=\"schoolyear_field\"> \
 									      		<label>Année d'étude</label> \
 			      						  		<select id=\"schoolyear\" class=\"ui fluid search dropdown\"> \
 			      								<!-- SCHOOLYEARS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
-			  								<div class=\"sixteen wide required field\"> \
+			  								<div class=\"sixteen wide required field\" id=\"dept_field\"> \
 									      		<label>Département</label> \
 			      						  		<select id=\"dept\" class=\"ui fluid search dropdown\"> \
 			      								<!-- DEPTS WILL GO HERE --> \
@@ -143,7 +143,7 @@ var DoleticUIModule = new function() {
 			  								</div> \
 			  						    </div> \
 			  						    <div class=\"fields\"> \
-									    	<div class=\"twelve wide required field\"> \
+									    	<div class=\"twelve wide required field\" id=\"position_field\"> \
 									      		<label>Position</label> \
 			      						  		<select id=\"position\" class=\"ui fluid search dropdown\"> \
 			      								<!-- POSITIONS WILL GO HERE --> \
@@ -325,7 +325,7 @@ var DoleticUIModule = new function() {
   									<div class=\"ui bottom attached tab segment\" data-tab=\"admm\"> \
 							  	  	   <form id=\"admm_form\" class=\"ui form segment\"> \
 									    <h4 class=\"ui dividing header\">Ajout d'une adhésion</h4> \
-				  							<div id=\"sdate_field\" class=\"sixteen wide required field\"> \
+				  							<div id=\"sdatea_field\" class=\"sixteen wide required field\"> \
 										      <label>Date de début</label> \
 										      <input id=\"sdatea\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
 										    </div> \
@@ -357,7 +357,7 @@ var DoleticUIModule = new function() {
 								    <div class=\"ui bottom attached tab segment\" data-tab=\"intm\"> \
 								    	<form id=\"intm_form\" class=\"ui form segment\"> \
 									    	<h4 class=\"ui dividing header\">Ajout d'une adhésion</h4> \
-				  							<div id=\"sdate_field\" class=\"sixteen wide required field\"> \
+				  							<div id=\"sdatei_field\" class=\"sixteen wide required field\"> \
 										      <label>Date de début</label> \
 										      <input id=\"sdatei\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
 										    </div> \
@@ -1058,7 +1058,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.insertNewIntMembership = function(userId) {
-		if($('#sdatei').val().length > 0) {
+		if(DoleticUIModule.checkNewIntMembershipForm()) {
 		   	var handler = function() {
 				DoleticUIModule.fillUserDetails(userId);
 				DoleticUIModule.clearNewIntMembershipForm(userId);
@@ -1386,33 +1386,120 @@ var DoleticUIModule = new function() {
 	}
 
 	this.checkNewUserForm = function() {
-		return  $('#firstname').val() != "" &&
-				$('#lastname').val() != "" &&
-				$('#birthdate').val() != "" &&
-				$('#tel').val() != "" &&
-				$('#mail').val() != "" &&
-				$('#address').val() != "" &&
-				$('#city').val() != "" &&
-				$('#postalcode').val() != "" &&
-				$('#country option:selected').text() != "" &&
-				$('#schoolyear option:selected').text() != "" &&
-				$('#dept option:selected').text() != "" &&
-				$('#position option:selected').text() != "";
-
+		$('#user_form .field').removeClass("error");
+		var valid = true;
+		var errorString = "";
+		if( !DoleticMasterInterface.checkName($('#firstname').val()) ) {
+			$('#firstname_field').addClass("error");
+			valid = false;
+		}
+		if( !DoleticMasterInterface.checkName($('#lastname').val()) ) {
+			$('#lastname_field').addClass("error");
+			valid = false;
+		}
+		if( !DoleticMasterInterface.checkDate($('#birthdate').val()) ) {
+			$('#birthdate_field').addClass("error");
+			valid = false;
+		}
+		if( !DoleticMasterInterface.checkTel($('#tel').val()) ) {
+			$('#tel_field').addClass("error");
+			valid = false;
+		}
+		if( !DoleticMasterInterface.checkMail($('#mail').val()) ) {
+			$('#mail_field').addClass("error");
+			valid = false;
+		}
+		if($('#address').val() == "") {
+			$('#address_field').addClass("error");
+			valid = false;
+		}
+		if( !DoleticMasterInterface.checkName($('#city').val()) ) {
+			$('#city_field').addClass("error");
+			valid = false;
+		}
+		if( !DoleticMasterInterface.checkPostalCode($('#postalcode').val()) ) {
+			$('#postalcode_field').addClass("error");
+			valid = false;
+		}
+		if( $('#gender option:selected').text() == "" ) {
+			$('#gender_field').addClass("error");
+			valid = false;
+		}
+		if( $('#country option:selected').text() == "" ) {
+			$('#country_field').addClass("error");
+			valid = false;
+		}
+		if( $('#schoolyear option:selected').text() == "" ) {
+			$('#schoolyear_field').addClass("error");
+			valid = false;
+		}
+		if( $('#dept option:selected').text() == "" ) {
+			$('#dept_field').addClass("error");
+			valid = false;
+		}
+		if( $('#position option:selected').text() == "" ) {
+			$('#position_field').addClass("error");
+			valid = false;
+		}
+		if(!valid) {
+			$('#user_form').transition('shake');
+			DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+		}
+		return valid;
 	}
 
 	this.checkNewTeamForm = function() {
-		return  $('#tname').val() != "" &&
-				$('#leader option:selected').text() != "" &&
-				$('#division option:selected').text() != "";
+		$('#team_form .field').removeClass("error");
+		var valid = true;
+		if( !DoleticMasterInterface.checkName($('#tname').val()) ) {
+			$('#tname_field').addClass("error");
+			valid = false;
+		}
+		if( $('#leader option:selected').text() == "" ) {
+			$('#leader_field').addClass("error");
+			valid = false;
+		}
+		if( $('#division option:selected').text() == "" ) {
+			$('#division_field').addClass("error");
+			valid = false;
+		}
+		if(!valid) {
+			$('#team_form').transition('shake');
+			DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+		}
+		return valid;
 	}
 
 	this.checkNewAdmMembershipForm = function() {
-		return true;
+		$('#admm_form .field').removeClass("error");
+		var valid = true;
+		if( !DoleticMasterInterface.checkDate($('#sdatea').val()) ) {
+			$('#sdatea_field').addClass("error");
+			valid = false;
+		}
+		if( !DoleticMasterInterface.checkDate($('#edate').val()) ) {
+			$('#edate_field').addClass("error");
+			valid = false;
+		}
+		if(!valid) {
+			$('#admm_form').transition('shake');
+			DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+		}
+		return valid;
 	}
 
 	this.checkNewIntMembershipForm = function() {
-		return true;
+		$('#intm_form .field').removeClass("error");
+		var valid = true;
+		if( !DoleticMasterInterface.checkDate($('#sdatei').val()) ) {
+			$('#sdatei_field').addClass("error");
+			valid = false;
+		}
+		if(!valid) {
+			$('#intm_form').transition('shake');
+			DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+		}
+		return valid;
 	}
 
 }
