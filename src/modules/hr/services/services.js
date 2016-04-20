@@ -15,8 +15,6 @@ var TeamServicesInterface = new function() {
       GET_ALL_DIVISIONS:'alldiv',
       INSERT_MEMBER:'insmem',
       DELETE_MEMBER:'delmem',
-      INSERT_AG:'insag',
-      DELETE_AG:'delag',
       INSERT:'insert',
       UPDATE:'update',
       DELETE:'delete'
@@ -104,7 +102,6 @@ var AdmMembershipServicesInterface = new function() {
       GET_ADM_MEMBERSHIP_BY_ID:'byidam',
       GET_ALL_ADM_MEMBERSHIPS:'allam',
       GET_USER_ADM_MEMBERSHIPS:'alluam',
-      GET_ALL_AGS:'allag',
       INSERT:'insert',
       UPDATE:'update',
       DELETE:'delete'
@@ -162,22 +159,6 @@ var AdmMembershipServicesInterface = new function() {
             { id: id }, 
             successHandler); 
   }
-  this.insertAg = function(ag, successHandler) {
-    return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.INSERT_AG, 
-            { ag:ag }, 
-            successHandler); 
-  }
-  this.deleteAg = function(ag, successHandler) {
-    return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.DELETE_AG, 
-            { ag:ag }, 
-            successHandler); 
-  } 
-  this.getAllAgs = function(successHandler) {
-    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_AGS, {}, successHandler); 
-  }
-
 }
 
 // ----------------------- INT_MEMBERSHIP INTERFACE SERVICES CLASS ----------------------------------

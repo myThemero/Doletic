@@ -29,13 +29,14 @@ class UserData implements \JsonSerializable {
 	private $insa_dept = null;
 	private $avatar_id = null;
 	private $last_pos = null;
+	private $ag = null;
 
 	/**
 	*	@brief Constructs a udata
 	*/
 	public function __construct($id, $userId, $gender, $firstname, $lastname, $birthdate, 
 								$tel, $email, $address, $city, $postalCode, $country, $schoolYear, 
-								$insaDept, $avatarId, $lastPos) {
+								$insaDept, $avatarId,  $ag, $lastPos) {
 		$this->id = intval($id);
 		$this->user_id = intval($userId);
 		$this->gender = $gender;
@@ -52,6 +53,7 @@ class UserData implements \JsonSerializable {
 		$this->insa_dept = $insaDept;
 		$this->avatar_id = intval($avatarId);
 		$this->last_pos = $lastPos;
+		$this->ag = $ag;
 	}
 
 	public function jsonSerialize() {
@@ -71,6 +73,7 @@ class UserData implements \JsonSerializable {
 			UserDataDBObject::COL_SCHOOL_YEAR => $this->school_year,
 			UserDataDBObject::COL_INSA_DEPT => $this->insa_dept,
 			UserDataDBObject::COL_AVATAR_ID => $this->avatar_id,
+			UserDataDBObject::COL_AG => $this->ag,
 			UserDataDBObject::COL_LAST_POS => $this->last_pos //Not in DB...
 		];
 	}
@@ -171,6 +174,12 @@ class UserData implements \JsonSerializable {
 	public function GetLastPos() {
 		return $this->last_pos;
 	}
+	/**
+	*	@brief Returns UserData agr
+	*/
+	public function GetAg() {
+		return $this->ag;
+	}
 }
 
 
@@ -194,6 +203,7 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_INSA_DEPT 		= "insaDept";
 	const PARAM_POSITION  		= "position";
 	const PARAM_AVATAR_ID  		= "avatarId";
+	const PARAM_AG		 		= "ag";
 	// --- internal services (actions)
 	const GET_USER_DATA_BY_ID 	= "byidud";
 	const GET_CURRENT_USER_DATA	= "currud";
@@ -204,7 +214,10 @@ class UserDataServices extends AbstractObjectServices {
 	const GET_ALL_COUNTRIES 	= "allc";
 	const GET_ALL_INSA_DEPTS 	= "alldept";
 	const GET_ALL_POSITIONS 	= "allpos";
+	const GET_ALL_AGS 			= "allag";
 	const CHECK_MAIL			= "checkmail";
+	const INSERT_AG		    	= "insag";
+	const DELETE_AG         	= "delag";
 	const INSERT				= "insert";
 	const UPDATE 				= "update";
 	const UPDATE_POSTION        = "updatepos";
@@ -237,6 +250,12 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__get_all_INSA_depts();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_POSITIONS)) {
 			$data = $this->__get_all_positions();
+		} else if(!strcmp($action, UserDataServices::GET_ALL_AGS)) {
+			$data = $this->__get_all_ags();
+		} else if(!strcmp($action, UserDataServices::INSERT_AG)) {
+			$data = $this->__insert_ag($params[UserDataServices::PARAM_AG]);
+		} else if(!strcmp($action, UserDataServices::DELETE_AG)) {
+			$data = $this->__delete_ag($params[UserDataServices::PARAM_AG]);
 		} else if(!strcmp($action, UserDataServices::CHECK_MAIL)) {
 			$data = $this->__check_mail($params[UserDataServices::PARAM_EMAIL]);
 		} else if(!strcmp($action, UserDataServices::INSERT)) {
@@ -254,7 +273,8 @@ class UserDataServices extends AbstractObjectServices {
 				$params[UserDataServices::PARAM_COUNTRY],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
 				$params[UserDataServices::PARAM_INSA_DEPT],
-				$params[UserDataServices::PARAM_POSITION]);
+				$params[UserDataServices::PARAM_POSITION],
+				$params[UserDataServices::PARAM_AG]);
 		} else if(!strcmp($action, UserDataServices::UPDATE)) {
 			$data = $this->__update_user_data(
 				$params[UserDataServices::PARAM_ID],
@@ -271,7 +291,8 @@ class UserDataServices extends AbstractObjectServices {
 				$params[UserDataServices::PARAM_COUNTRY],
 				$params[UserDataServices::PARAM_SCHOOL_YEAR],
 				$params[UserDataServices::PARAM_INSA_DEPT],
-				$params[UserDataServices::PARAM_POSITION]);
+				$params[UserDataServices::PARAM_POSITION],
+				$params[UserDataServices::PARAM_AG]);
 		} else if(!strcmp($action, UserDataServices::UPDATE_POSTION)) {
 			$data = $this->__update_user_position(
 				$params[UserDataServices::PARAM_USER_ID],
@@ -317,6 +338,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
 					$row[UserDataDBObject::COL_INSA_DEPT],
 					$row[UserDataDBObject::COL_AVATAR_ID],
+					$row[UserDataDBObject::COL_AG],
 					$this->__get_user_last_position($row[UserDataDBObject::COL_USER_ID]));
 			}
 		}
@@ -351,6 +373,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
 					$row[UserDataDBObject::COL_INSA_DEPT],
 					$row[UserDataDBObject::COL_AVATAR_ID],
+					$row[UserDataDBObject::COL_AG],
 					$this->__get_user_last_position($row[UserDataDBObject::COL_USER_ID]));
 			}
 		}
@@ -426,6 +449,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_SCHOOL_YEAR],
 					$row[UserDataDBObject::COL_INSA_DEPT],
 					$row[UserDataDBObject::COL_AVATAR_ID],
+					$row[UserDataDBObject::COL_AG],
 					$this->__get_user_last_position($row[UserDataDBObject::COL_USER_ID])));
 			}
 		}
@@ -528,11 +552,26 @@ class UserDataServices extends AbstractObjectServices {
 		return $udata;
 	}
 
+	private function __get_all_ags() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_AG)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for teams and fill it
+		$ags = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($ags,$row[UserDataDBObject::COL_AG]); 
+			}
+		}
+		return $ags;
+	}
+
 	// -- modify
 
 	private function __insert_user_data($userId, $gender, $firstname, $lastname, $birthdate, 
 									$tel, $email, $address, $city, $postalCode, $country, $schoolYear, 
-									$insaDept, $position) {
+									$insaDept, $position, $ag) {
 		// create sql params
 		$sql_params = array(
 			":".UserDataDBObject::COL_ID => "NULL",
@@ -549,7 +588,8 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_COUNTRY => $country,
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
 			":".UserDataDBObject::COL_INSA_DEPT => $insaDept,
-			":".UserDataDBObject::COL_AVATAR_ID => "NULL");
+			":".UserDataDBObject::COL_AVATAR_ID => "NULL",
+			":".UserDataDBObject::COL_AG => $ag);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetINSERTQuery();
 		// execute query
@@ -558,11 +598,21 @@ class UserDataServices extends AbstractObjectServices {
 		} else {
 			return FALSE;
 		}
-	} 
+	}
+
+
+	private function __insert_ag($ag) {
+		// create sql params
+		$sql_params = array(":".UserDataDBObject::COL_AG => $ag);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_AG)->GetINSERTQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
 
 	private function __update_user_data($id, $userId, $gender, $firstname, $lastname, $birthdate, 
 									$tel, $email, $address, $city, $postalCode, $country, $schoolYear, 
-									$insaDept, $position) {
+									$insaDept, $position, $ag) {
 		// create sql params
 		$sql_params = array(
 			":".UserDataDBObject::COL_ID => $id,
@@ -579,7 +629,8 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_COUNTRY => $country,
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
 			":".UserDataDBObject::COL_INSA_DEPT => $insaDept,
-			":".UserDataDBObject::COL_AVATAR_ID => "NULL");
+			":".UserDataDBObject::COL_AVATAR_ID => "NULL",
+			":".UserDataDBObject::COL_AG => $ag);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery();
 		// execute query
@@ -631,6 +682,15 @@ class UserDataServices extends AbstractObjectServices {
 			return parent::getDBConnection()->PrepareExecuteQuery($sql_bis, $sql_params_bis);
 		}
 		return FALSE;
+	}
+
+	private function __delete_ag($ag) {
+		// create sql params
+		$sql_params = array(":".UserDataDBObject::COL_AG => $ag);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_AG)->GetDELETEQuery(array(UserDataDBObject::COL_AG));
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
@@ -759,6 +819,7 @@ class UserDataDBObject extends AbstractDBObject {
 	const TABL_COM_COUNTRY = "com_country";
 	const TABL_COM_INSA_DEPT = "com_insa_dept";
 	const TABL_COM_POSITION	= "com_position";
+	const TABL_AG = "com_ag";
 	// --- columns
 	const COL_ID 			= "id";
 	const COL_USER_ID  		= "user_id";
@@ -780,7 +841,8 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_SINCE			= "since";
 	const COL_RG_CODE   	= "rg_code";
 	const COL_AVATAR_ID   	= "avatar_id";
-	const COL_LAST_POS		="last_pos";
+	const COL_LAST_POS		= "last_pos";
+	const COL_AG 			= "ag";
 	// -- attributes
 
 	// -- functions
@@ -806,6 +868,7 @@ class UserDataDBObject extends AbstractDBObject {
 		$dol_udata->AddColumn(UserDataDBObject::COL_SCHOOL_YEAR, DBTable::DT_INT, 11, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_INSA_DEPT, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, false, "-1");
+		$dol_udata->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false);
 		// --- dol_udata_position table
 		$dol_udata_position = new DBTable(UserDataDBObject::TABL_USER_POSITION);
 		$dol_udata_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
@@ -826,6 +889,9 @@ class UserDataDBObject extends AbstractDBObject {
 		$com_position = new DBTable(UserDataDBObject::TABL_COM_POSITION);
 		$com_position->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		$com_position->AddColumn(UserDataDBObject::COL_RG_CODE, DBTable::DT_INT, 11, false, "");
+		// --- com_ag table
+		$com_ag = new DBTable(UserDataDBObject::TABL_AG);
+		$com_ag->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false, "", false, true);
 
 		// -- add tables
 		parent::addTable($dol_udata);
@@ -834,6 +900,7 @@ class UserDataDBObject extends AbstractDBObject {
 		parent::addTable($com_country);
 		parent::addTable($com_insa_dept);
 		parent::addTable($com_position);
+		parent::addTable($com_ag);
 	}
 
 	/**

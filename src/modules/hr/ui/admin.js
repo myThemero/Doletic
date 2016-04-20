@@ -143,17 +143,16 @@ var DoleticUIModule = new function() {
 			  								</div> \
 			  						    </div> \
 			  						    <div class=\"fields\"> \
-									    	<div class=\"twelve wide required field\" id=\"position_field\"> \
+									    	<div class=\"nine wide required field\" id=\"position_field\"> \
 									      		<label>Position</label> \
 			      						  		<select id=\"position\" class=\"ui fluid search dropdown\"> \
 			      								<!-- POSITIONS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
-			  								<div class=\"four wide required field\"> \
-									      		<label>Intervenant</label> \
-			      						  		<select id=\"interv\" class=\"ui fluid dropdown\"> \
-			      								<option value=\"0\">Non</option> \
-			      								<option value=\"1\">Oui</option> \
+			  								<div class=\"seven wide required field\" id=\"ag_field\"> \
+									      		<label>AG de recrutement</label> \
+			      						  		<select id=\"ag\" class=\"ui fluid search dropdown\"> \
+			      								<!-- AGS WILL GO HERE --> \
 			    						  		</select> \
 			  								</div> \
 			  						    </div> \
@@ -279,6 +278,12 @@ var DoleticUIModule = new function() {
 								      <div class=\"description\" id=\"det_country\">undefined</div> \
 								    </div> \
 								  </div> \
+								  <div class=\"item\"> \
+								    <div class=\"content\"> \
+								      <div class=\"header\">AG de recrutement</div> \
+								      <div class=\"description\" id=\"det_ag\">undefined</div> \
+								    </div> \
+								  </div> \
 								</div> \
 						  	  </div> \
 						  	  <div class=\"nine wide column\"> \
@@ -292,7 +297,6 @@ var DoleticUIModule = new function() {
     									<th>Cotis.</th> \
     									<th>Fiche</th> \
     									<th>Certif.</th> \
-    									<th>AG</th> \
     									<th>Actions</th> \
   									</tr></thead>\
   										<tbody id=\"admm_body\"> \
@@ -333,12 +337,6 @@ var DoleticUIModule = new function() {
 										      <label>Date de fin</label> \
 										      <input id=\"edate\" placeholder=\"YYYY-MM-JJ\" type=\"text\"/> \
 										    </div> \
-										    <div class=\"sixteen wide required field\"> \
-									      		<label>AG de recrutement</label> \
-			      						  		<select id=\"ag\" class=\"ui fluid search dropdown\"> \
-			      								<!-- AGS WILL GO HERE --> \
-			    						  		</select> \
-			  								</div> \
 				  						    <div class=\"sixteen wide required field\"> \
 										      		<label>Documents présents</label> \
 				      						  		<select id=\"docs_adm\" name=\"Documents\" multiple=\"\" class=\"ui fluid dropdown\"> \
@@ -461,7 +459,6 @@ var DoleticUIModule = new function() {
 			if(data.code == 0) {
 				// create content var to build html
 				var content = "";
-				//DoleticUIModule.INSADept_list = data.object;
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
 					content += "<option value=\""+data.object[i].label+"\">"+data.object[i].label+"</option>\n";
@@ -491,8 +488,6 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0) {
 				// create content var to build html
-				//DoleticUIModule.position_list = data.object;
-				//var extra_content = "<option value=\"0\">Tous</option>";
 				var content = "";
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
@@ -500,7 +495,6 @@ var DoleticUIModule = new function() {
 				};
 				// insert html content
 				$('#position').html(content);
-				//$('#user_filter').html(extra_content + content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -527,7 +521,7 @@ var DoleticUIModule = new function() {
 		});
 	}
 	this.fillAGSelector = function() {
-		AdmMembershipServicesInterface.getAllAgs(function(data) {
+		UserDataServicesInterface.getAllAgs(function(data) {
 			// if no service error
 			if(data.code == 0) {
 				// create content var to build html
@@ -712,6 +706,7 @@ var DoleticUIModule = new function() {
 				$('#det_tel').html(data.object.tel);
 				$('#det_mail').html(data.object.email);
 				$('#det_year').html(data.object.school_year + data.object.insa_dept);
+				$('#det_ag').html(data.object.ag);
 				$('#det').show();
 				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
 				$('#det').click();
@@ -735,7 +730,6 @@ var DoleticUIModule = new function() {
 						html += "<td>"+data.object[i].fee+"</td>";
 						html += "<td>"+data.object[i].form+"</td>";
 						html += "<td>"+data.object[i].certif+"</td>";
-						html += "<td>"+data.object[i].ag+"</td>";
 						html = html.replace(/false/g, "Non");
 						html = html.replace(/true/g, "Oui");
 						html += "<td>\
@@ -911,6 +905,7 @@ var DoleticUIModule = new function() {
 													$('#schoolyear option:selected').text(),
 													$('#dept option:selected').text(),
 													$('#position option:selected').text(),
+													$('#ag option:selected').text(),
 													DoleticUIModule.addUserHandler);
 				});
 			});
@@ -944,7 +939,6 @@ var DoleticUIModule = new function() {
 				Boolean(options[0].selected),
 				Boolean(options[1].selected),
 				Boolean(options[2].selected),
-				$('#ag').val(),
 				handler);
 		}
 	}
@@ -1004,6 +998,7 @@ var DoleticUIModule = new function() {
 				$('#gender').dropdown("set selected", data.object.gender);
 				$('#position').dropdown("set selected", data.object.last_pos.label);
 				$('#country').dropdown("set selected", data.object.country);
+				$('#ag').dropdown("set selected", data.object.ag);
 
 				$('#adduser_btn').html("Confirmer");
 				$('#adduser_btn').attr("onClick", "DoleticUIModule.updateUser("+id+", "+user_id+"); return false;");
@@ -1115,6 +1110,7 @@ var DoleticUIModule = new function() {
 				$('#schoolyear option:selected').text(),
 				$('#dept option:selected').text(),
 				$('#position option:selected').text(),
+				$('#ag option:selected').text(),
 				DoleticUIModule.editUserHandler);
 		}
 	}
@@ -1148,7 +1144,6 @@ var DoleticUIModule = new function() {
 				Boolean(options[0].selected),
 				Boolean(options[1].selected),
 				Boolean(options[2].selected),
-				$('#ag').val(),
 				handler);
 		}
 	}

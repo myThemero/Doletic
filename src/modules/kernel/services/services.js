@@ -142,6 +142,9 @@ var UserDataServicesInterface = new function() {
       GET_ALL_COUNTRIES:"allc",
       GET_ALL_INSA_DEPTS:"alldept",
       GET_ALL_POSITIONS:"allpos",
+      GET_ALL_AGS:'allag',
+      INSERT_AG:'insag',
+      DELETE_AG:'delag',
       INSERT:"insert",
       UPDATE:"update",
       UPDATE_POSTION:"updatepos",
@@ -176,34 +179,21 @@ var UserDataServicesInterface = new function() {
             { id: id }, 
             successHandler); 
   }
-
-  /*this.getGenderById = function(id, successHandler) {
+   this.insertAg = function(ag, successHandler) {
     return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_GENDER_BY_ID, 
-            { id: id }, 
+            this.meta.OBJECT, this.meta.ACTION.INSERT_AG, 
+            { ag:ag }, 
             successHandler); 
   }
-
-  this.getCountryById = function(id, successHandler) {
+  this.deleteAg = function(ag, successHandler) {
     return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_COUNTRY_BY_ID, 
-            { id: id },  
+            this.meta.OBJECT, this.meta.ACTION.DELETE_AG, 
+            { ag:ag }, 
             successHandler); 
+  } 
+  this.getAllAgs = function(successHandler) {
+    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_AGS, {}, successHandler); 
   }
-
-  this.getINSADeptById = function(id, successHandler) {
-    return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_INSA_DEPT_BY_ID, 
-            { id: id }, 
-            successHandler); 
-  }
-
-  this.getPositionById = function(id, successHandler) {
-    return DoleticServicesInterface.callService(
-            this.meta.OBJECT, this.meta.ACTION.GET_POSITION_BY_ID, 
-            { id: id }, 
-            successHandler); 
-  }  */
 
   this.getUserLastPos = function(userId, successHandler) {
     return DoleticServicesInterface.callService(
@@ -212,7 +202,7 @@ var UserDataServicesInterface = new function() {
             successHandler);
   }
 
-  this.insert = function(userId, gender, firstname, lastname, birthdate, tel, email, address, city, postalCode, country, schoolYear, insaDept, position, successHandler) {
+  this.insert = function(userId, gender, firstname, lastname, birthdate, tel, email, address, city, postalCode, country, schoolYear, insaDept, position, ag, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, 
             this.meta.ACTION.INSERT, 
@@ -230,12 +220,13 @@ var UserDataServicesInterface = new function() {
               country:country,
               schoolYear:schoolYear,
               insaDept:insaDept,
-              position:position
+              position:position,
+              ag:ag
             }, 
             successHandler); 
   }
 
-  this.update = function(id, userId, gender, firstname, lastname, birthdate, tel, email, address, city, postalCode, country, schoolYear, insaDept, position, successHandler) {
+  this.update = function(id, userId, gender, firstname, lastname, birthdate, tel, email, address, city, postalCode, country, schoolYear, insaDept, position, ag, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, 
             this.meta.ACTION.UPDATE, 
@@ -254,7 +245,8 @@ var UserDataServicesInterface = new function() {
               country:country,
               schoolYear:schoolYear,
               insaDept:insaDept,
-              position:position
+              position:position,
+              ag:ag
             }, 
             successHandler); 
   }
