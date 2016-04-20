@@ -57,6 +57,39 @@ var DoleticUIModule = new function() {
 							  </div> \
 							  <div class=\"row\"> \
 							  <div class=\"ten wide column\"> \
+								<form class=\"ui form\" id=\"user_filters\">\
+									<div class=\"fields\"> \
+										<div class=\"three wide field\" id=\"division_filter\"> \
+									      	<label>Filtrer par pôle</label> \
+			      						  	<select id=\"division_f\" class=\"ui fluid search dropdown\"> \
+			      								<option value=\"all\">Tous</option>\
+			      							<!-- DIVISIONS WILL GO HERE --> \
+			    						  	</select> \
+			  							</div> \
+										<div class=\"five wide field\" id=\"position_filter\"> \
+									      	<label>Filtrer par poste</label> \
+			      						  	<select id=\"position_f\" class=\"ui fluid search dropdown\"> \
+			      							<option value=\"all\">Tous</option>\
+			      							<!-- POSITIONS WILL GO HERE --> \
+			    						  	</select> \
+			  							</div> \
+										<div class=\"four wide field\" id=\"sort_filter\"> \
+									      	<label>Trier par</label> \
+			      						  	<select id=\"sort_f\" class=\"ui fluid search dropdown\"> \
+				      							<option value=\"inscription\">Inscription</option>\
+				      							<option value=\"name\">Nom complet</option>\
+				      							<option value=\"year\">Année</option>\
+			    						  	</select> \
+			  							</div> \
+			  							<div class=\"four wide field\" id=\"keyword_filter\"> \
+									      	<label>Rechercher</label> \
+			      						  	<div class=\"ui icon input\">\
+											  <input type=\"text\" placeholder=\"Mots clés...\">\
+											  <i class=\"search icon\"></i>\
+											</div>\
+			  							</div> \
+			  						</div>\
+			  					</form>\
 								<div class=\"ui horizontal divider\"> \
 									Tous les membres <!-- PLACER FILTRE ICI -->\
 								</div> \
@@ -174,6 +207,39 @@ var DoleticUIModule = new function() {
 							  </div> \
 							  <div class=\"row\"> \
 							  <div class=\"ten wide column\"> \
+								<form class=\"ui form\" id=\"team_filters\">\
+									<div class=\"fields\"> \
+										<div class=\"three wide field\" id=\"division_filter\"> \
+									      	<label>Filtrer par pôle</label> \
+			      						  	<select id=\"division_f\" class=\"ui fluid search dropdown\"> \
+			      								<option value=\"all\">Tous</option>\
+			      							<!-- DIVISIONS WILL GO HERE --> \
+			    						  	</select> \
+			  							</div> \
+										<div class=\"five wide field\" id=\"member_filter\"> \
+									      	<label>Filtrer par membre</label> \
+			      						  	<select id=\"member_f\" class=\"ui fluid search dropdown\"> \
+			      							<option value=\"all\">Tous</option>\
+			      							<!-- POSITIONS WILL GO HERE --> \
+			    						  	</select> \
+			  							</div> \
+										<div class=\"four wide field\" id=\"sort_filter\"> \
+									      	<label>Trier par</label> \
+			      						  	<select id=\"sort_f\" class=\"ui fluid search dropdown\"> \
+				      							<option value=\"creation\">Création</option>\
+				      							<option value=\"name\">Nom</option>\
+				      							<option value=\"nbmbr\">Nb de membres</option>\
+			    						  	</select> \
+			  							</div> \
+			  							<div class=\"four wide field\" id=\"keyword_filter\"> \
+									      	<label>Rechercher</label> \
+			      						  	<div class=\"ui icon input\">\
+											  <input type=\"text\" placeholder=\"Mots clés...\">\
+											  <i class=\"search icon\"></i>\
+											</div>\
+			  							</div> \
+			  						</div>\
+			  					</form>\
 								<div class=\"ui horizontal divider\"> \
 									Toutes les équipes <!-- PLACER FILTRE ICI -->\
 								</div> \
@@ -495,6 +561,7 @@ var DoleticUIModule = new function() {
 				};
 				// insert html content
 				$('#position').html(content);
+				$('#position_f').append(content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -514,6 +581,8 @@ var DoleticUIModule = new function() {
 				};
 				// insert html content
 				$('#division').html(content);
+				$('#user_filters #division_f').append(content);
+				$('#team_filters #division_f').append(content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -583,6 +652,7 @@ var DoleticUIModule = new function() {
 				};
 				$('#user_body').html(content);
 				$('#leader').html(selector_content);
+				$('#member_f').append(selector_content);
 				
 			} else {
 				// use default service service error handler
