@@ -131,7 +131,9 @@ class AdmMembershipServices extends AbstractObjectServices {
 	const GET_ADM_MEMBERSHIP_BY_ID 	= "byidam";
 	const GET_ALL_ADM_MEMBERSHIPS   = "allam";
 	const GET_USER_ADM_MEMBERSHIPS  = "alluam";
-	const GET_ALL_AGS = "allag";
+	const GET_ALL_AGS 		= "allag";
+	const INSERT_AG		    = "insag";
+	const DELETE_AG         = "delag";
 	const INSERT 		    = "insert";
 	const UPDATE            = "update";
 	const DELETE            = "delete";
@@ -291,6 +293,15 @@ class AdmMembershipServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
+	private function __insert_ag($ag) {
+		// create sql params
+		$sql_params = array(":".AdmMembershipDBObject::COL_AG => $ag);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_AG)->GetINSERTQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
 	private function __update_adm_membership($id, $userId, $startDate, $endDate, $fee, $form, $certif, $ag) {
 		// create sql params
 		$sql_params = array(
@@ -313,6 +324,15 @@ class AdmMembershipServices extends AbstractObjectServices {
 		$sql_params = array(":".AdmMembershipDBObject::COL_ID => $id);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetDELETEQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
+	private function __delete_ag($ag) {
+		// create sql params
+		$sql_params = array(":".AdmMembershipDBObject::COL_AG => $ag);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_AG)->GetDELETEQuery(array(AdmMembershipDBObject::COL_AG));
 		// execute query
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}

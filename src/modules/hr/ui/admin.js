@@ -800,18 +800,6 @@ var DoleticUIModule = new function() {
 		$('#adduser_btn').html("Ajouter");
 		$('#adduser_btn').attr("onClick", "DoleticUIModule.insertNewUser(); return false;");
 		$('#user_form').transition('flash');
-		// clear error
-		if(this.hasInputError) {
-			// disable has error
-			this.hasInputError = false;
-			// change input style
-			$('#user_form').attr('class', 'ui form segment');
-			$('#firstname_field').attr('class', 'required field');
-			$('#lastname_field').attr('class', 'required field');
-			// remove error elements
-			$('#subject_error').remove();
-			$('#data_error').remove();
-		}
 	}
 
 	this.clearNewTeamForm = function() {
@@ -821,18 +809,6 @@ var DoleticUIModule = new function() {
 		$('#addteam_btn').html("Ajouter");
 		$('#addteam_btn').attr("onClick", "DoleticUIModule.insertNewTeam(); return false;");
 		$('#team_form').transition('flash');
-		// clear error
-		if(this.hasInputError) {
-			// disable has error
-			this.hasInputError = false;
-			// change input style
-			//$('#support_form').attr('class', 'ui form segment');
-			//$('#subject_field').attr('class', 'required field');
-			//$('#data_field').attr('class', 'required field');
-			// remove error elements
-			//$('#subject_error').remove();
-			//$('#data_error').remove();
-		}
 	}
 
 	this.clearNewAdmMembershipForm = function(userId) {
@@ -842,19 +818,6 @@ var DoleticUIModule = new function() {
 		$('#admm_btn').html("Ajouter");
 		$('#admm_btn').attr("onClick","DoleticUIModule.insertNewAdmMembership("+userId+"); return false;");
 		$('#admm_form').transition('flash');
-		// reset selector
-		// clear error
-		if(this.hasInputError) {
-			// disable has error
-			this.hasInputError = false;
-			// change input style
-			//$('#support_form').attr('class', 'ui form segment');
-			//$('#subject_field').attr('class', 'required field');
-			//$('#data_field').attr('class', 'required field');
-			// remove error elements
-			//$('#subject_error').remove();
-			//$('#data_error').remove();
-		}
 	}
 
 	this.clearNewIntMembershipForm = function(userId) {
@@ -864,71 +827,6 @@ var DoleticUIModule = new function() {
 		$('#intm_btn').html("Ajouter");
 		$('#intm_btn').attr("onClick", "DoleticUIModule.insertNewIntMembership("+userId+"); return false;");
 		$('#intm_form').transition('flash');
-		// reset selector
-		// clear error
-		if(this.hasInputError) {
-			// disable has error
-			this.hasInputError = false;
-			// change input style
-			//$('#support_form').attr('class', 'ui form segment');
-			//$('#subject_field').attr('class', 'required field');
-			//$('#data_field').attr('class', 'required field');
-			// remove error elements
-			//$('#subject_error').remove();
-			//$('#data_error').remove();
-		}
-	}
-
-	this.showUserInputError = function() {
-		if(!this.hasInputError) {
-			// raise loginError flag
-			this.hasInputError = true;
-			// show input error elements
-			$('#user_form').attr('class', 'ui form segment error');
-			$('#subject_field').attr('class', 'field error');
-			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
-			$('#data_field').attr('class', 'field error');
-			$('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
-		}
-	}
-
-	this.showTeamInputError = function() {
-		if(!this.hasInputError) {
-			// raise loginError flag
-			this.hasInputError = true;
-			// show input error elements
-			$('#team_form').attr('class', 'ui form segment error');
-			$('#subject_field').attr('class', 'field error');
-			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
-			$('#data_field').attr('class', 'field error');
-			$('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
-		}
-	}
-
-	this.showAdmMembershipInputError = function() {
-		if(!this.hasInputError) {
-			// raise loginError flag
-			this.hasInputError = true;
-			// show input error elements
-			$('#admm_form').attr('class', 'ui form segment error');
-			$('#subject_field').attr('class', 'field error');
-			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
-			$('#data_field').attr('class', 'field error');
-			$('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
-		}
-	}
-
-	this.showIntMembershipInputError = function() {
-		if(!this.hasInputError) {
-			// raise loginError flag
-			this.hasInputError = true;
-			// show input error elements
-			$('#intm_form').attr('class', 'ui form segment error');
-			$('#subject_field').attr('class', 'field error');
-			$('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
-			$('#data_field').attr('class', 'field error');
-			$('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
-		}
 	}
 
 	this.addUserHandler = function(data) {
@@ -1016,8 +914,6 @@ var DoleticUIModule = new function() {
 													DoleticUIModule.addUserHandler);
 				});
 			});
-		} else {
-			DoleticUIModule.showUserInputError();
 		}
 	}
 
@@ -1030,8 +926,6 @@ var DoleticUIModule = new function() {
 				$('#division option:selected').text(),
 				DoleticUIModule.addTeamHandler
 			);
-		} else {
-			DoleticUIModule.showTeamInputError();
 		}
 	}
 
@@ -1052,8 +946,6 @@ var DoleticUIModule = new function() {
 				Boolean(options[2].selected),
 				$('#ag').val(),
 				handler);
-		} else {
-			DoleticUIModule.showAdmMembershipInputError();
 		}
 	}
 
@@ -1074,8 +966,6 @@ var DoleticUIModule = new function() {
 				Boolean(options[3].selected),
 				Boolean(options[4].selected),
 				handler);
-		} else {
-			DoleticUIModule.showIntMembershipInputError();
 		}
 	}
 
@@ -1226,10 +1116,7 @@ var DoleticUIModule = new function() {
 				$('#dept option:selected').text(),
 				$('#position option:selected').text(),
 				DoleticUIModule.editUserHandler);
-		} else {
-			DoleticUIModule.showUserInputError();
 		}
-		DoleticUIModule.clearNewUserForm();
 	}
 
 	this.updateTeam = function(id) {
@@ -1242,10 +1129,7 @@ var DoleticUIModule = new function() {
 				$('#division option:selected').text(),
 				DoleticUIModule.editTeamHandler
 			);
-		} else {
-			DoleticUIModule.showTeamInputError();
 		}
-		DoleticUIModule.clearNewTeamForm();
 	}
 
 	this.updateAdmMembership = function(id, userId) {
@@ -1266,8 +1150,6 @@ var DoleticUIModule = new function() {
 				Boolean(options[2].selected),
 				$('#ag').val(),
 				handler);
-		} else {
-			DoleticUIModule.showAdmMembershipInputError();
 		}
 	}
 
@@ -1289,8 +1171,6 @@ var DoleticUIModule = new function() {
 				Boolean(options[3].selected),
 				Boolean(options[4].selected),
 				handler);
-		} else {
-			DoleticUIModule.showIntMembershipInputError();
 		}
 	}
 

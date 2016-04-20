@@ -15,6 +15,8 @@ var TeamServicesInterface = new function() {
       GET_ALL_DIVISIONS:'alldiv',
       INSERT_MEMBER:'insmem',
       DELETE_MEMBER:'delmem',
+      INSERT_AG:'insag',
+      DELETE_AG:'delag',
       INSERT:'insert',
       UPDATE:'update',
       DELETE:'delete'
@@ -158,6 +160,18 @@ var AdmMembershipServicesInterface = new function() {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.DELETE, 
             { id: id }, 
+            successHandler); 
+  }
+  this.insertAg = function(ag, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.INSERT_AG, 
+            { ag:ag }, 
+            successHandler); 
+  }
+  this.deleteAg = function(ag, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.DELETE_AG, 
+            { ag:ag }, 
             successHandler); 
   } 
   this.getAllAgs = function(successHandler) {
