@@ -30,6 +30,8 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.fillDivisionSelector();
 		//fill ag field
 		DoleticUIModule.fillAGSelector();
+		// init filters
+		$('#user_filters .dropdown').dropdown('setting', 'onChange', function() {DoleticUIModule.fillUsersList()});
 	}
 	/**
 	 *	Override build function
@@ -612,38 +614,50 @@ var DoleticUIModule = new function() {
 			if(data.code == 0 && data.object != "[]") {
 				// Store data in global array
 				window.user_list = new Array();
+				// Initialize filters 
+				// Need to find a better way
+				var pos_filter = $("#position_f option:selected").text();
+				if(pos_filter == "Tous") {
+					pos_filter = "";
+				}
+				var div_filter = $("#division_f option:selected").text();
+				if(div_filter == "Tous") {
+					div_filter = "";
+				}
 				// iterate over values to build options
 				var content = "";
 				var selector_content = "";
 				for (var i = 0; i < data.object.length; i++) {
-					window.user_list[data.object[i].id] = data.object[i];
-					content += "<tr> \
-      						<td> \
-      						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
-	  							<i class=\"user icon\"></i> \
-							</button> \
-							</td><td> \
-        				<h4 class=\"ui header\"> \
-          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
-            			"<div class=\"sub header\">" + data.object[i].last_pos.label + "</div> \
-        				</div> \
-      					</h4></td> \
-      					<td><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></td> \
-      					<td>" + data.object[i].tel + "</td> \
-      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
-    				<td> \
-    					<div class=\"ui icon buttons\"> \
-	    					<button class=\"ui icon button\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
-	  							<i class=\"write icon\"></i> \
-							</button> \
-							<button class=\"ui icon button\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
-	  							<i class=\"remove user icon\"></i> \
-							</button> \
-						</div> \
-    				</td> \
-    				</tr>";
-    				selector_content += "<option value=\""+data.object[i].user_id+"\">"
-    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
+					if(data.object[i].last_pos.label.indexOf(pos_filter) > -1 && data.object[i].last_pos.label.indexOf(div_filter) > -1) {
+						window.user_list[data.object[i].id] = data.object[i];
+						content += "<tr> \
+	      						<td> \
+	      						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
+		  							<i class=\"user icon\"></i> \
+								</button> \
+								</td><td> \
+	        				<h4 class=\"ui header\"> \
+	          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
+	            			"<div class=\"sub header\">" + data.object[i].last_pos.label + "</div> \
+	        				</div> \
+	      					</h4></td> \
+	      					<td><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></td> \
+	      					<td>" + data.object[i].tel + "</td> \
+	      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
+	    				<td> \
+	    					<div class=\"ui icon buttons\"> \
+		    					<button class=\"ui icon button\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
+		  							<i class=\"write icon\"></i> \
+								</button> \
+								<button class=\"ui icon button\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+		  							<i class=\"remove user icon\"></i> \
+								</button> \
+							</div> \
+	    				</td> \
+	    				</tr>";
+	    				selector_content += "<option value=\""+data.object[i].user_id+"\">"
+	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
+					}
 				};
 				$('#user_body').html(content);
 				$('#leader').html(selector_content);

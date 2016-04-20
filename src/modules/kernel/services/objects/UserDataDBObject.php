@@ -779,12 +779,12 @@ class UserDataServices extends AbstractObjectServices {
 			"Comptable" => 				(RightsMap::A_R  | RightsMap::M_G | RightsMap::D_G), // A  | M | D
 		    "Responsable DSI" => 		(RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G), // SA | A | D
 		    "Responsable GRC" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-		    "Responsable COM" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
+		    "Responsable Com" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
 		    "Responsable UA" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
 		    "Responsable Qualité" => 	(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
 		    "Junior DSI" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Junior GRC" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
-		    "Junior COM" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
+		    "Junior Com" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Chargé d'affaire" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Junior Qualité" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
 		    "Ancien membre" => 			(RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G), // G  | C | D
