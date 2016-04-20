@@ -14,10 +14,8 @@ var DoleticUIModule = new function() {
 		$('.dropdown').dropdown();
 		// hide user details tab
 		$('#det').hide();
-		// fill user list
-		DoleticUIModule.fillUsersList();
-		// fill team list
-		DoleticUIModule.fillTeamsList();
+		// fill user and team list. User first to fill user_list global array
+		$.when($.ajax(DoleticUIModule.fillUsersList())).then(DoleticUIModule.fillTeamsList());
 		// fill country field
 		DoleticUIModule.fillCountrySelector();
 		// fill gender field
@@ -637,9 +635,6 @@ var DoleticUIModule = new function() {
     					<div class=\"ui icon buttons\"> \
 	    					<button class=\"ui icon button\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
 	  							<i class=\"write icon\"></i> \
-							</button> \
-							<button class=\"ui icon button\" onClick=\"DoleticUIModule.archiveUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
-	  							<i class=\"archive icon\"></i> \
 							</button> \
 							<button class=\"ui icon button\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
 	  							<i class=\"remove user icon\"></i> \
