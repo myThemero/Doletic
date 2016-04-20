@@ -628,7 +628,7 @@ var DoleticUIModule = new function() {
 				var content = "";
 				var selector_content = "";
 				for (var i = 0; i < data.object.length; i++) {
-					if(data.object[i].last_pos.label.indexOf(pos_filter) > -1 && data.object[i].last_pos.label.indexOf(div_filter) > -1) {
+					if(data.object[i].last_pos.label.indexOf(pos_filter) > -1 && data.object[i].last_pos.division.indexOf(div_filter) > -1) {
 						window.user_list[data.object[i].id] = data.object[i];
 						content += "<tr> \
 	      						<td> \

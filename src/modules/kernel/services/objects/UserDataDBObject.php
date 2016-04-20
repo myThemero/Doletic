@@ -409,6 +409,7 @@ class UserDataServices extends AbstractObjectServices {
 					$position = array();
 					$position[UserDataDBObject::COL_LABEL] = $row[UserDataDBObject::COL_LABEL];
 					$position[UserDataDBObject::COL_RG_CODE] = $row[UserDataDBObject::COL_RG_CODE];
+					$position[UserDataDBObject::COL_DIVISION] = $row[UserDataDBObject::COL_DIVISION];
 				}
 			}
 		}
@@ -772,31 +773,32 @@ class UserDataServices extends AbstractObjectServices {
 		}
 		// -- init ETIC pos table --------------------------------------------------------------------
 		$positions = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
-			"Président" => 				(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-			"Vice-Président" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-			"Secrétaire Général" => 	(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-			"Trésorier" => 				(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-			"Comptable" => 				(RightsMap::A_R  | RightsMap::M_G | RightsMap::D_G), // A  | M | D
-		    "Responsable DSI" => 		(RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G), // SA | A | D
-		    "Responsable GRC" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-		    "Responsable Com" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-		    "Responsable UA" => 		(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-		    "Responsable Qualité" => 	(RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), // A  | A | D
-		    "Junior DSI" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
-		    "Junior GRC" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
-		    "Junior Com" => 			(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
-		    "Chargé d'affaire" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
-		    "Junior Qualité" => 		(RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), // U  | M | D
-		    "Ancien membre" => 			(RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G), // G  | C | D
-		    "Intervenant" => 			(RightsMap::G_R  | RightsMap::I_G | RightsMap::D_G), // G  | I | D
-		    "Client" => 				(RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G)  // G  | C | D
+			"Président" => 				array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "Présidence"), // A  | A | D
+			"Vice-Président" => 		array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "Présidence"), // A  | A | D
+			"Secrétaire Général" => 	array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "SG"), // A  | A | D
+			"Trésorier" => 				array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "Trésorerie"), // A  | A | D
+			"Comptable" => 				array((RightsMap::A_R  | RightsMap::M_G | RightsMap::D_G), "Trésorerie"), // A  | M | D
+		    "Responsable DSI" => 		array((RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G), "DSI"), // SA | A | D
+		    "Responsable GRC" => 		array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "GRC"), // A  | A | D
+		    "Responsable Com" => 		array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "Com"), // A  | A | D
+		    "Responsable UA" => 		array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "UA"), // A  | A | D
+		    "Responsable Qualité" => 	array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "Qualité"), // A  | A | D
+		    "Junior DSI" => 			array((RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), "DSI"), // U  | M | D
+		    "Junior GRC" => 			array((RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), "GRC"), // U  | M | D
+		    "Junior Com" => 			array((RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), "Com"), // U  | M | D
+		    "Chargé d'affaire" => 		array((RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), "UA"), // U  | M | D
+		    "Junior Qualité" => 		array((RightsMap::U_R  | RightsMap::M_G | RightsMap::D_G), "Qualité"), // U  | M | D
+		    "Ancien membre" => 			array((RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G), "Ancien"), // G  | C | D
+		    "Intervenant" => 			array((RightsMap::G_R  | RightsMap::I_G | RightsMap::D_G), "Intervenant"), // G  | I | D
+		    "Client" => 				array((RightsMap::G_R  | RightsMap::C_G | RightsMap::D_G), "Client") // G  | C | D
 		    );
 		// --- retrieve SQL query
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetINSERTQuery();
-		foreach ($positions as $position => $rgcode) {
+		foreach ($positions as $position => $attr) {
 			// --- create param array
 			$sql_params = array(":".UserDataDBObject::COL_LABEL => $position,
-								":".UserDataDBObject::COL_RG_CODE => $rgcode);
+								":".UserDataDBObject::COL_RG_CODE => $attr[0],
+								":".UserDataDBObject::COL_DIVISION => $attr[1]);
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
 		}
@@ -819,11 +821,11 @@ class UserDataDBObject extends AbstractDBObject {
 	const TABL_COM_COUNTRY = "com_country";
 	const TABL_COM_INSA_DEPT = "com_insa_dept";
 	const TABL_COM_POSITION	= "com_position";
-	const TABL_AG = "com_ag";
+	const TABL_AG 			= "com_ag";
 	// --- columns
 	const COL_ID 			= "id";
 	const COL_USER_ID  		= "user_id";
-	const COL_GENDER 	= "gender";
+	const COL_GENDER 		= "gender";
 	const COL_FIRSTNAME 	= "firstname";
 	const COL_LASTNAME  	= "lastname";
 	const COL_BIRTHDATE  	= "birthdate";
@@ -832,7 +834,7 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_ADDRESS  		= "address";
 	const COL_CITY 			= "city";
 	const COL_POSTAL_CODE	= "postal_code";
-	const COL_COUNTRY 	= "country";
+	const COL_COUNTRY 		= "country";
 	const COL_SCHOOL_YEAR 	= "school_year";
 	const COL_INSA_DEPT 	= "insa_dept";
 	const COL_POSITION  	= "position";
@@ -843,6 +845,7 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_AVATAR_ID   	= "avatar_id";
 	const COL_LAST_POS		= "last_pos";
 	const COL_AG 			= "ag";
+	const COL_DIVISION		= "division";
 	// -- attributes
 
 	// -- functions
@@ -889,6 +892,7 @@ class UserDataDBObject extends AbstractDBObject {
 		$com_position = new DBTable(UserDataDBObject::TABL_COM_POSITION);
 		$com_position->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		$com_position->AddColumn(UserDataDBObject::COL_RG_CODE, DBTable::DT_INT, 11, false, "");
+		$com_position->AddColumn(UserDataDBObject::COL_DIVISION, DBTable::DT_VARCHAR, 255, false, "");
 		// --- com_ag table
 		$com_ag = new DBTable(UserDataDBObject::TABL_AG);
 		$com_ag->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false, "", false, true);

@@ -391,7 +391,7 @@ class TeamServices extends AbstractObjectServices {
 	 */
 	public function ResetStaticData() {
 		// -- init categories table --------------------------------------------------------------------
-		$divisions = array("DSI","UA","GRC","Com", "Qualité", "SG", "Présidence", "RH", "Trésorerie");
+		$divisions = array("DSI","UA","GRC","Com", "Qualité", "SG", "Présidence", "RH", "Trésorerie", "Client", "Ancien", "Intervenant");
 		// --- retrieve SQL query
 		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_DIV)->GetINSERTQuery();
 		foreach ($divisions as $division) {
