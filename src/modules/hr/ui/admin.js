@@ -100,7 +100,10 @@ var DoleticUIModule = new function() {
 								</div> \
 									<table class=\"ui very basic celled table\" id=\"user_table\"> \
   										<thead> \
-    										<tr><th></th><th>Nom</th> \
+    										<tr><th></th><th>Nom\
+    											<button class=\"ui tiny basic icon button\">\
+    												<i class=\"caret up icon\"></i>\
+    											</button></th> \
     										<th>Email</th> \
     										<th>Téléphone</th> \
     										<th>Dept.</th> \

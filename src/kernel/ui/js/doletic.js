@@ -321,7 +321,7 @@ var DoleticMasterInterface = new function() {
 
   // Filters and sorting function
   /**
-   *  Checks date
+   *  Checks if an objects matches given keywords
    */
   this.matchKeywords = function(obj, keywords) {
     var objStr = JSON.stringify(obj);
@@ -332,6 +332,35 @@ var DoleticMasterInterface = new function() {
       }
     }
     return false;
+  }
+  /**
+   *  Sorts an array of objects using defined attribute as reference.
+   *  (Using bubble sort algorithm)
+   */
+  this.sortObjectsArray = function(objArray, attribute, asc) {
+    var length = objArray.length();
+    if(asc) {
+      for (var i = length-1; i>=0; i--){
+        for(var j = 1; j<=i; j++){
+          if(objArray[j-1][attribute]>objArray[j][attribute]){
+            var temp = objArray[j-1][attribute];
+              objArray[j-1] = objArray[j];
+              objArray[j] = temp;
+          }
+        }
+      }
+    } else {
+      for (var i = length-1; i>=0; i--){
+        for(var j = 1; j<=i; j++){
+          if(objArray[j-1][attribute]<objArray[j][attribute]){
+            var temp = objArray[j-1][attribute];
+              objArray[j-1] = objArray[j];
+              objArray[j] = temp;
+          }
+        }
+      }
+    }
+    return objArray;
   }
 
 }
