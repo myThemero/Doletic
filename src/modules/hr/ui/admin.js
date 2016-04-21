@@ -73,21 +73,26 @@ var DoleticUIModule = new function() {
 			      							<!-- POSITIONS WILL GO HERE --> \
 			    						  	</select> \
 			  							</div> \
-										<div class=\"four wide field\" id=\"sort_filter\"> \
+										<!-- <div class=\"four wide field\" id=\"sort_filter\"> \
 									      	<label>Trier par</label> \
 			      						  	<select id=\"sort_f\" class=\"ui fluid search dropdown\"> \
 				      							<option value=\"inscription\">Inscription</option>\
 				      							<option value=\"name\">Nom complet</option>\
 				      							<option value=\"year\">Année</option>\
 			    						  	</select> \
-			  							</div> \
-			  							<div class=\"four wide field\" id=\"keyword_filter\"> \
+			  							</div> -->\
+			  							<div class=\"four wide field\"> \
 									      	<label>Rechercher</label> \
 			      						  	<div class=\"ui icon input\">\
-											  <input type=\"text\" placeholder=\"Mots clés...\">\
+											  <input type=\"text\" placeholder=\"Mots clés...\"  id=\"keyword_filter\">\
 											  <i class=\"search icon\"></i>\
 											</div>\
 			  							</div> \
+				  							<div class=\"ui hr_center small buttons\"> \
+											<div id=\"abort_filters\" class=\"ui button\" onClick=\"DoleticUIModule.resetFilters();\">Réinitialiser</div> \
+											<div class=\"or\" data-text=\"ou\"></div> \
+											<div id=\"refresh_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.fillUsersList();\">Actualiser</div> \
+									  	</div> \
 			  						</div>\
 			  					</form>\
 								<div class=\"ui horizontal divider\"> \
@@ -624,6 +629,8 @@ var DoleticUIModule = new function() {
 				if(div_filter == "Tous") {
 					div_filter = "";
 				}
+				var keywords = $("#keyword_filter").val();
+
 				// iterate over values to build options
 				var content = "";
 				var selector_content = "";
@@ -631,7 +638,7 @@ var DoleticUIModule = new function() {
 					window.user_list[data.object[i].id] = data.object[i];
 					selector_content += "<option value=\""+data.object[i].user_id+"\">"
 	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
-					if(data.object[i].last_pos.label.indexOf(pos_filter) > -1 && data.object[i].last_pos.division.indexOf(div_filter) > -1) {
+					if(data.object[i].last_pos.label.indexOf(pos_filter) > -1 && data.object[i].last_pos.division.indexOf(div_filter) > -1 && DoleticMasterInterface.matchKeywords(data.object[i], keywords)) {
 						content += "<tr> \
 	      						<td> \
 	      						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
@@ -1454,6 +1461,12 @@ var DoleticUIModule = new function() {
 			DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
 		}
 		return valid;
+	}
+
+	this.resetFilters = function() {
+		$('#user_filters .dropdown').dropdown("restore defaults");
+		$('#keyword_filter').val('');
+		DoleticUIModule.fillUsersList();
 	}
 
 }

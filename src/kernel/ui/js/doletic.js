@@ -319,6 +319,21 @@ var DoleticMasterInterface = new function() {
     return str.match(/^[^0-9\_\@\#\"\'\/\\\*\+]+$/) != null;
   }
 
+  // Filters and sorting function
+  /**
+   *  Checks date
+   */
+  this.matchKeywords = function(obj, keywords) {
+    var objStr = JSON.stringify(obj);
+    var keys = keywords.split(" ");
+    for(var i=0; i<keys.length; i++) {
+      if(objStr.indexOf(keys[i]) > -1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }
 
 // ------------------------ DOLETIC DOCUMENT READY FUNCTION ------------------------------------
