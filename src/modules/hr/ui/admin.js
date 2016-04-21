@@ -99,9 +99,18 @@ var DoleticUIModule = new function() {
     											<button class=\"ui tiny basic icon button\" id=\"usort_firstname\"onClick=\"DoleticUIModule.sortUserList('firstname', true); return false;\" >\
     												<i class=\"caret up icon\"></i>\
     											</button></th> \
-    										<th>Email</th> \
-    										<th>Téléphone</th> \
-    										<th>Dept.</th> \
+    										<th>Email\
+    											<button class=\"ui tiny basic icon button\" id=\"usort_email\"onClick=\"DoleticUIModule.sortUserList('email', true); return false;\" >\
+    												<i class=\"caret up icon\"></i>\
+    											</button></th> \</th> \
+    										<th>Téléphone\
+    											<button class=\"ui tiny basic icon button\" id=\"usort_tel\"onClick=\"DoleticUIModule.sortUserList('tel', true); return false;\" >\
+    												<i class=\"caret up icon\"></i>\
+    											</button></th> \</th> \</th> \
+    										<th>Année\
+    											<button class=\"ui tiny basic icon button\" id=\"usort_school_year\"onClick=\"DoleticUIModule.sortUserList('school_year', true); return false;\" >\
+    												<i class=\"caret up icon\"></i>\
+    											</button></th> \</th> \</th> \</th> \
     										<th>Actions</th> \
   										</tr></thead>\
   										<tbody id=\"user_body\"> \
@@ -1478,10 +1487,10 @@ var DoleticUIModule = new function() {
 		// Reverse button
 		if(asc) {
 			$("#usort_"+attribute).html("<i class=\"caret down icon\"></i>");
-			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('firstname', false); return false;");
+			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('"+attribute+"', false); return false;");
 		} else {
-			$("#usort_"+attribute).html("<i class=\"caret down icon\"></i>");
-			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('firstname', true); return false;");
+			$("#usort_"+attribute).html("<i class=\"caret up icon\"></i>");
+			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('"+attribute+"', true); return false;");
 		}
 		DoleticUIModule.fillUsersList();
 	}
