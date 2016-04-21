@@ -35,6 +35,7 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.fillAGSelector();
 		// init filters
 		$('#user_filters .dropdown').dropdown('setting', 'onChange', function() {DoleticUIModule.fillUsersList()});
+		$('#team_filters .dropdown').dropdown('setting', 'onChange', function() {DoleticUIModule.fillTeamsList()});
 	}
 	/**
 	 *	Override build function
@@ -84,9 +85,9 @@ var DoleticUIModule = new function() {
 											</div>\
 			  							</div> \
 				  							<div class=\"ui hr_center small buttons\"> \
-											<div id=\"abort_filters\" class=\"ui button\" onClick=\"DoleticUIModule.resetFilters();\">Réinitialiser</div> \
+											<div id=\"abort_u_filters\" class=\"ui button\" onClick=\"DoleticUIModule.resetUserFilters();\">Réinitialiser</div> \
 											<div class=\"or\" data-text=\"ou\"></div> \
-											<div id=\"refresh_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.fillUsersList();\">Actualiser</div> \
+											<div id=\"refresh_u_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.fillUsersList();\">Actualiser</div> \
 									  	</div> \
 			  						</div>\
 			  					</form>\
@@ -223,7 +224,7 @@ var DoleticUIModule = new function() {
 									<div class=\"fields\"> \
 										<div class=\"three wide field\" id=\"division_filter\"> \
 									      	<label>Filtrer par pôle</label> \
-			      						  	<select id=\"division_f\" class=\"ui fluid search dropdown\"> \
+			      						  	<select id=\"division_ft\" class=\"ui fluid search dropdown\"> \
 			      								<option value=\"all\">Tous</option>\
 			      							<!-- DIVISIONS WILL GO HERE --> \
 			    						  	</select> \
@@ -235,21 +236,18 @@ var DoleticUIModule = new function() {
 			      							<!-- POSITIONS WILL GO HERE --> \
 			    						  	</select> \
 			  							</div> \
-										<div class=\"four wide field\" id=\"sort_filter\"> \
-									      	<label>Trier par</label> \
-			      						  	<select id=\"sort_f\" class=\"ui fluid search dropdown\"> \
-				      							<option value=\"creation\">Création</option>\
-				      							<option value=\"name\">Nom</option>\
-				      							<option value=\"nbmbr\">Nb de membres</option>\
-			    						  	</select> \
-			  							</div> \
-			  							<div class=\"four wide field\" id=\"keyword_filter\"> \
+			  							<div class=\"four wide field\"> \
 									      	<label>Rechercher</label> \
 			      						  	<div class=\"ui icon input\">\
-											  <input type=\"text\" placeholder=\"Mots clés...\">\
+											  <input type=\"text\" placeholder=\"Mots clés...\" id=\"keyword_filter_t\">\
 											  <i class=\"search icon\"></i>\
 											</div>\
 			  							</div> \
+			  							<div class=\"ui hr_center small buttons\"> \
+											<div id=\"abort_t_filters\" class=\"ui button\" onClick=\"DoleticUIModule.resetTeamFilters();\">Réinitialiser</div> \
+											<div class=\"or\" data-text=\"ou\"></div> \
+											<div id=\"refresh_t_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.fillTeamsList();\">Actualiser</div> \
+			  							</div>\
 			  						</div>\
 			  					</form>\
 								<div class=\"ui horizontal divider\"> \
@@ -257,9 +255,21 @@ var DoleticUIModule = new function() {
 								</div> \
 									<table class=\"ui very basic celled table\" id=\"team_table\"> \
   										<thead> \
-    										<tr><th>Nom</th> \
-    										<th>Chef d'équipe</th> \
-    										<th>Pôle</th> \
+    										<tr><th>Nom\
+    											<button class=\"ui tiny basic icon button\" id=\"tsort_name\"onClick=\"DoleticUIModule.sortTeamList('name', true); return false;\" >\
+    												<i class=\"caret up icon\"></i>\
+    											</button></th> \
+    										</th> \
+    										<th>Chef d'équipe\
+    											<button class=\"ui tiny basic icon button\" id=\"tsort_leader_id\"onClick=\"DoleticUIModule.sortTeamList('leader_id', true); return false;\" >\
+    												<i class=\"caret up icon\"></i>\
+    											</button></th> \
+    										</th> \
+    										<th>Pôle\
+    											<button class=\"ui tiny basic icon button\" id=\"tsort_division\"onClick=\"DoleticUIModule.sortTeamList('division', true); return false;\" >\
+    												<i class=\"caret up icon\"></i>\
+    											</button></th> \
+    										</th> \
     										<th>Membres</th> \
     										<th>Actions</th> \
   										</tr></thead>\
@@ -594,7 +604,7 @@ var DoleticUIModule = new function() {
 				// insert html content
 				$('#division').html(content);
 				$('#user_filters #division_f').append(content);
-				$('#team_filters #division_f').append(content);
+				$('#team_filters #division_ft').append(content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -694,31 +704,44 @@ var DoleticUIModule = new function() {
 			if(data.code == 0 && data.object != "[]") {
 				
 				window.team_list = new Array();
+				// Sort if needed
+				if(window.sortTeam.attribute != "id") {
+					DoleticMasterInterface.sortObjectsArray(data.object, window.sortTeam.attribute, window.sortTeam.asc);			
+				}
+				var div_filter = $("#division_ft option:selected").text();
+				if(div_filter == "Tous") {
+					div_filter = "";
+				}
+				var keywords = $("#keyword_filter_t").val();
 				// create content var to build html
 				var content = "";
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
 					window.team_list[data.object[i].id] = data.object[i];
-					DoleticUIModule.makeTeamModal(data.object[i]);
-					content += "<tr><td>"+data.object[i].name+"</td> \
-								<td>"+window.user_list[data.object[i].leader_id].firstname + " " 
-								+ window.user_list[data.object[i].leader_id].lastname +"</td> \
-								<td>" + data.object[i].division + "</td> \
-								<td> \
-									<button class=\"ui icon button\" onClick=\"$('#tmodal_"+data.object[i].id+"').modal('show');\"> \
-	  									<i class=\"write icon\"></i>Gérer \
-								</td> \
-								<td> \
-									<div class=\"ui icon buttons\"> \
-										<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
-		  									<i class=\"write icon\"></i> \
-										</button> \
-										<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
-		  									<i class=\"remove icon\"></i> \
-										</button>\
-									</div> \
-								</td> \
-								</tr>";
+					if(data.object[i].division.indexOf(div_filter) > -1 
+						&& DoleticMasterInterface.matchKeywords(data.object[i], keywords)) {
+						
+						DoleticUIModule.makeTeamModal(data.object[i]);
+						content += "<tr><td>"+data.object[i].name+"</td> \
+									<td>"+window.user_list[data.object[i].leader_id].firstname + " " 
+									+ window.user_list[data.object[i].leader_id].lastname +"</td> \
+									<td>" + data.object[i].division + "</td> \
+									<td> \
+										<button class=\"ui icon button\" onClick=\"$('#tmodal_"+data.object[i].id+"').modal('show');\"> \
+		  									<i class=\"write icon\"></i>Gérer \
+									</td> \
+									<td> \
+										<div class=\"ui icon buttons\"> \
+											<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
+			  									<i class=\"write icon\"></i> \
+											</button> \
+											<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
+			  									<i class=\"remove icon\"></i> \
+											</button>\
+										</div> \
+									</td> \
+									</tr>";
+					}
 				};
 				// insert html content
 				$('#team_body').html(content);
@@ -1474,10 +1497,16 @@ var DoleticUIModule = new function() {
 		return valid;
 	}
 
-	this.resetFilters = function() {
+	this.resetUserFilters = function() {
 		$('#user_filters .dropdown').dropdown("restore defaults");
 		$('#keyword_filter').val('');
 		DoleticUIModule.fillUsersList();
+	}
+
+	this.resetTeamFilters = function() {
+		$('#team_filters .dropdown').dropdown("restore defaults");
+		$('#keyword_filter_t').val('');
+		DoleticUIModule.fillTeamsList();
 	}
 
 	this.sortUserList = function(attribute, asc) {
@@ -1493,6 +1522,21 @@ var DoleticUIModule = new function() {
 			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('"+attribute+"', true); return false;");
 		}
 		DoleticUIModule.fillUsersList();
+	}
+
+	this.sortTeamList = function(attribute, asc) {
+		// Set global variable properties
+		window.sortTeam.attribute = attribute;
+		window.sortTeam.asc = Boolean(asc);
+		// Reverse button
+		if(asc) {
+			$("#tsort_"+attribute).html("<i class=\"caret down icon\"></i>");
+			$("#tsort_"+attribute).attr("onClick", "DoleticUIModule.sortTeamList('"+attribute+"', false); return false;");
+		} else {
+			$("#tsort_"+attribute).html("<i class=\"caret up icon\"></i>");
+			$("#tsort_"+attribute).attr("onClick", "DoleticUIModule.sortTeamList('"+attribute+"', true); return false;");
+		}
+		DoleticUIModule.fillTeamsList();
 	}
 
 }
