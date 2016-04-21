@@ -338,12 +338,12 @@ var DoleticMasterInterface = new function() {
    *  (Using bubble sort algorithm)
    */
   this.sortObjectsArray = function(objArray, attribute, asc) {
-    var length = objArray.length();
+    var length = objArray.length;
     if(asc) {
       for (var i = length-1; i>=0; i--){
         for(var j = 1; j<=i; j++){
           if(objArray[j-1][attribute]>objArray[j][attribute]){
-            var temp = objArray[j-1][attribute];
+            var temp = objArray[j-1];
               objArray[j-1] = objArray[j];
               objArray[j] = temp;
           }
@@ -353,7 +353,7 @@ var DoleticMasterInterface = new function() {
       for (var i = length-1; i>=0; i--){
         for(var j = 1; j<=i; j++){
           if(objArray[j-1][attribute]<objArray[j][attribute]){
-            var temp = objArray[j-1][attribute];
+            var temp = objArray[j-1];
               objArray[j-1] = objArray[j];
               objArray[j] = temp;
           }

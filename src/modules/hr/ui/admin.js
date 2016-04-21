@@ -8,6 +8,9 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 
+		// Define global variables
+		window.sortUser = {attribute:"id", asc:Boolean(true)};
+		window.sortTeam = {attribute:"id", asc:Boolean(true)};
 		this.super.render(htmlNode, this);
 		// activate items in tabs
 		$('.menu .item').tab();
@@ -73,14 +76,6 @@ var DoleticUIModule = new function() {
 			      							<!-- POSITIONS WILL GO HERE --> \
 			    						  	</select> \
 			  							</div> \
-										<!-- <div class=\"four wide field\" id=\"sort_filter\"> \
-									      	<label>Trier par</label> \
-			      						  	<select id=\"sort_f\" class=\"ui fluid search dropdown\"> \
-				      							<option value=\"inscription\">Inscription</option>\
-				      							<option value=\"name\">Nom complet</option>\
-				      							<option value=\"year\">Année</option>\
-			    						  	</select> \
-			  							</div> -->\
 			  							<div class=\"four wide field\"> \
 									      	<label>Rechercher</label> \
 			      						  	<div class=\"ui icon input\">\
@@ -101,7 +96,7 @@ var DoleticUIModule = new function() {
 									<table class=\"ui very basic celled table\" id=\"user_table\"> \
   										<thead> \
     										<tr><th></th><th>Nom\
-    											<button class=\"ui tiny basic icon button\">\
+    											<button class=\"ui tiny basic icon button\" id=\"usort_firstname\"onClick=\"DoleticUIModule.sortUserList('firstname', true); return false;\" >\
     												<i class=\"caret up icon\"></i>\
     											</button></th> \
     										<th>Email</th> \
@@ -622,6 +617,10 @@ var DoleticUIModule = new function() {
 			if(data.code == 0 && data.object != "[]") {
 				// Store data in global array
 				window.user_list = new Array();
+				// Sort if needed
+				if(window.sortUser.attribute != "id") {
+					DoleticMasterInterface.sortObjectsArray(data.object, window.sortUser.attribute, window.sortUser.asc);
+				}
 				// Initialize filters 
 				// Need to find a better way
 				var pos_filter = $("#position_f option:selected").text();
@@ -1469,6 +1468,21 @@ var DoleticUIModule = new function() {
 	this.resetFilters = function() {
 		$('#user_filters .dropdown').dropdown("restore defaults");
 		$('#keyword_filter').val('');
+		DoleticUIModule.fillUsersList();
+	}
+
+	this.sortUserList = function(attribute, asc) {
+		// Set global variable properties
+		window.sortUser.attribute = attribute;
+		window.sortUser.asc = Boolean(asc);
+		// Reverse button
+		if(asc) {
+			$("#usort_"+attribute).html("<i class=\"caret down icon\"></i>");
+			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('firstname', false); return false;");
+		} else {
+			$("#usort_"+attribute).html("<i class=\"caret down icon\"></i>");
+			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('firstname', true); return false;");
+		}
 		DoleticUIModule.fillUsersList();
 	}
 
