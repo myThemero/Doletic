@@ -84,7 +84,7 @@ var DoleticUIModule = new function() {
 											  <i class=\"search icon\"></i>\
 											</div>\
 			  							</div> \
-				  							<div class=\"ui hr_center small buttons\"> \
+				  						<div class=\"ui hr_center small buttons\"> \
 											<div id=\"abort_u_filters\" class=\"ui button\" onClick=\"DoleticUIModule.resetUserFilters();\">Réinitialiser</div> \
 											<div class=\"or\" data-text=\"ou\"></div> \
 											<div id=\"refresh_u_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.fillUsersList();\">Actualiser</div> \
@@ -232,7 +232,7 @@ var DoleticUIModule = new function() {
 										<div class=\"five wide field\" id=\"member_filter\"> \
 									      	<label>Filtrer par membre</label> \
 			      						  	<select id=\"member_f\" class=\"ui fluid search dropdown\"> \
-			      							<option value=\"all\">Tous</option>\
+			      							<option value=\"0\">Tous</option>\
 			      							<!-- POSITIONS WILL GO HERE --> \
 			    						  	</select> \
 			  							</div> \
@@ -243,11 +243,11 @@ var DoleticUIModule = new function() {
 											  <i class=\"search icon\"></i>\
 											</div>\
 			  							</div> \
-			  							<div class=\"ui hr_center small buttons\"> \
+				  						<div class=\"ui hr_center small buttons\"> \
 											<div id=\"abort_t_filters\" class=\"ui button\" onClick=\"DoleticUIModule.resetTeamFilters();\">Réinitialiser</div> \
 											<div class=\"or\" data-text=\"ou\"></div> \
 											<div id=\"refresh_t_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.fillTeamsList();\">Actualiser</div> \
-			  							</div>\
+				  						</div>\
 			  						</div>\
 			  					</form>\
 								<div class=\"ui horizontal divider\"> \
@@ -712,6 +712,7 @@ var DoleticUIModule = new function() {
 				if(div_filter == "Tous") {
 					div_filter = "";
 				}
+				var member_filter_id = $("#member_f option:selected").val();
 				var keywords = $("#keyword_filter_t").val();
 				// create content var to build html
 				var content = "";
@@ -719,7 +720,8 @@ var DoleticUIModule = new function() {
 				for (var i = 0; i < data.object.length; i++) {
 					window.team_list[data.object[i].id] = data.object[i];
 					if(data.object[i].division.indexOf(div_filter) > -1 
-						&& DoleticMasterInterface.matchKeywords(data.object[i], keywords)) {
+						&& DoleticMasterInterface.matchKeywords(data.object[i], keywords)
+						&& (member_filter_id == 0 || data.object[i].member_id.indexOf(member_filter_id) > -1)) {
 						
 						DoleticUIModule.makeTeamModal(data.object[i]);
 						content += "<tr><td>"+data.object[i].name+"</td> \
