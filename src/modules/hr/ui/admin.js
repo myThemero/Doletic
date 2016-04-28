@@ -50,7 +50,7 @@ var DoleticUIModule = new function() {
   							<a class=\"item active\" data-tab=\"stats\">Statistiques</a> \
   							<a class=\"item\" data-tab=\"memberlist\">Liste des membres</a> \
   							<a class=\"item\" data-tab=\"teamlist\">Liste des équipes</a> \
-  							<a class=\"item\" data-tab=\"form\">Formations</a> \
+  							<!--<a class=\"item\" data-tab=\"form\">Formations</a>--> \
   							<a class=\"item\" id=\"det\" data-tab=\"userdetails\">Détails de l'utilisateur</a> \
 						</div> \
 						<div class=\"ui bottom attached tab segment active\" data-tab=\"stats\"> \
@@ -343,12 +343,12 @@ var DoleticUIModule = new function() {
 							</div> \
 						</div> \
 						 \
-						 	<!-- 		FORMATIONS ET AGR 		--> \
+						 	<!-- 		FORMATIONS 		--> \
 						 	\
-						<div class=\"ui bottom attached tab segment\" data-tab=\"form\"> \
+						<!--<div class=\"ui bottom attached tab segment\" data-tab=\"form\"> \
 							<div class=\"ui two column grid container\"> \
 							</div>\
-						</div>\
+						</div>-->\
 						 \
 						 	<!-- 		USER DETAILS 		--> \
 						 	\
@@ -990,6 +990,10 @@ var DoleticUIModule = new function() {
 		$('#intm_form').transition('flash');
 	}
 
+	this.clearNewAGRForm = function() {
+		$('#agr').val("");
+	}
+
 	this.addUserHandler = function(data) {
 		// if no service error
 		if(data.code == 0) {
@@ -1131,9 +1135,14 @@ var DoleticUIModule = new function() {
 	}
 
 	this.insertNewAGR = function() {
+		var handler = function() {
+			DoleticUIModule.fillAGSelector();
+			DoleticUIModule.clearNewAGRForm();
+		};
+
 		if(DoleticUIModule.checkNewAGRForm()) {
 			var ag = $("#agr").val();
-			UserDataServicesInterface.insertAg(ag, DoleticUIModule.fillAGSelector);
+			UserDataServicesInterface.insertAg(ag, handler);
 		}
 	}
 
