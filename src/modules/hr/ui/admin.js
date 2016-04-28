@@ -50,10 +50,43 @@ var DoleticUIModule = new function() {
   							<a class=\"item active\" data-tab=\"stats\">Statistiques</a> \
   							<a class=\"item\" data-tab=\"memberlist\">Liste des membres</a> \
   							<a class=\"item\" data-tab=\"teamlist\">Liste des équipes</a> \
+  							<a class=\"item\" data-tab=\"form\">Formations</a> \
   							<a class=\"item\" id=\"det\" data-tab=\"userdetails\">Détails de l'utilisateur</a> \
 						</div> \
 						<div class=\"ui bottom attached tab segment active\" data-tab=\"stats\"> \
-				  			<p>Cette portion est encore en développpement...</p>\
+				  			<div class=\"ui two column grid container\"> \
+							  	<div class=\"row\"> \
+								  	<div class=\"nine wide column\"> \
+								  		<div class=\"ui horizontal divider\"> \
+											Indicateurs RH\
+										</div> \
+								  	</div>\
+								  	<div class=\"seven wide column\"> \
+								  		<div class=\"ui horizontal divider\"> \
+											Gestion des AG de Recrutement\
+										</div> \
+										<div class=\"ui stackable grid container\"> \
+								  			<div class=\"row\"> \
+								  				<div class=\"nine wide column\"> \
+								  					<table class=\"ui very basic single line striped table\"><tbody id=\"agr_body\">\
+								  						<!-- AGR LIST GOES THERE -->\
+								  					</tbody></table>\
+								  				</div>\
+								  				<div class=\"seven wide column\"> \
+								  					<form class=\"ui form\">\
+								 						<h4 class=\"ui dividing header\">Ajouter une AGR</h4>\
+								 						<div id=\"agr_field\" class=\"sxiteen wide required field\"> \
+														  <label>Date de</label> \
+														  <input id=\"agr\" placeholder=\"Nom...\" type=\"text\"/> \
+														</div> \
+														<div id=\"add_agr_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.insertNewAGR();\">Ajouter</div> \
+													</form>\
+												</div>\
+								  			</div>\
+								  		</div>\
+								  	</div>\
+							  	</div>\
+				  			</div>\
 					    </div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"memberlist\"> \
 						  <div class=\"ui two column grid container\"> \
@@ -309,6 +342,13 @@ var DoleticUIModule = new function() {
 							  </div> \
 							</div> \
 						</div> \
+						 \
+						 	<!-- 		FORMATIONS ET AGR 		--> \
+						 	\
+						<div class=\"ui bottom attached tab segment\" data-tab=\"form\"> \
+							<div class=\"ui two column grid container\"> \
+							</div>\
+						</div>\
 						 \
 						 	<!-- 		USER DETAILS 		--> \
 						 	\
@@ -617,12 +657,17 @@ var DoleticUIModule = new function() {
 			if(data.code == 0) {
 				// create content var to build html
 				var content = "";
+				var table_content = "";
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
 					content += "<option value=\""+data.object[i]+"\">"+data.object[i]+"</option>\n";
+					table_content += "<tr><td>"+data.object[i]+"</td><td><button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAGR('"+data.object[i]+"'); return false;\"> \
+			  									<i class=\"remove icon\"></i>Retirer \
+											</button></td></tr>";
 				};
 				// insert html content
 				$('#ag').html(content);
+				$('#agr_body').html(table_content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -1085,6 +1130,13 @@ var DoleticUIModule = new function() {
 		}
 	}
 
+	this.insertNewAGR = function() {
+		if(DoleticUIModule.checkNewAGRForm()) {
+			var ag = $("#agr").val();
+			UserDataServicesInterface.insertAg(ag, DoleticUIModule.fillAGSelector);
+		}
+	}
+
 	this.insertTeamMember = function(id) {
 		var handler = function() {
 			DoleticUIModule.updateTeamModal(id);
@@ -1348,6 +1400,20 @@ var DoleticUIModule = new function() {
 			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
 	}
 
+	this.deleteAGR = function(ag) {
+		console.log(String(ag));
+		var del = function() {
+			UserDataServicesInterface.deleteAg(String(ag), function() {
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'AGR a été supprimée avec succès !");
+				DoleticUIModule.fillAGSelector();
+			});
+		};
+		// Confirmation
+		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
+			"Etes-vous sûr de vouloir supprimer l'AGR ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
+	}
+
 	this.deleteTeamMember = function(id, memberId) {
 		var handler = function() {
 			DoleticUIModule.updateTeamModal(id);
@@ -1497,6 +1563,14 @@ var DoleticUIModule = new function() {
 			DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
 		}
 		return valid;
+	}
+
+	this.checkNewAGRForm = function() {
+		if( !DoleticMasterInterface.checkDate($('#agr').val()) ) {
+			$('#agr').addClass("error");
+			return false;
+		}
+		return true;
 	}
 
 	this.resetUserFilters = function() {
