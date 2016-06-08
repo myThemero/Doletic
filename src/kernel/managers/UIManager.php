@@ -99,6 +99,8 @@ class UIManager extends AbstractManager {
 		array_push($this->internal_js, "ui/js_depends/jquery-2.2.0.min.js");
 		array_push($this->internal_js, "ui/js_depends/plotly-1.5.0.min.js");
 		array_push($this->internal_js, "ui/semantic/dist/semantic.min.js");
+		array_push($this->internal_js, "ui/dataTables/jquery.dataTables.min.js");
+		array_push($this->internal_js, "ui/dataTables/dataTables.semanticui.min.js");
 		array_push($this->internal_js, "services/doletic_services.js");
 		array_push($this->internal_js, "ui/js/abstract_doletic_module.js");
 		array_push($this->internal_js, "ui/js/doletic_utils.js");
