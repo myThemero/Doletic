@@ -41,6 +41,7 @@ class HrModule extends AbstractModule {
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_ADM_MEMBERSHIP_BY_ID => RightsMap::A_RMASK,	// only super admin 
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_ALL_ADM_MEMBERSHIPS 	=> RightsMap::G_RMASK,	// everyone 
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS => RightsMap::G_RMASK,  // everyone
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_CURRENT_ADM_MEMBERSHIP => RightsMap::G_RMASK,  // everyone
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::INSERT 		=> RightsMap::A_RMASK,  // admin 
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::UPDATE 		=> RightsMap::A_RMASK,	// admin 
 				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::DELETE 		=> RightsMap::A_RMASK,  // admin

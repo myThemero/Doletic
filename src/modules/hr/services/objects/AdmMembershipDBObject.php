@@ -101,6 +101,13 @@ public function jsonSerialize() {
 	public function GetCertif() {
 		return $this->certif;
 	}
+	/**
+	 * @brief
+	 */
+	public function IsComplete() {
+		return $this->certif && $this->form && $this->fee;
+	}
+
 }
 
 /**
@@ -121,6 +128,7 @@ class AdmMembershipServices extends AbstractObjectServices {
 	const GET_ADM_MEMBERSHIP_BY_ID 	= "byidam";
 	const GET_ALL_ADM_MEMBERSHIPS   = "allam";
 	const GET_USER_ADM_MEMBERSHIPS  = "alluam";
+	const GET_CURRENT_ADM_MEMBERSHIP = "valadmm";
 	const INSERT 		    = "insert";
 	const UPDATE            = "update";
 	const DELETE            = "delete";
@@ -140,6 +148,8 @@ class AdmMembershipServices extends AbstractObjectServices {
 			$data = $this->__get_all_adm_memberships();
 		} else if(!strcmp($action, AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS)) {
 			$data = $this->__get_user_adm_memberships($params[AdmMembershipServices::PARAM_USER]);
+		} else if(!strcmp($action, AdmMembershipServices::GET_CURRENT_ADM_MEMBERSHIP)) {
+			$data = $this->__get_current_adm_membership($params[AdmMembershipServices::PARAM_USER]);
 		} else if(!strcmp($action, AdmMembershipServices::INSERT)) {
 			$data = $this->__insert_adm_membership(
 				$params[AdmMembershipServices::PARAM_USER],
@@ -237,6 +247,33 @@ class AdmMembershipServices extends AbstractObjectServices {
 			}
 		}
 		return $adm_memberships;
+	}
+
+	private function __get_current_adm_membership($userId) {
+		// create sql params array
+		$sql_params = array(":".AdmMembershipDBObject::COL_USER_ID => $userId,
+							":".AdmMembershipDBObject::COL_END_DATE => date('Y-m-d'));
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_USER_ID, AdmMembershipDBObject::COL_END_DATE), array(), 1);
+		substr_replace($sql, ">", strrpos($sql, "="), strlen("="));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for adm_memberships and fill it
+		$adm_membership = null;
+		if(isset($pdos)) {
+			if( ($row = $pdos->fetch()) !== false) {
+				$adm_membership = new AdmMembership(
+					$row[AdmMembershipDBObject::COL_ID], 
+					$row[AdmMembershipDBObject::COL_USER_ID], 
+					$row[AdmMembershipDBObject::COL_START_DATE], 
+					$row[AdmMembershipDBObject::COL_END_DATE], 
+					$row[AdmMembershipDBObject::COL_FEE], 
+					$row[AdmMembershipDBObject::COL_FORM], 
+					$row[AdmMembershipDBObject::COL_CERTIF]);
+			}
+		}
+		return $adm_membership;
 	}
 
 	// --- modify

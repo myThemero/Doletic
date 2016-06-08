@@ -705,8 +705,15 @@ var DoleticUIModule = new function() {
 					selector_content += "<option value=\""+data.object[i].user_id+"\">"
 	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
 					if(data.object[i].last_pos.label.indexOf(pos_filter) > -1 && data.object[i].last_pos.division.indexOf(div_filter) > -1 && DoleticMasterInterface.matchKeywords(data.object[i], keywords)) {
-						content += "<tr> \
-	      						<td> \
+						content += "<tr";
+						var valid = function(admm) {
+							if(admm.object == [] || admm.object.fee != 1 || admm.object.form != 1 | admm.object.certif != 1) {
+								content += " class=\"warning\"";
+								console.log("Erreur !");
+							}
+						}
+						AdmMembershipServicesInterface.getCurrentAdmMembership(data.object[i].user_id, function(data) {console.log(data); valid(data);});
+						content += "><td> \
 	      						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
 		  							<i class=\"user icon\"></i> \
 								</button> \
