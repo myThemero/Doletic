@@ -24,9 +24,8 @@ var DoleticUIModule = new function() {
 		$('#content_div').load("../modules/hr/ui/superadmin.html");
 		// hide user details tab
 		$('#det').hide();
-		DoleticUIModule.fillUsersList();
 		// fill user and team list. User first to fill user_list global array
-		//$.when($.ajax(DoleticUIModule.fillUsersList())).then(DoleticUIModule.fillTeamsList());
+		$.when($.ajax(DoleticUIModule.fillUsersList())).then(DoleticUIModule.fillTeamsList());
 		// fill country field
 		DoleticUIModule.fillCountrySelector();
 		// fill gender field
@@ -286,7 +285,7 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				// Store data in global array
-				//window.user_list = new Array();
+				window.user_list = new Array();
 				// iterate over values to build options
 				var content = "";
 				var filters = [
@@ -297,9 +296,14 @@ var DoleticUIModule = new function() {
 								DoleticMasterInterface.input_filter,
 								DoleticMasterInterface.reset_filter
 								];
-				//var selector_content = "";
+				var selector_content = "<option value>Membre...</option>";
 				for (var i = 0; i < data.object.length; i++) {
+						
+						window.user_list[data.object[i].id] = data.object[i];
 
+						selector_content += "<option value=\""+data.object[i].user_id+"\">"
+
+	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
 						content += "<tr><td> \
 	      						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
 		  							<i class=\"user icon\"></i> \
@@ -324,12 +328,12 @@ var DoleticUIModule = new function() {
 							</div> \
 	    				</td> \
 	    				</tr>";
+
 	    				
 				}
 				$('#user_body').html(content);
 				DoleticMasterInterface.makeDataTables('user_table', filters);
-				/*$('#leader').html(selector_content);
-				$('#member_f').append(selector_content);*/
+				$('#leader').html(selector_content).dropdown();
 				
 			} else {
 				// use default service service error handler
@@ -344,49 +348,43 @@ var DoleticUIModule = new function() {
 			if(data.code == 0 && data.object != "[]") {
 				
 				window.team_list = new Array();
-				// Sort if needed
-				if(window.sortTeam.attribute != "id") {
-					DoleticMasterInterface.sortObjectsArray(data.object, window.sortTeam.attribute, window.sortTeam.asc);			
-				}
-				var div_filter = $("#division_ft option:selected").text();
-				if(div_filter == "Tous") {
-					div_filter = "";
-				}
-				var member_filter_id = $("#member_f option:selected").val();
-				var keywords = $("#keyword_filter_t").val();
 				// create content var to build html
 				var content = "";
+				var filters = [
+								DoleticMasterInterface.input_filter,
+								DoleticMasterInterface.input_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.input_filter,
+								DoleticMasterInterface.reset_filter
+								];
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
 					window.team_list[data.object[i].id] = data.object[i];
-					if(data.object[i].division.indexOf(div_filter) > -1 
-						&& DoleticMasterInterface.matchKeywords(data.object[i], keywords)
-						&& (member_filter_id == 0 || data.object[i].member_id.indexOf(member_filter_id) > -1)) {
-						
-						DoleticUIModule.makeTeamModal(data.object[i]);
-						content += "<tr><td>"+data.object[i].name+"</td> \
-									<td>"+window.user_list[data.object[i].leader_id].firstname + " " 
-									+ window.user_list[data.object[i].leader_id].lastname +"</td> \
-									<td>" + data.object[i].division + "</td> \
-									<td> \
-										<button class=\"ui icon button\" onClick=\"$('#tmodal_"+data.object[i].id+"').modal('show');\"> \
-		  									<i class=\"write icon\"></i>Gérer \
-									</td> \
-									<td> \
-										<div class=\"ui icon buttons\"> \
-											<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
-			  									<i class=\"write icon\"></i> \
-											</button> \
-											<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
-			  									<i class=\"remove icon\"></i> \
-											</button>\
-										</div> \
-									</td> \
-									</tr>";
-					}
+					DoleticUIModule.makeTeamModal(data.object[i]);
+					content += "<tr><td>"+data.object[i].name+"</td> \
+								<td>"+window.user_list[data.object[i].leader_id].firstname + " " 
+								+ window.user_list[data.object[i].leader_id].lastname +"</td> \
+								<td>" + data.object[i].division + "</td> \
+								<td> \
+									<button class=\"ui icon button\" onClick=\"$('#tmodal_"+data.object[i].id+"').modal('show');\"> \
+	  									<i class=\"write icon\"></i>Gérer \
+								</td> \
+								<td> \
+									<div class=\"ui icon buttons\"> \
+										<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
+		  									<i class=\"write icon\"></i> \
+										</button> \
+										<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
+		  									<i class=\"remove icon\"></i> \
+										</button>\
+									</div> \
+								</td> \
+								</tr>";
+					//}
 				};
 				// insert html content
 				$('#team_body').html(content);
+				DoleticMasterInterface.makeDataTables('team_table', filters);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -480,6 +478,14 @@ var DoleticUIModule = new function() {
 
 				// Fill memberships tables
 				AdmMembershipServicesInterface.getUserAdmMemberships(data.object.user_id, function(data) {
+					var filters = [
+								DoleticMasterInterface.input_filter,
+								DoleticMasterInterface.input_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.reset_filter
+								];
 					var html = "";
 					for(var i=0; i<data.object.length; i++) {
 						if(!(data.object[i].fee && data.object[i].form && data.object[i].certif)) {
@@ -507,8 +513,18 @@ var DoleticUIModule = new function() {
 						
 					}
 					$("#admm_body").html(html);
+					DoleticMasterInterface.makeDataTables('admm_table', filters);
 				});
 				IntMembershipServicesInterface.getUserIntMemberships(data.object.user_id, function(data) {
+					var filters = [
+								DoleticMasterInterface.input_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.reset_filter
+								];
 					var html = "";
 					for(var i=0; i<data.object.length; i++) {
 						if(!(data.object[i].fee && data.object[i].form && data.object[i].certif && data.object[i].rib && data.object[i].identity)) {
@@ -537,6 +553,7 @@ var DoleticUIModule = new function() {
 						
 					}
 					$("#intm_body").html(html);
+					DoleticMasterInterface.makeDataTables('intm_table', filters);
 				});
 			} else {
 				// use default service service error handler
