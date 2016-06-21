@@ -9,6 +9,10 @@ var DoleticMasterInterface = new function() {
   // Constantes --------------------------------
   this.module_container_id = 'module_container';
   this.master_container_id = 'master_container';
+  this.no_filter = 0;
+  this.input_filter = 1;
+  this.select_filter = 2;
+  this.reset_filter = 3;
   // -------------------------------------------
 
   // Ui settings
@@ -361,6 +365,100 @@ var DoleticMasterInterface = new function() {
       }
     }
     return objArray;
+  }
+
+  this.makeDataTables = function(id, filters) {
+    $.getJSON( "./ui/dataTables/translate.json", function( data ) {
+        var table = $('#' + id).DataTable({
+            language: data,
+            initComplete: function() {
+                var i = 0;
+                this.api().columns().every( function () {
+                    var column = this;
+                    var footer = $(column.footer()); 
+                    switch(filters[i]) {
+                        case DoleticMasterInterface.input_filter:
+                            var title = footer.text();
+                            footer.html( '<div class="ui fluid input"><input class="filter-input" type="text" placeholder="'+title+'" /></div>' );
+                            $('input', footer).on( 'keyup change', function () {
+                                if(column.search() !== this.value) {
+                                    column.search( this.value ).draw();
+                                }
+                            });
+                            break;
+                        case DoleticMasterInterface.select_filter:
+                            var select = $('<select class="ui fluid search dropdown"><option value=""></option></select>')
+                                .appendTo( $(column.footer()).empty() )
+                                .on( 'change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                                    column.search( val ? '^'+val+'$' : '', true, false ).draw();
+                                });
+       
+                            column.data().unique().sort().each( function ( d, j ) {
+                                d = d.replace(/(<([^>]+)>)/ig,"");
+                                select.append( '<option value="'+d+'">'+d+'</option>' ).dropdown();
+                            });
+                            break;
+                        case DoleticMasterInterface.reset_filter:
+                          var button = $('<button class="ui icon button"><i class="refresh icon"></i>Réinit.</button>')
+                              .appendTo( $(column.footer()).empty() )
+                              .click(function() {
+                                  var tfoot = $(this).parent().parent().parent();
+                                  tfoot.find(".filter-input").val("").change();
+                                  tfoot.find(".dropdown").dropdown("restore defaults");
+                              });
+                          break;
+                        default:
+                            break;
+                    }
+                    i++;
+                });
+            }
+        });
+        
+
+
+        /*$('#' + id + ' tfoot th').each( function () {
+              var title = $(this).text();
+              if(title.length > 0) {
+                $(this).html( '<div class="ui fluid input"><input type="text" placeholder="'+title+'..." /></div>' );
+              }
+          } );*/
+
+
+
+        // Apply the search
+          /*table.columns().every( function () {
+              var that = this;
+       
+              
+          });*/
+          /*$('#' + id).DataTable( {
+              initComplete: function () {
+                  this.api().columns().every( function () {
+                      var column = this;
+                      if($(column.footer()).html().length > 0) {
+                          var select = $('<select class="ui fluid search dropdown"><option value=""></option></select>')
+                          .appendTo( $(column.footer()).empty() )
+                          .on( 'change', function () {
+                              var val = $.fn.dataTable.util.escapeRegex(
+                                  $(this).val()
+                              );
+       
+                              column
+                                  .search( val ? '^'+val+'$' : '', true, false )
+                                  .draw();
+                          });
+       
+                      column.data().unique().sort().each( function ( d, j ) {
+                          d = d.replace(/\<a([^,\>]+)>+([^,\>]+)>/ig,"").replace(/(<([^>]+)>)/ig,"");
+                          select.append( '<option value="'+d+'">'+d+'</option>' ).dropdown();
+                    });
+                  }
+              });
+          }
+      });*/
+    });
   }
 
 }

@@ -1,0 +1,157 @@
+<div class="ui two column grid container"> 
+    <div class="three wide column"> 
+        <div class="ui relaxed divided list"> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">Nom complet</div> 
+                    <div class="description" id="det_name">undefined</div> 
+                </div> 
+            </div> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">Poste actuel</div> 
+                    <div class="description" id="det_pos">undefined</div> 
+                </div> 
+            </div> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">Date de naissance</div> 
+                    <div class="description" id="det_birth">undefined</div> 
+                </div> 
+            </div> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">Année</div> 
+                    <div class="description" id="det_year">undefined</div> 
+                </div> 
+            </div> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">Téléphone</div> 
+                    <div class="description" id="det_tel">undefined</div> 
+                </div> 
+            </div> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">Email</div> 
+                    <div class="description" id="det_mail">undefined</div> 
+                </div> 
+            </div> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">Adresse</div> 
+                    <div class="description" id="det_add">undefined</div> 
+                    <div class="description" id="det_postal">undefined</div> 
+                    <div class="description" id="det_city">undefined</div> 
+                </div> 
+            </div> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">Nationalité</div> 
+                    <div class="description" id="det_country">undefined</div> 
+                </div> 
+            </div> 
+            <div class="item"> 
+                <div class="content"> 
+                    <div class="header">AG de recrutement</div> 
+                    <div class="description" id="det_ag">undefined</div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+    <div class="nine wide column"> 
+        <div class="ui horizontal divider"> 
+            Adhésions administrateur 
+        </div> 
+        <table class="ui very basic celled table" id="admm_table"> 
+            <thead> 
+                <tr>
+                    <th>Date de début</th> 
+                    <th>Date de fin</th> 
+                    <th>Cotis.</th> 
+                    <th>Fiche</th> 
+                    <th>Certif.</th> 
+                    <th>Actions</th> 
+                </tr>
+            </thead>
+            <tbody id="admm_body"> 
+                <!-- ADM MEMBERSHIP LIST WILL GO THERE --> 
+            </tbody> 
+        </table> 
+        <div class="ui horizontal divider"> 
+            Adhésions intervenant 
+        </div> 
+        <table class="ui very basic celled table" id="intm_table"> 
+            <thead> 
+                <tr>
+                    <th>Date de début</th> 
+                    <th>Cotis.</th> 
+                    <th>Fiche</th> 
+                    <th>Certif.</th> 
+                    <th>RIB</th> 
+                    <th>Pièce id.</th> 
+                    <th>Actions</th> 
+                </tr>
+            </thead>
+            <tbody id="intm_body"> 
+                <!-- INT MEMBERSHIP LIST WILL GO THERE --> 
+            </tbody> 
+        </table> 
+    </div> 
+    <div class="four wide column"> 
+        <div class="ui top attached tabular menu"> 
+            <a class="item active" data-tab="admm" id="admm_tab">Administrateur</a> 
+            <a class="item" data-tab="intm" id="intm_tab">Intervenant</a> 
+        </div> 
+        <div class="ui bottom attached tab segment" data-tab="admm"> 
+            <form id="admm_form" class="ui form segment"> 
+                <h4 class="ui dividing header">Ajout d'une adhésion</h4> 
+                <div id="sdatea_field" class="sixteen wide required field"> 
+                    <label>Date de début</label> 
+                    <input id="sdatea" placeholder="YYYY-MM-JJ" type="text"/> 
+                </div> 
+                <div id="edate_field" class="sixteen wide required field"> 
+                    <label>Date de fin</label> 
+                    <input id="edate" placeholder="YYYY-MM-JJ" type="text"/> 
+                </div> 
+                <div class="sixteen wide required field"> 
+                    <label>Documents présents</label> 
+                    <select id="docs_adm" name="Documents" multiple="" class="ui fluid dropdown"> 
+                        <option value="0">Cotisation</option> 
+                        <option value="1">Fiche d'inscription</option> 
+                        <option value="2">Certificat de scolarité</option> 
+                    </select> 
+                </div> 
+                <div class="ui hr_center small buttons"> 
+                    <div id="abort_admm" class="ui button" onClick="DoleticUIModule.clearNewAdmMembershipForm(-1));">Annuler</div> 
+                    <div class="or" data-text="ou"></div> 
+                    <div id="admm_btn" class="ui green button" onClick="DoleticUIModule.insertNewAdmMembership(-1);">Ajouter</div> 
+                </div> 
+            </form> 
+        </div> 
+        <div class="ui bottom attached tab segment" data-tab="intm"> 
+            <form id="intm_form" class="ui form segment"> 
+                <h4 class="ui dividing header">Ajout d'une adhésion</h4> 
+                <div id="sdatei_field" class="sixteen wide required field"> 
+                    <label>Date de début</label> 
+                    <input id="sdatei" placeholder="YYYY-MM-JJ" type="text"/> 
+                </div> 
+                <div class="sixteen wide required field"> 
+                    <label>Documents présents</label> 
+                    <select id="docs_int" name="Documents" multiple="" class="ui fluid dropdown"> 
+                        <option value="0">Cotisation</option> 
+                        <option value="1">Fiche d'inscription</option> 
+                        <option value="2">Certificat de scolarité</option> 
+                        <option value="3">RIB</option> 
+                        <option value="4">Pièce d'identité</option> 
+                    </select> 
+                </div> 
+                <div class="ui hr_center small buttons"> 
+                    <div id="abort_intm" class="ui button" onClick="DoleticUIModule.clearNewIntMembershipForm(-1);">Annuler</div> 
+                    <div class="or" data-text="ou"></div> 
+                    <div id="intm_btn" class="ui green button" onClick="DoleticUIModule.insertNewIntMembership(-1);">Ajouter</div> 
+                </div> 
+            </form> 
+        </div> 
+    </div> 
+</div> 

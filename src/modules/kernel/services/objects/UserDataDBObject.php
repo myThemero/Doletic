@@ -213,6 +213,7 @@ class UserDataServices extends AbstractObjectServices {
 	const GET_ALL_GENDERS 		= "allg";
 	const GET_ALL_COUNTRIES 	= "allc";
 	const GET_ALL_INSA_DEPTS 	= "alldept";
+	const GET_ALL_SCHOOL_YEARS 	= "allyear";
 	const GET_ALL_POSITIONS 	= "allpos";
 	const GET_ALL_AGS 			= "allag";
 	const CHECK_MAIL			= "checkmail";
@@ -248,6 +249,8 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__get_all_countries();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_INSA_DEPTS)) {
 			$data = $this->__get_all_INSA_depts();
+		} else if(!strcmp($action, UserDataServices::GET_ALL_SCHOOL_YEARS)) {
+			$data = $this->__get_all_school_years();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_POSITIONS)) {
 			$data = $this->__get_all_positions();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_AGS)) {
@@ -499,6 +502,21 @@ class UserDataServices extends AbstractObjectServices {
 				array_push($labels, array(
 					UserDataDBObject::COL_LABEL => $row[UserDataDBObject::COL_LABEL],
 					UserDataDBObject::COL_DETAIL => $row[UserDataDBObject::COL_DETAIL]));
+			}
+		}
+		return $labels;
+	}
+
+	private function __get_all_school_years() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_SCHOOL_YEAR)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for labels and fill it
+		$labels = array();
+		if(isset($pdos)) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($labels, $row[UserDataDBObject::COL_LABEL]);
 			}
 		}
 		return $labels;
@@ -771,6 +789,16 @@ class UserDataServices extends AbstractObjectServices {
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
 		}
+		// -- init school year table --------------------------------------------------------------------
+		$years = array(1, 2, 3, 4, 5, 6, 7, 8);
+		// --- retrieve SQL query
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_SCHOOL_YEAR)->GetINSERTQuery();
+		foreach ($years as $year) {
+			// --- create param array
+			$sql_params = array(":".UserDataDBObject::COL_LABEL => $year);
+			// --- execute SQL query
+			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
+		}
 		// -- init ETIC pos table --------------------------------------------------------------------
 		$positions = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
 			"Président" => 				array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "Présidence"), // A  | A | D
@@ -820,6 +848,7 @@ class UserDataDBObject extends AbstractDBObject {
 	const TABL_COM_GENDER = "com_gender";
 	const TABL_COM_COUNTRY = "com_country";
 	const TABL_COM_INSA_DEPT = "com_insa_dept";
+	const TABL_COM_SCHOOL_YEAR = "com_school_year";
 	const TABL_COM_POSITION	= "com_position";
 	const TABL_AG 			= "com_ag";
 	// --- columns
@@ -888,6 +917,9 @@ class UserDataDBObject extends AbstractDBObject {
 		$com_insa_dept = new DBTable(UserDataDBObject::TABL_COM_INSA_DEPT);
 		$com_insa_dept->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		$com_insa_dept->AddColumn(UserDataDBObject::COL_DETAIL, DBTable::DT_VARCHAR, 255, false, "");
+		// --- com_school_year table
+		$com_school_year = new DBTable(UserDataDBObject::TABL_COM_SCHOOL_YEAR);
+		$com_school_year->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_INT, 11, false, "", false, true);
 		// --- com_position table
 		$com_position = new DBTable(UserDataDBObject::TABL_COM_POSITION);
 		$com_position->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
@@ -903,6 +935,7 @@ class UserDataDBObject extends AbstractDBObject {
 		parent::addTable($com_gender);
 		parent::addTable($com_country);
 		parent::addTable($com_insa_dept);
+		parent::addTable($com_school_year);
 		parent::addTable($com_position);
 		parent::addTable($com_ag);
 	}

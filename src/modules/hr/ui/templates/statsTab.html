@@ -1,0 +1,37 @@
+<div class="ui two column grid container"> 
+    <div class="row"> 
+        <div class="nine wide column"> 
+            <div class="ui horizontal divider"> 
+                Indicateurs RH
+            </div> 
+        </div>
+        <div class="seven wide column"> 
+            <div class="ui horizontal divider"> 
+                Gestion des AG de Recrutement
+            </div> 
+            <div class="ui stackable grid container"> 
+                <div class="row"> 
+                    <div class="nine wide column"> 
+                        <table class="ui very basic single line striped table">
+                            <tbody id="agr_body">
+                                <!-- AGR LIST GOES THERE -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="seven wide column"> 
+                        <form class="ui form">
+                            <h4 class="ui dividing header">Ajouter une AGR</h4>
+                                <div id="agr_field" class="sxiteen wide required field"> 
+                                    <label>Date de</label> 
+                                    <input id="agr" placeholder="Nom..." type="text"/> 
+                                </div> 
+                                <div id="add_agr_btn" class="ui green button" onClick="DoleticUIModule.insertNewAGR();">
+                                Ajouter
+                                </div> 
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -64,7 +64,8 @@ class HrModule extends AbstractModule {
 		parent::addDBObject(new IntMembershipDBObject($this));
 
 		// -- add module specific ui
-		parent::addUI('Administration','admin');	// refer to couple (admin.js, admin.css)
+		parent::addUI('Super-Admins', 'superadmin');
+		parent::addUI('Admins','admin');	// refer to couple (admin.js, admin.css)
 		parent::addUI('Membres','ui'); 	// refer to couple (ui.js, ui.css)
 	}
 
