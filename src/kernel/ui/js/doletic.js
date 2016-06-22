@@ -416,49 +416,6 @@ var DoleticMasterInterface = new function() {
                 });
             }
         });
-        
-
-
-        /*$('#' + id + ' tfoot th').each( function () {
-              var title = $(this).text();
-              if(title.length > 0) {
-                $(this).html( '<div class="ui fluid input"><input type="text" placeholder="'+title+'..." /></div>' );
-              }
-          } );*/
-
-
-
-        // Apply the search
-          /*table.columns().every( function () {
-              var that = this;
-       
-              
-          });*/
-          /*$('#' + id).DataTable( {
-              initComplete: function () {
-                  this.api().columns().every( function () {
-                      var column = this;
-                      if($(column.footer()).html().length > 0) {
-                          var select = $('<select class="ui fluid search dropdown"><option value=""></option></select>')
-                          .appendTo( $(column.footer()).empty() )
-                          .on( 'change', function () {
-                              var val = $.fn.dataTable.util.escapeRegex(
-                                  $(this).val()
-                              );
-       
-                              column
-                                  .search( val ? '^'+val+'$' : '', true, false )
-                                  .draw();
-                          });
-       
-                      column.data().unique().sort().each( function ( d, j ) {
-                          d = d.replace(/\<a([^,\>]+)>+([^,\>]+)>/ig,"").replace(/(<([^>]+)>)/ig,"");
-                          select.append( '<option value="'+d+'">'+d+'</option>' ).dropdown();
-                    });
-                  }
-              });
-          }
-      });*/
     });
   }
 

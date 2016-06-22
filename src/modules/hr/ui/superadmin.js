@@ -8,9 +8,6 @@ var DoleticUIModule = new function() {
 	 */
 	this.render = function(htmlNode) {
 
-		// Define global variables
-		window.sortUser = {attribute:"id", asc:Boolean(true)};
-		window.sortTeam = {attribute:"id", asc:Boolean(true)};
 		this.super.render(htmlNode, this);
 		// Load HTML templates
 		DoleticUIModule.getStatsTab();
@@ -242,8 +239,6 @@ var DoleticUIModule = new function() {
 				};
 				// insert html content
 				$('#division').html(content).dropdown();
-				//$('#user_filters #division_f').append(content);
-				//$('#team_filters #division_ft').append(content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -487,7 +482,6 @@ var DoleticUIModule = new function() {
 		} else {
 		    $mod.replaceWith(modal);
 		}
-		//$("body").append(modal);
 		$("#add_tmember_select"+team.id).dropdown();
 	}
 
@@ -1283,48 +1277,6 @@ var DoleticUIModule = new function() {
 			return false;
 		}
 		return true;
-	}
-
-	this.resetUserFilters = function() {
-		$('#user_filters .dropdown').dropdown("restore defaults");
-		$('#keyword_filter').val('');
-		DoleticUIModule.fillUsersList();
-	}
-
-	this.resetTeamFilters = function() {
-		$('#team_filters .dropdown').dropdown("restore defaults");
-		$('#keyword_filter_t').val('');
-		DoleticUIModule.fillTeamsList();
-	}
-
-	this.sortUserList = function(attribute, asc) {
-		// Set global variable properties
-		window.sortUser.attribute = attribute;
-		window.sortUser.asc = Boolean(asc);
-		// Reverse button
-		if(asc) {
-			$("#usort_"+attribute).html("<i class=\"caret down icon\"></i>");
-			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('"+attribute+"', false); return false;");
-		} else {
-			$("#usort_"+attribute).html("<i class=\"caret up icon\"></i>");
-			$("#usort_"+attribute).attr("onClick", "DoleticUIModule.sortUserList('"+attribute+"', true); return false;");
-		}
-		DoleticUIModule.fillUsersList();
-	}
-
-	this.sortTeamList = function(attribute, asc) {
-		// Set global variable properties
-		window.sortTeam.attribute = attribute;
-		window.sortTeam.asc = Boolean(asc);
-		// Reverse button
-		if(asc) {
-			$("#tsort_"+attribute).html("<i class=\"caret down icon\"></i>");
-			$("#tsort_"+attribute).attr("onClick", "DoleticUIModule.sortTeamList('"+attribute+"', false); return false;");
-		} else {
-			$("#tsort_"+attribute).html("<i class=\"caret up icon\"></i>");
-			$("#tsort_"+attribute).attr("onClick", "DoleticUIModule.sortTeamList('"+attribute+"', true); return false;");
-		}
-		DoleticUIModule.fillTeamsList();
 	}
 
 }
