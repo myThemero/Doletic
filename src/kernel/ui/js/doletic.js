@@ -370,6 +370,7 @@ var DoleticMasterInterface = new function() {
   this.makeDataTables = function(id, filters) {
     $.getJSON( "./ui/dataTables/translate.json", function( data ) {
         var table = $('#' + id).DataTable({
+            retrieve: true,
             language: data,
             initComplete: function() {
                 var i = 0;

@@ -12,16 +12,12 @@ var DoleticUIModule = new function() {
 		window.sortUser = {attribute:"id", asc:Boolean(true)};
 		window.sortTeam = {attribute:"id", asc:Boolean(true)};
 		this.super.render(htmlNode, this);
-		// activate items in tabs
-		$('.menu .item').tab();
 		// Load HTML templates
 		DoleticUIModule.getStatsTab();
 		DoleticUIModule.getMembersTab();
 		DoleticUIModule.getTeamsTab();
 		DoleticUIModule.getDetailsTab();
 
-
-		$('#content_div').load("../modules/hr/ui/superadmin.html");
 		// hide user details tab
 		$('#det').hide();
 		// fill user and team list. User first to fill user_list global array
@@ -40,10 +36,8 @@ var DoleticUIModule = new function() {
 		DoleticUIModule.fillDivisionSelector();
 		//fill ag field
 		DoleticUIModule.fillAGSelector();
-		// init filters
-		//$('.dropdown').dropdown();
-		$('#user_filters .dropdown').dropdown('setting', 'onChange', function() {DoleticUIModule.fillUsersList()});
-		$('#team_filters .dropdown').dropdown('setting', 'onChange', function() {DoleticUIModule.fillTeamsList()});
+		// activate items in tabs
+		$('.menu .item').tab();
 	}
 	/**
 	 *	Override build function
@@ -282,12 +276,35 @@ var DoleticUIModule = new function() {
 
 	this.fillUsersList = function() {
 		UserDataServicesInterface.getAll(function(data) {
+			// Delete and recreate table so Datatables is reinitialized
+			$("#user_table_container").html("");
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				// Store data in global array
 				window.user_list = new Array();
 				// iterate over values to build options
-				var content = "";
+				var content = "<table class=\"ui very basic celled table\" id=\"user_table\"> \
+                <thead> \
+                    <tr>\
+                        <th></th>\
+                        <th>Nom/Mail</th> \
+                        <th>Poste</th> \
+                        <th>Téléphone</th> \
+                        <th>Année</th> \
+                        <th>Actions</th> \
+                    </tr>\
+                </thead>\
+                <tfoot> \
+                    <tr>\
+                        <th></th>\
+                        <th>Nom</th> \
+                        <th>Email</th> \
+                        <th>Téléphone</th> \
+                        <th>Année</th> \
+                        <th></th> \
+                    </tr>\
+                </tfoot>\
+                <tbody id=\"user_body\">";
 				var filters = [
 								DoleticMasterInterface.no_filter,
 								DoleticMasterInterface.input_filter,
@@ -331,7 +348,8 @@ var DoleticUIModule = new function() {
 
 	    				
 				}
-				$('#user_body').html(content);
+				content += "</tbody></table>";
+				$('#user_table_container').append(content);
 				DoleticMasterInterface.makeDataTables('user_table', filters);
 				$('#leader').html(selector_content).dropdown();
 				
@@ -344,12 +362,33 @@ var DoleticUIModule = new function() {
 
 	this.fillTeamsList = function() {
 		TeamServicesInterface.getAll(function(data) {
+			// Delete and recreate table so Datatables is reinitialized
+			$("#team_table_container").html("");
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				
 				window.team_list = new Array();
 				// create content var to build html
-				var content = "";
+				var content = "<table class=\"ui very basic celled table\" id=\"team_table\"> \
+								    <thead> \
+								        <tr>\
+								            <th>Nom</th> \
+								            <th>Chef d'équipe</th> \
+								            <th>Pôle</th> \
+								            <th>Membres</th> \
+								            <th>Actions</th> \
+								        </tr>_\
+								    </thead>\
+								    <tfoot> \
+								        <tr>\
+								            <th>Nom</th> \
+								            <th>Chef d'équipe</th> \
+								            <th>Pôle</th> \
+								            <th>Membres</th> \
+								            <th>Actions</th> \
+								        </tr>\
+								    </tfoot>\
+								    <tbody id=\"team_body\"> ";
 				var filters = [
 								DoleticMasterInterface.input_filter,
 								DoleticMasterInterface.input_filter,
@@ -382,8 +421,9 @@ var DoleticUIModule = new function() {
 								</tr>";
 					//}
 				};
+				content += "</tbody></table> ";
 				// insert html content
-				$('#team_body').html(content);
+				$('#team_table_container').append(content);
 				DoleticMasterInterface.makeDataTables('team_table', filters);
 			} else {
 				// use default service service error handler
@@ -452,6 +492,10 @@ var DoleticUIModule = new function() {
 	}
 
 	this.fillUserDetails = function(userId) {
+		// activate items in tabs
+		$('.menu .item').tab();
+		$('.dropdown').dropdown();
+
 		this.userId = userId;
 		UserDataServicesInterface.getById(userId, function(data) {
 			// if no service error
@@ -478,6 +522,7 @@ var DoleticUIModule = new function() {
 
 				// Fill memberships tables
 				AdmMembershipServicesInterface.getUserAdmMemberships(data.object.user_id, function(data) {
+					$("#admm_table_container").html("");
 					var filters = [
 								DoleticMasterInterface.input_filter,
 								DoleticMasterInterface.input_filter,
@@ -486,7 +531,28 @@ var DoleticUIModule = new function() {
 								DoleticMasterInterface.select_filter,
 								DoleticMasterInterface.reset_filter
 								];
-					var html = "";
+					var html = "<table class=\"ui very basic celled table\" id=\"admm_table\"> \
+            <thead> \
+                <tr>\
+                    <th>Date de début</th> \
+                    <th>Date de fin</th> \
+                    <th>Cotis.</th> \
+                    <th>Fiche</th> \
+                    <th>Certif.</th> \
+                    <th>Actions</th> \
+                </tr>\
+            </thead>\
+            <tfoot> \
+                <tr>\
+                    <th>Date de début</th> \
+                    <th>Date de fin</th> \
+                    <th>Cotis.</th> \
+                    <th>Fiche</th> \
+                    <th>Certif.</th> \
+                    <th>Actions</th> \
+                </tr>\
+            </tfoot>\
+            <tbody id=\"admm_body\"> ";
 					for(var i=0; i<data.object.length; i++) {
 						if(!(data.object[i].fee && data.object[i].form && data.object[i].certif)) {
 							html += "<tr class=\"warning\">";
@@ -512,10 +578,12 @@ var DoleticUIModule = new function() {
 						</td></tr>";
 						
 					}
-					$("#admm_body").html(html);
+					html += "</tbody></table>"
+					$("#admm_table_container").html(html);
 					DoleticMasterInterface.makeDataTables('admm_table', filters);
 				});
 				IntMembershipServicesInterface.getUserIntMemberships(data.object.user_id, function(data) {
+					$("#intm_table_container").html("");
 					var filters = [
 								DoleticMasterInterface.input_filter,
 								DoleticMasterInterface.select_filter,
@@ -525,7 +593,30 @@ var DoleticUIModule = new function() {
 								DoleticMasterInterface.select_filter,
 								DoleticMasterInterface.reset_filter
 								];
-					var html = "";
+					var html = "<table class=\"ui very basic celled table\" id=\"intm_table\"> \
+            <thead> \
+                <tr>\
+                    <th>Date de début</th> \
+                    <th>Cotis.</th> \
+                    <th>Fiche</th> \
+                    <th>Certif.</th> \
+                    <th>RIB</th> \
+                    <th>Pièce id.</th> \
+                    <th>Actions</th> \
+                </tr>\
+            </thead>\
+            <tfoot> \
+                <tr>\
+                    <th>Date de début</th> \
+                    <th>Cotis.</th> \
+                    <th>Fiche</th> \
+                    <th>Certif.</th> \
+                    <th>RIB</th> \
+                    <th>Pièce id.</th> \
+                    <th>Actions</th> \
+                </tr>\
+            </tfoot>\
+            <tbody id=\"intm_body\"> ";
 					for(var i=0; i<data.object.length; i++) {
 						if(!(data.object[i].fee && data.object[i].form && data.object[i].certif && data.object[i].rib && data.object[i].identity)) {
 							html += "<tr class=\"warning\">";
@@ -552,7 +643,7 @@ var DoleticUIModule = new function() {
 						</td></tr>";
 						
 					}
-					$("#intm_body").html(html);
+					$("#intm_table_container").html(html);
 					DoleticMasterInterface.makeDataTables('intm_table', filters);
 				});
 			} else {
