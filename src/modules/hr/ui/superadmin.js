@@ -317,7 +317,7 @@ var DoleticUIModule = new function() {
 
 	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
 						content += "<tr><td> \
-	      						<button class=\"ui icon button\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
+	      						<button class=\"ui icon button\" data-title=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname +"\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
 		  							<i class=\"user icon\"></i> \
 								</button> \
 								</td><td> \
@@ -331,10 +331,10 @@ var DoleticUIModule = new function() {
 	      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
 	    				<td> \
 	    					<div class=\"ui icon buttons\"> \
-		    					<button class=\"ui icon button\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
+		    					<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
 		  							<i class=\"write icon\"></i> \
 								</button> \
-								<button class=\"ui icon button\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+								<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
 		  							<i class=\"remove user icon\"></i> \
 								</button> \
 							</div> \
@@ -347,6 +347,7 @@ var DoleticUIModule = new function() {
 				$('#user_table_container').append(content);
 				DoleticMasterInterface.makeDataTables('user_table', filters);
 				$('#leader').html(selector_content).dropdown();
+				$('#user_body .button').popup();
 				
 			} else {
 				// use default service service error handler
@@ -361,7 +362,6 @@ var DoleticUIModule = new function() {
 			$("#team_table_container").html("");
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
-				
 				window.team_list = new Array();
 				// create content var to build html
 				var content = "<table class=\"ui very basic celled table\" id=\"team_table\"> \
@@ -405,10 +405,10 @@ var DoleticUIModule = new function() {
 								</td> \
 								<td> \
 									<div class=\"ui icon buttons\"> \
-										<button class=\"ui icon button\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
+										<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editTeam("+data.object[i].id+"); return false;\"> \
 		  									<i class=\"write icon\"></i> \
 										</button> \
-										<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
+										<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteTeam("+data.object[i].id+"); return false;\"> \
 		  									<i class=\"remove icon\"></i> \
 										</button>\
 									</div> \
@@ -420,6 +420,7 @@ var DoleticUIModule = new function() {
 				// insert html content
 				$('#team_table_container').append(content);
 				DoleticMasterInterface.makeDataTables('team_table', filters);
+				$('#team_body .button').popup();
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -508,11 +509,12 @@ var DoleticUIModule = new function() {
 				$('#det').show();
 				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
 				$('#det').click();
+				$('#addadmm_modal_btn').attr("onClick", "DoleticUIModule.showNewAdmMembershipForm("+data.object.user_id+"); return false;");
 				$('#admm_btn').attr("onClick", "DoleticUIModule.insertNewAdmMembership("+data.object.user_id+"); return false;");
-				$('#abort_admm').attr("onClick", "DoleticUIModule.clearNewAdmMembershipForm("+data.object.user_id+"); return false;");
+				$('#abort_admm').attr("onClick", "DoleticUIModule.cancelNewAdmMembershipForm("+data.object.user_id+"); return false;");
+				$('#addintm_modal_btn').attr("onClick", "DoleticUIModule.showNewIntMembershipForm("+data.object.user_id+"); return false;");
 				$('#intm_btn').attr("onClick", "DoleticUIModule.insertNewIntMembership("+data.object.user_id+"); return false;");
-				$('#abort_intm').attr("onClick", "DoleticUIModule.clearNewIntMembershipForm("+data.object.user_id+"); return false;");
-				$('#admm_tab').click();
+				$('#abort_intm').attr("onClick", "DoleticUIModule.cancelNewIntMembershipForm("+data.object.user_id+"); return false;");
 
 				// Fill memberships tables
 				AdmMembershipServicesInterface.getUserAdmMemberships(data.object.user_id, function(data) {
@@ -562,10 +564,10 @@ var DoleticUIModule = new function() {
 						html = html.replace(/true/g, "Oui");
 						html += "<td>\
 							<div class=\"ui icon buttons\"> \
-								<button class=\"ui icon button\" onClick=\"DoleticUIModule.editAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+								<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
 		  							<i class=\"write icon\"></i> \
 								</button> \
-								<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+								<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
 		  							<i class=\"remove icon\"></i> \
 								</button>\
 							</div> \
@@ -575,6 +577,7 @@ var DoleticUIModule = new function() {
 					html += "</tbody></table>"
 					$("#admm_table_container").html(html);
 					DoleticMasterInterface.makeDataTables('admm_table', filters);
+					$("#admm_body .button").popup();
 				});
 				IntMembershipServicesInterface.getUserIntMemberships(data.object.user_id, function(data) {
 					$("#intm_table_container").html("");
@@ -627,10 +630,10 @@ var DoleticUIModule = new function() {
 						html = html.replace(/true/g, "Oui");
 						html += "<td>\
 							<div class=\"ui icon buttons\"> \
-								<button class=\"ui icon button\" onClick=\"DoleticUIModule.editIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+								<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
 		  							<i class=\"write icon\"></i> \
 								</button> \
-								<button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+								<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
 		  							<i class=\"remove icon\"></i> \
 								</button>\
 							</div> \
@@ -639,6 +642,7 @@ var DoleticUIModule = new function() {
 					}
 					$("#intm_table_container").html(html);
 					DoleticMasterInterface.makeDataTables('intm_table', filters);
+					$("#intm_body .button").popup();
 				});
 			} else {
 				// use default service service error handler
@@ -657,7 +661,6 @@ var DoleticUIModule = new function() {
 
 		$('#adduser_btn').html("Ajouter");
 		$('#adduser_btn').attr("onClick", "DoleticUIModule.insertNewUser(); return false;");
-		$('#user_form').transition('flash');
 	}
 
 	this.clearNewTeamForm = function() {
@@ -666,7 +669,6 @@ var DoleticUIModule = new function() {
 		$('#team_form .dropdown').dropdown('restore defaults');
 		$('#addteam_btn').html("Ajouter");
 		$('#addteam_btn').attr("onClick", "DoleticUIModule.insertNewTeam(); return false;");
-		$('#team_form').transition('flash');
 	}
 
 	this.clearNewAdmMembershipForm = function(userId) {
@@ -675,7 +677,6 @@ var DoleticUIModule = new function() {
 		$('#admm_form .dropdown').dropdown('restore defaults');
 		$('#admm_btn').html("Ajouter");
 		$('#admm_btn').attr("onClick","DoleticUIModule.insertNewAdmMembership("+userId+"); return false;");
-		$('#admm_form').transition('flash');
 	}
 
 	this.clearNewIntMembershipForm = function(userId) {
@@ -684,7 +685,6 @@ var DoleticUIModule = new function() {
 		$('#intm_form .dropdown').dropdown('restore defaults');
 		$('#intm_btn').html("Ajouter");
 		$('#intm_btn').attr("onClick", "DoleticUIModule.insertNewIntMembership("+userId+"); return false;");
-		$('#intm_form').transition('flash');
 	}
 
 	this.clearNewAGRForm = function() {
@@ -695,7 +695,7 @@ var DoleticUIModule = new function() {
 		// if no service error
 		if(data.code == 0) {
 			// clear ticket form
-			DoleticUIModule.clearNewUserForm();
+			DoleticUIModule.cancelNewUserForm();
 			// alert user that creation is a success
 			DoleticMasterInterface.showSuccess("Création réussie !", "L'utilisateur a été créé avec succès !");
 			// fill ticket list
@@ -710,7 +710,7 @@ var DoleticUIModule = new function() {
 		// if no service error
 		if(data.code == 0) {
 			// clear ticket form
-			DoleticUIModule.clearNewUserForm();
+			DoleticUIModule.cancelNewUserForm();
 			// alert user that creation is a success
 			DoleticMasterInterface.showSuccess("Edition réussie !", "L'utilisateur a été modifié avec succès !");
 			// fill ticket list
@@ -725,7 +725,7 @@ var DoleticUIModule = new function() {
 		// if no service error
 		if(data.code == 0) {
 			// clear ticket form
-			DoleticUIModule.clearNewTeamForm();
+			DoleticUIModule.cancelNewTeamForm();
 			// alert user that creation is a success
 			DoleticMasterInterface.showSuccess("Création réussie !", "L'équipe a été créée avec succès !");
 			// fill ticket list
@@ -740,7 +740,7 @@ var DoleticUIModule = new function() {
 		// if no service error
 		if(data.code == 0) {
 			// clear ticket form
-			DoleticUIModule.clearNewTeamForm();
+			DoleticUIModule.cancelNewTeamForm();
 			// alert user that creation is a success
 			DoleticMasterInterface.showSuccess("Edition réussie !", "L'équipe a été modifiée avec succès !");
 			// fill ticket list
@@ -797,7 +797,7 @@ var DoleticUIModule = new function() {
 		   	// retreive missing information
 			var handler = function() {
 				DoleticUIModule.fillUserDetails(userId);
-				DoleticUIModule.clearNewAdmMembershipForm(userId);
+				DoleticUIModule.cancelNewAdmMembershipForm(userId);
 			};
 			var options = document.getElementById("docs_adm").options;
 			AdmMembershipServicesInterface.insert(
@@ -815,7 +815,7 @@ var DoleticUIModule = new function() {
 		if(DoleticUIModule.checkNewIntMembershipForm()) {
 		   	var handler = function() {
 				DoleticUIModule.fillUserDetails(userId);
-				DoleticUIModule.clearNewIntMembershipForm(userId);
+				DoleticUIModule.cancelNewIntMembershipForm(userId);
 			};
 		   	// retreive missing information
 			var options = document.getElementById("docs_int").options;
@@ -882,7 +882,7 @@ var DoleticUIModule = new function() {
 
 				$('#adduser_btn').html("Confirmer");
 				$('#adduser_btn').attr("onClick", "DoleticUIModule.updateUser("+id+", "+user_id+"); return false;");
-				$('#user_form').transition('pulse');
+				$('#user_form_modal').modal('show');
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -900,7 +900,7 @@ var DoleticUIModule = new function() {
 				$('#leader').dropdown("set selected", data.object.leader_id);
 				$('#addteam_btn').html("Confirmer");
 				$('#addteam_btn').attr("onClick", "DoleticUIModule.updateTeam("+id+"); return false;");
-				$('#team_form').transition('pulse');
+				$('#team_form_modal').modal('show');
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -909,7 +909,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.editAdmMembership = function(id, userId) {
-		$('#admm_tab').click();
+		$('#admm_form_modal').modal('show');
 		$('#admm_form h4').html("Edition d'une adhésion");
 		AdmMembershipServicesInterface.getById(id, function(data) {
 			// if no service error
@@ -930,7 +930,6 @@ var DoleticUIModule = new function() {
 				$('#docs_adm').dropdown("set exactly", options);
 				$('#admm_btn').html("Confirmer");
 				$('#admm_btn').attr("onClick", "DoleticUIModule.updateAdmMembership("+id+", "+userId+"); return false;");
-				$('#admm_form').transition('pulse');
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -939,7 +938,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.editIntMembership = function(id, userId) {
-		$('#intm_tab').click();
+		$('#intm_form_modal').modal('show');
 		$('#intm_form h4').html("Edition d'une adhésion");
 		IntMembershipServicesInterface.getById(id, function(data) {
 			// if no service error
@@ -964,7 +963,6 @@ var DoleticUIModule = new function() {
 				$('#docs_int').dropdown("set exactly", options);
 				$('#intm_btn').html("Confirmer");
 				$('#intm_btn').attr("onClick", "DoleticUIModule.updateIntMembership("+id+", "+userId+"); return false;");
-				$('#intm_form').transition('pulse');
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -1014,7 +1012,7 @@ var DoleticUIModule = new function() {
 		   	// retreive missing information
 			var handler = function() {
 				DoleticUIModule.fillUserDetails(userId);
-				DoleticUIModule.clearNewAdmMembershipForm(userId);
+				DoleticUIModule.cancelNewAdmMembershipForm(userId);
 			};
 			var options = document.getElementById("docs_adm").options;
 			AdmMembershipServicesInterface.update(id,
@@ -1034,7 +1032,7 @@ var DoleticUIModule = new function() {
 		   	// retreive missing information
 			var handler = function() {
 				DoleticUIModule.fillUserDetails(userId);
-				DoleticUIModule.clearNewIntMembershipForm(userId);
+				DoleticUIModule.cancelNewIntMembershipForm(userId);
 			};
 			var options = document.getElementById("docs_int").options;
 			IntMembershipServicesInterface.update(id,
@@ -1152,6 +1150,46 @@ var DoleticUIModule = new function() {
 				$("#members_" + id).html(html);
 		  	}
 		});
+	}
+
+	this.showNewUserForm = function() {
+		DoleticUIModule.clearNewUserForm();
+		$('#user_form_modal').modal('show');
+	}
+
+	this.cancelNewUserForm = function() {
+		DoleticUIModule.clearNewUserForm();
+		$('#user_form_modal').modal('hide');
+	}
+
+	this.showNewTeamForm = function() {
+		DoleticUIModule.clearNewTeamForm();
+		$('#team_form_modal').modal('show');
+	}
+
+	this.cancelNewTeamForm = function() {
+		DoleticUIModule.clearNewTeamForm();
+		$('#team_form_modal').modal('hide');
+	}
+
+	this.showNewAdmMembershipForm = function(id) {
+		DoleticUIModule.clearNewAdmMembershipForm(id);
+		$('#admm_form_modal').modal('show');
+	}
+
+	this.cancelNewAdmMembershipForm = function(id) {
+		DoleticUIModule.clearNewAdmMembershipForm(id);
+		$('#admm_form_modal').modal('hide');
+	}
+
+	this.showNewIntMembershipForm = function(id) {
+		DoleticUIModule.clearNewIntMembershipForm(id);
+		$('#intm_form_modal').modal('show');
+	}
+
+	this.cancelNewIntMembershipForm = function(id) {
+		DoleticUIModule.clearNewIntMembershipForm(id);
+		$('#intm_form_modal').modal('hide');
 	}
 
 	this.checkNewUserForm = function() {

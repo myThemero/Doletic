@@ -419,6 +419,11 @@ var DoleticMasterInterface = new function() {
     });
   }
 
+  this.toggleSidebar = function(id) {
+    $(".ui.sidebar.visible").sidebar("toggle");
+    $("#"+id).sidebar("toggle");
+  }
+
 }
 
 // ------------------------ DOLETIC DOCUMENT READY FUNCTION ------------------------------------

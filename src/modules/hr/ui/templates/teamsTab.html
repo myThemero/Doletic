@@ -1,11 +1,12 @@
 <div class="ui two column grid container"> 
     <div class="row"> 
+        <div id="addteam_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewTeamForm();">Ajouter un équipe</div> 
     </div> 
     <div class="row"> 
-        <div class="ten wide column" id="team_table_container"> 
+        <div class="sixteen wide column" id="team_table_container"> 
             <!--Team table will go there-->
         </div> 
-        <div class="six wide column"> 
+        <div class="ui modal" id="team_form_modal"> 
             <form id="team_form" class="ui form segment"> 
                 <h4 class="ui dividing header">Ajout d'une équipe</h4> 
                 <div id="tname_field" class="twelve wide required field"> 
@@ -25,7 +26,7 @@
                     </select> 
                 </div> 
                 <div class="ui hr_center small buttons"> 
-                    <div id="abort_btn" class="ui button" onClick="DoleticUIModule.clearNewTeamForm();">Annuler</div> 
+                    <div id="abort_btn" class="ui button" onClick="DoleticUIModule.cancelNewTeamForm();">Annuler</div> 
                     <div class="or" data-text="ou"></div> 
                     <div id="addteam_btn" class="ui green button" onClick="DoleticUIModule.insertNewTeam();return false;">Ajouter</div> 
                 </div>
