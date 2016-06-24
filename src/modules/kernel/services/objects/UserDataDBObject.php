@@ -389,6 +389,7 @@ class UserDataServices extends AbstractObjectServices {
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery(
 			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_USER_ID),
+			array(),
 			array(UserDataDBObject::COL_SINCE => DBTable::ORDER_DESC), 1);
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);

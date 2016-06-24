@@ -255,8 +255,10 @@ class AdmMembershipServices extends AbstractObjectServices {
 							":".AdmMembershipDBObject::COL_END_DATE => date('Y-m-d'));
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_USER_ID, AdmMembershipDBObject::COL_END_DATE), array(), 1);
-		substr_replace($sql, ">", strrpos($sql, "="), strlen("="));
+			array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_USER_ID, AdmMembershipDBObject::COL_END_DATE),
+			array(AdmMembershipDBObject::COL_END_DATE => DBTable::OP_GREATER),
+			array(),
+			1);
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for adm_memberships and fill it

@@ -26,6 +26,11 @@ class DBTable {
 	const ID_ONLY = "id_only";
 	const ORDER_DESC = "DESC";
 	const ORDER_ASC = "ASC";
+	const OP_EQUALS = "=";
+	const OP_GREATER = ">";
+	const OP_GREATER_EQ = ">=";
+	const OP_LESS = "<";
+	const OP_LESS_EQ = "<=";
 	// -- attributes
 	private $name = null;
 	private $engine = null;
@@ -150,6 +155,7 @@ class DBTable {
 	 */
 	public function GetSELECTQuery($select = array(DBTable::SELECT_ALL), 
 								   $where = array(DBTable::EVERYWHERE),
+								   $operator = array(), // supposed to be a array(column => [OP_EQUALS|OP_GREATER|OP_LESS|...], ...)
 								   $orderby = array(), // supposed to be a array(column => [ORDER_DESC|ORDER_ASC],...)
 								   $limit = -1,
 								   $or = false) {
@@ -172,7 +178,11 @@ class DBTable {
 		if(!in_array(DBTable::EVERYWHERE, $where)) {
 			$query .= " WHERE ";
 			foreach ($where as $column) {
-				$query .= "`".$column."`=:".$column.$link;
+				$col_operator = DBTable::OP_EQUALS;
+				if(array_key_exists($column, $operator)) {
+					$col_operator = $operator[$column];
+				}
+				$query .= "`".$column."`".$col_operator.":".$column.$link;
 			}
 			$query = substr($query, 0, strlen($query)-strlen($link));
 		}
