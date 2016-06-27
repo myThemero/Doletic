@@ -320,33 +320,33 @@ var DoleticUIModule = new function() {
 						selector_content += "<option value=\""+data.object[i].user_id+"\">"
 
 	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
-						content += "<tr><td> \
-	      						<button class=\"ui icon button\" data-title=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname +"\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
-		  							<i class=\"user icon\"></i> \
-								</button> \
-								</td><td> \
-	        				<h4 class=\"ui header\"> \
-	          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
-	            			"<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></div> \
-	        				</div> \
-	      					</h4></td> \
-	      					<td>" + data.object[i].last_pos.label + "</td> \
-	      					<td>" + data.object[i].last_pos.division + "</td> \
-	      					<td>" + data.object[i].tel + "</td> \
-	      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
-	    				<td> \
-	    					<div class=\"ui icon buttons\"> \
-		    					<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
-		  							<i class=\"write icon\"></i> \
-								</button> \
-								<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
-		  							<i class=\"remove user icon\"></i> \
-								</button> \
-							</div> \
-	    				</td> \
-	    				</tr>";
-
-	    				
+						if(!data.object[i].disabled) {
+							content += "<tr><td> \
+		      						<button class=\"ui icon button\" data-title=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname +"\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
+			  							<i class=\"user icon\"></i> \
+									</button> \
+									</td><td> \
+		        				<h4 class=\"ui header\"> \
+		          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
+		            			"<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></div> \
+		        				</div> \
+		      					</h4></td> \
+		      					<td>" + data.object[i].last_pos.label + "</td> \
+		      					<td>" + data.object[i].last_pos.division + "</td> \
+		      					<td>" + data.object[i].tel + "</td> \
+		      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
+		    				<td> \
+		    					<div class=\"ui icon buttons\"> \
+			    					<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
+			  							<i class=\"write icon\"></i> \
+									</button> \
+									<button class=\"ui icon button\" data-title=\"Désactiver\" onClick=\"DoleticUIModule.disableUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+			  							<i class=\"remove user icon\"></i> \
+									</button> \
+								</div> \
+		    				</td> \
+		    				</tr>";
+						}
 				}
 				content += "</tbody></table>";
 				$('#user_table_container').append(content);
@@ -1139,7 +1139,6 @@ var DoleticUIModule = new function() {
 	}
 
 	this.deleteAGR = function(ag) {
-		console.log(String(ag));
 		var del = function() {
 			UserDataServicesInterface.deleteAg(String(ag), function() {
 				DoleticMasterInterface.hideConfirmModal();
@@ -1158,6 +1157,24 @@ var DoleticUIModule = new function() {
 		};
 
 		TeamServicesInterface.deleteMember(id, memberId, handler);
+	}
+
+	this.disableUser = function(id, user_id) {
+		var udataHandler = function() {
+			UserDataServicesInterface.disable(id, function(){
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Désactivation réussie !", "L'utilisateur a été désactivé.");
+				DoleticUIModule.fillUsersList();
+			});
+			
+		};
+		var uHandler = function() {
+			UserServicesInterface.disable(user_id, udataHandler);
+		};
+
+		// Confirmation
+		DoleticMasterInterface.showConfirmModal("Confirmer la désactivation", "\<i class=\"remove icon\"\>\<\/i\>", 
+			"Etes-vous sûr de vouloir désactiver cet utilisateur ? Il ou elle ne pourra plus se connecter à Doletic jusqu'à réactivation.", uHandler, DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.updateTeamModal = function(id) {

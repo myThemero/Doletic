@@ -66,6 +66,8 @@ class KernelModule extends AbstractModule {
 				UserDBObject::OBJ_NAME.':'.UserServices::INSERT 						=> RightsMap::A_RMASK,	// only admin and above
 				UserDBObject::OBJ_NAME.':'.UserServices::UPDATE 						=> RightsMap::A_RMASK,	// only admin and above
 				UserDBObject::OBJ_NAME.':'.UserServices::DELETE 						=> RightsMap::SA_RMASK,	// only super admin
+				UserDBObject::OBJ_NAME.':'.UserServices::DISABLE 						=> RightsMap::A_RMASK,	// only admin and above
+				UserDBObject::OBJ_NAME.':'.UserServices::RESTORE 						=> RightsMap::A_RMASK,	// only admin and above
 				// ---- user data object services
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_USER_DATA_BY_ID 	=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_USER_LAST_POS 		=> RightsMap::G_RMASK,	// everyone

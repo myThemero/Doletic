@@ -11,7 +11,7 @@ var CommentServicesInterface = new function() {
       GET_ALL_COMMENTS:'all',
       INSERT: 'insert',
       UPDATE: 'update',
-      DELETE: 'delete'
+      DELETE: 'delete',
     }
   };
 
@@ -54,7 +54,7 @@ var CommentServicesInterface = new function() {
             this.meta.OBJECT, this.meta.ACTION.DELETE, 
             { id: id }, 
             successHandler); 
-  }  
+  }
 
 }
 
@@ -150,7 +150,9 @@ var UserDataServicesInterface = new function() {
       UPDATE:"update",
       UPDATE_POSTION:"updatepos",
       UPDATE_AVATAR:"updateava",
-      DELETE:"delete"
+      DELETE:"delete",
+      DISABLE:"disable",
+      ENABLE:"enable"
     }
   };
 
@@ -282,7 +284,25 @@ var UserDataServicesInterface = new function() {
               userId: userId
             }, 
             successHandler); 
-  }  
+  }
+
+  this.disable = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.DISABLE, 
+            { 
+              id: id
+            }, 
+            successHandler); 
+  }
+
+  this.enable = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.ENABLE, 
+            { 
+              id: id
+            }, 
+            successHandler); 
+  }
 
 }
 
@@ -300,7 +320,9 @@ var UserServicesInterface = new function() {
       GENERATE_CREDENTIALS:'gencred',
       INSERT: 'insert',
       UPDATE: 'update',
-      DELETE: 'delete'
+      DELETE: 'delete',
+      DISABLE: 'disable',
+      RESTORE: 'restore'
     }
   };
 
@@ -363,7 +385,27 @@ var UserServicesInterface = new function() {
               id: id
             }, 
             successHandler); 
-  }  
+  }
+
+  this.disable = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, 
+            this.meta.ACTION.DISABLE, 
+            {
+              id: id
+            }, 
+            successHandler); 
+  }
+
+  this.restore = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, 
+            this.meta.ACTION.RESTORE, 
+            {
+              id: id
+            }, 
+            successHandler); 
+  }
 
 }
 

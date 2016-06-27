@@ -98,7 +98,9 @@ class UserServices extends AbstractObjectServices {
 	const UPDATE			= "update";
 	const UPDATE_TOKEN		= "updatetok";
 	const UPDATE_PASS       = "updatepass";
-	const DELETE			= "delete";
+	const DELETE			= "delete"; // Only available for disabled users for safety reasons
+	const DISABLE			= "disable";
+	const RESTORE			= "restore";
 	// -- functions
 
 	// -- construct
@@ -126,7 +128,11 @@ class UserServices extends AbstractObjectServices {
 		} else if(!strcmp($action, UserServices::UPDATE_PASS)) {
 			$data = $this->__change_pass($params[UserServices::PARAM_TOKEN]);
 		} else if(!strcmp($action, UserServices::DELETE)) {
-			$data = $this->__delete_user($params[UserServices::PARAM_ID]);
+			$data = $this->__delete_disabled_user($params[UserServices::PARAM_ID]);
+		} else if(!strcmp($action, UserServices::DISABLE)) {
+			$data = $this->__disable_user($params[UserServices::PARAM_ID]);
+		} else if(!strcmp($action, UserServices::RESTORE)) {
+			$data = $this->__restore_user($params[UserServices::PARAM_ID]);
 		}
 		return $data;
 	}
@@ -255,7 +261,33 @@ private function __generate_credentials($firstname, $lastname) {
 		} else {
 			return 0;
 		}
-	} 
+	}
+
+	private function __disable_user($id) {
+		// create sql params
+		$sql_params = array(":".UserDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetDISABLEQuery(UserDBObject::TABL_USER_DISABLED);
+		// execute query
+		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+			return $this->__delete_user($id);
+		} else {
+			return 0;
+		}
+	}
+
+	private function __restore_user($id) {
+		// create sql params
+		$sql_params = array(":".UserDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetRESTOREQuery(UserDBObject::TABL_USER_DISABLED);
+		// execute query
+		if(parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+			return $this->__delete_disabled_user($id);
+		} else {
+			return 0;
+		}
+	}
 
 	private function __update_user_password($id, $hash) {
 		// create sql params
@@ -308,6 +340,15 @@ private function __generate_credentials($firstname, $lastname) {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
+	private function __delete_disabled_user($id) {
+		// create sql params
+		$sql_params = array(":".UserDBObject::COL_ID => $id);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER_DISABLED)->GetDELETEQuery();
+		// execute query
+		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+	}
+
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
 
 	public function ResetStaticData() {
@@ -329,6 +370,7 @@ class UserDBObject extends AbstractDBObject {
 	const OBJ_NAME = "user";
 	// --- tables
 	const TABL_USER = "dol_user";
+	const TABL_USER_DISABLED = "dol_user_disabled";
 	// --- columns
 	const COL_ID = "id";
 	const COL_USERNAME = "username";
@@ -336,6 +378,8 @@ class UserDBObject extends AbstractDBObject {
 	const COL_LAST_CON_TSMP = "last_connect_timestamp";
 	const COL_SIGNUP_TSMP = "sign_up_timestamp";
 	const COL_TOKEN = "reset_token";
+	const COL_DISABLE_TSMP = "disable_timestamp";
+	const COL_RESTORE_TSMP = "restore_timestamp";
 	// -- attributes
 
 	// -- functions
@@ -353,8 +397,22 @@ class UserDBObject extends AbstractDBObject {
 		$dol_user->AddColumn(UserDBObject::COL_SIGNUP_TSMP, DBTable::DT_VARCHAR, 255, false);
 		$dol_user->AddColumn(UserDBObject::COL_TOKEN, DBTable::DT_VARCHAR, 255, false);
 
+		// --- dol_user table
+		$dol_user_disabled = new DBTable(UserDBObject::TABL_USER_DISABLED);
+		$dol_user_disabled->AddColumn(UserDBObject::COL_ID, DBTable::DT_INT, 11, false, "", false, true);
+		$dol_user_disabled->AddColumn(UserDBObject::COL_USERNAME, DBTable::DT_VARCHAR, 255, false);
+		$dol_user_disabled->AddColumn(UserDBObject::COL_PASSWORD, DBTable::DT_VARCHAR, 255, false);
+		$dol_user_disabled->AddColumn(UserDBObject::COL_LAST_CON_TSMP, DBTable::DT_VARCHAR, 255, false);
+		$dol_user_disabled->AddColumn(UserDBObject::COL_SIGNUP_TSMP, DBTable::DT_VARCHAR, 255, false);
+		$dol_user_disabled->AddColumn(UserDBObject::COL_TOKEN, DBTable::DT_VARCHAR, 255, false);
+		$dol_user_disabled->AddColumn(UserDBObject::COL_DISABLE_TSMP, DBTable::DT_VARCHAR, 255, false);
+		$dol_user_disabled->AddColumn(UserDBObject::COL_RESTORE_TSMP, DBTable::DT_VARCHAR, 255, false);
+
+
+
 		// -- add tables
 		parent::addTable($dol_user);
+		parent::addTable($dol_user_disabled);
 	}
 
 	/**

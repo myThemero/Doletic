@@ -31,6 +31,9 @@ class DBTable {
 	const OP_GREATER_EQ = ">=";
 	const OP_LESS = "<";
 	const OP_LESS_EQ = "<=";
+	// --- Default column names
+	const COL_DISABLE_TSMP = "disable_timestamp";
+	const COL_RESTORE_TSMP = "restore_timestamp";
 	// -- attributes
 	private $name = null;
 	private $engine = null;
@@ -284,5 +287,25 @@ class DBTable {
 	 */
 	public function GetARCHIVEQuery($archiveTableName) {
 		return "INSERT INTO `".$archiveTableName."` SELECT * FROM `".$this->name."` WHERE `id`=:id;";
+	}
+	/**
+	 *	Returns a SQL to copy a full row from between two tables sharing the same schema
+	 */
+	public function GetDISABLEQuery($disableTableName, 
+									$autoRestore = null, 
+									$disableColumnName = DBTable::COL_DISABLE_TSMP, 
+									$restoreColumnName = DBTable::COL_RESTORE_TSMP) {
+		return "INSERT INTO `".$disableTableName."` SELECT *, '" . date(DateTime::ISO8601) . "' AS " . $disableColumnName . 
+				 ", '".$autoRestore."' AS '" . $restoreColumnName . "' FROM `".$this->name."` WHERE `id`=:id;";
+	}
+
+	public function GetRESTOREQuery($disableTableName) {
+		$query = "INSERT INTO `".$this->name."` SELECT";
+		foreach($this->columns as $column) {
+			$query += $column + ",";
+		}
+		$query = substr($query, 0, strlen($query)-1);
+		$query += "FROM `" . $disableTableName . "` WHERE id =:id;";
+		return $query;
 	}
 }
