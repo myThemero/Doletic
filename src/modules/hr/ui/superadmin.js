@@ -44,10 +44,10 @@ var DoleticUIModule = new function() {
 				  <div class=\"row\"> \
 				  </div> \
 				  <div class=\"row\"> \
-				  	<div class=\"sixteen wide column\"> \
-				  		<div class=\"ui top attached tabular menu\"> \
+				  	<div class=\"sixteen wide column\" id=\"page_content\"> \
+				  		<div class=\"ui top attached tabular menu\" id=\"tabmenu\" > \
   							<a class=\"item active\" data-tab=\"stats\">Statistiques</a> \
-  							<a class=\"item\" data-tab=\"memberlist\">Liste des membres</a> \
+  							<a class=\"item\" id=\"memlist\" data-tab=\"memberlist\">Liste des membres</a> \
   							<a class=\"item\" data-tab=\"teamlist\">Liste des équipes</a> \
   							<!--<a class=\"item\" data-tab=\"form\">Formations</a>--> \
   							<a class=\"item\" id=\"det\" data-tab=\"userdetails\">Détails de l'utilisateur</a> \
@@ -284,6 +284,7 @@ var DoleticUIModule = new function() {
                         <th></th>\
                         <th>Nom/Mail</th> \
                         <th>Poste</th> \
+                        <th>Pôle</th> \
                         <th>Téléphone</th> \
                         <th>Année</th> \
                         <th>Actions</th> \
@@ -293,7 +294,8 @@ var DoleticUIModule = new function() {
                     <tr>\
                         <th></th>\
                         <th>Nom</th> \
-                        <th>Email</th> \
+                        <th>Poste</th> \
+                        <th>Pôle</th> \
                         <th>Téléphone</th> \
                         <th>Année</th> \
                         <th></th> \
@@ -304,6 +306,7 @@ var DoleticUIModule = new function() {
 								DoleticMasterInterface.no_filter,
 								DoleticMasterInterface.input_filter,
 								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.select_filter,
 								DoleticMasterInterface.input_filter,
 								DoleticMasterInterface.input_filter,
 								DoleticMasterInterface.reset_filter
@@ -311,6 +314,7 @@ var DoleticUIModule = new function() {
 				var selector_content = "<option value>Membre...</option>";
 				for (var i = 0; i < data.object.length; i++) {
 						
+						//DoleticUIModule.createUserDetails(data.object[i]);
 						window.user_list[data.object[i].id] = data.object[i];
 
 						selector_content += "<option value=\""+data.object[i].user_id+"\">"
@@ -327,6 +331,7 @@ var DoleticUIModule = new function() {
 	        				</div> \
 	      					</h4></td> \
 	      					<td>" + data.object[i].last_pos.label + "</td> \
+	      					<td>" + data.object[i].last_pos.division + "</td> \
 	      					<td>" + data.object[i].tel + "</td> \
 	      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
 	    				<td> \
@@ -484,6 +489,35 @@ var DoleticUIModule = new function() {
 		    $mod.replaceWith(modal);
 		}
 		$("#add_tmember_select"+team.id).dropdown();
+	}
+
+	this.showUserDetails = function(userId) {
+		$('#det_' + userId).show();
+		$('#det_' + userId).click();
+	}
+
+	this.hideUserDetails = function(userId) {
+		var prev = $('#det_' + userId).prev();
+		while(prev.css('display') == 'none') {
+			prev = prev.prev();
+		}
+		console.log(prev.html());
+		prev.click();
+		$('#det_' + userId).hide();
+	}
+
+	this.createUserDetails = function(user) {
+		$('#tabmenu').append('<a class="item" id="det_' + user.user_id + '" data-tab="userdetails_' + user.user_id + '">Détails de ' + user.firstname +' ' + user.lastname + '  <i class="icon remove"></i></a>');
+		$('#det_' + user.user_id + ' .icon.remove').click(function() {
+			DoleticUIModule.hideUserDetails(user.user_id);
+		});
+		$('#page_content').append('<div class="ui bottom attached tab segment" data-tab="userdetails_' + user.user_id + '"><div id="detailsTab_' + user.user_id + '"></div></div>');
+		$.when($('#detailsTab_' + user.user_id).load("../modules/hr/ui/templates/userDetailsTab.html")).then(function() {
+			$('#detailsTab_' + user.user_id).html($('#detailsTab').html().replace(/\{id\}/g, user.user_id));
+			$('#det_' + user.user_id).hide();
+			$('.menu #det_' + user.user_id).tab();
+		});
+		
 	}
 
 	this.fillUserDetails = function(userId) {
