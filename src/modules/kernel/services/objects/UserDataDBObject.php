@@ -671,10 +671,26 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
 			":".UserDataDBObject::COL_INSA_DEPT => $insaDept,
 			":".UserDataDBObject::COL_AVATAR_ID => "NULL",
-			":".UserDataDBObject::COL_AG => $ag,
-			":".UserDataDBObject::COL_DISABLED => $disabled);
+			":".UserDataDBObject::COL_AG => $ag);
 		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery();
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(array(
+			UserDataDBObject::COL_ID,
+			UserDataDBObject::COL_USER_ID,
+			UserDataDBObject::COL_GENDER,
+			UserDataDBObject::COL_FIRSTNAME,
+			UserDataDBObject::COL_LASTNAME,
+			UserDataDBObject::COL_BIRTHDATE,
+			UserDataDBObject::COL_TEL,
+			UserDataDBObject::COL_EMAIL,
+			UserDataDBObject::COL_ADDRESS,
+			UserDataDBObject::COL_CITY,
+			UserDataDBObject::COL_POSTAL_CODE,
+			UserDataDBObject::COL_COUNTRY,
+			UserDataDBObject::COL_SCHOOL_YEAR,
+			UserDataDBObject::COL_INSA_DEPT,
+			UserDataDBObject::COL_AVATAR_ID,
+			UserDataDBObject::COL_AG
+			));
 		// execute query
 		if (parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
 			return $this->__update_user_position($userId, $position);
@@ -826,7 +842,8 @@ class UserDataServices extends AbstractObjectServices {
 		    "GI" => "Génie Industriel",
 		    "IF" => "Informatique",
 		    "SGM" => "Science et Génie des Matériaux",
-		    "TC" => "Télécommunications, Services et Usages");
+		    "TC" => "Télécommunications, Services et Usages",
+		    "PC" => "Premier Cycle");
 		// --- retrieve SQL query
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_INSA_DEPT)->GetINSERTQuery();
 		foreach ($depts as $dept => $detail) {

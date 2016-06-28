@@ -12,6 +12,7 @@ var DoleticUIModule = new function() {
 		// Load HTML templates
 		DoleticUIModule.getStatsTab();
 		DoleticUIModule.getMembersTab();
+		DoleticUIModule.getDisabledTab();
 		DoleticUIModule.getTeamsTab();
 		DoleticUIModule.getDetailsTab();
 
@@ -48,6 +49,7 @@ var DoleticUIModule = new function() {
 				  		<div class=\"ui top attached tabular menu\" id=\"tabmenu\" > \
   							<a class=\"item active\" data-tab=\"stats\">Statistiques</a> \
   							<a class=\"item\" id=\"memlist\" data-tab=\"memberlist\">Liste des membres</a> \
+  							<a class=\"item\" id=\"dislist\" data-tab=\"disabledlist\">Utilisateurs inactifs</a> \
   							<a class=\"item\" data-tab=\"teamlist\">Liste des équipes</a> \
   							<!--<a class=\"item\" data-tab=\"form\">Formations</a>--> \
   							<a class=\"item\" id=\"det\" data-tab=\"userdetails\">Détails de l'utilisateur</a> \
@@ -58,6 +60,10 @@ var DoleticUIModule = new function() {
 					    </div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"memberlist\"> \
 							<div id=\"membersTab\">\
+							</div>\
+						</div> \
+						<div class=\"ui bottom attached tab segment\" data-tab=\"disabledlist\"> \
+							<div id=\"disabledTab\">\
 							</div>\
 						</div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"teamlist\"> \
@@ -113,6 +119,13 @@ var DoleticUIModule = new function() {
 	 */
 	this.getMembersTab = function() {
 		$('#membersTab').load("../modules/hr/ui/templates/membersTab.html");
+	}
+
+	/**
+	 *	Load the HTML code of the Members Tab
+	 */
+	this.getDisabledTab = function() {
+		$('#disabledTab').load("../modules/hr/ui/templates/disabledTab.html");
 	}
 
 	/**
@@ -273,6 +286,7 @@ var DoleticUIModule = new function() {
 		UserDataServicesInterface.getAll(function(data) {
 			// Delete and recreate table so Datatables is reinitialized
 			$("#user_table_container").html("");
+			$("#disabled_table_container").html("");
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				// Store data in global array
@@ -302,6 +316,32 @@ var DoleticUIModule = new function() {
                     </tr>\
                 </tfoot>\
                 <tbody id=\"user_body\">";
+
+                var disabled_content = "<table class=\"ui very basic celled table\" id=\"disabled_table\"> \
+                <thead> \
+                    <tr>\
+                        <th></th>\
+                        <th>Nom/Mail</th> \
+                        <th>Poste</th> \
+                        <th>Pôle</th> \
+                        <th>Téléphone</th> \
+                        <th>Année</th> \
+                        <th>Actions</th> \
+                    </tr>\
+                </thead>\
+                <tfoot> \
+                    <tr>\
+                        <th></th>\
+                        <th>Nom</th> \
+                        <th>Poste</th> \
+                        <th>Pôle</th> \
+                        <th>Téléphone</th> \
+                        <th>Année</th> \
+                        <th></th> \
+                    </tr>\
+                </tfoot>\
+                <tbody id=\"disabled_body\">";
+
 				var filters = [
 								DoleticMasterInterface.no_filter,
 								DoleticMasterInterface.input_filter,
@@ -320,7 +360,33 @@ var DoleticUIModule = new function() {
 						selector_content += "<option value=\""+data.object[i].user_id+"\">"
 
 	    							+ data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
-						if(!data.object[i].disabled) {
+						if(data.object[i].disabled) {
+							disabled_content += "<tr><td> \
+		      						<button class=\"ui icon button\" data-title=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname +"\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
+			  							<i class=\"user icon\"></i> \
+									</button> \
+									</td><td> \
+		        				<h4 class=\"ui header\"> \
+		          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
+		            			"<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></div> \
+		        				</div> \
+		      					</h4></td> \
+		      					<td>" + data.object[i].last_pos.label + "</td> \
+		      					<td>" + data.object[i].last_pos.division + "</td> \
+		      					<td>" + data.object[i].tel + "</td> \
+		      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
+		    				<td> \
+		    					<div class=\"ui icon buttons\"> \
+			    					<button class=\"ui icon button\" data-title=\"Réactiver\" onClick=\"DoleticUIModule.restoreUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
+			  							<i class=\"refresh icon\"></i> \
+									</button> \
+									<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+			  							<i class=\"remove icon\"></i> \
+									</button> \
+								</div> \
+		    				</td> \
+		    				</tr>"
+						} else {
 							content += "<tr><td> \
 		      						<button class=\"ui icon button\" data-title=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname +"\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
 			  							<i class=\"user icon\"></i> \
@@ -350,9 +416,12 @@ var DoleticUIModule = new function() {
 				}
 				content += "</tbody></table>";
 				$('#user_table_container').append(content);
+				$('#disabled_table_container').append(disabled_content);
 				DoleticMasterInterface.makeDataTables('user_table', filters);
+				DoleticMasterInterface.makeDataTables('disabled_table', filters);
 				$('#leader').html(selector_content).dropdown();
 				$('#user_body .button').popup();
+				$('#disabled_body .button').popup();
 				
 			} else {
 				// use default service service error handler
@@ -541,7 +610,11 @@ var DoleticUIModule = new function() {
 				$('#det_year').html(data.object.school_year + data.object.insa_dept);
 				$('#det_ag').html(data.object.ag);
 				$('#det').show();
-				$('#det').html("Détails de "+ data.object.firstname + " " + data.object.lastname);
+				var htmlTitle = "Détails de "+ data.object.firstname + " " + data.object.lastname;
+				if(data.object.disabled) {
+					htmlTitle += " (désactivé)";
+				}
+				$('#det').html(htmlTitle);
 				$('#det').click();
 				$('#addadmm_modal_btn').attr("onClick", "DoleticUIModule.showNewAdmMembershipForm("+data.object.user_id+"); return false;");
 				$('#admm_btn').attr("onClick", "DoleticUIModule.insertNewAdmMembership("+data.object.user_id+"); return false;");
@@ -1175,6 +1248,24 @@ var DoleticUIModule = new function() {
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la désactivation", "\<i class=\"remove icon\"\>\<\/i\>", 
 			"Etes-vous sûr de vouloir désactiver cet utilisateur ? Il ou elle ne pourra plus se connecter à Doletic jusqu'à réactivation.", uHandler, DoleticMasterInterface.hideConfirmModal);
+	}
+
+	this.restoreUser = function(id, user_id) {
+		var udataHandler = function() {
+			UserDataServicesInterface.enable(id, function(){
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Réactivation réussie !", "L'utilisateur a été réactivé.");
+				DoleticUIModule.fillUsersList();
+			});
+			
+		};
+		var uHandler = function() {
+			UserServicesInterface.restore(user_id, udataHandler);
+		};
+
+		// Confirmation
+		DoleticMasterInterface.showConfirmModal("Confirmer la réactivation", "\<i class=\"remove icon\"\>\<\/i\>", 
+			"Etes-vous sûr de vouloir réactiver cet utilisateur ? Il ou elle pourra de nouveau accéder à Doletic.", uHandler, DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.updateTeamModal = function(id) {

@@ -300,12 +300,12 @@ class DBTable {
 	}
 
 	public function GetRESTOREQuery($disableTableName) {
-		$query = "INSERT INTO `".$this->name."` SELECT";
+		$query = "INSERT INTO `".$this->name."` SELECT ";
 		foreach($this->columns as $column) {
-			$query += $column + ",";
+			$query .= $column[DBTable::KEY_NAME] . ",";
 		}
 		$query = substr($query, 0, strlen($query)-1);
-		$query += "FROM `" . $disableTableName . "` WHERE id =:id;";
+		$query .= " FROM `" . $disableTableName . "` WHERE id =:id;";
 		return $query;
 	}
 }
