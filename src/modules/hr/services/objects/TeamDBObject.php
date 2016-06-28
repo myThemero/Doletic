@@ -437,9 +437,11 @@ class TeamDBObject extends AbstractDBObject {
 		$dol_team = new DBTable(TeamDBObject::TABL_TEAM);
 		$dol_team->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
 		$dol_team->AddColumn(TeamDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_team->AddColumn(TeamDBObject::COL_LEADER_ID, DBTable::DT_INT, 11, false);
+		$dol_team->AddColumn(TeamDBObject::COL_LEADER_ID, DBTable::DT_INT, 11, false, "", false, false, true);
 		$dol_team->AddColumn(TeamDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false);
 		$dol_team->AddColumn(TeamDBObject::COL_DIVISION, DBTable::DT_VARCHAR, 255, false);
+		$dol_team->AddForeignKey(TeamDBObject::COL_LEADER_ID.'_fk', TeamDBObject::COL_LEADER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
+
 		// --- dol_team_member
 		$dol_team_member = new DBTable(TeamDBObject::TABL_MEMBERS);
 		$dol_team_member->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", false, false);

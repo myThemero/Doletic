@@ -951,7 +951,7 @@ class UserDataDBObject extends AbstractDBObject {
 		// --- dol_udata table
 		$dol_udata = new DBTable(UserDataDBObject::TABL_USER_DATA);
 		$dol_udata->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_udata->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "", false, false, true);
 		$dol_udata->AddColumn(UserDataDBObject::COL_GENDER, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_FIRSTNAME, DBTable::DT_VARCHAR, 255, false, "");
 		$dol_udata->AddColumn(UserDataDBObject::COL_LASTNAME, DBTable::DT_VARCHAR, 255, false, "");

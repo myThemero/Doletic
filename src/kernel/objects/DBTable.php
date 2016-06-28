@@ -11,6 +11,7 @@ class DBTable {
 	const KEY_DEFAULT = "default";
 	const KEY_AUTO = "auto";
 	const KEY_PRIMARY = "primary";
+	const KEY_INDEX = "index";
 	// --- data types
 	const DT_INT = "int";
 	const DT_VARCHAR = "varchar";
@@ -18,6 +19,11 @@ class DBTable {
 	const DT_DATE = "date";
 	const DT_DATETIME = "datetime";
 	const DT_BOOLEAN = "boolean";
+	// --- actions
+	const DT_CASCADE = "CASCADE";
+	const DT_NO_ACTION = "NO_ACTION";
+	const DT_RESTRICT = "RESTRICT";
+	const DT_SET_NULL = "SET_NULL";
 	// --- query consts
 	const SELECT_ALL = "*";
 	const EVERYWHERE = "everywhere";
@@ -62,20 +68,21 @@ class DBTable {
 	 *	Add a column to SQL table
 	 */
 	public function AddColumn($name, $dataType, $size = -1, $canBeNullFlag = true, $defaultValue = "", 
-							  $autoIncFlag = false, $primaryKeyFlag = false) {
+							  $autoIncFlag = false, $primaryKeyFlag = false, $index = false) {
 		array_push($this->columns, array(DBTable::KEY_NAME => $name,
 										DBTable::KEY_DATATYPE => $dataType,
 										DBTable::KEY_SIZE => $size,
 										DBTable::KEY_NULL => $canBeNullFlag,
 										DBTable::KEY_DEFAULT => $defaultValue,
 										DBTable::KEY_AUTO => $autoIncFlag,
-										DBTable::KEY_PRIMARY => $primaryKeyFlag));
+										DBTable::KEY_PRIMARY => $primaryKeyFlag,
+										DBTable::KEY_INDEX => $index));
 	}
 	/**
-	 *
+	 *	Add a foreign key to SQL table
 	 */
-	public function AddForeignKey($fkName, $tableColumnName, $refTableName, $refTableColumnName) {
-		array_push($this->foreign, array($fkName, $tableColumnName, $refTableName, $refTableColumnName));
+	public function AddForeignKey($fkName, $tableColumnName, $refTableName, $refTableColumnName, $onDelete = DBTable::DT_RESTRICT, $onUpdate = DBTable::DT_RESTRICT) {
+		array_push($this->foreign, array($fkName, $tableColumnName, $refTableName, $refTableColumnName, $onDelete, $onUpdate));
 	}
 	/**
 	 *
@@ -88,6 +95,7 @@ class DBTable {
 	 */
 	public function GetCREATEQuery() {
 		$primaryKeys = array();
+		$index = array();
 		$query = "CREATE TABLE IF NOT EXISTS `".$this->name."` (";
 		foreach ($this->columns as $column) {
 			$query .= "`".$column[DBTable::KEY_NAME]."` ".$column[DBTable::KEY_DATATYPE];
@@ -113,6 +121,10 @@ class DBTable {
 			if($column[DBTable::KEY_PRIMARY]) {
 				array_push($primaryKeys, $column[DBTable::KEY_NAME]);
 			}
+			// column index
+			if($column[DBTable::KEY_INDEX]) {
+				array_push($index, $column[DBTable::KEY_NAME]);
+			}
 			$query .= ",";
 		}
 		// table primary keys
@@ -125,10 +137,20 @@ class DBTable {
 		} else {
 			$query = trim($query, ",");
 		}
+		// table primary keys
+		if(sizeof($index) > 0) {
+				foreach ($index as $key) {
+					$query .= ", INDEX `". $key ."_FI` (";
+					$query .= "`".$key."`),";
+				}
+				$query = trim($query, ",");
+		} else {
+			$query = trim($query, ",");
+		}
 		// add foreign keys
 		if(sizeof($this->foreign) > 0) {
 			foreach ($this->foreign as $foreignKeyRecord) {
-				$query .= ",FOREIGN KEY `".$foreignKeyRecord[0]."`(`".$foreignKeyRecord[1]."`) REFERENCES `".$foreignKeyRecord[2]."`(`".$foreignKeyRecord[3]."`)";
+				$query .= ", CONSTRAINT " . $foreignKeyRecord[0] ." FOREIGN KEY (`".$foreignKeyRecord[1]."`) REFERENCES `".$foreignKeyRecord[2]."`(`".$foreignKeyRecord[3]."`) ON DELETE " . $foreignKeyRecord[4] . " ON UPDATE ".$foreignKeyRecord[5];
 			}
 		}
 		// add unique columns
