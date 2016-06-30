@@ -34,7 +34,7 @@ abstract class AbstractDBObject {
 	public function ClearDB() {
 		foreach ($this->tables as $tableName => $table) {
 			// drop table if exists
-			$this->db_connection->ExecuteQuery($table->GetDROPQuery());
+			$this->db_connection->ExecuteQuery($table->GetDROPQuery(true));
 		}
 	}
 	/**

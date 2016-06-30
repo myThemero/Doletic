@@ -172,9 +172,12 @@ class DBTable {
 	/**
 	 *	Returns SQL DROP query for this table
 	 */
-	public function GetDROPQuery() {
+	public function GetDROPQuery($ignoreForeign = false) {
+		if($ignoreForeign) {
+			return "SET FOREIGN_KEY_CHECKS = 0; DROP TABLE IF EXISTS `".$this->name."`; SET FOREIGN_KEY_CHECKS = 1;";
+		}
 		return "DROP TABLE IF EXISTS `".$this->name."`;";
-	}	
+	}
 	/**
 	 *	Returns SQL SELECT query for this table
 	 */

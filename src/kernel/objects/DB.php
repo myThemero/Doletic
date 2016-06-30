@@ -44,7 +44,8 @@ class DB {
 	 */
 	public function Connect() {
 		try {
-			$this->pdo = new PDO($this->dns, $this->user, $this->pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));	
+			$this->pdo = new PDO($this->dns, $this->user, $this->pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // For dev only
 			$this->connected = true;
 		} catch(PDOException $e) {
 			die($e);
