@@ -202,6 +202,8 @@ var DoleticMasterInterface = new function() {
    *  Shows Doletic confirmation standard modal
    */  
   this.showConfirmModal = function(header, icon, question, yesHandler, noHandler) {
+    $('#confirm_modal_no').off('click');
+    $('#confirm_modal_yes').off('click');
     $('#confirm_modal_header').html(header);
     $('#confirm_modal_icon').html(icon);
     $('#confirm_modal_description').html(question);
