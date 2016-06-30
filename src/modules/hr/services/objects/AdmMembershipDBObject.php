@@ -374,6 +374,7 @@ class AdmMembershipDBObject extends AbstractDBObject {
 		$dol_adm_membership->AddColumn(AdmMembershipDBObject::COL_FEE, DBTable::DT_INT, 1, false); // boolean
 		$dol_adm_membership->AddColumn(AdmMembershipDBObject::COL_FORM, DBTable::DT_INT, 1, false); // boolean
 		$dol_adm_membership->AddColumn(AdmMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false); // boolean
+		$dol_adm_membership->AddForeignKey(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP.'_fk1', AdmMembershipDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
 
 		// -- add tables
 		parent::addTable($dol_adm_membership);

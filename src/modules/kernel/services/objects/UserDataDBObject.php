@@ -810,7 +810,7 @@ class UserDataServices extends AbstractObjectServices {
 		"Haïti","Honduras","Jamaïque","Mexique","Nicaragua","Panama","Paraguay","Pérou","Saint-Christophe-et-Niévès",
 		"Sainte-Lucie","Saint-Vincent-et-les-Grenadines","Salvador","Suriname","Trinité-et-Tobago",
 		"Uruguay","Venezuela","Afghanistan","Arabie saoudite","Arménie","Azerbaïdjan","Bahreïn","Bangladesh",
-		"Bhoutan","Birmanie","Brunei","Cambodge","Chine","Chypre","Corée du Nord","Corée du Sud","Émirats arabes unis",
+		"Bhoutan","Birmanie","Brunei","Cambodge","Chine","Corée du Nord","Corée du Sud","Émirats arabes unis",
 		"Géorgie","Inde","Indonésie","Irak","Iran","Israël","Japon","Jordanie","Kazakhstan","Kirghizistan",
 		"Koweït","Laos","Liban","Malaisie","Maldives","Mongolie","Népal","Oman","Ouzbékistan","Pakistan",
 		"Philippines","Qatar","Singapour","Sri Lanka","Syrie","Tadjikistan","Thaïlande","Timor oriental",
@@ -948,31 +948,6 @@ class UserDataDBObject extends AbstractDBObject {
 		// -- construct parent
 		parent::__construct($module, UserDataDBObject::OBJ_NAME);
 		// -- create tables
-		// --- dol_udata table
-		$dol_udata = new DBTable(UserDataDBObject::TABL_USER_DATA);
-		$dol_udata->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_udata->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "", false, false, true);
-		$dol_udata->AddColumn(UserDataDBObject::COL_GENDER, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_FIRSTNAME, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_LASTNAME, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_BIRTHDATE, DBTable::DT_DATE, -1, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_TEL, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_CITY, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_POSTAL_CODE, DBTable::DT_INT, 11, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_SCHOOL_YEAR, DBTable::DT_INT, 11, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_INSA_DEPT, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, false, "-1");
-		$dol_udata->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false);
-		$dol_udata->AddColumn(UserDataDBObject::COL_DISABLED, DBTable::DT_INT, 1, false);
-		// --- dol_udata_position table
-		$dol_udata_position = new DBTable(UserDataDBObject::TABL_USER_POSITION);
-		$dol_udata_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_udata_position->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "");
-		$dol_udata_position->AddColumn(UserDataDBObject::COL_POSITION, DBTable::DT_VARCHAR, 255, false, "");
-		$dol_udata_position->AddColumn(UserDataDBObject::COL_SINCE, DBTable::DT_DATETIME, -1, false, "");
 		// --- com_gender table
 		$com_gender = new DBTable(UserDataDBObject::TABL_COM_GENDER);
 		$com_gender->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
@@ -994,16 +969,48 @@ class UserDataDBObject extends AbstractDBObject {
 		// --- com_ag table
 		$com_ag = new DBTable(UserDataDBObject::TABL_AG);
 		$com_ag->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false, "", false, true);
+		// --- dol_udata table
+		$dol_udata = new DBTable(UserDataDBObject::TABL_USER_DATA);
+		$dol_udata->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		$dol_udata->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "", false, false, true);
+		$dol_udata->AddColumn(UserDataDBObject::COL_GENDER, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_FIRSTNAME, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_LASTNAME, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_BIRTHDATE, DBTable::DT_DATE, -1, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_TEL, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_CITY, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_POSTAL_CODE, DBTable::DT_INT, 11, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_SCHOOL_YEAR, DBTable::DT_INT, 11, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_INSA_DEPT, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, false, "-1");
+		$dol_udata->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false);
+		$dol_udata->AddColumn(UserDataDBObject::COL_DISABLED, DBTable::DT_INT, 1, false);
+		$dol_udata->AddForeignKey(UserDataDBObject::TABL_USER_DATA.'_fk1', UserDataDBObject::COL_GENDER, UserDataDBObject::TABL_COM_GENDER, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
+		$dol_udata->AddForeignKey(UserDataDBObject::TABL_USER_DATA.'_fk2', UserDataDBObject::COL_COUNTRY, UserDataDBObject::TABL_COM_COUNTRY, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
+		$dol_udata->AddForeignKey(UserDataDBObject::TABL_USER_DATA.'_fk3', UserDataDBObject::COL_SCHOOL_YEAR, UserDataDBObject::TABL_COM_SCHOOL_YEAR, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
+		$dol_udata->AddForeignKey(UserDataDBObject::TABL_USER_DATA.'_fk4', UserDataDBObject::COL_INSA_DEPT, UserDataDBObject::TABL_COM_INSA_DEPT, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
+		$dol_udata->AddForeignKey(UserDataDBObject::TABL_USER_DATA.'_fk5', UserDataDBObject::COL_AG, UserDataDBObject::TABL_AG, UserDataDBObject::COL_AG, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
+		// --- dol_udata_position table
+		$dol_udata_position = new DBTable(UserDataDBObject::TABL_USER_POSITION);
+		$dol_udata_position->AddColumn(UserDataDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
+		$dol_udata_position->AddColumn(UserDataDBObject::COL_USER_ID, DBTable::DT_INT, 11, false, "");
+		$dol_udata_position->AddColumn(UserDataDBObject::COL_POSITION, DBTable::DT_VARCHAR, 255, false, "");
+		$dol_udata_position->AddColumn(UserDataDBObject::COL_SINCE, DBTable::DT_DATETIME, -1, false, "");
+		$dol_udata_position->AddForeignKey(UserDataDBObject::TABL_USER_POSITION.'_fk1', UserDataDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
+		$dol_udata_position->AddForeignKey(UserDataDBObject::TABL_USER_POSITION.'_fk2', UserDataDBObject::COL_POSITION, UserDataDBObject::TABL_COM_POSITION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 
 		// -- add tables
-		parent::addTable($dol_udata);
-		parent::addTable($dol_udata_position);
 		parent::addTable($com_gender);
 		parent::addTable($com_country);
 		parent::addTable($com_insa_dept);
 		parent::addTable($com_school_year);
 		parent::addTable($com_position);
 		parent::addTable($com_ag);
+		parent::addTable($dol_udata);
+		parent::addTable($dol_udata_position);
 	}
 
 	/**

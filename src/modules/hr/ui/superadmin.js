@@ -9,6 +9,9 @@ var DoleticUIModule = new function() {
 	this.render = function(htmlNode) {
 
 		this.super.render(htmlNode, this);
+		
+		window.currentDetails = -1;
+
 		// Load HTML templates
 		DoleticUIModule.getStatsTab();
 		DoleticUIModule.getMembersTab();
@@ -594,7 +597,6 @@ var DoleticUIModule = new function() {
 		$('.menu .item').tab();
 		$('.dropdown').dropdown();
 
-		this.userId = userId;
 		UserDataServicesInterface.getById(userId, function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
@@ -756,7 +758,7 @@ var DoleticUIModule = new function() {
 				DoleticServicesInterface.handleServiceError(data);
 			}
 		});
-
+		window.currentDetails = userId;
 	}
 
 	this.clearNewUserForm = function() {
@@ -796,66 +798,6 @@ var DoleticUIModule = new function() {
 
 	this.clearNewAGRForm = function() {
 		$('#agr').val("");
-	}
-
-	this.addUserHandler = function(data) {
-		// if no service error
-		if(data.code == 0) {
-			// clear ticket form
-			DoleticUIModule.cancelNewUserForm();
-			// alert user that creation is a success
-			DoleticMasterInterface.showSuccess("Création réussie !", "L'utilisateur a été créé avec succès !");
-			// fill ticket list
-			DoleticUIModule.fillUsersList();
-		} else {
-			// use default service service error handler
-			DoleticServicesInterface.handleServiceError(data);
-		}
-	}
-
-	this.editUserHandler = function(data) {
-		// if no service error
-		if(data.code == 0) {
-			// clear ticket form
-			DoleticUIModule.cancelNewUserForm();
-			// alert user that creation is a success
-			DoleticMasterInterface.showSuccess("Edition réussie !", "L'utilisateur a été modifié avec succès !");
-			// fill ticket list
-			DoleticUIModule.fillUsersList();
-		} else {
-			// use default service service error handler
-			DoleticServicesInterface.handleServiceError(data);
-		}
-	}
-
-	this.addTeamHandler = function(data) {
-		// if no service error
-		if(data.code == 0) {
-			// clear ticket form
-			DoleticUIModule.cancelNewTeamForm();
-			// alert user that creation is a success
-			DoleticMasterInterface.showSuccess("Création réussie !", "L'équipe a été créée avec succès !");
-			// fill ticket list
-			DoleticUIModule.fillTeamsList();
-		} else {
-			// use default service service error handler
-			DoleticServicesInterface.handleServiceError(data);
-		}
-	}
-
-	this.editTeamHandler = function(data) {
-		// if no service error
-		if(data.code == 0) {
-			// clear ticket form
-			DoleticUIModule.cancelNewTeamForm();
-			// alert user that creation is a success
-			DoleticMasterInterface.showSuccess("Edition réussie !", "L'équipe a été modifiée avec succès !");
-			// fill ticket list
-			DoleticUIModule.fillTeamsList();
-		} else {
-			// use default service service error handler
-			DoleticServicesInterface.handleServiceError(data);
-		}
 	}
 
 	this.insertNewUser = function() {
@@ -966,6 +908,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.editUser = function(id, user_id) {
+		console.log("edit");
 		$('#user_form h4').html("Edition d'un membre");
 		UserDataServicesInterface.getById(id, function(data) {
 			// if no service error
@@ -1078,6 +1021,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.updateUser = function(id, user_id) {
+		console.log("update");
 		// ADD OTHER TESTS
 		if(DoleticUIModule.checkNewUserForm()) {
 			// Insert user data in db SELECT ?
@@ -1155,25 +1099,18 @@ var DoleticUIModule = new function() {
 	}
 
 	this.deleteUser = function(id, user_id) {
-		// Création fonction de suppression (nécessaire pour passer une référence et nom un retour)
-		var del = function() {
-			UserDataServicesInterface.delete(id, user_id, function() {
-				UserServicesInterface.delete(id, function(id) {
-					DoleticMasterInterface.hideConfirmModal();
-					DoleticMasterInterface.showSuccess("Suppression réussie !", "L'utilisateur a été supprimé avec succès !");
-					DoleticUIModule.fillUsersList();
-					
-				});
-			});
-		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove user icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'utilisateur ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir supprimer l'utilisateur ? Cette opération est irréversible.",
+			function(){
+				DoleticUIModule.deleteUserHandler(id, user_id);
+			},
+			DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.deleteTeam = function(id) {
 		// Création fonction de suppression (nécessaire pour passer une référence et nom un retour)
-		var del = function() {
+		var delTeam = function() {
 			TeamServicesInterface.delete(id, function() {
 				DoleticMasterInterface.hideConfirmModal();
 				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'équipe a été supprimée avec succès !");
@@ -1182,11 +1119,11 @@ var DoleticUIModule = new function() {
 		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'équipe ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);	
+			"Etes-vous sûr de vouloir supprimer l'équipe ? Cette opération est irréversible.", delTeam, DoleticMasterInterface.hideConfirmModal);	
 	}
 
 	this.deleteAdmMembership = function(id, userId) {
-		var del = function() {
+		var delAdmm = function() {
 			AdmMembershipServicesInterface.delete(id, function() {
 				DoleticMasterInterface.hideConfirmModal();
 				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
@@ -1195,11 +1132,11 @@ var DoleticUIModule = new function() {
 		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", delAdmm, DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.deleteIntMembership = function(id, userId) {
-		var del = function() {
+		var delIntm = function() {
 			IntMembershipServicesInterface.delete(id, function() {
 				DoleticMasterInterface.hideConfirmModal();
 				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
@@ -1208,11 +1145,11 @@ var DoleticUIModule = new function() {
 		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", delIntm, DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.deleteAGR = function(ag) {
-		var del = function() {
+		var delAG = function() {
 			UserDataServicesInterface.deleteAg(String(ag), function() {
 				DoleticMasterInterface.hideConfirmModal();
 				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'AGR a été supprimée avec succès !");
@@ -1221,7 +1158,7 @@ var DoleticUIModule = new function() {
 		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'AGR ? Cette opération est irréversible.", del, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir supprimer l'AGR ? Cette opération est irréversible.", delAG, DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.deleteTeamMember = function(id, memberId) {
@@ -1233,39 +1170,24 @@ var DoleticUIModule = new function() {
 	}
 
 	this.disableUser = function(id, user_id) {
-		var udataHandler = function() {
-			UserDataServicesInterface.disable(id, function(){
-				DoleticMasterInterface.hideConfirmModal();
-				DoleticMasterInterface.showSuccess("Désactivation réussie !", "L'utilisateur a été désactivé.");
-				DoleticUIModule.fillUsersList();
-			});
-			
-		};
-		var uHandler = function() {
-			UserServicesInterface.disable(user_id, udataHandler);
-		};
-
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la désactivation", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir désactiver cet utilisateur ? Il ou elle ne pourra plus se connecter à Doletic jusqu'à réactivation.", uHandler, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir désactiver cet utilisateur ? Il ou elle ne pourra plus se connecter à Doletic jusqu'à réactivation.", 
+			function() {
+				DoleticUIModule.disableUserHandler(id, user_id);
+			},
+			DoleticMasterInterface.hideConfirmModal);
+
 	}
 
 	this.restoreUser = function(id, user_id) {
-		var udataHandler = function() {
-			UserDataServicesInterface.enable(id, function(){
-				DoleticMasterInterface.hideConfirmModal();
-				DoleticMasterInterface.showSuccess("Réactivation réussie !", "L'utilisateur a été réactivé.");
-				DoleticUIModule.fillUsersList();
-			});
-			
-		};
-		var uHandler = function() {
-			UserServicesInterface.restore(user_id, udataHandler);
-		};
-
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la réactivation", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir réactiver cet utilisateur ? Il ou elle pourra de nouveau accéder à Doletic.", uHandler, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir réactiver cet utilisateur ? Il ou elle pourra de nouveau accéder à Doletic.", 
+			function() {
+				DoleticUIModule.restoreUserHandler(id, user_id);
+			},
+			DoleticMasterInterface.hideConfirmModal);
 	}
 
 	this.updateTeamModal = function(id) {
@@ -1457,6 +1379,107 @@ var DoleticUIModule = new function() {
 			return false;
 		}
 		return true;
+	}
+
+	// --- HANDLERS
+	this.addUserHandler = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// clear ticket form
+			DoleticUIModule.cancelNewUserForm();
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Création réussie !", "L'utilisateur a été créé avec succès !");
+			// fill ticket list
+			DoleticUIModule.fillUsersList();
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
+	this.editUserHandler = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// clear ticket form
+			DoleticUIModule.cancelNewUserForm();
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Edition réussie !", "L'utilisateur a été modifié avec succès !");
+			// fill ticket list
+			DoleticUIModule.fillUsersList();
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}		
+	}
+
+	this.disableUserHandler = function(id, userId) {
+		UserServicesInterface.disable(userId, function() {
+			UserDataServicesInterface.disable(id, function(){
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Désactivation réussie !", "L'utilisateur a été désactivé.");
+				DoleticUIModule.fillUsersList();
+				if(window.currentDetails == userId) {
+					$('#det').html($('#det').html() + " (désactivé)");
+				}
+			});
+		});
+	}
+
+	this.restoreUserHandler = function(id, userId) {
+		UserServicesInterface.restore(userId, function() {
+			UserDataServicesInterface.enable(id, function(){
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Réactivation réussie !", "L'utilisateur a été réactivé.");
+				DoleticUIModule.fillUsersList();
+				if(window.currentDetails == userId) {
+					$('#det').html($('#det').html().replace(" (désactivé)", ""));
+				}
+			});
+		});
+	}
+
+	this.deleteUserHandler = function(id, userId) {
+			UserDataServicesInterface.delete(id, userId, function() {
+				UserServicesInterface.delete(id, function(id) {
+					DoleticMasterInterface.hideConfirmModal();
+					DoleticMasterInterface.showSuccess("Suppression réussie !", "L'utilisateur a été supprimé avec succès !");
+					DoleticUIModule.fillUsersList();
+					if(window.currentDetails = userId) {
+						$("#det").hide();
+					}
+					
+				});
+			});
+	}
+
+	this.addTeamHandler = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// clear ticket form
+			DoleticUIModule.cancelNewTeamForm();
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Création réussie !", "L'équipe a été créée avec succès !");
+			// fill ticket list
+			DoleticUIModule.fillTeamsList();
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
+	this.editTeamHandler = function(data) {
+		// if no service error
+		if(data.code == 0) {
+			// clear ticket form
+			DoleticUIModule.cancelNewTeamForm();
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Edition réussie !", "L'équipe a été modifiée avec succès !");
+			// fill ticket list
+			DoleticUIModule.fillTeamsList();
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
 	}
 
 }

@@ -355,6 +355,7 @@ class IntMembershipDBObject extends AbstractDBObject {
 		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false); // boolean
 		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_RIB, DBTable::DT_INT, 1, false); // boolean
 		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_IDENTITY, DBTable::DT_INT, 1, false); // boolean
+		$dol_int_membership->AddForeignKey(IntMembershipDBObject::TABL_INT_MEMBERSHIP.'_fk1', IntMembershipDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
 
 		// -- add tables
 		parent::addTable($dol_int_membership);
