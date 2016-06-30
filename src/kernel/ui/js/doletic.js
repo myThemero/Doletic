@@ -243,7 +243,7 @@ var DoleticMasterInterface = new function() {
    *  @param content : message content
    */
   this.showMessage = function(type, header, content) {
-    $('#'+this.master_container_id).append(
+    $('#'+this.master_container_id).html(
     "<div class=\"column\"> \
       <div class=\"ui " + type + " message dol_message\"> \
         <i class=\"close icon\" onClick=\"this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);\" ></i> \
