@@ -333,7 +333,7 @@ class ContactDBObject extends AbstractDBObject {
 		$dol_contact->AddColumn(ContactDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false);
 		$dol_contact->AddColumn(ContactDBObject::COL_PHONE, DBTable::DT_VARCHAR, 255, false);
 		$dol_contact->AddColumn(ContactDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false);
-		$dol_contact->AddColumn(ContactDBObject::COL_LAST_UPDATE, DBTable::DT_DATE, 255, false);
+		$dol_contact->AddColumn(ContactDBObject::COL_LAST_UPDATE, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_contact);
