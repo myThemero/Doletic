@@ -506,6 +506,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.makeTeamModal = function(team) {
+		$('#tmodal_' + team.id).remove();
 		var modal = "<div class=\"ui modal\" id=\"tmodal_"+team.id+"\" > \
 	  		<div class=\"header\">\
 	    		Gérer les membres\
@@ -626,139 +627,162 @@ var DoleticUIModule = new function() {
 				$('#abort_intm').attr("onClick", "DoleticUIModule.cancelNewIntMembershipForm("+data.object.user_id+"); return false;");
 
 				// Fill memberships tables
-				AdmMembershipServicesInterface.getUserAdmMemberships(data.object.user_id, function(data) {
-					$("#admm_table_container").html("");
-					var filters = [
-								DoleticMasterInterface.input_filter,
-								DoleticMasterInterface.input_filter,
-								DoleticMasterInterface.select_filter,
-								DoleticMasterInterface.select_filter,
-								DoleticMasterInterface.select_filter,
-								DoleticMasterInterface.reset_filter
-								];
-					var html = "<table class=\"ui very basic celled table\" id=\"admm_table\"> \
-            <thead> \
-                <tr>\
-                    <th>Date de début</th> \
-                    <th>Date de fin</th> \
-                    <th>Cotis.</th> \
-                    <th>Fiche</th> \
-                    <th>Certif.</th> \
-                    <th>Actions</th> \
-                </tr>\
-            </thead>\
-            <tfoot> \
-                <tr>\
-                    <th>Date de début</th> \
-                    <th>Date de fin</th> \
-                    <th>Cotis.</th> \
-                    <th>Fiche</th> \
-                    <th>Certif.</th> \
-                    <th>Actions</th> \
-                </tr>\
-            </tfoot>\
-            <tbody id=\"admm_body\"> ";
-					for(var i=0; i<data.object.length; i++) {
-						if(!(data.object[i].fee && data.object[i].form && data.object[i].certif)) {
-							html += "<tr class=\"warning\">";
-						} else {
-							html += "<tr>";
-						}
-						html += "<td>"+data.object[i].start_date+"</td>";
-						html += "<td>"+data.object[i].end_date+"</td>";
-						html += "<td>"+data.object[i].fee+"</td>";
-						html += "<td>"+data.object[i].form+"</td>";
-						html += "<td>"+data.object[i].certif+"</td>";
-						html = html.replace(/false/g, "Non");
-						html = html.replace(/true/g, "Oui");
-						html += "<td>\
-							<div class=\"ui icon buttons\"> \
-								<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
-		  							<i class=\"write icon\"></i> \
-								</button> \
-								<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
-		  							<i class=\"remove icon\"></i> \
-								</button>\
-							</div> \
-						</td></tr>";
-						
-					}
-					html += "</tbody></table>"
-					$("#admm_table_container").html(html);
-					DoleticMasterInterface.makeDataTables('admm_table', filters);
-					$("#admm_body .button").popup();
-				});
-				IntMembershipServicesInterface.getUserIntMemberships(data.object.user_id, function(data) {
-					$("#intm_table_container").html("");
-					var filters = [
-								DoleticMasterInterface.input_filter,
-								DoleticMasterInterface.select_filter,
-								DoleticMasterInterface.select_filter,
-								DoleticMasterInterface.select_filter,
-								DoleticMasterInterface.select_filter,
-								DoleticMasterInterface.select_filter,
-								DoleticMasterInterface.reset_filter
-								];
-					var html = "<table class=\"ui very basic celled table\" id=\"intm_table\"> \
-            <thead> \
-                <tr>\
-                    <th>Date de début</th> \
-                    <th>Cotis.</th> \
-                    <th>Fiche</th> \
-                    <th>Certif.</th> \
-                    <th>RIB</th> \
-                    <th>Pièce id.</th> \
-                    <th>Actions</th> \
-                </tr>\
-            </thead>\
-            <tfoot> \
-                <tr>\
-                    <th>Date de début</th> \
-                    <th>Cotis.</th> \
-                    <th>Fiche</th> \
-                    <th>Certif.</th> \
-                    <th>RIB</th> \
-                    <th>Pièce id.</th> \
-                    <th>Actions</th> \
-                </tr>\
-            </tfoot>\
-            <tbody id=\"intm_body\"> ";
-					for(var i=0; i<data.object.length; i++) {
-						if(!(data.object[i].fee && data.object[i].form && data.object[i].certif && data.object[i].rib && data.object[i].identity)) {
-							html += "<tr class=\"warning\">";
-						} else {
-							html += "<tr>";
-						}
-						html += "<td>"+data.object[i].start_date+"</td>";
-						html += "<td>"+data.object[i].fee+"</td>";
-						html += "<td>"+data.object[i].form+"</td>";
-						html += "<td>"+data.object[i].certif+"</td>";
-						html += "<td>"+data.object[i].rib+"</td>";
-						html += "<td>"+data.object[i].identity+"</td>";
-						html = html.replace(/false/g, "Non");
-						html = html.replace(/true/g, "Oui");
-						html += "<td>\
-							<div class=\"ui icon buttons\"> \
-								<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
-		  							<i class=\"write icon\"></i> \
-								</button> \
-								<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
-		  							<i class=\"remove icon\"></i> \
-								</button>\
-							</div> \
-						</td></tr>";
-						
-					}
-					$("#intm_table_container").html(html);
-					DoleticMasterInterface.makeDataTables('intm_table', filters);
-					$("#intm_body .button").popup();
-				});
+				DoleticUIModule.fillAdmMemberships(data.object.user_id);
+				DoleticUIModule.fillIntMemberships(data.object.user_id);
+				
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
 			}
 		});
 		window.currentDetails = userId;
+	}
+
+	this.fillAdmMemberships = function(userId) {
+		AdmMembershipServicesInterface.getUserAdmMemberships(userId, function(data) {
+			$("#admm_table_container").html("");
+
+			if(data.code == 0 && data.object != "[]") {
+
+				var filters = [
+							DoleticMasterInterface.input_filter,
+							DoleticMasterInterface.input_filter,
+							DoleticMasterInterface.select_filter,
+							DoleticMasterInterface.select_filter,
+							DoleticMasterInterface.select_filter,
+							DoleticMasterInterface.reset_filter
+							];
+				var html = "<table class=\"ui very basic celled table\" id=\"admm_table\"> \
+							    <thead> \
+							        <tr>\
+							            <th>Date de début</th> \
+							            <th>Date de fin</th> \
+							            <th>Cotis.</th> \
+							            <th>Fiche</th> \
+							            <th>Certif.</th> \
+							            <th>Actions</th> \
+							        </tr>\
+							    </thead>\
+							    <tfoot> \
+							        <tr>\
+							            <th>Date de début</th> \
+							            <th>Date de fin</th> \
+							            <th>Cotis.</th> \
+							            <th>Fiche</th> \
+							            <th>Certif.</th> \
+							            <th>Actions</th> \
+							        </tr>\
+							    </tfoot>\
+							    <tbody id=\"admm_body\"> ";
+				for(var i=0; i<data.object.length; i++) {
+					if(!(data.object[i].fee && data.object[i].form && data.object[i].certif)) {
+						html += "<tr class=\"warning\">";
+					} else {
+						html += "<tr>";
+					}
+					html += "<td>"+data.object[i].start_date+"</td>";
+					html += "<td>"+data.object[i].end_date+"</td>";
+					html += "<td>"+data.object[i].fee+"</td>";
+					html += "<td>"+data.object[i].form+"</td>";
+					html += "<td>"+data.object[i].certif+"</td>";
+					html = html.replace(/false/g, "Non");
+					html = html.replace(/true/g, "Oui");
+					html += "<td>\
+						<div class=\"ui icon buttons\"> \
+							<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+	  							<i class=\"write icon\"></i> \
+							</button> \
+							<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteAdmMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+	  							<i class=\"remove icon\"></i> \
+							</button>\
+						</div> \
+					</td></tr>";
+					
+				}
+				html += "</tbody></table>"
+				$("#admm_table_container").html(html);
+				DoleticMasterInterface.makeDataTables('admm_table', filters);
+				$("#admm_body .button").popup();
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.fillIntMemberships = function(userId) {
+		IntMembershipServicesInterface.getUserIntMemberships(userId, function(data) {
+			$("#intm_table_container").html("");
+
+			if(data.code == 0 && data.object != "[]") {
+
+				var filters = [
+							DoleticMasterInterface.input_filter,
+							DoleticMasterInterface.select_filter,
+							DoleticMasterInterface.select_filter,
+							DoleticMasterInterface.select_filter,
+							DoleticMasterInterface.select_filter,
+							DoleticMasterInterface.select_filter,
+							DoleticMasterInterface.reset_filter
+							];
+				var html = "<table class=\"ui very basic celled table\" id=\"intm_table\"> \
+							    <thead> \
+							        <tr>\
+							            <th>Date de début</th> \
+							            <th>Cotis.</th> \
+							            <th>Fiche</th> \
+							            <th>Certif.</th> \
+							            <th>RIB</th> \
+							            <th>Pièce id.</th> \
+							            <th>Actions</th> \
+							        </tr>\
+							    </thead>\
+							    <tfoot> \
+							        <tr>\
+							            <th>Date de début</th> \
+							            <th>Cotis.</th> \
+							            <th>Fiche</th> \
+							            <th>Certif.</th> \
+							            <th>RIB</th> \
+							            <th>Pièce id.</th> \
+							            <th>Actions</th> \
+							        </tr>\
+							    </tfoot>\
+							    <tbody id=\"intm_body\"> ";
+				for(var i=0; i<data.object.length; i++) {
+					if(!(data.object[i].fee && data.object[i].form && data.object[i].certif && data.object[i].rib && data.object[i].identity)) {
+						html += "<tr class=\"warning\">";
+					} else {
+						html += "<tr>";
+					}
+					html += "<td>"+data.object[i].start_date+"</td>";
+					html += "<td>"+data.object[i].fee+"</td>";
+					html += "<td>"+data.object[i].form+"</td>";
+					html += "<td>"+data.object[i].certif+"</td>";
+					html += "<td>"+data.object[i].rib+"</td>";
+					html += "<td>"+data.object[i].identity+"</td>";
+					html = html.replace(/false/g, "Non");
+					html = html.replace(/true/g, "Oui");
+					html += "<td>\
+						<div class=\"ui icon buttons\"> \
+							<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+	  							<i class=\"write icon\"></i> \
+							</button> \
+							<button class=\"ui icon button\" data-title=\"Supprimer\" onClick=\"DoleticUIModule.deleteIntMembership("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+	  							<i class=\"remove icon\"></i> \
+							</button>\
+						</div> \
+					</td></tr>";
+					
+				}
+				$("#intm_table_container").html(html);
+				DoleticMasterInterface.makeDataTables('intm_table', filters);
+				$("#intm_body .button").popup();
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 
 	this.clearNewUserForm = function() {
@@ -844,10 +868,6 @@ var DoleticUIModule = new function() {
 	this.insertNewAdmMembership = function(userId) {
 		if(DoleticUIModule.checkNewAdmMembershipForm()) {
 		   	// retreive missing information
-			var handler = function() {
-				DoleticUIModule.fillUserDetails(userId);
-				DoleticUIModule.cancelNewAdmMembershipForm(userId);
-			};
 			var options = document.getElementById("docs_adm").options;
 			AdmMembershipServicesInterface.insert(
 				userId, // Retenir l'utilisateur concerné
@@ -856,16 +876,14 @@ var DoleticUIModule = new function() {
 				Boolean(options[0].selected),
 				Boolean(options[1].selected),
 				Boolean(options[2].selected),
-				handler);
+				function(data) {
+					DoleticUIModule.addAdmMembershipHandler(userId, data);
+				});
 		}
 	}
 
 	this.insertNewIntMembership = function(userId) {
 		if(DoleticUIModule.checkNewIntMembershipForm()) {
-		   	var handler = function() {
-				DoleticUIModule.fillUserDetails(userId);
-				DoleticUIModule.cancelNewIntMembershipForm(userId);
-			};
 		   	// retreive missing information
 			var options = document.getElementById("docs_int").options;
 			IntMembershipServicesInterface.insert(
@@ -876,27 +894,32 @@ var DoleticUIModule = new function() {
 				Boolean(options[2].selected),
 				Boolean(options[3].selected),
 				Boolean(options[4].selected),
-				handler);
+				function(data) {
+					DoleticUIModule.addIntMembershipHandler(userId, data);
+				});
 		}
 	}
 
 	this.insertNewAGR = function() {
-		var handler = function() {
-			DoleticUIModule.fillAGSelector();
-			DoleticUIModule.clearNewAGRForm();
-		};
-
 		if(DoleticUIModule.checkNewAGRForm()) {
 			var ag = $("#agr").val();
-			UserDataServicesInterface.insertAg(ag, handler);
+			UserDataServicesInterface.insertAg(ag, function(data) {
+				// if no service error
+				if(data.code == 0) {
+					DoleticUIModule.clearNewAGRForm();
+					// alert user that creation is a success
+					DoleticMasterInterface.showSuccess("Création réussie !", "L'AGR a été ajoutée avec succès !");
+					// fill AGR list
+					DoleticUIModule.fillAGSelector();
+				} else {
+					// use default service service error handler
+					DoleticServicesInterface.handleServiceError(data);
+				}
+			});
 		}
 	}
 
 	this.insertTeamMember = function(id) {
-		var handler = function() {
-			DoleticUIModule.updateTeamModal(id);
-		};
-
 		var select = document.getElementById("add_tmember_select"+id);
 		var options = new Array();
 		for(var i=0; i<select.options.length; i++) {
@@ -904,7 +927,15 @@ var DoleticUIModule = new function() {
 				options.push(select.options[i].value);
 			}
 		}
-		TeamServicesInterface.insertMember(id, options, handler);
+		TeamServicesInterface.insertMember(id, options, function(data) {
+			// if no service error
+			if(data.code == 0) {
+				DoleticUIModule.updateTeamModal(id);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 
 	this.editUser = function(id, user_id) {
@@ -1040,7 +1071,8 @@ var DoleticUIModule = new function() {
 				$('#dept option:selected').text(),
 				$('#position option:selected').text(),
 				$('#ag option:selected').text(),
-				DoleticUIModule.editUserHandler);
+				DoleticUIModule.editUserHandler
+			);
 		}
 	}
 
@@ -1061,10 +1093,6 @@ var DoleticUIModule = new function() {
 		// ADD OTHER TESTS
 		if(DoleticUIModule.checkNewAdmMembershipForm()) {
 		   	// retreive missing information
-			var handler = function() {
-				DoleticUIModule.fillUserDetails(userId);
-				DoleticUIModule.cancelNewAdmMembershipForm(userId);
-			};
 			var options = document.getElementById("docs_adm").options;
 			AdmMembershipServicesInterface.update(id,
 				userId, // Retenir l'utilisateur concerné
@@ -1073,7 +1101,10 @@ var DoleticUIModule = new function() {
 				Boolean(options[0].selected),
 				Boolean(options[1].selected),
 				Boolean(options[2].selected),
-				handler);
+				function(data) {
+					DoleticUIModule.editAdmMembershipHandler(userId, data);
+				}
+			);
 		}
 	}
 
@@ -1081,10 +1112,6 @@ var DoleticUIModule = new function() {
 		// ADD OTHER TESTS
 		if(DoleticUIModule.checkNewIntMembershipForm()) {
 		   	// retreive missing information
-			var handler = function() {
-				DoleticUIModule.fillUserDetails(userId);
-				DoleticUIModule.cancelNewIntMembershipForm(userId);
-			};
 			var options = document.getElementById("docs_int").options;
 			IntMembershipServicesInterface.update(id,
 				userId, // Retenir l'utilisateur concerné
@@ -1094,7 +1121,10 @@ var DoleticUIModule = new function() {
 				Boolean(options[2].selected),
 				Boolean(options[3].selected),
 				Boolean(options[4].selected),
-				handler);
+				function(data) {
+					DoleticUIModule.editIntMembershipHandler(userId, data);
+				}
+			);
 		}
 	}
 
@@ -1109,64 +1139,58 @@ var DoleticUIModule = new function() {
 	}
 
 	this.deleteTeam = function(id) {
-		// Création fonction de suppression (nécessaire pour passer une référence et nom un retour)
-		var delTeam = function() {
-			TeamServicesInterface.delete(id, function() {
-				DoleticMasterInterface.hideConfirmModal();
-				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'équipe a été supprimée avec succès !");
-				DoleticUIModule.fillTeamsList();
-			});
-		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'équipe ? Cette opération est irréversible.", delTeam, DoleticMasterInterface.hideConfirmModal);	
+			"Etes-vous sûr de vouloir supprimer l'équipe ? Cette opération est irréversible.", 
+			function() {
+				DoleticUIModule.deleteTeamHandler(id);
+			},
+			DoleticMasterInterface.hideConfirmModal);	
 	}
 
 	this.deleteAdmMembership = function(id, userId) {
-		var delAdmm = function() {
-			AdmMembershipServicesInterface.delete(id, function() {
-				DoleticMasterInterface.hideConfirmModal();
-				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
-				DoleticUIModule.fillUserDetails(userId);
-			});
-		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", delAdmm, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.",
+			function() {
+				DoleticUIModule.deleteAdmMembershipHandler(id, userId);
+			},
+			DoleticMasterInterface.hideConfirmModal
+		);
 	}
 
 	this.deleteIntMembership = function(id, userId) {
-		var delIntm = function() {
-			IntMembershipServicesInterface.delete(id, function() {
-				DoleticMasterInterface.hideConfirmModal();
-				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
-				DoleticUIModule.fillUserDetails(userId);
-			});
-		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.", delIntm, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.",
+			function() {
+				DoleticUIModule.deleteIntMembershipHandler(id, userId);
+			},
+			DoleticMasterInterface.hideConfirmModal
+		);
 	}
 
 	this.deleteAGR = function(ag) {
-		var delAG = function() {
-			UserDataServicesInterface.deleteAg(String(ag), function() {
-				DoleticMasterInterface.hideConfirmModal();
-				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'AGR a été supprimée avec succès !");
-				DoleticUIModule.fillAGSelector();
-			});
-		};
 		// Confirmation
 		DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>", 
-			"Etes-vous sûr de vouloir supprimer l'AGR ? Cette opération est irréversible.", delAG, DoleticMasterInterface.hideConfirmModal);
+			"Etes-vous sûr de vouloir supprimer l'AGR ? Cette opération est irréversible.",
+			function() {
+				DoleticUIModule.deleteAGRHandler(ag);
+			},
+			DoleticMasterInterface.hideConfirmModal
+		);
 	}
 
 	this.deleteTeamMember = function(id, memberId) {
-		var handler = function() {
-			DoleticUIModule.updateTeamModal(id);
-		};
-
-		TeamServicesInterface.deleteMember(id, memberId, handler);
+		TeamServicesInterface.deleteMember(id, memberId, function(data) {
+			// if no service error
+			if(data.code == 0) {
+				DoleticUIModule.updateTeamModal(id);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 
 	this.disableUser = function(id, user_id) {
@@ -1381,6 +1405,8 @@ var DoleticUIModule = new function() {
 		return true;
 	}
 
+
+
 	// --- HANDLERS
 	this.addUserHandler = function(data) {
 		// if no service error
@@ -1413,42 +1439,77 @@ var DoleticUIModule = new function() {
 	}
 
 	this.disableUserHandler = function(id, userId) {
-		UserServicesInterface.disable(userId, function() {
-			UserDataServicesInterface.disable(id, function(){
-				DoleticMasterInterface.hideConfirmModal();
-				DoleticMasterInterface.showSuccess("Désactivation réussie !", "L'utilisateur a été désactivé.");
-				DoleticUIModule.fillUsersList();
-				if(window.currentDetails == userId) {
-					$('#det').html($('#det').html() + " (désactivé)");
-				}
-			});
+		UserServicesInterface.disable(userId, function(data) {
+			// if no service error
+			if(data.code == 0) {
+					UserDataServicesInterface.disable(id, function(data){
+						// if no service error
+						if(data.code == 0) {
+							DoleticMasterInterface.hideConfirmModal();
+							DoleticMasterInterface.showSuccess("Désactivation réussie !", "L'utilisateur a été désactivé.");
+							DoleticUIModule.fillUsersList();
+							if(window.currentDetails == userId) {
+								$('#det').html($('#det').html() + " (désactivé)");
+							}
+						} else {
+					
+						}
+					});
+
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
 		});
 	}
 
 	this.restoreUserHandler = function(id, userId) {
-		UserServicesInterface.restore(userId, function() {
-			UserDataServicesInterface.enable(id, function(){
-				DoleticMasterInterface.hideConfirmModal();
-				DoleticMasterInterface.showSuccess("Réactivation réussie !", "L'utilisateur a été réactivé.");
-				DoleticUIModule.fillUsersList();
-				if(window.currentDetails == userId) {
-					$('#det').html($('#det').html().replace(" (désactivé)", ""));
-				}
-			});
+		UserServicesInterface.restore(userId, function(data) {
+			// if no service error
+			if(data.code == 0) {
+				UserDataServicesInterface.enable(id, function(data){
+					// if no service error
+					if(data.code == 0) {
+						DoleticMasterInterface.hideConfirmModal();
+						DoleticMasterInterface.showSuccess("Réactivation réussie !", "L'utilisateur a été réactivé.");
+						DoleticUIModule.fillUsersList();
+						if(window.currentDetails == userId) {
+							$('#det').html($('#det').html().replace(" (désactivé)", ""));
+						}
+					} else {
+						// use default service service error handler
+						DoleticServicesInterface.handleServiceError(data);
+					}
+				});
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
 		});
 	}
 
 	this.deleteUserHandler = function(id, userId) {
-			UserDataServicesInterface.delete(id, userId, function() {
-				UserServicesInterface.delete(id, function(id) {
-					DoleticMasterInterface.hideConfirmModal();
-					DoleticMasterInterface.showSuccess("Suppression réussie !", "L'utilisateur a été supprimé avec succès !");
-					DoleticUIModule.fillUsersList();
-					if(window.currentDetails = userId) {
-						$("#det").hide();
-					}
-					
-				});
+			UserDataServicesInterface.delete(id, userId, function(data) {
+				// if no service error
+				if(data.code == 0) {
+					UserServicesInterface.delete(id, function(data) {
+						// if no service error
+						if(data.code == 0) {
+							DoleticMasterInterface.hideConfirmModal();
+							DoleticMasterInterface.showSuccess("Suppression réussie !", "L'utilisateur a été supprimé avec succès !");
+							DoleticUIModule.fillUsersList();
+							if(window.currentDetails = userId) {
+								$("#det").hide();
+							}
+						} else {
+							// use default service service error handler
+							DoleticServicesInterface.handleServiceError(data);
+						}
+					});
+				} else {
+					// use default service service error handler
+					DoleticServicesInterface.handleServiceError(data);
+				}
 			});
 	}
 
@@ -1480,6 +1541,118 @@ var DoleticUIModule = new function() {
 			// use default service service error handler
 			DoleticServicesInterface.handleServiceError(data);
 		}
+	}
+
+	this.deleteTeamHandler = function(id) {
+		TeamServicesInterface.delete(id, function(data) {
+			// if no service error
+			if(data.code == 0) {
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'équipe a été supprimée avec succès !");
+				DoleticUIModule.fillTeamsList();
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.addAdmMembershipHandler = function(userId, data) {
+		// if no service error
+		if(data.code == 0) {
+			DoleticUIModule.cancelNewAdmMembershipForm(userId);
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Création réussie !", "L'adhésion a été ajoutée avec succès !");
+			// fill AdmMemberships list
+			DoleticUIModule.fillAdmMemberships(userId);
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
+	this.editAdmMembershipHandler = function(userId, data) {
+		// if no service error
+		if(data.code == 0) {
+			DoleticUIModule.cancelNewAdmMembershipForm(userId);
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Edition réussie !", "L'adhésion a été modifiée avec succès !");
+			// fill AdmMemberships list
+			DoleticUIModule.fillAdmMemberships(userId);
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
+	this.deleteAdmMembershipHandler = function(id, userId) {
+		AdmMembershipServicesInterface.delete(id, function(data) {
+			// if no service error
+			if(data.code == 0) {
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
+				DoleticUIModule.fillAdmMemberships(userId);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.addIntMembershipHandler = function(userId, data) {
+		// if no service error
+		if(data.code == 0) {
+			DoleticUIModule.cancelNewIntMembershipForm(userId);
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Création réussie !", "L'adhésion a été ajoutée avec succès !");
+			// fill IntMemberships list
+			DoleticUIModule.fillIntMemberships(userId);
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
+	this.editIntMembershipHandler = function(userId, data) {
+		// if no service error
+		if(data.code == 0) {
+			DoleticUIModule.cancelNewIntMembershipForm(userId);
+			// alert user that creation is a success
+			DoleticMasterInterface.showSuccess("Edition réussie !", "L'adhésion a été modifiée avec succès !");
+			// fill IntMemberships list
+			DoleticUIModule.fillIntMemberships(userId);
+		} else {
+			// use default service service error handler
+			DoleticServicesInterface.handleServiceError(data);
+		}
+	}
+
+	this.deleteIntMembershipHandler = function(id, userId) {
+		IntMembershipServicesInterface.delete(id, function(data) {
+			// if no service error
+			if(data.code == 0) {
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
+				DoleticUIModule.fillIntMemberships(userId);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+	}
+
+	this.deleteAGRHandler = function(ag) {
+		UserDataServicesInterface.deleteAg(String(ag), function(data) {
+			// if no service error
+			if(data.code == 0) {
+				DoleticMasterInterface.hideConfirmModal();
+				DoleticMasterInterface.showSuccess("Suppression réussie !", "L'AGR a été supprimée avec succès !");
+				DoleticUIModule.fillAGSelector();
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
 	}
 
 }

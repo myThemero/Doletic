@@ -132,7 +132,7 @@ var AdmMembershipServicesInterface = new function() {
             { id: id }, 
             successHandler); 
   }
-  this.insert = function(userId, startDate, endDate, fee, form, certif, ag, successHandler) {
+  this.insert = function(userId, startDate, endDate, fee, form, certif, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT, 
             {
@@ -141,12 +141,11 @@ var AdmMembershipServicesInterface = new function() {
               endDate:endDate,
               fee:fee,
               form:form,
-              certif:certif,
-              ag:ag
+              certif:certif
             }, 
             successHandler); 
   }
-  this.update = function(id, userId, startDate, endDate, fee, form, certif, ag, successHandler) {
+  this.update = function(id, userId, startDate, endDate, fee, form, certif, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE, 
             {
@@ -156,8 +155,7 @@ var AdmMembershipServicesInterface = new function() {
               endDate:endDate,
               fee:fee,
               form:form,
-              certif:certif,
-              ag:ag
+              certif:certif
             }, 
             successHandler);
   }
