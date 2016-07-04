@@ -422,7 +422,8 @@ var DoleticUIModule = new function() {
 				$('#disabled_table_container').append(disabled_content);
 				DoleticMasterInterface.makeDataTables('user_table', filters);
 				DoleticMasterInterface.makeDataTables('disabled_table', filters);
-				$('#leader').html(selector_content).dropdown();
+				$('.user-drop').html(selector_content);
+				$('#leader').dropdown();
 				$('#user_body .button').popup();
 				$('#disabled_body .button').popup();
 				
@@ -539,7 +540,7 @@ var DoleticUIModule = new function() {
  						 <h4 class=\"ui dividing header\">Ajouter des membres</h4>\
  						 <div class=\"required field\"> \
 							<label>Membre à ajouter</label> \
-			      				<select id=\"add_tmember_select"+team.id+"\" class=\"ui fluid search dropdown\" multiple >";
+			      				<select id=\"add_tmember_select"+team.id+"\" class=\"ui fluid search dropdown user-drop\" multiple >";
 		for(var i = 0; i<window.user_list.length; i++) {
  			if(typeof window.user_list[i] !== 'undefined') {
  				modal += "<option value=\""+window.user_list[i].id+"\">"+window.user_list[i].firstname + " " + window.user_list[i].lastname+"</option>";
@@ -1498,6 +1499,7 @@ var DoleticUIModule = new function() {
 							DoleticMasterInterface.hideConfirmModal();
 							DoleticMasterInterface.showSuccess("Suppression réussie !", "L'utilisateur a été supprimé avec succès !");
 							DoleticUIModule.fillUsersList();
+							DoleticUIModule.fillTeamsList();
 							if(window.currentDetails = userId) {
 								$("#det").hide();
 							}
