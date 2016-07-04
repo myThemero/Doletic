@@ -223,6 +223,7 @@ class UserDataServices extends AbstractObjectServices {
 	const GET_ALL_COUNTRIES 	= "allc";
 	const GET_ALL_INSA_DEPTS 	= "alldept";
 	const GET_ALL_SCHOOL_YEARS 	= "allyear";
+	const GET_ALL_DIVISIONS 	= "alldiv";
 	const GET_ALL_POSITIONS 	= "allpos";
 	const GET_ALL_AGS 			= "allag";
 	const CHECK_MAIL			= "checkmail";
@@ -262,6 +263,8 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__get_all_INSA_depts();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_SCHOOL_YEARS)) {
 			$data = $this->__get_all_school_years();
+		} else if(!strcmp($action, UserDataServices::GET_ALL_DIVISIONS)) {
+			$data = $this->__get_all_divisions();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_POSITIONS)) {
 			$data = $this->__get_all_positions();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_AGS)) {
@@ -775,6 +778,21 @@ class UserDataServices extends AbstractObjectServices {
 		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
 	}
 
+	private function __get_all_divisions() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_DIVISION)->GetSELECTQuery();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		// create an empty array for divisions and fill it
+		$divisions = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($divisions,$row[UserDataDBObject::COL_LABEL]); 
+			}
+		}
+		return $divisions;
+	}
+
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
 	
 	/**
@@ -863,6 +881,16 @@ class UserDataServices extends AbstractObjectServices {
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
 		}
+		// -- init ETIC div table --------------------------------------------------------------------
+		$divisions = array("DSI","UA","GRC","Com", "Qualité", "SG", "Présidence", "RH", "Trésorerie", "Client", "Ancien", "Intervenant");
+		// --- retrieve SQL query
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_DIVISION)->GetINSERTQuery();
+		foreach ($divisions as $division) {
+			// --- create param array
+			$sql_params = array(":".UserDataDBObject::COL_LABEL => $division);
+			// --- execute SQL query
+			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
+		}
 		// -- init ETIC pos table --------------------------------------------------------------------
 		$positions = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
 			"Président" => 				array((RightsMap::A_R  | RightsMap::A_G | RightsMap::D_G), "Présidence"), // A  | A | D
@@ -913,6 +941,7 @@ class UserDataDBObject extends AbstractDBObject {
 	const TABL_COM_COUNTRY = "com_country";
 	const TABL_COM_INSA_DEPT = "com_insa_dept";
 	const TABL_COM_SCHOOL_YEAR = "com_school_year";
+	const TABL_COM_DIVISION	= "com_division";
 	const TABL_COM_POSITION	= "com_position";
 	const TABL_AG 			= "com_ag";
 	// --- columns
@@ -961,11 +990,15 @@ class UserDataDBObject extends AbstractDBObject {
 		// --- com_school_year table
 		$com_school_year = new DBTable(UserDataDBObject::TABL_COM_SCHOOL_YEAR);
 		$com_school_year->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_INT, 11, false, "", false, true);
+		// --- com_division table
+		$com_division = new DBTable(UserDataDBObject::TABL_COM_DIVISION);
+		$com_division->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		// --- com_position table
 		$com_position = new DBTable(UserDataDBObject::TABL_COM_POSITION);
 		$com_position->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 		$com_position->AddColumn(UserDataDBObject::COL_RG_CODE, DBTable::DT_INT, 11, false, "");
 		$com_position->AddColumn(UserDataDBObject::COL_DIVISION, DBTable::DT_VARCHAR, 255, false, "");
+		$com_position->AddForeignKey(UserDataDBObject::TABL_COM_POSITION.'_fk1', UserDataDBObject::COL_DIVISION, UserDataDBObject::TABL_COM_DIVISION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 		// --- com_ag table
 		$com_ag = new DBTable(UserDataDBObject::TABL_AG);
 		$com_ag->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false, "", false, true);
@@ -1007,6 +1040,7 @@ class UserDataDBObject extends AbstractDBObject {
 		parent::addTable($com_country);
 		parent::addTable($com_insa_dept);
 		parent::addTable($com_school_year);
+		parent::addTable($com_division);
 		parent::addTable($com_position);
 		parent::addTable($com_ag);
 		parent::addTable($dol_udata);

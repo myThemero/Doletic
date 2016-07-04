@@ -142,6 +142,7 @@ var UserDataServicesInterface = new function() {
       GET_ALL_COUNTRIES:"allc",
       GET_ALL_INSA_DEPTS:"alldept",
       GET_ALL_SCHOOL_YEARS:"allyear",
+      GET_ALL_DIVISIONS:'alldiv',
       GET_ALL_POSITIONS:"allpos",
       GET_ALL_AGS:'allag',
       INSERT_AG:'insag',
@@ -175,6 +176,10 @@ var UserDataServicesInterface = new function() {
   this.getAllSchoolYears = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT,this.meta.ACTION.GET_ALL_SCHOOL_YEARS,{},successHandler); 
   } 
+
+  this.getAllDivisions = function(successHandler) {
+   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_DIVISIONS, {}, successHandler); 
+  }
 
   this.getAllPositions = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT,this.meta.ACTION.GET_ALL_POSITIONS,{},successHandler); 

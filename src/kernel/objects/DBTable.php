@@ -166,6 +166,7 @@ class DBTable {
 		}
 		// table engine
 		$query .= ") ENGINE=".$this->engine." CHARSET=utf8;";
+		echo "\n" . $this->name . "\n";
 		// return query
 		return $query;
 	}

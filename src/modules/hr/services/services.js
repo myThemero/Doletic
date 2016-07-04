@@ -12,7 +12,6 @@ var TeamServicesInterface = new function() {
       GET_TEAM_MEMBERS:'memt',
       GET_ALL_TEAMS:'allt',
       GET_USER_TEAMS:'allut',
-      GET_ALL_DIVISIONS:'alldiv',
       INSERT_MEMBER:'insmem',
       DELETE_MEMBER:'delmem',
       INSERT:'insert',
@@ -23,9 +22,6 @@ var TeamServicesInterface = new function() {
 
   this.getAll = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_TEAMS, {}, successHandler); 
-  }
-  this.getAllDivisions = function(successHandler) {
-   return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_DIVISIONS, {}, successHandler); 
   }
   this.getUserTeams = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_USER_TEAMS, {}, successHandler); 

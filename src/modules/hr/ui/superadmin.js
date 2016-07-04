@@ -244,7 +244,7 @@ var DoleticUIModule = new function() {
 	}
 
 	this.fillDivisionSelector = function() {
-		TeamServicesInterface.getAllDivisions(function(data) {
+		UserDataServicesInterface.getAllDivisions(function(data) {
 			// if no service error
 			if(data.code == 0) {
 				// create content var to build html

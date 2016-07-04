@@ -30,7 +30,6 @@ class HrModule extends AbstractModule {
 				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_TEAM_MEMBERS 		=> RightsMap::G_RMASK,  // everyone 
 				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_ALL_TEAMS 			=> RightsMap::G_RMASK,	// everyone 
 				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_USER_TEAMS 		=> RightsMap::G_RMASK,  // everyone
-				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_ALL_DIVISIONS 		=> RightsMap::G_RMASK,  // everyone 
 				TeamDBObject::OBJ_NAME.':'.TeamServices::INSERT_MEMBER			=> RightsMap::A_RMASK,	// admin 
 				TeamDBObject::OBJ_NAME.':'.TeamServices::DELETE_MEMBER	 		=> RightsMap::A_RMASK,  // admin 
 				TeamDBObject::OBJ_NAME.':'.TeamServices::INSERT 				=> RightsMap::A_RMASK,  // admin 

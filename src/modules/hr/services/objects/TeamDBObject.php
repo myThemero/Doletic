@@ -111,7 +111,6 @@ class TeamServices extends AbstractObjectServices {
 	const GET_TEAM_MEMBERS = "memt";
 	const GET_ALL_TEAMS  = "allt";
 	const GET_USER_TEAMS = "allut";
-	const GET_ALL_DIVISIONS = "alldiv";
 	const INSERT_MEMBER = "insmem";
 	const DELETE_MEMBER = "delmem";
 	const INSERT 		   = "insert";
@@ -137,8 +136,6 @@ class TeamServices extends AbstractObjectServices {
 			$data = $this->__get_all_teams();
 		} else if(!strcmp($action, TeamServices::GET_USER_TEAMS)) {
 			$data = $this->__get_current_user_Teams();
-		} else if(!strcmp($action, TeamServices::GET_ALL_DIVISIONS)) {
-			$data = $this->__get_all_divisions();
 		} else if(!strcmp($action, TeamServices::INSERT_MEMBER)) {
 			$data = $this->__insert_members($params[TeamServices::PARAM_ID], $params[TeamServices::PARAM_MEMBER_ID]);
 		} else if(!strcmp($action, TeamServices::DELETE_MEMBER)) {
@@ -247,21 +244,6 @@ class TeamServices extends AbstractObjectServices {
 			}
 		}
 		return $teams;
-	}
-
-	private function __get_all_divisions() {
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_DIV)->GetSELECTQuery();
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
-		// create an empty array for teams and fill it
-		$divisions = array();
-		if($pdos != null) {
-			while( ($row = $pdos->fetch()) !== false) {
-				array_push($divisions,$row[TeamDBObject::COL_LABEL]); 
-			}
-		}
-		return $divisions;
 	}
 
 	private function __get_current_user_teams() {
@@ -390,17 +372,7 @@ class TeamServices extends AbstractObjectServices {
 	 *	---------!---------!---------!---------!---------!---------!---------!---------!---------
 	 */
 	public function ResetStaticData() {
-		// -- init categories table --------------------------------------------------------------------
-		$divisions = array("DSI","UA","GRC","Com", "Qualité", "SG", "Présidence", "RH", "Trésorerie", "Client", "Ancien", "Intervenant");
-		// --- retrieve SQL query
-		$sql = parent::getDBObject()->GetTable(TeamDBObject::TABL_DIV)->GetINSERTQuery();
-		foreach ($divisions as $division) {
-			// --- create param array
-			$sql_params = array(/*":".TeamDBObject::COL_ID => "NULL",*/
-								":".TeamDBObject::COL_LABEL => $division);
-			// --- execute SQL query
-			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
-		}
+
 	}
 
 }
@@ -416,7 +388,6 @@ class TeamDBObject extends AbstractDBObject {
 	// --- tables
 	const TABL_TEAM = "dol_team";
 	const TABL_MEMBERS = "dol_team_member";
-	const TABL_DIV = "com_division";
 	// --- columns
 	const COL_ID = "id";
 	const COL_NAME = "name";
@@ -441,6 +412,7 @@ class TeamDBObject extends AbstractDBObject {
 		$dol_team->AddColumn(TeamDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false);
 		$dol_team->AddColumn(TeamDBObject::COL_DIVISION, DBTable::DT_VARCHAR, 255, false);
 		$dol_team->AddForeignKey(TeamDBObject::COL_LEADER_ID.'_fk1', TeamDBObject::COL_LEADER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
+		$dol_team->AddForeignKey(TeamDBObject::COL_DIVISION.'_fk1', TeamDBObject::COL_DIVISION, UserDataDBObject::TABL_COM_DIVISION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 
 		// --- dol_team_member
 		$dol_team_member = new DBTable(TeamDBObject::TABL_MEMBERS);
@@ -449,14 +421,10 @@ class TeamDBObject extends AbstractDBObject {
 		$dol_team_member->AddForeignKey(TeamDBObject::TABL_MEMBERS.'_fk1', TeamDBObject::COL_MEMBER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
 		$dol_team_member->AddForeignKey(TeamDBObject::TABL_MEMBERS.'_fk2', TeamDBObject::COL_ID, TeamDBObject::TABL_TEAM, TeamDBObject::COL_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
 		$dol_team_member->AddUniqueColumns(array(TeamDBObject::COL_ID, TeamDBObject::COL_MEMBER_ID));
-		// --- com_division table
-		$com_team_division = new DBTable(TeamDBObject::TABL_DIV);
-		$com_team_division->AddColumn(TeamDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
 
 		// -- add tables
 		parent::addTable($dol_team);
 		parent::addTable($dol_team_member);
-		parent::addTable($com_team_division);
 	}
 	/**
 	 *	@brief Returns all services associated with this object
