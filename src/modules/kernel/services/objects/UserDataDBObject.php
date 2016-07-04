@@ -28,7 +28,7 @@ class UserData implements \JsonSerializable {
 	private $school_year = null;
 	private $insa_dept = null;
 	private $avatar_id = null;
-	private $last_pos = null;
+	private $pos = null;
 	private $ag = null;
 	private $disabled = false;
 
@@ -37,7 +37,7 @@ class UserData implements \JsonSerializable {
 	*/
 	public function __construct($id, $userId, $gender, $firstname, $lastname, $birthdate, 
 								$tel, $email, $address, $city, $postalCode, $country, $schoolYear, 
-								$insaDept, $avatarId,  $ag, $disabled, $lastPos) {
+								$insaDept, $avatarId,  $ag, $disabled, $pos) {
 		$this->id = intval($id);
 		$this->user_id = intval($userId);
 		$this->gender = $gender;
@@ -53,7 +53,7 @@ class UserData implements \JsonSerializable {
 		$this->school_year = intval($schoolYear);
 		$this->insa_dept = $insaDept;
 		$this->avatar_id = intval($avatarId);
-		$this->last_pos = $lastPos;
+		$this->pos = $pos;
 		$this->ag = $ag;
 		$this->disabled = (bool)$disabled;
 	}
@@ -77,7 +77,7 @@ class UserData implements \JsonSerializable {
 			UserDataDBObject::COL_AVATAR_ID => $this->avatar_id,
 			UserDataDBObject::COL_AG => $this->ag,
 			UserDataDBObject::COL_DISABLED => $this->disabled,
-			UserDataDBObject::COL_LAST_POS => $this->last_pos //Not in DB...
+			UserDataDBObject::COL_POSITION => $this->pos //Not in DB...
 		];
 	}
 
@@ -174,8 +174,8 @@ class UserData implements \JsonSerializable {
 	/**
 	*	@brief Returns UserData last position
 	*/
-	public function GetLastPos() {
-		return $this->last_pos;
+	public function GetPos() {
+		return $this->pos;
 	}
 	/**
 	*	@brief Returns UserData agr
@@ -217,6 +217,7 @@ class UserDataServices extends AbstractObjectServices {
 	const GET_USER_DATA_BY_ID 	= "byidud";
 	const GET_CURRENT_USER_DATA	= "currud";
 	const GET_USER_LAST_POS     = "lastpos";
+	const GET_ALL_USER_POS      = "allupos";
 	const GET_USER_RG_CODE      = "rgcode";
 	const GET_ALL_USER_DATA 	= "allud";
 	const GET_ALL_GENDERS 		= "allg";
@@ -251,6 +252,8 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__get_current_user_data();
 		} else if(!strcmp($action, UserDataServices::GET_USER_LAST_POS)) {
 			$data = $this->__get_user_last_position($params[UserDataServices::PARAM_USER_ID]);
+		} else if(!strcmp($action, UserDataServices::GET_ALL_USER_POS)) {
+			$data = $this->__get_all_user_positions($params[UserDataServices::PARAM_USER_ID]);
 		} else if(!strcmp($action, UserDataServices::GET_USER_RG_CODE)) {
 			$data = $this->__get_user_rgcode();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_USER_DATA)) {
@@ -361,7 +364,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_AVATAR_ID],
 					$row[UserDataDBObject::COL_AG],
 					$row[UserDataDBObject::COL_DISABLED],
-					$this->__get_user_last_position($row[UserDataDBObject::COL_USER_ID]));
+					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
 			}
 		}
 		return $udata;
@@ -397,7 +400,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_AVATAR_ID],
 					$row[UserDataDBObject::COL_AG],
 					$row[UserDataDBObject::COL_DISABLED],
-					$this->__get_user_last_position($row[UserDataDBObject::COL_USER_ID]));
+					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
 			}
 		}
 		return $udata;
@@ -440,6 +443,45 @@ class UserDataServices extends AbstractObjectServices {
 		return $position;
 	}
 
+	private function __get_all_user_positions($userId) {
+		// create sql params array
+		$sql_params = array(":".UserDataDBObject::COL_USER_ID => $userId);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_USER_ID),
+			array(),
+			array(UserDataDBObject::COL_SINCE => DBTable::ORDER_DESC));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for udata and fill it
+		$position_labels = array();
+		if(isset($pdos)) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($position_labels, $row[UserDataDBObject::COL_POSITION]);
+			}
+		}
+		$positions = array();
+		foreach($position_labels as $position_label) {
+			$position = null;
+			$sql_params = array(":".UserDataDBObject::COL_LABEL => $position_label);
+			$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
+						array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_LABEL));
+			// execute SQL query and save result
+			$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+			// create an empty array for udata and fill it
+			if(isset($pdos)) {
+				if( ($row = $pdos->fetch()) !== false) {
+					$position = array();
+					$position[UserDataDBObject::COL_LABEL] = $row[UserDataDBObject::COL_LABEL];
+					$position[UserDataDBObject::COL_RG_CODE] = $row[UserDataDBObject::COL_RG_CODE];
+					$position[UserDataDBObject::COL_DIVISION] = $row[UserDataDBObject::COL_DIVISION];
+					array_push($positions, $position);
+				}
+			}
+		}
+		return $positions;
+	}
+
 	private function __get_user_rgcode() {
 		$position = $this->__get_user_last_position(parent::getCurrentUser()->GetId());
 		$rgcode = null;
@@ -476,7 +518,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_AVATAR_ID],
 					$row[UserDataDBObject::COL_AG],
 					$row[UserDataDBObject::COL_DISABLED],
-					$this->__get_user_last_position($row[UserDataDBObject::COL_USER_ID])));
+					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
 			}
 		}
 		return $udata;
@@ -589,7 +631,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_AVATAR_ID],
 					$row[UserDataDBObject::COL_AG],
 					$row[UserDataDBObject::COL_DISABLED],
-					$this->__get_user_last_position($row[UserDataDBObject::COL_USER_ID]));
+					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
 			}
 		}
 		return $udata;

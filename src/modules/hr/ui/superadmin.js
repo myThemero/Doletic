@@ -356,7 +356,6 @@ var DoleticUIModule = new function() {
 								];
 				var selector_content = "<option value>Membre...</option>";
 				for (var i = 0; i < data.object.length; i++) {
-						
 						//DoleticUIModule.createUserDetails(data.object[i]);
 						window.user_list[data.object[i].id] = data.object[i];
 
@@ -374,8 +373,8 @@ var DoleticUIModule = new function() {
 		            			"<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></div> \
 		        				</div> \
 		      					</h4></td> \
-		      					<td>" + data.object[i].last_pos.label + "</td> \
-		      					<td>" + data.object[i].last_pos.division + "</td> \
+		      					<td>" + data.object[i].position[0].label + "</td> \
+		      					<td>" + data.object[i].position[0].division + "</td> \
 		      					<td>" + data.object[i].tel + "</td> \
 		      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
 		    				<td> \
@@ -400,8 +399,8 @@ var DoleticUIModule = new function() {
 		            			"<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></div> \
 		        				</div> \
 		      					</h4></td> \
-		      					<td>" + data.object[i].last_pos.label + "</td> \
-		      					<td>" + data.object[i].last_pos.division + "</td> \
+		      					<td>" + data.object[i].position[0].label + "</td> \
+		      					<td>" + data.object[i].position[0].division + "</td> \
 		      					<td>" + data.object[i].tel + "</td> \
 		      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
 		    				<td> \
@@ -522,7 +521,7 @@ var DoleticUIModule = new function() {
 						  <div class=\"content\">\
 						    <div class=\"header\"><strong>"+ window.user_list[team.member_id[i]].firstname + " " 
 						    					   + window.user_list[team.member_id[i]].lastname;
-			modal +=	    "</strong></div><div class=\"description\">"+window.user_list[team.member_id[i]].last_pos.label+"</div>\
+			modal +=	    "</strong></div><div class=\"description\">"+window.user_list[team.member_id[i]].position[0].label+"</div>\
 						  </div>";
 			if(team.member_id[i] != team.leader_id) {
 				modal += "<td><button class=\"ui small icon button\"onClick=\"DoleticUIModule.deleteTeamMember("+team.id+", "+team.member_id[i]+"); return false;\"> \
@@ -603,7 +602,12 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				$('#det_name').html(data.object.gender + " " + data.object.firstname + " " + data.object.lastname);
-				$('#det_pos').html(data.object.last_pos.label);
+				var pos_html = "";
+				pos_html += "<strong>" + data.object.position[0].label + " (actuel)</strong>";
+				for(var i = 1; i<data.object.position.length; i++) {
+					pos_html += "<br>" + data.object.position[i].label;
+				}
+				$('#det_pos').html(pos_html);
 				$('#det_birth').html(data.object.birthdate);
 				$('#det_country').html(data.object.country);
 				$('#det_city').html(data.object.city);
@@ -958,7 +962,7 @@ var DoleticUIModule = new function() {
 				$('#schoolyear').dropdown("set selected", data.object.school_year);
 				$('#dept').dropdown("set selected", data.object.insa_dept);
 				$('#gender').dropdown("set selected", data.object.gender);
-				$('#position').dropdown("set selected", data.object.last_pos.label);
+				$('#position').dropdown("set selected", data.object.position[0].label);
 				$('#country').dropdown("set selected", data.object.country);
 				$('#ag').dropdown("set selected", data.object.ag);
 
@@ -1226,7 +1230,7 @@ var DoleticUIModule = new function() {
 							  <div class=\"content\">\
 							    <div class=\"header\"><strong>"+ window.user_list[data.object[i]].firstname + " " 
 							    					   + window.user_list[data.object[i]].lastname;
-				html +=	    "</strong></div><div class=\"description\">"+window.user_list[data.object[i]].last_pos.label+"</div>\
+				html +=	    "</strong></div><div class=\"description\">"+window.user_list[data.object[i]].position[0].label+"</div>\
 							  </div>";
 				if(data.object[i] != window.team_list[id].leader_id) {
 					html += "<td><button class=\"ui small icon button\"onClick=\"DoleticUIModule.deleteTeamMember("+id+", "+data.object[i]+"); return false;\"> \
