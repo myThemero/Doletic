@@ -24,6 +24,15 @@ class DBTable {
 	const DT_NO_ACTION = "NO_ACTION";
 	const DT_RESTRICT = "RESTRICT";
 	const DT_SET_NULL = "SET_NULL";
+	// --- JOIN
+	const DT_LEFT = "LEFT";
+	const DT_RIGHT = "RIGHT";
+	const DT_CROSS = "CROSS";
+	const DT_INNER = "INNER";
+	const DT_OUTER = "OUTER";
+	const DT_NATURAL = "NATURAL";
+	// --- UNION
+	const DT_ALL = "ALL";
 	// --- query consts
 	const SELECT_ALL = "*";
 	const EVERYWHERE = "everywhere";
@@ -332,6 +341,22 @@ class DBTable {
 		}
 		$query = substr($query, 0, strlen($query)-1);
 		$query .= " FROM `" . $disableTableName . "` WHERE id =:id;";
+		return $query;
+	}
+
+	static function GetJOINQuery($query1, $query2, $joinOn, $type = DBTable::DT_INNER, $leftRight = "") {
+		return "SELECT * FROM (" . trim($query1, ';').") AS a " . $leftRight . " " . $type . " JOIN (".trim($query2, ';').") AS b ON a." . $joinOn[0] . " = b." . $joinOn[1] . ";";
+	}
+
+	static function GetUNIONQuery($query1, $query2, $all = true) {
+		$query = $query1;
+		if(strpos($query1, "SELECT") == 0 && strpos($query2, "SELECT") == 0) {
+			$query = "(" . trim($query1, ';') . ") UNION ";
+			if($all) {
+				$query .= DBTable::ALL . " ";
+			}
+				$query .= "(" . trim($query2, ';') . ");";
+		}
 		return $query;
 	}
 }

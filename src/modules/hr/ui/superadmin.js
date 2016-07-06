@@ -356,6 +356,7 @@ var DoleticUIModule = new function() {
 								];
 				var selector_content = "<option value>Membre...</option>";
 				for (var i = 0; i < data.object.length; i++) {
+					console.log(data.object[i]);
 						//DoleticUIModule.createUserDetails(data.object[i]);
 						window.user_list[data.object[i].id] = data.object[i];
 
@@ -603,10 +604,7 @@ var DoleticUIModule = new function() {
 			if(data.code == 0 && data.object != "[]") {
 				$('#det_name').html(data.object.gender + " " + data.object.firstname + " " + data.object.lastname);
 				var pos_html = "";
-				pos_html += "<strong>" + data.object.position[0].label + " (actuel)</strong>";
-				for(var i = 1; i<data.object.position.length; i++) {
-					pos_html += "<br>" + data.object.position[i].label;
-				}
+				pos_html += data.object.position[0].label;
 				$('#det_pos').html(pos_html);
 				$('#det_birth').html(data.object.birthdate);
 				$('#det_country').html(data.object.country);
@@ -634,6 +632,7 @@ var DoleticUIModule = new function() {
 				// Fill memberships tables
 				DoleticUIModule.fillAdmMemberships(data.object.user_id);
 				DoleticUIModule.fillIntMemberships(data.object.user_id);
+				DoleticUIModule.fillPositionHistory(data.object);
 				
 			} else {
 				// use default service service error handler
@@ -788,6 +787,16 @@ var DoleticUIModule = new function() {
 				DoleticServicesInterface.handleServiceError(data);
 			}
 		});
+	}
+
+	this.fillPositionHistory = function(user) {
+		var content = '';
+		for(var i = 0; i<user.position.length; i++) {
+			content += "<tr><td>" + user.position[i].label + "</td>";
+			content += "<td>" + user.position[i].since + "</td></tr>";
+		}
+		console.log(content);
+		$('#pos_history_body').html(content);
 	}
 
 	this.clearNewUserForm = function() {
