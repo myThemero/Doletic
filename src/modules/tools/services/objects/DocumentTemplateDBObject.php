@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 require_once "objects/DocumentProcessor.php";
 
@@ -273,10 +274,11 @@ class DocumentTemplateDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_document_template table
 		$dol_document_template = new DBTable(DocumentTemplateDBObject::TABL_DOCTEMPLATE);
-		$dol_document_template->AddColumn(DocumentTemplateDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_document_template->AddColumn(DocumentTemplateDBObject::COL_UPLOAD_ID, DBTable::DT_INT, 11, false);
-		$dol_document_template->AddColumn(DocumentTemplateDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_document_template->AddColumn(DocumentTemplateDBObject::COL_TYPE, DBTable::DT_VARCHAR, 255, false);
+		$dol_document_template
+			->AddColumn(DocumentTemplateDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(DocumentTemplateDBObject::COL_UPLOAD_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(DocumentTemplateDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(DocumentTemplateDBObject::COL_TYPE, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_document_template);

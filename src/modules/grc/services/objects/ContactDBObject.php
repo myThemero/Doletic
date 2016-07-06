@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -326,14 +327,15 @@ class ContactDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_contact table
 		$dol_contact = new DBTable(ContactDBObject::TABL_CONTACT);
-		$dol_contact->AddColumn(ContactDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_contact->AddColumn(ContactDBObject::COL_FIRSTNAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_contact->AddColumn(ContactDBObject::COL_LASTNAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_contact->AddColumn(ContactDBObject::COL_FIRM_ID, DBTable::DT_INT, 11, false);
-		$dol_contact->AddColumn(ContactDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false);
-		$dol_contact->AddColumn(ContactDBObject::COL_PHONE, DBTable::DT_VARCHAR, 255, false);
-		$dol_contact->AddColumn(ContactDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false);
-		$dol_contact->AddColumn(ContactDBObject::COL_LAST_UPDATE, DBTable::DT_VARCHAR, 255, false);
+		$dol_contact
+			->AddColumn(ContactDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(ContactDBObject::COL_FIRSTNAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(ContactDBObject::COL_LASTNAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(ContactDBObject::COL_FIRM_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(ContactDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(ContactDBObject::COL_PHONE, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(ContactDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(ContactDBObject::COL_LAST_UPDATE, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_contact);

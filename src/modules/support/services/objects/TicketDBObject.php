@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -489,30 +490,34 @@ class TicketDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_ticket table
 		$dol_ticket = new DBTable(TicketDBObject::TABL_TICKET);
-		$dol_ticket->AddColumn(TicketDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_ticket->AddColumn(TicketDBObject::COL_SENDER_ID, DBTable::DT_INT, 11, false);
-		$dol_ticket->AddColumn(TicketDBObject::COL_RECEIVER_ID, DBTable::DT_INT, 11, false);
-		$dol_ticket->AddColumn(TicketDBObject::COL_SUBJECT, DBTable::DT_VARCHAR, 255, false);
-		$dol_ticket->AddColumn(TicketDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false);
-		$dol_ticket->AddColumn(TicketDBObject::COL_DATA, DBTable::DT_TEXT, 11, false);
-		$dol_ticket->AddColumn(TicketDBObject::COL_STATUS_ID, DBTable::DT_INT, 11, false);
+		$dol_ticket
+			->AddColumn(TicketDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(TicketDBObject::COL_SENDER_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(TicketDBObject::COL_RECEIVER_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(TicketDBObject::COL_SUBJECT, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(TicketDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(TicketDBObject::COL_DATA, DBTable::DT_TEXT, 11, false)
+			->AddColumn(TicketDBObject::COL_STATUS_ID, DBTable::DT_INT, 11, false);
 		// --- dol_ticket_archive
 		$dol_ticket_archive = new DBTable(TicketDBObject::TABL_ARCHIV);
-		$dol_ticket_archive->AddColumn(TicketDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_ticket_archive->AddColumn(TicketDBObject::COL_SENDER_ID, DBTable::DT_INT, 11, false);
-		$dol_ticket_archive->AddColumn(TicketDBObject::COL_RECEIVER_ID, DBTable::DT_INT, 11, false);
-		$dol_ticket_archive->AddColumn(TicketDBObject::COL_SUBJECT, DBTable::DT_VARCHAR, 255, false);
-		$dol_ticket_archive->AddColumn(TicketDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false);
-		$dol_ticket_archive->AddColumn(TicketDBObject::COL_DATA, DBTable::DT_TEXT, 11, false);
-		$dol_ticket_archive->AddColumn(TicketDBObject::COL_STATUS_ID, DBTable::DT_INT, 11, false);
+		$dol_ticket_archive
+			->AddColumn(TicketDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(TicketDBObject::COL_SENDER_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(TicketDBObject::COL_RECEIVER_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(TicketDBObject::COL_SUBJECT, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(TicketDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(TicketDBObject::COL_DATA, DBTable::DT_TEXT, 11, false)
+			->AddColumn(TicketDBObject::COL_STATUS_ID, DBTable::DT_INT, 11, false);
 		// --- dol_ticket_category table
 		$dol_ticket_category = new DBTable(TicketDBObject::TABL_CATEGO);
-		$dol_ticket_category->AddColumn(TicketDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_ticket_category->AddColumn(TicketDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false);
+		$dol_ticket_category
+			->AddColumn(TicketDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(TicketDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false);
 		// --- dol_ticket_status table
 		$dol_ticket_status = new DBTable(TicketDBObject::TABL_STATUS);
-		$dol_ticket_status->AddColumn(TicketDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_ticket_status->AddColumn(TicketDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false);
+		$dol_ticket_status
+			->AddColumn(TicketDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(TicketDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_ticket);

@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -406,21 +407,23 @@ class TeamDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_team table
 		$dol_team = new DBTable(TeamDBObject::TABL_TEAM);
-		$dol_team->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_team->AddColumn(TeamDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_team->AddColumn(TeamDBObject::COL_LEADER_ID, DBTable::DT_INT, 11, false);
-		$dol_team->AddColumn(TeamDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false);
-		$dol_team->AddColumn(TeamDBObject::COL_DIVISION, DBTable::DT_VARCHAR, 255, false);
-		$dol_team->AddForeignKey(TeamDBObject::COL_LEADER_ID.'_fk1', TeamDBObject::COL_LEADER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
-		$dol_team->AddForeignKey(TeamDBObject::COL_DIVISION.'_fk1', TeamDBObject::COL_DIVISION, UserDataDBObject::TABL_COM_DIVISION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
+		$dol_team
+			->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(TeamDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(TeamDBObject::COL_LEADER_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(TeamDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(TeamDBObject::COL_DIVISION, DBTable::DT_VARCHAR, 255, false)
+			->AddForeignKey(TeamDBObject::COL_LEADER_ID.'_fk1', TeamDBObject::COL_LEADER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE)
+			->AddForeignKey(TeamDBObject::COL_DIVISION.'_fk1', TeamDBObject::COL_DIVISION, UserDataDBObject::TABL_COM_DIVISION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 
 		// --- dol_team_member
 		$dol_team_member = new DBTable(TeamDBObject::TABL_MEMBERS);
-		$dol_team_member->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false);
-		$dol_team_member->AddColumn(TeamDBObject::COL_MEMBER_ID, DBTable::DT_INT, 11, false);
-		$dol_team_member->AddForeignKey(TeamDBObject::TABL_MEMBERS.'_fk1', TeamDBObject::COL_MEMBER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
-		$dol_team_member->AddForeignKey(TeamDBObject::TABL_MEMBERS.'_fk2', TeamDBObject::COL_ID, TeamDBObject::TABL_TEAM, TeamDBObject::COL_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
-		$dol_team_member->AddUniqueColumns(array(TeamDBObject::COL_ID, TeamDBObject::COL_MEMBER_ID));
+		$dol_team_member
+			->AddColumn(TeamDBObject::COL_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(TeamDBObject::COL_MEMBER_ID, DBTable::DT_INT, 11, false)
+			->AddForeignKey(TeamDBObject::TABL_MEMBERS.'_fk1', TeamDBObject::COL_MEMBER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE)
+			->AddForeignKey(TeamDBObject::TABL_MEMBERS.'_fk2', TeamDBObject::COL_ID, TeamDBObject::TABL_TEAM, TeamDBObject::COL_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE)
+			->AddUniqueColumns(array(TeamDBObject::COL_ID, TeamDBObject::COL_MEMBER_ID));
 
 		// -- add tables
 		parent::addTable($dol_team);

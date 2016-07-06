@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -334,16 +335,17 @@ class FirmDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_firm table
 		$dol_firm = new DBTable(FirmDBObject::TABL_FIRM);
-		$dol_firm->AddColumn(FirmDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_firm->AddColumn(FirmDBObject::COL_SIRET, DBTable::DT_VARCHAR, 255, false);
-		$dol_firm->AddColumn(FirmDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_firm->AddColumn(FirmDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, false);
-		$dol_firm->AddColumn(FirmDBObject::COL_POSTAL_CODE, DBTable::DT_VARCHAR, 255, false);
-		$dol_firm->AddColumn(FirmDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false);
-		$dol_firm->AddColumn(FirmDBObject::COL_CITY, DBTable::DT_VARCHAR, 255, false);
-		$dol_firm->AddColumn(FirmDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, false);
-		$dol_firm->AddColumn(FirmDBObject::COL_TYPE, DBTable::DT_VARCHAR, 255, false);
-		$dol_firm->AddColumn(FirmDBObject::COL_LAST_CONTACT, DBTable::DT_VARCHAR, 255, false);
+		$dol_firm
+			->AddColumn(FirmDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(FirmDBObject::COL_SIRET, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(FirmDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(FirmDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(FirmDBObject::COL_POSTAL_CODE, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(FirmDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(FirmDBObject::COL_CITY, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(FirmDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(FirmDBObject::COL_TYPE, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(FirmDBObject::COL_LAST_CONTACT, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_firm);

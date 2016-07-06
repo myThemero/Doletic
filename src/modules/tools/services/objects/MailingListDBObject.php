@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -298,14 +299,16 @@ class MailingListDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_maillist table
 		$dol_maillist = new DBTable(MailingListDBObject::TABL_MAILLIST);
-		$dol_maillist->AddColumn(MailingListDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_maillist->AddColumn(MailingListDBObject::COL_CAN_SUBSCRIBE, DBTable::DT_BOOLEAN);
-		$dol_maillist->AddColumn(MailingListDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
+		$dol_maillist
+			->AddColumn(MailingListDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(MailingListDBObject::COL_CAN_SUBSCRIBE, DBTable::DT_BOOLEAN)
+			->AddColumn(MailingListDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
 		// --- dol_user_maillist table
 		$dol_user_maillist = new DBTable(MailingListDBObject::TABL_USER_MAILLIST);
-		$dol_user_maillist->AddColumn(MailingListDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_user_maillist->AddColumn(MailingListDBObject::COL_MAILLIST_ID, DBTable::DT_INT, 11, false);
-		$dol_user_maillist->AddColumn(MailingListDBObject::COL_USER_ID, DBTable::DT_INT, 11, false);
+		$dol_user_maillist
+			->AddColumn(MailingListDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(MailingListDBObject::COL_MAILLIST_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(MailingListDBObject::COL_USER_ID, DBTable::DT_INT, 11, false);
 
 		// -- add tables
 		parent::addTable($dol_maillist);

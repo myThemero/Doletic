@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -347,15 +348,16 @@ class IntMembershipDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_int_membership table
 		$dol_int_membership = new DBTable(IntMembershipDBObject::TABL_INT_MEMBERSHIP);
-		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_USER_ID, DBTable::DT_INT, 11, false);
-		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_START_DATE, DBTable::DT_VARCHAR, 255, false);
-		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_FEE, DBTable::DT_INT, 1, false); // boolean
-		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_FORM, DBTable::DT_INT, 1, false); // boolean
-		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false); // boolean
-		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_RIB, DBTable::DT_INT, 1, false); // boolean
-		$dol_int_membership->AddColumn(IntMembershipDBObject::COL_IDENTITY, DBTable::DT_INT, 1, false); // boolean
-		$dol_int_membership->AddForeignKey(IntMembershipDBObject::TABL_INT_MEMBERSHIP.'_fk1', IntMembershipDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
+		$dol_int_membership
+			->AddColumn(IntMembershipDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(IntMembershipDBObject::COL_USER_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(IntMembershipDBObject::COL_START_DATE, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(IntMembershipDBObject::COL_FEE, DBTable::DT_INT, 1, false) // boolean
+			->AddColumn(IntMembershipDBObject::COL_FORM, DBTable::DT_INT, 1, false) // boolean
+			->AddColumn(IntMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false) // boolean
+			->AddColumn(IntMembershipDBObject::COL_RIB, DBTable::DT_INT, 1, false) // boolean
+			->AddColumn(IntMembershipDBObject::COL_IDENTITY, DBTable::DT_INT, 1, false) // boolean
+			->AddForeignKey(IntMembershipDBObject::TABL_INT_MEMBERSHIP.'_fk1', IntMembershipDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
 
 		// -- add tables
 		parent::addTable($dol_int_membership);
