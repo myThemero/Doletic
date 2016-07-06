@@ -153,7 +153,8 @@ var UserDataServicesInterface = new function() {
       UPDATE_AVATAR:"updateava",
       DELETE:"delete",
       DISABLE:"disable",
-      ENABLE:"enable"
+      ENABLE:"enable",
+      STATS:"stats"
     }
   };
 
@@ -307,6 +308,10 @@ var UserDataServicesInterface = new function() {
               id: id
             }, 
             successHandler); 
+  }
+
+  this.getGlobalStats = function(successHandler) {
+    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.STATS, {}, successHandler); 
   }
 
 }

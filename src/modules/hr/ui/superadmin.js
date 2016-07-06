@@ -21,6 +21,8 @@ var DoleticUIModule = new function() {
 
 		// hide user details tab
 		$('#det').hide();
+		//Draw graphs
+		DoleticUIModule.drawGraphs();
 		// fill user and team list. User first to fill user_list global array
 		$.when($.ajax(DoleticUIModule.fillUsersList())).then(DoleticUIModule.fillTeamsList());
 		// fill country field
@@ -356,7 +358,6 @@ var DoleticUIModule = new function() {
 								];
 				var selector_content = "<option value>Membre...</option>";
 				for (var i = 0; i < data.object.length; i++) {
-					console.log(data.object[i]);
 						//DoleticUIModule.createUserDetails(data.object[i]);
 						window.user_list[data.object[i].id] = data.object[i];
 
@@ -565,6 +566,28 @@ var DoleticUIModule = new function() {
 		$("#add_tmember_select"+team.id).dropdown();
 	}
 
+	this.drawGraphs = function() {
+		UserDataServicesInterface.getGlobalStats(function(data) {
+			// if no service error
+			if(data.code == 0 && data.object != "[]") {
+				var divisionStats = data.object.division;
+				Plotly.plot("dpt_graph", [{
+						values: divisionStats.count,
+						labels: divisionStats.label,
+						type: 'pie'
+					}], 
+					{
+						margin: { t:0 }
+					}
+				);
+			} else {
+				// use default service service error handler
+				DoleticServicesInterface.handleServiceError(data);
+			}
+		});
+		
+	}
+
 	this.showUserDetails = function(userId) {
 		$('#det_' + userId).show();
 		$('#det_' + userId).click();
@@ -575,7 +598,6 @@ var DoleticUIModule = new function() {
 		while(prev.css('display') == 'none') {
 			prev = prev.prev();
 		}
-		console.log(prev.html());
 		prev.click();
 		$('#det_' + userId).hide();
 	}
@@ -795,7 +817,6 @@ var DoleticUIModule = new function() {
 			content += "<tr><td>" + user.position[i].label + "</td>";
 			content += "<td>" + user.position[i].since + "</td></tr>";
 		}
-		console.log(content);
 		$('#pos_history_body').html(content);
 	}
 
@@ -953,7 +974,6 @@ var DoleticUIModule = new function() {
 	}
 
 	this.editUser = function(id, user_id) {
-		console.log("edit");
 		$('#user_form h4').html("Edition d'un membre");
 		UserDataServicesInterface.getById(id, function(data) {
 			// if no service error
@@ -1066,7 +1086,6 @@ var DoleticUIModule = new function() {
 	}
 
 	this.updateUser = function(id, user_id) {
-		console.log("update");
 		// ADD OTHER TESTS
 		if(DoleticUIModule.checkNewUserForm()) {
 			// Insert user data in db SELECT ?

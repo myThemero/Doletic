@@ -33,6 +33,9 @@ class DBTable {
 	const DT_NATURAL = "NATURAL";
 	// --- UNION
 	const DT_ALL = "ALL";
+	// --- COUNT
+	const DT_COUNT = "count";
+	const DT_COUNT_COLUMN = "COUNT(*)";
 	// --- query consts
 	const SELECT_ALL = "*";
 	const EVERYWHERE = "everywhere";
@@ -196,12 +199,20 @@ class DBTable {
 								   $operator = array(), // supposed to be a array(column => [OP_EQUALS|OP_GREATER|OP_LESS|...], ...)
 								   $orderby = array(), // supposed to be a array(column => [ORDER_DESC|ORDER_ASC],...)
 								   $limit = -1,
-								   $or = false) {
+								   $or = false,
+								   $count = false,
+								   $groupBy = null) {
 		$link = " AND ";
 		if($or) {
 			$link = " OR ";
 		}
 		$query = "SELECT ";
+		if($count) {
+			if(isset($groupBy)) {
+				$query .= $groupBy.", ";
+			}
+			$query .= "COUNT(";
+		}
 		// check if select all
 		if(in_array(DBTable::SELECT_ALL, $select)) {
 			$query .= "*";
@@ -210,6 +221,9 @@ class DBTable {
 				$query .= "`".$column."`,";
 			}
 			$query = trim($query, " ,");
+		}
+		if($count) {
+			$query .= ")";
 		}
 		$query.= " FROM `".$this->name."`";
 		// check if not everywhere
@@ -223,6 +237,10 @@ class DBTable {
 				$query .= "`".$column."`".$col_operator.":".$column.$link;
 			}
 			$query = substr($query, 0, strlen($query)-strlen($link));
+		}
+		// check if group by
+		if(isset($groupBy)) {
+			$query .= " GROUP BY `".$groupBy . "`";
 		}
 		// check if order by
 		if(sizeof($orderby) > 0) {
@@ -344,8 +362,28 @@ class DBTable {
 		return $query;
 	}
 
-	static function GetJOINQuery($query1, $query2, $joinOn, $type = DBTable::DT_INNER, $leftRight = "") {
-		return "SELECT * FROM (" . trim($query1, ';').") AS a " . $leftRight . " " . $type . " JOIN (".trim($query2, ';').") AS b ON a." . $joinOn[0] . " = b." . $joinOn[1] . ";";
+	static function GetJOINQuery($query1, $query2, $joinOn = array(), $type = DBTable::DT_INNER, $leftRight = "", $count=false, $groupBy = null) {
+		if(empty($joinOn)) {
+			$type = DBTable::DT_NATURAL;
+		}
+		$query = "SELECT ";
+		if($count) {
+			if(isset($groupBy)) {
+				$query .= $groupBy.", ";
+			}
+			$query .= "COUNT(*)";
+		} else {
+			$query .= "*";
+		}
+		$query .= " FROM (" . trim($query1, ';').") AS a " . $leftRight . " " . $type . " JOIN (".trim($query2, ';').") AS b";
+		if(!empty($joinOn)) {
+			$query .= " ON a." . $joinOn[0] . " = b." . $joinOn[1];
+		}
+		if(isset($groupBy)) {
+			$query .= " GROUP BY `".$groupBy . "`";
+		} 
+		$query .= ";";
+		return $query;
 	}
 
 	static function GetUNIONQuery($query1, $query2, $all = true) {

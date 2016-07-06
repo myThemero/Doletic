@@ -237,6 +237,7 @@ class UserDataServices extends AbstractObjectServices {
 	const DELETE 				= "delete";
 	const DISABLE 				="disable";
 	const ENABLE 				="enable";
+	const STATS 				="stats";
 	// -- functions
 
 	// -- construct
@@ -326,6 +327,8 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__disable_user_data($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::ENABLE)) {
 			$data = $this->__enable_user_data($params[UserDataServices::PARAM_ID]);
+		} else if(!strcmp($action, UserDataServices::STATS)) {
+			$data = $this->__get_global_stats();
 		}
 		return $data;
 	}
@@ -809,6 +812,43 @@ class UserDataServices extends AbstractObjectServices {
 			}
 		}
 		return $divisions;
+	}
+
+	private function __get_global_stats() {
+		return array(
+				'division' => $this->__get_user_data_division_stats()
+			);
+	}
+
+	private function __get_user_data_division_stats() {
+		$stat = array(UserDataDBObject::COL_LABEL => array(), DBTable::DT_COUNT => array());
+		// create sql params
+		$sql_params = array(":".UserDataDBObject::COL_DISABLED => false);
+		// create sql request
+		// create subqueries
+		$sql1 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery(array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_DISABLED));
+		$sql2 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery();
+		$sql3 = DBTable::GetJOINQuery($sql1, $sql2);
+		$sql4 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery();
+		// create complete query
+		$sql = DBTable::GetJOINQuery(
+			$sql3,
+			$sql4,
+			array(UserDataDBObject::COL_POSITION, UserDataDBObject::COL_LABEL),
+			DBTable::DT_INNER,
+			"",
+			true,
+			UserDataDBObject::COL_DIVISION
+		);
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($stat[UserDataDBObject::COL_LABEL], $row[UserDataDBObject::COL_DIVISION]);
+				array_push($stat[DBTable::DT_COUNT], $row[DBTable::DT_COUNT_COLUMN]);
+			}
+		}
+		return $stat;
 	}
 
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
