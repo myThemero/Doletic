@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -290,12 +291,13 @@ class ModuleDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_module table
 		$dol_module = new DBTable(ModuleDBObject::TABL_MODULE);
-		$dol_module->AddColumn(ModuleDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_module->AddColumn(ModuleDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_module->AddColumn(ModuleDBObject::COL_VERSION, DBTable::DT_VARCHAR, 255, false);
-		$dol_module->AddColumn(ModuleDBObject::COL_AUTHORS, DBTable::DT_VARCHAR, 255, false);
-		$dol_module->AddColumn(ModuleDBObject::COL_DEPEND, DBTable::DT_VARCHAR, 255, false);
-		$dol_module->AddColumn(ModuleDBObject::COL_ENABLED, DBTable::DT_BOOLEAN, -1, false);
+		$dol_module
+			->AddColumn(ModuleDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(ModuleDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(ModuleDBObject::COL_VERSION, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(ModuleDBObject::COL_AUTHORS, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(ModuleDBObject::COL_DEPEND, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(ModuleDBObject::COL_ENABLED, DBTable::DT_BOOLEAN, -1, false);
 
 		// -- add tables
 		parent::addTable($dol_module);

@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -390,23 +391,25 @@ class UserDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_user table
 		$dol_user = new DBTable(UserDBObject::TABL_USER);
-		$dol_user->AddColumn(UserDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_user->AddColumn(UserDBObject::COL_USERNAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_user->AddColumn(UserDBObject::COL_PASSWORD, DBTable::DT_VARCHAR, 255, false);
-		$dol_user->AddColumn(UserDBObject::COL_LAST_CON_TSMP, DBTable::DT_VARCHAR, 255, false);
-		$dol_user->AddColumn(UserDBObject::COL_SIGNUP_TSMP, DBTable::DT_VARCHAR, 255, false);
-		$dol_user->AddColumn(UserDBObject::COL_TOKEN, DBTable::DT_VARCHAR, 255, false);
+		$dol_user
+			->AddColumn(UserDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(UserDBObject::COL_USERNAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_PASSWORD, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_LAST_CON_TSMP, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_SIGNUP_TSMP, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_TOKEN, DBTable::DT_VARCHAR, 255, false);
 
 		// --- dol_user table
 		$dol_user_disabled = new DBTable(UserDBObject::TABL_USER_DISABLED);
-		$dol_user_disabled->AddColumn(UserDBObject::COL_ID, DBTable::DT_INT, 11, false, "", false, true);
-		$dol_user_disabled->AddColumn(UserDBObject::COL_USERNAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_user_disabled->AddColumn(UserDBObject::COL_PASSWORD, DBTable::DT_VARCHAR, 255, false);
-		$dol_user_disabled->AddColumn(UserDBObject::COL_LAST_CON_TSMP, DBTable::DT_VARCHAR, 255, false);
-		$dol_user_disabled->AddColumn(UserDBObject::COL_SIGNUP_TSMP, DBTable::DT_VARCHAR, 255, false);
-		$dol_user_disabled->AddColumn(UserDBObject::COL_TOKEN, DBTable::DT_VARCHAR, 255, false);
-		$dol_user_disabled->AddColumn(UserDBObject::COL_DISABLE_TSMP, DBTable::DT_VARCHAR, 255, false);
-		$dol_user_disabled->AddColumn(UserDBObject::COL_RESTORE_TSMP, DBTable::DT_VARCHAR, 255, false);
+		$dol_user_disabled
+			->AddColumn(UserDBObject::COL_ID, DBTable::DT_INT, 11, false, "", false, true)
+			->AddColumn(UserDBObject::COL_USERNAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_PASSWORD, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_LAST_CON_TSMP, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_SIGNUP_TSMP, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_TOKEN, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_DISABLE_TSMP, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDBObject::COL_RESTORE_TSMP, DBTable::DT_VARCHAR, 255, false);
 
 
 

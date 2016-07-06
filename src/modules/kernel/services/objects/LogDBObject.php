@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -260,11 +261,12 @@ class LogDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_log table
 		$dol_log = new DBTable(LogDBObject::TABL_LOG);
-		$dol_log->AddColumn(LogDBObject::COL_ID, 		DBTable::DT_INT, 11, false, "", true, true);
-		$dol_log->AddColumn(LogDBObject::COL_CRITICITY, DBTable::DT_VARCHAR, 25, false);
-		$dol_log->AddColumn(LogDBObject::COL_TIMESTAMP, DBTable::DT_VARCHAR, 50, false);
-		$dol_log->AddColumn(LogDBObject::COL_SCRIPT, 	DBTable::DT_VARCHAR, 255, false);
-		$dol_log->AddColumn(LogDBObject::COL_MESSAGE, 	DBTable::DT_TEXT, -1, false);
+		$dol_log
+			->AddColumn(LogDBObject::COL_ID, 		DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(LogDBObject::COL_CRITICITY, DBTable::DT_VARCHAR, 25, false)
+			->AddColumn(LogDBObject::COL_TIMESTAMP, DBTable::DT_VARCHAR, 50, false)
+			->AddColumn(LogDBObject::COL_SCRIPT, 	DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(LogDBObject::COL_MESSAGE, 	DBTable::DT_TEXT, -1, false);
 		// -- add tables
 		parent::addTable($dol_log);
 	}

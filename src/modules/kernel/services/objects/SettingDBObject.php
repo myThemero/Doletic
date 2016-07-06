@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -232,9 +233,10 @@ class SettingDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_setting table
 		$dol_setting = new DBTable(SettingDBObject::TABL_SETTING);
-		$dol_setting->AddColumn(SettingDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_setting->AddColumn(SettingDBObject::COL_KEY, DBTable::DT_VARCHAR, 255, false);
-		$dol_setting->AddColumn(SettingDBObject::COL_VALUE, DBTable::DT_VARCHAR, 255, false);
+		$dol_setting
+			->AddColumn(SettingDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(SettingDBObject::COL_KEY, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(SettingDBObject::COL_VALUE, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_setting);

@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -197,12 +198,13 @@ class OVHWrapperDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_ovh_wrapper table
 		$dol_ovh_wrapper = new DBTable(OVHWrapperDBObject::TABL_OVH_WRAPPER);
-		$dol_ovh_wrapper->AddColumn(OVHWrapperDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_ovh_wrapper->AddColumn(OVHWrapperDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_ovh_wrapper->AddColumn(OVHWrapperDBObject::COL_ENDPOINT, DBTable::DT_VARCHAR, 255, false);
-		$dol_ovh_wrapper->AddColumn(OVHWrapperDBObject::COL_APP_KEY, DBTable::DT_VARCHAR, 255, false);
-		$dol_ovh_wrapper->AddColumn(OVHWrapperDBObject::COL_APP_SEC, DBTable::DT_VARCHAR, 255, false);
-		$dol_ovh_wrapper->AddColumn(OVHWrapperDBObject::COL_CON_KEY, DBTable::DT_VARCHAR, 255, false);
+		$dol_ovh_wrapper
+			->AddColumn(OVHWrapperDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(OVHWrapperDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(OVHWrapperDBObject::COL_ENDPOINT, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(OVHWrapperDBObject::COL_APP_KEY, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(OVHWrapperDBObject::COL_APP_SEC, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(OVHWrapperDBObject::COL_CON_KEY, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_ovh_wrapper);

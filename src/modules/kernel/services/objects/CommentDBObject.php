@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 
 /**
@@ -221,10 +222,11 @@ class CommentDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_comment table
 		$dol_comment = new DBTable(CommentDBObject::TABL_COMMENT);
-		$dol_comment->AddColumn(CommentDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_comment->AddColumn(CommentDBObject::COL_USER_ID, DBTable::DT_INT, 11, false);
-		$dol_comment->AddColumn(CommentDBObject::COL_DATE, DBTable::DT_VARCHAR, 255, false);
-		$dol_comment->AddColumn(CommentDBObject::COL_DATA, DBTable::DT_TEXT, -1, false);
+		$dol_comment
+			->AddColumn(CommentDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(CommentDBObject::COL_USER_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(CommentDBObject::COL_DATE, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(CommentDBObject::COL_DATA, DBTable::DT_TEXT, -1, false);
 		// -- add tables
 		parent::addTable($dol_comment);
 	}

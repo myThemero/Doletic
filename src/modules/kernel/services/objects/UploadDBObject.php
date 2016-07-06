@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
+require_once "objects/DBProcedure.php";
 require_once "objects/DBTable.php"; 
 require_once "objects/DocumentProcessor.php";
 
@@ -314,11 +315,12 @@ class UploadDBObject extends AbstractDBObject {
 		// -- create tables
 		// --- dol_upload table
 		$dol_upload = new DBTable(UploadDBObject::TABL_UPLOAD);
-		$dol_upload->AddColumn(UploadDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true);
-		$dol_upload->AddColumn(UploadDBObject::COL_USER_ID, DBTable::DT_INT, 11, false);
-		$dol_upload->AddColumn(UploadDBObject::COL_TIMESTAMP, DBTable::DT_VARCHAR, 255, false);
-		$dol_upload->AddColumn(UploadDBObject::COL_FILENAME, DBTable::DT_VARCHAR, 255, false);
-		$dol_upload->AddColumn(UploadDBObject::COL_STOR_FNAME, DBTable::DT_VARCHAR, 255, false);
+		$dol_upload
+			->AddColumn(UploadDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+			->AddColumn(UploadDBObject::COL_USER_ID, DBTable::DT_INT, 11, false)
+			->AddColumn(UploadDBObject::COL_TIMESTAMP, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UploadDBObject::COL_FILENAME, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UploadDBObject::COL_STOR_FNAME, DBTable::DT_VARCHAR, 255, false);
 
 		// -- add tables
 		parent::addTable($dol_upload);

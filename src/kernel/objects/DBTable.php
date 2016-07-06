@@ -89,18 +89,21 @@ class DBTable {
 										DBTable::KEY_AUTO => $autoIncFlag,
 										DBTable::KEY_PRIMARY => $primaryKeyFlag,
 										DBTable::KEY_INDEX => $index));
+		return $this;
 	}
 	/**
 	 *	Add a foreign key to SQL table
 	 */
 	public function AddForeignKey($fkName, $tableColumnName, $refTableName, $refTableColumnName, $onDelete = DBTable::DT_RESTRICT, $onUpdate = DBTable::DT_RESTRICT) {
 		array_push($this->foreign, array($fkName, $tableColumnName, $refTableName, $refTableColumnName, $onDelete, $onUpdate));
+		return $this;
 	}
 	/**
 	 *
 	 */
 	public function AddUniqueColumns($uniqueColumns) {
 		array_push($this->unique, $uniqueColumns);
+		return $this;
 	}
 	/**
 	 *	Returns SQL CREATE query for this table
