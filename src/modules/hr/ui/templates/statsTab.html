@@ -5,7 +5,10 @@
                 Indicateurs RH
             </div> 
             <div class="row" id="graphs">
-                <div class="plotly-graph" id="dpt_graph">
+                <div class="plotly-graph" id="div_graph">
+                    
+                </div>
+                <div class="plotly-graph" id="ag_graph">
                     
                 </div>
             </div>
@@ -26,13 +29,17 @@
                     <div class="seven wide column"> 
                         <form class="ui form">
                             <h4 class="ui dividing header">Ajouter une AGR</h4>
-                                <div id="agr_field" class="sxiteen wide required field"> 
-                                    <label>Date de</label> 
-                                    <input id="agr" placeholder="Nom..." type="text"/> 
-                                </div> 
-                                <div id="add_agr_btn" class="ui green button" onClick="DoleticUIModule.insertNewAGR();">
-                                Ajouter
-                                </div> 
+                            <div id="agr_field" class="sxiteen wide required field"> 
+                                <label>Date</label> 
+                                <input id="agr" placeholder="Nom..." type="text"/> 
+                            </div> 
+                            <div id="agr_pr_field" class="sxiteen wide required field"> 
+                                <label>Etudiants présents</label> 
+                                <input id="agr_pr" placeholder="Présences..." type="number"/> 
+                            </div> 
+                            <div id="add_agr_btn" class="ui green button" onClick="DoleticUIModule.insertNewAGR();">
+                            Ajouter
+                            </div> 
                         </form>
                     </div>
                 </div>

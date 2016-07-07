@@ -192,10 +192,13 @@ var UserDataServicesInterface = new function() {
             { id: id }, 
             successHandler); 
   }
-   this.insertAg = function(ag, successHandler) {
+   this.insertAg = function(ag, presence, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT_AG, 
-            { ag:ag }, 
+            { 
+                ag:ag,
+                presence:presence
+            }, 
             successHandler); 
   }
   this.deleteAg = function(ag, successHandler) {

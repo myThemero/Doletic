@@ -1,6 +1,10 @@
 <div class="ui two column grid container"> 
     <div class="row"> 
-        <div id="addteam_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewTeamForm();">Ajouter un équipe</div> 
+        <div class="ui buttons">
+            <div id="addteam_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewTeamForm();">Ajouter une équipe</div>
+            <div id="refresh_team_btn" class="ui olive button" onClick="DoleticUIModule.fillTeamsList();">Actualiser la liste</div> 
+            <div id="excel_team_btn" class="ui yellow button" onClick="alert('Fonction non implémentée...')">Exporter au format Excel</div> 
+        </div>
     </div> 
     <div class="row"> 
         <div class="sixteen wide column" id="team_table_container"> 

@@ -214,6 +214,7 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_POSITION  		= "position";
 	const PARAM_AVATAR_ID  		= "avatarId";
 	const PARAM_AG		 		= "ag";
+	const PARAM_PRESENCE 		= "presence";
 	// --- internal services (actions)
 	const GET_USER_DATA_BY_ID 	= "byidud";
 	const GET_CURRENT_USER_DATA	= "currud";
@@ -275,7 +276,7 @@ class UserDataServices extends AbstractObjectServices {
 		} else if(!strcmp($action, UserDataServices::GET_ALL_AGS)) {
 			$data = $this->__get_all_ags();
 		} else if(!strcmp($action, UserDataServices::INSERT_AG)) {
-			$data = $this->__insert_ag($params[UserDataServices::PARAM_AG]);
+			$data = $this->__insert_ag($params[UserDataServices::PARAM_AG], $params[UserDataServices::PARAM_PRESENCE]);
 		} else if(!strcmp($action, UserDataServices::DELETE_AG)) {
 			$data = $this->__delete_ag($params[UserDataServices::PARAM_AG]);
 		} else if(!strcmp($action, UserDataServices::CHECK_MAIL)) {
@@ -626,7 +627,10 @@ class UserDataServices extends AbstractObjectServices {
 		$ags = array();
 		if($pdos != null) {
 			while( ($row = $pdos->fetch()) !== false) {
-				array_push($ags,$row[UserDataDBObject::COL_AG]); 
+				array_push($ags, array(
+					UserDataDBObject::COL_AG => $row[UserDataDBObject::COL_AG],
+					UserDataDBObject::COL_PRESENCE => $row[UserDataDBObject::COL_PRESENCE]
+				)); 
 			}
 		}
 		return $ags;
@@ -667,9 +671,10 @@ class UserDataServices extends AbstractObjectServices {
 	}
 
 
-	private function __insert_ag($ag) {
+	private function __insert_ag($ag, $presence) {
 		// create sql params
-		$sql_params = array(":".UserDataDBObject::COL_AG => $ag);
+		$sql_params = array(":".UserDataDBObject::COL_AG => $ag,
+							":".UserDataDBObject::COL_PRESENCE => $presence,);
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_AG)->GetINSERTQuery();
 		// execute query
@@ -829,15 +834,19 @@ class UserDataServices extends AbstractObjectServices {
 			}
 		}
 		foreach($indicators as $indicator) {
-			$stat = array(UserDataDBObject::COL_LABEL => array(), DBTable::DT_COUNT => array());
+			$stat = array();
 			// Call procedure
 			$query = DBProcedure::GetCALLQueryByName($indicator[UserDataDBObject::COL_PROCEDURE]);
 			$result = parent::getDBConnection()->RawQuery($query);
 			//var_dump($result);
 			if($result != null && !empty($result)) {
 				foreach($result as $r) {
-					array_push($stat[UserDataDBObject::COL_LABEL], $r[$indicator[UserDataDBObject::COL_LABEL]]);
-					array_push($stat[DBTable::DT_COUNT], $r[DBTable::DT_COUNT]);
+					foreach($r as $key => $value) {
+						if(!isset($stat[$key])) {
+							$stat[$key] = array();
+						}
+						array_push($stat[$key], $r[$key]);
+					}
 				}
 			}
 			$stats[$indicator[UserDataDBObject::COL_LABEL]] = $stat;
@@ -978,7 +987,8 @@ class UserDataServices extends AbstractObjectServices {
 
 		// -- init ETIC indicators table --------------------------------------------------------------------
 		$indicators = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
-			"division" => array(UserDataDBObject::PROC_STATS_UDATA_DIVISION, "NULL")
+			"division" 	=> array(UserDataDBObject::PROC_STATS_UDATA_DIVISION, "NULL"),
+			"ag" 		=> array(UserDataDBObject::PROC_STATS_AG_PRESENCE, "NULL")
 		    );
 		// --- retrieve SQL query
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_INDICATORS)->GetINSERTQuery();
@@ -1036,12 +1046,14 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_AVATAR_ID   		= "avatar_id";
 	const COL_LAST_POS			= "last_pos";
 	const COL_AG 				= "ag";
+	const COL_PRESENCE 			= "presence";
 	const COL_DIVISION			= "division";
 	const COL_DISABLED			= "disabled";
 	const COL_PROCEDURE			= "procedure";
 	const COL_EXPECTED_RESULT	= "expected_result";
 	// -- procedures
-	const PROC_STATS_UDATA_DIVISION = "stats_udata_division";
+	const PROC_STATS_UDATA_DIVISION 	= "stats_udata_division";
+	const PROC_STATS_AG_PRESENCE 		= "stats_udata_ag";
 	// -- attributes
 
 	// -- functions
@@ -1076,7 +1088,9 @@ class UserDataDBObject extends AbstractDBObject {
 			->AddForeignKey(UserDataDBObject::TABL_COM_POSITION.'_fk1', UserDataDBObject::COL_DIVISION, UserDataDBObject::TABL_COM_DIVISION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 		// --- com_ag table
 		$com_ag = new DBTable(UserDataDBObject::TABL_AG);
-		$com_ag->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false, "", false, true);
+		$com_ag
+			->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false, "", false, true)
+			->AddColumn(UserDataDBObject::COL_PRESENCE, DBTable::DT_INT, 11, false);
 		// --- dol_udata table
 		$dol_udata = new DBTable(UserDataDBObject::TABL_USER_DATA);
 		$dol_udata
@@ -1149,8 +1163,23 @@ class UserDataDBObject extends AbstractDBObject {
 		$stats_udata_division = new DBProcedure(UserDataDBObject::PROC_STATS_UDATA_DIVISION, $sql_query);
 		$stats_udata_division->replaceSQLParams($sql_params);
 
+		// -- UserData by AG
+		$stats_udata_ag = new DBProcedure(UserDataDBObject::PROC_STATS_AG_PRESENCE,
+			"SELECT b.ag, count, presence FROM(
+				SELECT 
+					ag, 
+				    COUNT(*) AS count  
+				FROM `dol_udata`
+				GROUP BY ag) AS a
+				RIGHT OUTER JOIN (SELECT *
+				      FROM `com_ag`) AS b
+				ON a.ag = b.ag;"
+		);
+
+
 		// -- add procedures
 		parent::addProcedure($stats_udata_division);
+		parent::addProcedure($stats_udata_ag);
 
 	}
 

@@ -272,8 +272,8 @@ var DoleticUIModule = new function() {
 				var table_content = "";
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
-					content += "<option value=\""+data.object[i]+"\">"+data.object[i]+"</option>\n";
-					table_content += "<tr><td>"+data.object[i]+"</td><td><button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAGR('"+data.object[i]+"'); return false;\"> \
+					content += "<option value=\""+data.object[i].ag+"\">"+data.object[i].ag+"</option>\n";
+					table_content += "<tr><td>"+data.object[i].ag+" (" + data.object[i].presence + ")</td><td><button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAGR('"+data.object[i]+"'); return false;\"> \
 			  									<i class=\"remove icon\"></i>Retirer \
 											</button></td></tr>";
 				};
@@ -570,14 +570,33 @@ var DoleticUIModule = new function() {
 		UserDataServicesInterface.getGlobalStats(function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
+				console.log(data.object);
 				var divisionStats = data.object.division;
-				Plotly.plot("dpt_graph", [{
+				var agStats = data.object.ag;
+				Plotly.plot("div_graph", [{
 						values: divisionStats.count,
 						labels: divisionStats.label,
 						type: 'pie'
 					}], 
 					{
 						margin: { t:0 }
+					}
+				);
+				Plotly.plot("ag_graph", [{
+						y: agStats.count,
+						x: agStats.ag,
+						name: 'Recrutés',
+						type: 'bar'
+					},
+					{
+						y: agStats.presence,
+						x: agStats.ag,
+						name: 'Présents',
+						type: 'bar'
+					}], 
+					{
+						margin: { t:0 },
+						barmode: 'stack'
 					}
 				);
 			} else {
@@ -857,6 +876,7 @@ var DoleticUIModule = new function() {
 
 	this.clearNewAGRForm = function() {
 		$('#agr').val("");
+		$('#agr_pr').val("");
 	}
 
 	this.insertNewUser = function() {
@@ -938,7 +958,8 @@ var DoleticUIModule = new function() {
 	this.insertNewAGR = function() {
 		if(DoleticUIModule.checkNewAGRForm()) {
 			var ag = $("#agr").val();
-			UserDataServicesInterface.insertAg(ag, function(data) {
+			var pr = $("#agr_pr").val();
+			UserDataServicesInterface.insertAg(ag, pr, function(data) {
 				// if no service error
 				if(data.code == 0) {
 					DoleticUIModule.clearNewAGRForm();
@@ -1431,11 +1452,16 @@ var DoleticUIModule = new function() {
 	}
 
 	this.checkNewAGRForm = function() {
+		var valid = true;
 		if( !DoleticMasterInterface.checkDate($('#agr').val()) ) {
 			$('#agr').addClass("error");
-			return false;
+			valid = false;
 		}
-		return true;
+		if( !$('#agr_pr').val() < 0 ) {
+			$('#agr_pr').addClass("error");
+			valid = false;
+		}
+		return valid;
 	}
 
 

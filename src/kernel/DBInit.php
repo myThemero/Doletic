@@ -82,7 +82,20 @@ class FakeDataFunction extends AbstractFunction {
 		// Add AG
 		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(UserDataServices::INSERT_AG, array(
-					UserDataServices::PARAM_AG 		=> "2016-02-20"
+					UserDataServices::PARAM_AG 			=> "2016-02-20",
+					UserDataServices::PARAM_PRESENCE	=> 7
+				));
+
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::INSERT_AG, array(
+					UserDataServices::PARAM_AG 			=> "2015-02-17",
+					UserDataServices::PARAM_PRESENCE	=> 4
+				));
+
+		$kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(UserDataServices::INSERT_AG, array(
+					UserDataServices::PARAM_AG 			=> "2015-10-04",
+					UserDataServices::PARAM_PRESENCE	=> 5
 				));
 
 		// SA account
@@ -101,7 +114,7 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_COUNTRY 		=> "France",
 					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
 					UserDataServices::PARAM_INSA_DEPT 		=> "IF",
-					UserDataServices::PARAM_AG 		=> "2016-02-20",
+					UserDataServices::PARAM_AG 		=> "2015-02-17",
 					UserDataServices::PARAM_POSITION 		=> "Responsable DSI"
 						));
 		// A account
@@ -159,7 +172,7 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_COUNTRY 		=> "France",
 					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
 					UserDataServices::PARAM_INSA_DEPT 		=> "IF",
-					UserDataServices::PARAM_AG 		=> "2016-02-20",
+					UserDataServices::PARAM_AG 		=> "2015-10-04",
 					UserDataServices::PARAM_POSITION 		=> "Trésorier"
 						));
 		$kernel->GetDBObject(TeamDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
