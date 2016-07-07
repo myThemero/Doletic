@@ -816,40 +816,34 @@ class UserDataServices extends AbstractObjectServices {
 	}
 
 	private function __get_global_stats() {
-		return array(
-				'division' => $this->__get_user_data_division_stats()
-			);
-	}
-
-	private function __get_user_data_division_stats() {
-		$stat = array(UserDataDBObject::COL_LABEL => array(), DBTable::DT_COUNT => array());
-		// create sql params
-		$sql_params = array(":".UserDataDBObject::COL_DISABLED => false);
+		$stats = array();
+		// Get all indicators
 		// create sql request
-		// create subqueries
-		$sql1 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery(array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_DISABLED));
-		$sql2 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery();
-		$sql3 = DBTable::GetJOINQuery($sql1, $sql2);
-		$sql4 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery();
-		// create complete query
-		$sql = DBTable::GetJOINQuery(
-			$sql3,
-			$sql4,
-			array(UserDataDBObject::COL_POSITION, UserDataDBObject::COL_LABEL),
-			DBTable::DT_INNER,
-			"",
-			true,
-			UserDataDBObject::COL_DIVISION
-		);
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_INDICATORS)->GetSELECTQuery();
 		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+		$indicators = array();
 		if($pdos != null) {
 			while( ($row = $pdos->fetch()) !== false) {
-				array_push($stat[UserDataDBObject::COL_LABEL], $row[UserDataDBObject::COL_DIVISION]);
-				array_push($stat[DBTable::DT_COUNT], $row[DBTable::DT_COUNT_COLUMN]);
+				array_push($indicators, $row);
 			}
 		}
-		return $stat;
+		foreach($indicators as $indicator) {
+			$stat = array(UserDataDBObject::COL_LABEL => array(), DBTable::DT_COUNT => array());
+			// Call procedure
+			$query = DBProcedure::GetCALLQueryByName($indicator[UserDataDBObject::COL_PROCEDURE]);
+			$result = parent::getDBConnection()->RawQuery($query);
+			//var_dump($result);
+			if($result != null && !empty($result)) {
+				foreach($result as $r) {
+					array_push($stat[UserDataDBObject::COL_LABEL], $r[$indicator[UserDataDBObject::COL_LABEL]]);
+					array_push($stat[DBTable::DT_COUNT], $r[DBTable::DT_COUNT]);
+				}
+			}
+			$stats[$indicator[UserDataDBObject::COL_LABEL]] = $stat;
+		}
+
+		return $stats;
 	}
 
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
@@ -981,6 +975,21 @@ class UserDataServices extends AbstractObjectServices {
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
 		}
+
+		// -- init ETIC indicators table --------------------------------------------------------------------
+		$indicators = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
+			"division" => array(UserDataDBObject::PROC_STATS_UDATA_DIVISION, "NULL")
+		    );
+		// --- retrieve SQL query
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_INDICATORS)->GetINSERTQuery();
+		foreach ($indicators as $indicator => $attr) {
+			// --- create param array
+			$sql_params = array(":".UserDataDBObject::COL_LABEL => $indicator,
+								":".UserDataDBObject::COL_PROCEDURE => $attr[0],
+								":".UserDataDBObject::COL_EXPECTED_RESULT => $attr[1]);
+			// --- execute SQL query
+			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
+		}
 	}
 
 }
@@ -994,40 +1003,45 @@ class UserDataDBObject extends AbstractDBObject {
 	// --- object name
 	const OBJ_NAME = "udata";
 	// --- tables
-	const TABL_USER_DATA = "dol_udata";
-	const TABL_USER_POSITION = "dol_udata_position";
-	const TABL_COM_GENDER = "com_gender";
-	const TABL_COM_COUNTRY = "com_country";
-	const TABL_COM_INSA_DEPT = "com_insa_dept";
-	const TABL_COM_SCHOOL_YEAR = "com_school_year";
-	const TABL_COM_DIVISION	= "com_division";
-	const TABL_COM_POSITION	= "com_position";
-	const TABL_AG 			= "com_ag";
+	const TABL_USER_DATA 		= "dol_udata";
+	const TABL_USER_POSITION 	= "dol_udata_position";
+	const TABL_COM_GENDER 		= "com_gender";
+	const TABL_COM_COUNTRY 		= "com_country";
+	const TABL_COM_INSA_DEPT 	= "com_insa_dept";
+	const TABL_COM_SCHOOL_YEAR 	= "com_school_year";
+	const TABL_COM_DIVISION		= "com_division";
+	const TABL_COM_POSITION		= "com_position";
+	const TABL_AG 				= "com_ag";
+	const TABL_INDICATORS		="dol_udata_indicators";
 	// --- columns
-	const COL_ID 			= "id";
-	const COL_USER_ID  		= "user_id";
-	const COL_GENDER 		= "gender";
-	const COL_FIRSTNAME 	= "firstname";
-	const COL_LASTNAME  	= "lastname";
-	const COL_BIRTHDATE  	= "birthdate";
-	const COL_TEL 			= "tel";
-	const COL_EMAIL  		= "email";
-	const COL_ADDRESS  		= "address";
-	const COL_CITY 			= "city";
-	const COL_POSTAL_CODE	= "postal_code";
-	const COL_COUNTRY 		= "country";
-	const COL_SCHOOL_YEAR 	= "school_year";
-	const COL_INSA_DEPT 	= "insa_dept";
-	const COL_POSITION  	= "position";
-	const COL_LABEL			= "label";
-	const COL_DETAIL		= "detail";
-	const COL_SINCE			= "since";
-	const COL_RG_CODE   	= "rg_code";
-	const COL_AVATAR_ID   	= "avatar_id";
-	const COL_LAST_POS		= "last_pos";
-	const COL_AG 			= "ag";
-	const COL_DIVISION		= "division";
-	const COL_DISABLED		= "disabled";
+	const COL_ID 				= "id";
+	const COL_USER_ID  			= "user_id";
+	const COL_GENDER 			= "gender";
+	const COL_FIRSTNAME 		= "firstname";
+	const COL_LASTNAME  		= "lastname";
+	const COL_BIRTHDATE  		= "birthdate";
+	const COL_TEL 				= "tel";
+	const COL_EMAIL  			= "email";
+	const COL_ADDRESS  			= "address";
+	const COL_CITY 				= "city";
+	const COL_POSTAL_CODE		= "postal_code";
+	const COL_COUNTRY 			= "country";
+	const COL_SCHOOL_YEAR 		= "school_year";
+	const COL_INSA_DEPT 		= "insa_dept";
+	const COL_POSITION  		= "position";
+	const COL_LABEL				= "label";
+	const COL_DETAIL			= "detail";
+	const COL_SINCE				= "since";
+	const COL_RG_CODE   		= "rg_code";
+	const COL_AVATAR_ID   		= "avatar_id";
+	const COL_LAST_POS			= "last_pos";
+	const COL_AG 				= "ag";
+	const COL_DIVISION			= "division";
+	const COL_DISABLED			= "disabled";
+	const COL_PROCEDURE			= "procedure";
+	const COL_EXPECTED_RESULT	= "expected_result";
+	// -- procedures
+	const PROC_STATS_UDATA_DIVISION = "stats_udata_division";
 	// -- attributes
 
 	// -- functions
@@ -1098,6 +1112,12 @@ class UserDataDBObject extends AbstractDBObject {
 			->AddForeignKey(UserDataDBObject::TABL_USER_POSITION.'_fk1', UserDataDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE)
 			->AddForeignKey(UserDataDBObject::TABL_USER_POSITION.'_fk2', UserDataDBObject::COL_POSITION, UserDataDBObject::TABL_COM_POSITION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 
+		$dol_udata_indicators = new DBTable(UserDataDBObject::TABL_INDICATORS);
+		$dol_udata_indicators
+			->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true)
+			->AddColumn(UserDataDBObject::COL_PROCEDURE, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDataDBObject::COL_EXPECTED_RESULT, DBTable::DT_VARCHAR, 255);
+
 		// -- add tables
 		parent::addTable($com_gender);
 		parent::addTable($com_country);
@@ -1108,6 +1128,30 @@ class UserDataDBObject extends AbstractDBObject {
 		parent::addTable($com_ag);
 		parent::addTable($dol_udata);
 		parent::addTable($dol_udata_position);
+		parent::addTable($dol_udata_indicators);
+
+		// -- create procedures
+		// -- UserData by division
+		$sql_params = array(":".UserDataDBObject::COL_DISABLED => "0");
+		// create sql query
+		$sql_query = DBTable::GetJOINQuery(
+			DBTable::GetJOINQuery(
+				$this->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery(array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_DISABLED)), 
+				$this->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery()
+			),
+			$this->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(),
+			array(UserDataDBObject::COL_POSITION, UserDataDBObject::COL_LABEL),
+			DBTable::DT_INNER,
+			"",
+			true,
+			UserDataDBObject::COL_DIVISION
+		);
+		$stats_udata_division = new DBProcedure(UserDataDBObject::PROC_STATS_UDATA_DIVISION, $sql_query);
+		$stats_udata_division->replaceSQLParams($sql_params);
+
+		// -- add procedures
+		parent::addProcedure($stats_udata_division);
+
 	}
 
 	/**

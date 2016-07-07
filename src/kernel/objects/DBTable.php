@@ -181,7 +181,7 @@ class DBTable {
 		}
 		// table engine
 		$query .= ") ENGINE=".$this->engine." CHARSET=utf8;";
-		echo "\n" . $this->name . "\n";
+		echo "\n TABLE : " . $this->name . "\n";
 		// return query
 		return $query;
 	}
@@ -226,7 +226,7 @@ class DBTable {
 			$query = trim($query, " ,");
 		}
 		if($count) {
-			$query .= ")";
+			$query .= ") AS count";
 		}
 		$query.= " FROM `".$this->name."`";
 		// check if not everywhere
@@ -374,7 +374,7 @@ class DBTable {
 			if(isset($groupBy)) {
 				$query .= $groupBy.", ";
 			}
-			$query .= "COUNT(*)";
+			$query .= "COUNT(*) AS count";
 		} else {
 			$query .= "*";
 		}

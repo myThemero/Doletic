@@ -68,6 +68,7 @@ class DB {
 			return $this->pdo->exec($sql);
 		}
 	}
+
 	/**
 	 *
 	 */
@@ -94,6 +95,17 @@ class DB {
 			$pdos = $this->pdo->prepare($sql);
 			$pdos->execute($sql_params);
 			return $pdos;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public function RawQuery($sql) {
+		if($this->dbmanager->DebuggingModeEnabled()) {
+			var_dump("RawQuery:sql: " . $sql);
+		} else {
+			return $this->pdo->query($sql);
 		}
 	}
 }

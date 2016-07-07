@@ -72,10 +72,11 @@ class DBProcedure {
 			$query .= $this->GetDROPQuery();
 		}
 		$query .= "CREATE PROCEDURE " . $this->name . "(";
-		foreach($params as $param) {
+		foreach($this->params as $param) {
 			$query .= $param[DBProcedure::DP_PARAM_IN_OUT] . " " . $param[DBProcedure::DP_PARAM_NAME] . " " . $param[DBProcedure::DP_PARAM_TYPE] . ", ";
 		}
-		$query = trim($query, ",") . ") BEGIN " . $content . " END";
+		$query = trim($query, ",") . ") BEGIN " . $this->content . " END";
+		echo "\n PROCEDURE : " . $this->name . "\n";
 		return $query;
 	}
 
@@ -84,7 +85,17 @@ class DBProcedure {
 	}
 
 	public function GetCALLQuery() {
-		$query = "CALL " . $this->name;
-		return $query;
+		return "CALL " . $this->name;
+	}
+
+	static function GetCALLQueryByName($name) {
+		return "CALL " . $name . "()";
+	}
+
+	public function replaceSQLParams($sql_params) {
+		foreach($sql_params as $key => $value) {
+			$this->content = str_replace($key, $value, $this->content);
+		}
+		return $this;
 	}
 }
