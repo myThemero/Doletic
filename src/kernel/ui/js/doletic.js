@@ -375,47 +375,49 @@ var DoleticMasterInterface = new function() {
             retrieve: true,
             language: data,
             initComplete: function() {
-                var i = 0;
-                this.api().columns().every( function () {
-                    var column = this;
-                    var footer = $(column.footer()); 
-                    switch(filters[i]) {
-                        case DoleticMasterInterface.input_filter:
-                            var title = footer.text();
-                            footer.html( '<div class="ui fluid input"><input class="filter-input" type="text" placeholder="'+title+'" /></div>' );
-                            $('input', footer).on( 'keyup change', function () {
-                                if(column.search() !== this.value) {
-                                    column.search( this.value ).draw();
-                                }
-                            });
-                            break;
-                        case DoleticMasterInterface.select_filter:
-                            var select = $('<select class="ui fluid search dropdown"><option value=""></option></select>')
-                                .appendTo( $(column.footer()).empty() )
-                                .on( 'change', function () {
-                                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                                    column.search( val ? '^'+val+'$' : '', true, false ).draw();
-                                });
-       
-                            column.data().unique().sort().each( function ( d, j ) {
-                                d = d.replace(/(<([^>]+)>)/ig,"");
-                                select.append( '<option value="'+d+'">'+d+'</option>' ).dropdown();
-                            });
-                            break;
-                        case DoleticMasterInterface.reset_filter:
-                          var button = $('<button class="ui icon button"><i class="refresh icon"></i>Réinit.</button>')
-                              .appendTo( $(column.footer()).empty() )
-                              .click(function() {
-                                  var tfoot = $(this).parent().parent().parent();
-                                  tfoot.find(".filter-input").val("").change();
-                                  tfoot.find(".dropdown").dropdown("restore defaults");
+                if(filters != []) {
+                  var i = 0;
+                  this.api().columns().every( function () {
+                      var column = this;
+                      var footer = $(column.footer()); 
+                      switch(filters[i]) {
+                          case DoleticMasterInterface.input_filter:
+                              var title = footer.text();
+                              footer.html( '<div class="ui fluid input"><input class="filter-input" type="text" placeholder="'+title+'" /></div>' );
+                              $('input', footer).on( 'keyup change', function () {
+                                  if(column.search() !== this.value) {
+                                      column.search( this.value ).draw();
+                                  }
                               });
-                          break;
-                        default:
+                              break;
+                          case DoleticMasterInterface.select_filter:
+                              var select = $('<select class="ui fluid search dropdown"><option value=""></option></select>')
+                                  .appendTo( $(column.footer()).empty() )
+                                  .on( 'change', function () {
+                                      var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                                      column.search( val ? '^'+val+'$' : '', true, false ).draw();
+                                  });
+         
+                              column.data().unique().sort().each( function ( d, j ) {
+                                  d = d.replace(/(<([^>]+)>)/ig,"");
+                                  select.append( '<option value="'+d+'">'+d+'</option>' ).dropdown();
+                              });
+                              break;
+                          case DoleticMasterInterface.reset_filter:
+                            var button = $('<button class="ui icon button"><i class="refresh icon"></i>Réinit.</button>')
+                                .appendTo( $(column.footer()).empty() )
+                                .click(function() {
+                                    var tfoot = $(this).parent().parent().parent();
+                                    tfoot.find(".filter-input").val("").change();
+                                    tfoot.find(".dropdown").dropdown("restore defaults");
+                                });
                             break;
-                    }
-                    i++;
-                });
+                          default:
+                              break;
+                      }
+                      i++;
+                  });
+                }
             }
         });
     });

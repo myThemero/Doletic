@@ -283,6 +283,7 @@ var DoleticUIModule = new function() {
 				// insert html content
 				$('#ag').html(content).dropdown();
 				$('#agr_table_container').html(table_content);
+				DoleticMasterInterface.makeDataTables('agr_table', []);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
