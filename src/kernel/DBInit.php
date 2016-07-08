@@ -151,8 +151,8 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_CITY	 		=> "Etic",
 					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
-					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
-					UserDataServices::PARAM_INSA_DEPT 		=> "IF",
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> 2,
+					UserDataServices::PARAM_INSA_DEPT 		=> "PC",
 					UserDataServices::PARAM_AG 		=> "2016-02-20",
 					UserDataServices::PARAM_POSITION 		=> "Junior DSI"
 						));
@@ -170,8 +170,8 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_CITY	 		=> "Etic",
 					UserDataServices::PARAM_POSTAL_CODE 	=> 99999,
 					UserDataServices::PARAM_COUNTRY 		=> "France",
-					UserDataServices::PARAM_SCHOOL_YEAR 	=> 4,
-					UserDataServices::PARAM_INSA_DEPT 		=> "IF",
+					UserDataServices::PARAM_SCHOOL_YEAR 	=> 3,
+					UserDataServices::PARAM_INSA_DEPT 		=> "GI",
 					UserDataServices::PARAM_AG 		=> "2015-10-04",
 					UserDataServices::PARAM_POSITION 		=> "Trésorier"
 						));

@@ -32,13 +32,14 @@ class UserData implements \JsonSerializable {
 	private $pos = null;
 	private $ag = null;
 	private $disabled = false;
+	private $creation_date = null;
 
 	/**
 	*	@brief Constructs a udata
 	*/
 	public function __construct($id, $userId, $gender, $firstname, $lastname, $birthdate, 
 								$tel, $email, $address, $city, $postalCode, $country, $schoolYear, 
-								$insaDept, $avatarId,  $ag, $disabled, $pos) {
+								$insaDept, $avatarId,  $ag, $disabled, $creationDate, $pos) {
 		$this->id = intval($id);
 		$this->user_id = intval($userId);
 		$this->gender = $gender;
@@ -57,6 +58,7 @@ class UserData implements \JsonSerializable {
 		$this->pos = $pos;
 		$this->ag = $ag;
 		$this->disabled = (bool)$disabled;
+		$this->creation_date = $creationDate;
 	}
 
 	public function jsonSerialize() {
@@ -78,7 +80,8 @@ class UserData implements \JsonSerializable {
 			UserDataDBObject::COL_AVATAR_ID => $this->avatar_id,
 			UserDataDBObject::COL_AG => $this->ag,
 			UserDataDBObject::COL_DISABLED => $this->disabled,
-			UserDataDBObject::COL_POSITION => $this->pos //Not in DB...
+			UserDataDBObject::COL_POSITION => $this->pos, //Not in DB...
+			UserDataDBObject::COL_CREATION_DATE => $this->creation_date
 		];
 	}
 
@@ -190,6 +193,13 @@ class UserData implements \JsonSerializable {
 	public function GetDisabled() {
 		return $this->disabled;
 	}
+	/**
+	*	@brief Returns UserData disabled
+	*/
+	public function GetCreationDate() {
+		return $this->creation_date;
+	}
+
 }
 
 
@@ -212,6 +222,7 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_SCHOOL_YEAR 	= "schoolYear";
 	const PARAM_INSA_DEPT 		= "insaDept";
 	const PARAM_POSITION  		= "position";
+	const PARAM_CREATIO_DATE	= "creationDate";
 	const PARAM_AVATAR_ID  		= "avatarId";
 	const PARAM_AG		 		= "ag";
 	const PARAM_PRESENCE 		= "presence";
@@ -369,6 +380,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_AVATAR_ID],
 					$row[UserDataDBObject::COL_AG],
 					$row[UserDataDBObject::COL_DISABLED],
+					$row[UserDataDBObject::COL_CREATION_DATE],
 					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
 			}
 		}
@@ -405,6 +417,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_AVATAR_ID],
 					$row[UserDataDBObject::COL_AG],
 					$row[UserDataDBObject::COL_DISABLED],
+					$row[UserDataDBObject::COL_CREATION_DATE],
 					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
 			}
 		}
@@ -499,6 +512,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_AVATAR_ID],
 					$row[UserDataDBObject::COL_AG],
 					$row[UserDataDBObject::COL_DISABLED],
+					$row[UserDataDBObject::COL_CREATION_DATE],
 					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
 			}
 		}
@@ -612,6 +626,7 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_AVATAR_ID],
 					$row[UserDataDBObject::COL_AG],
 					$row[UserDataDBObject::COL_DISABLED],
+					$row[UserDataDBObject::COL_CREATION_DATE],
 					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
 			}
 		}
@@ -659,7 +674,8 @@ class UserDataServices extends AbstractObjectServices {
 			":".UserDataDBObject::COL_INSA_DEPT => $insaDept,
 			":".UserDataDBObject::COL_AVATAR_ID => "NULL",
 			":".UserDataDBObject::COL_AG => $ag,
-			":".UserDataDBObject::COL_DISABLED => false);
+			":".UserDataDBObject::COL_DISABLED => false,
+			":".UserDataDBObject::COL_CREATION_DATE => date('Y-m-d'));
 		// create sql request
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetINSERTQuery();
 		// execute query
@@ -836,16 +852,21 @@ class UserDataServices extends AbstractObjectServices {
 		foreach($indicators as $indicator) {
 			$stat = array();
 			// Call procedure
-			$query = DBProcedure::GetCALLQueryByName($indicator[UserDataDBObject::COL_PROCEDURE]);
+			$params = array();
+			if(isset($indicator[UserDataDBObject::COL_PARAMS]) && $indicator[UserDataDBObject::COL_PARAMS] != "" ) {
+				$params = explode(";", $indicator[UserDataDBObject::COL_PARAMS]);
+			}
+			$query = DBProcedure::GetCALLQueryByName($indicator[UserDataDBObject::COL_PROCEDURE], $params);
 			$result = parent::getDBConnection()->RawQuery($query);
 			//var_dump($result);
 			if($result != null && !empty($result)) {
 				foreach($result as $r) {
-					foreach($r as $key => $value) {
+					$finalRow = array_merge($r, $indicator);
+					foreach($finalRow as $key => $value) {
 						if(!isset($stat[$key])) {
 							$stat[$key] = array();
 						}
-						array_push($stat[$key], $r[$key]);
+						array_push($stat[$key], $value);
 					}
 				}
 			}
@@ -987,16 +1008,20 @@ class UserDataServices extends AbstractObjectServices {
 
 		// -- init ETIC indicators table --------------------------------------------------------------------
 		$indicators = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
-			"division" 	=> array(UserDataDBObject::PROC_STATS_UDATA_DIVISION, "NULL"),
-			"ag" 		=> array(UserDataDBObject::PROC_STATS_AG_PRESENCE, "NULL")
+			"division" 	=> array("Répartition des membres par pôle", UserDataDBObject::PROC_STATS_UDATA_DIVISION, NULL, NULL),
+			"ag" 		=> array("Présences aux AG sur membres recrutés", UserDataDBObject::PROC_STATS_AG_PRESENCE, NULL, NULL),
+			"pc"		=> array("Taux de membres au PC", UserDataDBObject::PROC_STATS_PC_RATE, NULL, "0.3")
 		    );
 		// --- retrieve SQL query
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_INDICATORS)->GetINSERTQuery();
 		foreach ($indicators as $indicator => $attr) {
 			// --- create param array
 			$sql_params = array(":".UserDataDBObject::COL_LABEL => $indicator,
-								":".UserDataDBObject::COL_PROCEDURE => $attr[0],
-								":".UserDataDBObject::COL_EXPECTED_RESULT => $attr[1]);
+								":".UserDataDBObject::COL_DESCRIPTION => $attr[0],
+								":".UserDataDBObject::COL_PROCEDURE => $attr[1],
+								":".UserDataDBObject::COL_PARAMS => $attr[2],
+								":".UserDataDBObject::COL_EXPECTED_RESULT => $attr[3]
+								);
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
 		}
@@ -1046,14 +1071,20 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_AVATAR_ID   		= "avatar_id";
 	const COL_LAST_POS			= "last_pos";
 	const COL_AG 				= "ag";
+	const COL_CREATION_DATE		= "creation_date";
 	const COL_PRESENCE 			= "presence";
 	const COL_DIVISION			= "division";
 	const COL_DISABLED			= "disabled";
 	const COL_PROCEDURE			= "procedure";
+	const COL_PARAMS			= "params";
 	const COL_EXPECTED_RESULT	= "expected_result";
+	const COL_DESCRIPTION		= "description";
 	// -- procedures
 	const PROC_STATS_UDATA_DIVISION 	= "stats_udata_division";
 	const PROC_STATS_AG_PRESENCE 		= "stats_udata_ag";
+	const PROC_STATS_PC_RATE			= "stats_udata_pc";
+	// -- procedures args
+	const ARG_PC_RATE			= "pc_rate";
 	// -- attributes
 
 	// -- functions
@@ -1111,6 +1142,7 @@ class UserDataDBObject extends AbstractDBObject {
 			->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, false, "-1")
 			->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false)
 			->AddColumn(UserDataDBObject::COL_DISABLED, DBTable::DT_INT, 1, false)
+			->AddColumn(UserDataDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false)
 			->AddForeignKey(UserDataDBObject::TABL_USER_DATA.'_fk1', UserDataDBObject::COL_GENDER, UserDataDBObject::TABL_COM_GENDER, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
 			->AddForeignKey(UserDataDBObject::TABL_USER_DATA.'_fk2', UserDataDBObject::COL_COUNTRY, UserDataDBObject::TABL_COM_COUNTRY, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
 			->AddForeignKey(UserDataDBObject::TABL_USER_DATA.'_fk3', UserDataDBObject::COL_SCHOOL_YEAR, UserDataDBObject::TABL_COM_SCHOOL_YEAR, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
@@ -1129,7 +1161,9 @@ class UserDataDBObject extends AbstractDBObject {
 		$dol_udata_indicators = new DBTable(UserDataDBObject::TABL_INDICATORS);
 		$dol_udata_indicators
 			->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true)
+			->AddColumn(UserDataDBObject::COL_DESCRIPTION, DBTable::DT_VARCHAR, 255, false)
 			->AddColumn(UserDataDBObject::COL_PROCEDURE, DBTable::DT_VARCHAR, 255, false)
+			->AddColumn(UserDataDBObject::COL_PARAMS, DBTable::DT_VARCHAR, 255)
 			->AddColumn(UserDataDBObject::COL_EXPECTED_RESULT, DBTable::DT_VARCHAR, 255);
 
 		// -- add tables
@@ -1176,10 +1210,25 @@ class UserDataDBObject extends AbstractDBObject {
 				ON a.ag = b.ag;"
 		);
 
+		$stats_udata_pc = new DBProcedure(UserDataDBObject::PROC_STATS_PC_RATE,
+		"DECLARE count_pc INT DEFAULT 0;
+			DECLARE count_total INT DEFAULT 0;
+
+			SELECT COUNT(*) INTO count_pc
+			FROM `dol_udata`
+			WHERE insa_dept='PC';
+
+			SELECT COUNT(*) INTO count_total
+			FROM `dol_udata`;
+
+			SELECT count_pc/count_total AS `pc_rate`;");
+		//$stats_udata_pc->AddParam(DBProcedure::DP_PARAM_OUT, UserDataDBObject::ARG_PC_RATE, DBProcedure::DP_FLOAT);
+
 
 		// -- add procedures
 		parent::addProcedure($stats_udata_division);
 		parent::addProcedure($stats_udata_ag);
+		parent::addProcedure($stats_udata_pc);
 
 	}
 

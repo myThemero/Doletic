@@ -6,6 +6,7 @@ class DBProcedure {
 	// --- data types
 	const DP_INT = "int";
 	const DP_VARCHAR = "varchar";
+	const DP_FLOAT = "float";
 	const DP_TEXT = "text";
 	const DP_DATE = "date";
 	const DP_DATETIME = "datetime";
@@ -56,8 +57,8 @@ class DBProcedure {
 	/**
 	 *
 	 */
-	public function AddParam($inOut, $name, $type, $size) {
-		array_push($params, array(
+	public function AddParam($inOut, $name, $type, $size = "") {
+		array_push($this->params, array(
 			DBProcedure::DP_PARAM_IN_OUT => $inOut,
 			DBProcedure::DP_PARAM_NAME => $name,
 			DBProcedure::DP_PARAM_TYPE => $type,
@@ -88,8 +89,24 @@ class DBProcedure {
 		return "CALL " . $this->name;
 	}
 
-	static function GetCALLQueryByName($name) {
-		return "CALL " . $name . "()";
+	static function GetCALLQueryByName($name, $params = array()) {
+		$hasParams = boolval(isset($params) && !empty($params));
+		$query = "CALL " . $name . "(";
+		if($hasParams) {
+			foreach($params as $param) {
+				$query .= "@" . $param . ",";
+			}
+			$query = trim($query, ",");
+		}
+		$query .= ");";
+		if($hasParams) {
+			$query .= " SELECT ";
+			foreach($params as $param) {
+				$query .= "@" . $param . " AS `" . $param . "`,";
+			}
+			$query = trim($query, ",") . ";";
+		}
+		return $query;
 	}
 
 	public function replaceSQLParams($sql_params) {

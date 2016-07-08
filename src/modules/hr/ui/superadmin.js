@@ -571,11 +571,13 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				console.log(data.object);
+				
+				// --- BUILD GRAPHS
 				var divisionStats = data.object.division;
 				var agStats = data.object.ag;
 				Plotly.plot("div_graph", [{
 						values: divisionStats.count,
-						labels: divisionStats.label,
+						labels: divisionStats.division,
 						type: 'pie'
 					}], 
 					{
@@ -599,6 +601,13 @@ var DoleticUIModule = new function() {
 						barmode: 'stack'
 					}
 				);
+
+				// --- FILL TABLE
+				var pcStats = data.object.pc;
+				var tbody = $('#indicators_body');
+				tbody.html("");
+				tbody.append("<td>" + pcStats.description + "</td><td>" + Number(pcStats.pc_rate)*100 + "%</td><td>" + Number(pcStats.expected_result)*100 + "%</td>");
+
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
