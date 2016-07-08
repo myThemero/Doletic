@@ -269,17 +269,20 @@ var DoleticUIModule = new function() {
 			if(data.code == 0) {
 				// create content var to build html
 				var content = "";
-				var table_content = "";
+				var table_content = '<table class="ui very basic single line striped table" id="agr_table">\
+										<thead><tr><th>Date</th><th>Présents</th><th>Actions</th></tr></thead>\
+										<tbody id="agr_body">';
 				// iterate over values to build options
 				for (var i = 0; i < data.object.length; i++) {
 					content += "<option value=\""+data.object[i].ag+"\">"+data.object[i].ag+"</option>\n";
-					table_content += "<tr><td>"+data.object[i].ag+" (" + data.object[i].presence + ")</td><td><button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAGR('"+data.object[i]+"'); return false;\"> \
+					table_content += "<tr><td>"+data.object[i].ag+"</td><td>" + data.object[i].presence + "</td><td><button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAGR('"+data.object[i].ag+"'); return false;\"> \
 			  									<i class=\"remove icon\"></i>Retirer \
 											</button></td></tr>";
 				};
+				table_content += '</tbody></table>';
 				// insert html content
 				$('#ag').html(content).dropdown();
-				$('#agr_body').html(table_content);
+				$('#agr_table_container').html(table_content);
 			} else {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
@@ -571,7 +574,6 @@ var DoleticUIModule = new function() {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				console.log(data.object);
-				
 				// --- BUILD GRAPHS
 				var divisionStats = data.object.division;
 				var agStats = data.object.ag;
@@ -976,6 +978,7 @@ var DoleticUIModule = new function() {
 					DoleticMasterInterface.showSuccess("Création réussie !", "L'AGR a été ajoutée avec succès !");
 					// fill AGR list
 					DoleticUIModule.fillAGSelector();
+					DoleticUIModule.cancelNewAGRForm();
 				} else {
 					// use default service service error handler
 					DoleticServicesInterface.handleServiceError(data);
@@ -1341,6 +1344,16 @@ var DoleticUIModule = new function() {
 	this.cancelNewIntMembershipForm = function(id) {
 		DoleticUIModule.clearNewIntMembershipForm(id);
 		$('#intm_form_modal').modal('hide');
+	}
+
+	this.showNewAGRForm = function() {
+		DoleticUIModule.clearNewAGRForm();
+		$('#agr_form_modal').modal('show');
+	}
+
+	this.cancelNewAGRForm = function() {
+		DoleticUIModule.clearNewAGRForm();
+		$('#agr_form_modal').modal('hide');
 	}
 
 	this.checkNewUserForm = function() {

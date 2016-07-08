@@ -1,9 +1,10 @@
 <div class="ui two column grid container"> 
     <div class="row"> 
-        <div class="nine wide column"> 
+        <div class="nine wide center aligned column"> 
             <div class="ui horizontal divider"> 
-                Indicateurs RH
+                Statistiques RH
             </div> 
+            <div id="refresh_indicators" class="ui olive button" onClick="DoleticUIModule.drawGraphs();">Actualiser les indicateurs</div> 
             <div class="row" id="graphs">
                 <div class="plotly-graph" id="div_graph">
                     
@@ -18,49 +19,52 @@
                 Gestion des AG de Recrutement
             </div> 
             <div class="ui stackable grid container"> 
-                <div class="row"> 
-                    <div class="nine wide column"> 
-                        <table class="ui very basic single line striped table">
-                            <tbody id="agr_body">
-                                <!-- AGR LIST GOES THERE -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="seven wide column"> 
-                        <form class="ui form">
-                            <h4 class="ui dividing header">Ajouter une AGR</h4>
-                            <div id="agr_field" class="sxiteen wide required field"> 
-                                <label>Date</label> 
-                                <input id="agr" placeholder="Nom..." type="text"/> 
-                            </div> 
-                            <div id="agr_pr_field" class="sxiteen wide required field"> 
-                                <label>Etudiants présents</label> 
-                                <input id="agr_pr" placeholder="Présences..." type="number"/> 
-                            </div> 
-                            <div id="add_agr_btn" class="ui green button" onClick="DoleticUIModule.insertNewAGR();">
-                            Ajouter
-                            </div> 
-                        </form>
+                <div class="row">
+                    <div class="center aligned column">
+                        <div id="addag_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewAGRForm();">Ajouter une AG de recrutement</div> 
                     </div>
                 </div>
-            </div>
-            <div class="ui horizontal divider"> 
-                Indicateurs RH
-            </div>
-            <div class="row"> 
-                <table class="ui very basic single line striped table">
-                    <thead>
-                        <tr>
-                            <th>Indicateur</th>
-                            <th>Actuel</th>
-                            <th>Objectif</th>
-                        </tr>
-                    </thead>
-                    <tbody id="indicators_body">
-                        <!-- INDICATORS LIST GOES THERE -->
-                    </tbody>
-                </table>
-            </div>
+                <div class="row" id="agr_table_container"> 
+                </div>
+                <div class="row">
+                    <div class="ui modal" id="agr_form_modal"> 
+                        <div class="ui segment">
+                            <form class="ui form">
+                                <h4 class="ui dividing header">Ajouter une AGR</h4>
+                                <div id="agr_field" class="sxiteen wide required field"> 
+                                    <label>Date</label> 
+                                    <input id="agr" placeholder="Nom..." type="text"/> 
+                                </div> 
+                                <div id="agr_pr_field" class="sxiteen wide required field"> 
+                                    <label>Etudiants présents</label> 
+                                    <input id="agr_pr" placeholder="Présences..." type="number"/> 
+                                </div> 
+                                <div class="ui hr_center small buttons"> 
+                                    <div id="abort__agr_btn" class="ui button" onClick="DoleticUIModule.cancelNewAGRForm();">Annuler</div> 
+                                    <div class="or" data-text="ou"></div> 
+                                    <div id="add_agr_btn" class="ui green button" onClick="DoleticUIModule.insertNewAGR();">Ajouter</div> 
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui horizontal divider"> 
+                    Indicateurs RH
+                </div>
+                <div class="row"> 
+                    <table class="ui very basic single line striped table">
+                        <thead>
+                            <tr>
+                                <th>Indicateur</th>
+                                <th>Actuel</th>
+                                <th>Objectif</th>
+                            </tr>
+                        </thead>
+                        <tbody id="indicators_body">
+                            <!-- INDICATORS LIST GOES THERE -->
+                        </tbody>
+                    </table>
+                </div>
             </div> 
         </div>
     </div>
