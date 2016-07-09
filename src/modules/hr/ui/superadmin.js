@@ -634,21 +634,25 @@ var DoleticUIModule = new function() {
 				var invalidAdmm = data.object.invalid_admm;
 				var invalidHtml = "";
 				for(var i=0; i<invalidAdmm.division.length; i++) {
-					invalidHtml += "<tr><td>" + invalidAdmm.division[i] + "</td><td>" + invalidAdmm.invalid_count[i] + "</td></tr>"
+					invalidHtml += '<tr><td><a href="#memlist" class="invadmm_link">' + invalidAdmm.division[i] + "</a></td><td>" + invalidAdmm.invalid_count[i] + "</td></tr>"
 				}
 				$('#invalid_body').html(invalidHtml);
+				$('.invadmm_link').click(function() {
+					$('#user_table_Pôle').dropdown("set selected", $(this).html()).change();;
+					$('#memlist').click();
+				});
 
 				// --- FILL INDICATOR TABLE
 				var pcStats = data.object.pc;
 				var tbody = $('#indicators_body');
 				tbody.html("");
 				var tr = "<tr class=";
-				if(pcStats.pc_rate >= pcStats.expected_result) {
+				if(pcStats.result >= pcStats.expected_result && pcStats.expected_greater || pcStats.result <= pcStats.expected_result && !pcStats.expected_greater) {
 					tr += '"positive">';
 				} else {
 					tr +='"negative">';
 				}
-				tbody.append(tr + "<td>" + pcStats.description + "</td><td>" + Number(pcStats.pc_rate)*100 + "%</td><td>" + Number(pcStats.expected_result)*100 + "%</td></tr>");
+				tbody.append(tr + "<td>" + pcStats.description + "</td><td>" + Number(pcStats.result) + pcStats.expected_unit + "</td><td>" + Number(pcStats.expected_result) + pcStats.expected_unit + "</td></tr>");
 
 			} else {
 				// use default service service error handler

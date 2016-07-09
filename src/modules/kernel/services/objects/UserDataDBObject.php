@@ -1007,12 +1007,12 @@ class UserDataServices extends AbstractObjectServices {
 
 		// -- init ETIC indicators table --------------------------------------------------------------------
 		$indicators = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
-			"division" 		=> array("Répartition des membres par pôle", UserDataDBObject::PROC_STATS_UDATA_DIVISION, NULL, NULL),
-			"ag" 			=> array("Présences aux AG sur membres recrutés", UserDataDBObject::PROC_STATS_AG_PRESENCE, NULL, NULL),
-			"pc"			=> array("Taux de membres au PC", UserDataDBObject::PROC_STATS_PC_RATE, NULL, "0.3"),
-			"inscription" 	=> array("Inscriptions par mois", UserDataDBObject::PROC_STATS_INSCRIPTIONS, NULL, NULL),
-			"members"		=> array("Evolution des membres", UserDataDBObject::PROC_STATS_MEMBERS, NULL, NULL),
-			"invalid_admm"	=> array("Adhésions invalides par pôle", UserDataDBObject::PROC_INVALID_ADMM, NULL, NULL)
+			"division" 		=> array("Répartition des membres par pôle", UserDataDBObject::PROC_STATS_UDATA_DIVISION, NULL, NULL, NULL, NULL),
+			"ag" 			=> array("Présences aux AG sur membres recrutés", UserDataDBObject::PROC_STATS_AG_PRESENCE, NULL, NULL, NULL, NULL),
+			"pc"			=> array("Taux de membres au PC", UserDataDBObject::PROC_STATS_PC_RATE, NULL, "30", "%", 1),
+			"inscription" 	=> array("Inscriptions par mois", UserDataDBObject::PROC_STATS_INSCRIPTIONS, NULL, NULL, NULL, NULL),
+			"members"		=> array("Evolution des membres", UserDataDBObject::PROC_STATS_MEMBERS, NULL, NULL, NULL, NULL),
+			"invalid_admm"	=> array("Adhésions invalides par pôle", UserDataDBObject::PROC_INVALID_ADMM, NULL, NULL, NULL, NULL)
 		    );
 		// --- retrieve SQL query
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_INDICATORS)->GetINSERTQuery();
@@ -1022,7 +1022,9 @@ class UserDataServices extends AbstractObjectServices {
 								":".UserDataDBObject::COL_DESCRIPTION => $attr[0],
 								":".UserDataDBObject::COL_PROCEDURE => $attr[1],
 								":".UserDataDBObject::COL_PARAMS => $attr[2],
-								":".UserDataDBObject::COL_EXPECTED_RESULT => $attr[3]
+								":".UserDataDBObject::COL_EXPECTED_RESULT => $attr[3],
+								":".UserDataDBObject::COL_EXPECTED_UNIT => $attr[4],
+								":".UserDataDBObject::COL_EXPECTED_GREATER => $attr[5]
 								);
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
@@ -1080,6 +1082,8 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_PROCEDURE			= "procedure";
 	const COL_PARAMS			= "params";
 	const COL_EXPECTED_RESULT	= "expected_result";
+	const COL_EXPECTED_UNIT		= "expected_unit";
+	const COL_EXPECTED_GREATER	= "expected_greater";
 	const COL_DESCRIPTION		= "description";
 	// -- procedures
 	const PROC_STATS_UDATA_DIVISION 	= "stats_udata_division";
@@ -1169,7 +1173,9 @@ class UserDataDBObject extends AbstractDBObject {
 			->AddColumn(UserDataDBObject::COL_DESCRIPTION, DBTable::DT_VARCHAR, 255, false)
 			->AddColumn(UserDataDBObject::COL_PROCEDURE, DBTable::DT_VARCHAR, 255, false)
 			->AddColumn(UserDataDBObject::COL_PARAMS, DBTable::DT_VARCHAR, 255)
-			->AddColumn(UserDataDBObject::COL_EXPECTED_RESULT, DBTable::DT_VARCHAR, 255);
+			->AddColumn(UserDataDBObject::COL_EXPECTED_RESULT, DBTable::DT_VARCHAR, 255)
+			->AddColumn(UserDataDBObject::COL_EXPECTED_UNIT, DBTable::DT_VARCHAR, 255)
+			->AddColumn(UserDataDBObject::COL_EXPECTED_GREATER, DBTable::DT_INT, 0);
 
 		// -- add tables
 		parent::addTable($com_gender);
@@ -1227,7 +1233,7 @@ class UserDataDBObject extends AbstractDBObject {
 			FROM `dol_udata`
 			WHERE disabled=0;
 
-			SELECT count_pc/count_total AS `pc_rate`;"
+			SELECT 100*count_pc/count_total AS `result`;"
 		);
 
 		$stats_udata_inscription = new DBProcedure(UserDataDBObject::PROC_STATS_INSCRIPTIONS,

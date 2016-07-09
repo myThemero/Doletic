@@ -383,7 +383,7 @@ var DoleticMasterInterface = new function() {
                       switch(filters[i]) {
                           case DoleticMasterInterface.input_filter:
                               var title = footer.text();
-                              footer.html( '<div class="ui fluid input"><input class="filter-input" type="text" placeholder="'+title+'" /></div>' );
+                              footer.html( '<div class="ui fluid input"><input class="filter-input" type="text" placeholder="'+title+'" id="'+id+'_'+$(column.header()).html()+'"/></div>' );
                               $('input', footer).on( 'keyup change', function () {
                                   if(column.search() !== this.value) {
                                       column.search( this.value ).draw();
@@ -391,7 +391,7 @@ var DoleticMasterInterface = new function() {
                               });
                               break;
                           case DoleticMasterInterface.select_filter:
-                              var select = $('<select class="ui fluid search dropdown"><option value=""></option></select>')
+                              var select = $('<select class="ui fluid search dropdown" id="'+id+'_'+$(column.header()).html()+'"><option value=""></option></select>')
                                   .appendTo( $(column.footer()).empty() )
                                   .on( 'change', function () {
                                       var val = $.fn.dataTable.util.escapeRegex($(this).val());
