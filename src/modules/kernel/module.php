@@ -9,6 +9,7 @@ require_once "../modules/kernel/services/objects/UserDBObject.php";
 require_once "../modules/kernel/services/objects/UserDataDBObject.php";
 require_once "../modules/kernel/services/objects/OVHWrapperDBObject.php";
 require_once "../modules/kernel/services/objects/LogDBObject.php";
+require_once "../modules/kernel/services/objects/IndicatorDBObject.php";
 
 class KernelModule extends AbstractModule {
 
@@ -86,7 +87,28 @@ class KernelModule extends AbstractModule {
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::ENABLE 				=> RightsMap::A_RMASK,	// only admin and above
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_AGS 			=> RightsMap::G_RMASK,  // everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::INSERT_AG 				=> RightsMap::A_RMASK,  // admin  
-				UserDataDBObject::OBJ_NAME.':'.UserDataServices::DELETE_AG 				=> RightsMap::A_RMASK  // admin
+				UserDataDBObject::OBJ_NAME.':'.UserDataServices::DELETE_AG 				=> RightsMap::A_RMASK,  // admin
+
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::GET_BY_ID			=> RightsMap::A_RMASK,  // only admin and above
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::GET_ALL				=> RightsMap::A_RMASK,  // only admin and above
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::GET_ALL_VALUE		=> RightsMap::A_RMASK,  // only admin and above
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::GET_ALL_GRAPH		=> RightsMap::A_RMASK,  // only admin and above
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::GET_ALL_TABLE		=> RightsMap::A_RMASK,  // only admin and above
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::PROCESS_BY_ID		=> RightsMap::G_RMASK,  // everyone
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::PROCESS_ALL			=> RightsMap::G_RMASK,  // everyone
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::PROCESS_ALL_VALUE	=> RightsMap::G_RMASK,  // everyone
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::PROCESS_ALL_GRAPH	=> RightsMap::G_RMASK,  // everyone
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::PROCESS_ALL_TABLE	=> RightsMap::G_RMASK,  // everyone
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::INSERT_VALUE			=> RightsMap::SA_RMASK,  // only super-admin
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::INSERT_GRAPH			=> RightsMap::SA_RMASK,  // only super-admin
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::INSERT_TABLE			=> RightsMap::SA_RMASK,  // only super-admin
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::UPDATE_VALUE			=> RightsMap::SA_RMASK,  // only super-admin
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::UPDATE_GRAPH			=> RightsMap::SA_RMASK,  // only super-admin
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::UPDATE_TABLE			=> RightsMap::SA_RMASK,  // only super-admin
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::DELETE				=> RightsMap::SA_RMASK,  // only super-admin
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::DISABLE				=> RightsMap::SA_RMASK,  // only super-admin
+				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::ENABLE				=> RightsMap::SA_RMASK,  // only super-admin
+
 				),
 				false // disable ui must be true in production version
 			);
@@ -99,6 +121,7 @@ class KernelModule extends AbstractModule {
 		parent::addDBObject(new UserDataDBObject($this));
 		parent::addDBObject(new OVHWrapperDBObject($this));
 		parent::addDBObject(new LogDBObject($this));
+		parent::addDBObject(new IndicatorDBObject($this));
 		// -- add module specific ui
 		parent::addUI('Home','home');	// refer to couple (home.js, home.css)
 		parent::addUI('Login','login');	// refer to couple (login.js, login.css)

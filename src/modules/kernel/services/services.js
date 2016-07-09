@@ -445,3 +445,181 @@ var UserServicesInterface = new function() {
             successHandler); 
   }
 }
+
+// ----------------------- INDICATOR INTERFACE SERVICES CLASS ----------------------------------
+
+var IndicatorServicesInterface = new function() {
+
+  this.meta = {
+    // --- (object)
+    OBJECT: 'indicator',
+    // --- (actions)
+    ACTION: {
+      GET_BY_ID:'byid',
+      GET_ALL:'all',
+      GET_ALL_VALUE:'allval',
+      GET_ALL_GRAPH:'allgra',
+      GET_ALL_TABLE:'alltab',
+      PROCESS_BY_ID:'procbyid',
+      PROCESS_ALL:'procall',
+      PROCESS_ALL_VALUE:'procval',
+      PROCESS_ALL_GRAPH:'procgra',
+      PROCESS_ALL_TABLE:'proctab',
+      INSERT_VALUE:'insval',
+      INSERT_GRAPH:'insgra',
+      INSERT_TABLE:'instab',
+      UPDATE_VALUE:'updval',
+      UPDATE_GRAPH:'updgra',
+      UPDATE_TABLE:'updtab',
+      DISABLE: 'disable',
+      ENABLE: 'enable',
+      DELETE: 'delete'
+    }
+  };
+
+  this.getAll = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL, 
+            {}, 
+            successHandler); 
+  }
+
+  this.getById = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_BY_ID, 
+            { id: id }, 
+            successHandler); 
+  }
+
+  this.getAllValue = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_VALUE, 
+            {}, 
+            successHandler); 
+  }
+
+  this.getAllGraph = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_GRAPH, 
+            {}, 
+            successHandler); 
+  }
+
+  this.getAllTable = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_TABLE, 
+            {}, 
+            successHandler); 
+  }
+
+  this.insertValue = function(procedure, module, description, params, expectedResult, unit, expectedGreater, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.INSERT_VALUE, 
+            {
+              procedure: procedure,
+              module: module,
+              description: description,
+              params: params,
+              expectedResult: expectedResult,
+              unit: unit,
+              expectedGreater: expectedGreater
+            },
+            successHandler); 
+  }
+
+  this.insertGraph = function(procedure, module, description, params, graphType, legend, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.INSERT_GRAPH, 
+            {
+              procedure: procedure,
+              module: module,
+              description: description,
+              params: params,
+              graphType: graphType,
+              legend: legend
+            },
+            successHandler); 
+  }
+
+  this.insertTable = function(procedure, module, description, params, labelColumn, resultColumn, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.INSERT_TABLE, 
+            {
+              procedure: procedure,
+              module: module,
+              description: description,
+              params: params,
+              labelColumn: labelColumn,
+              resultColumn: resultColumn
+            },
+            successHandler); 
+  }
+
+  this.updateValue = function(id, procedure, module, description, params, expectedResult, unit, expectedGreater, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.UPDATE_VALUE, 
+            {
+              id: id,
+              procedure: procedure,
+              module: module,
+              description: description,
+              params: params,
+              expectedResult: expectedResult,
+              unit: unit,
+              expectedGreater: expectedGreater
+            }, 
+            successHandler); 
+  }
+
+  this.updateGraph = function(id, procedure, module, description, params, graphType, legend, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.UPDATE_GRAPH, 
+            {
+              id: id,
+              procedure: procedure,
+              module: module,
+              description: description,
+              params: params,
+              graphType: graphType,
+              legend: legend
+            }, 
+            successHandler); 
+  }
+
+  this.updateTable = function(id, procedure, module, description, params, labelColumn, resultColumn, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.UPDATE_TABLE, 
+            {
+              id: id,
+              procedure: procedure,
+              module: module,
+              description: description,
+              params: params,
+              labelColumn: labelColumn,
+              resultColumn: resultColumn
+            }, 
+            successHandler); 
+  }
+
+  this.disable = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.DISABLE, 
+            { id: id }, 
+            successHandler); 
+  }
+
+  this.enable = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.ENABLE, 
+            { id: id }, 
+            successHandler); 
+  }
+
+  this.delete = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.DELETE, 
+            { id: id }, 
+            successHandler); 
+  }
+
+}
