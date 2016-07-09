@@ -858,7 +858,6 @@ class UserDataServices extends AbstractObjectServices {
 			}
 			$query = DBProcedure::GetCALLQueryByName($indicator[UserDataDBObject::COL_PROCEDURE], $params);
 			$result = parent::getDBConnection()->RawQuery($query);
-			//var_dump($result);
 			if($result != null && !empty($result)) {
 				foreach($result as $r) {
 					$finalRow = array_merge($r, $indicator);
@@ -1008,9 +1007,12 @@ class UserDataServices extends AbstractObjectServices {
 
 		// -- init ETIC indicators table --------------------------------------------------------------------
 		$indicators = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
-			"division" 	=> array("Répartition des membres par pôle", UserDataDBObject::PROC_STATS_UDATA_DIVISION, NULL, NULL),
-			"ag" 		=> array("Présences aux AG sur membres recrutés", UserDataDBObject::PROC_STATS_AG_PRESENCE, NULL, NULL),
-			"pc"		=> array("Taux de membres au PC", UserDataDBObject::PROC_STATS_PC_RATE, NULL, "0.3")
+			"division" 		=> array("Répartition des membres par pôle", UserDataDBObject::PROC_STATS_UDATA_DIVISION, NULL, NULL),
+			"ag" 			=> array("Présences aux AG sur membres recrutés", UserDataDBObject::PROC_STATS_AG_PRESENCE, NULL, NULL),
+			"pc"			=> array("Taux de membres au PC", UserDataDBObject::PROC_STATS_PC_RATE, NULL, "0.3"),
+			"inscription" 	=> array("Inscriptions par mois", UserDataDBObject::PROC_STATS_INSCRIPTIONS, NULL, NULL),
+			"members"		=> array("Evolution des membres", UserDataDBObject::PROC_STATS_MEMBERS, NULL, NULL),
+			"invalid_admm"	=> array("Adhésions invalides par pôle", UserDataDBObject::PROC_INVALID_ADMM, NULL, NULL)
 		    );
 		// --- retrieve SQL query
 		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_INDICATORS)->GetINSERTQuery();
@@ -1083,6 +1085,9 @@ class UserDataDBObject extends AbstractDBObject {
 	const PROC_STATS_UDATA_DIVISION 	= "stats_udata_division";
 	const PROC_STATS_AG_PRESENCE 		= "stats_udata_ag";
 	const PROC_STATS_PC_RATE			= "stats_udata_pc";
+	const PROC_STATS_INSCRIPTIONS		= "stats_udata_inscription";
+	const PROC_STATS_MEMBERS			= "stats_udata_members";
+	const PROC_INVALID_ADMM				= "stats_invalid_admm";
 	// -- procedures args
 	const ARG_PC_RATE			= "pc_rate";
 	// -- attributes
@@ -1216,19 +1221,76 @@ class UserDataDBObject extends AbstractDBObject {
 
 			SELECT COUNT(*) INTO count_pc
 			FROM `dol_udata`
-			WHERE insa_dept='PC';
+			WHERE insa_dept='PC' AND disabled=0;
 
 			SELECT COUNT(*) INTO count_total
-			FROM `dol_udata`;
+			FROM `dol_udata`
+			WHERE disabled=0;
 
-			SELECT count_pc/count_total AS `pc_rate`;");
-		//$stats_udata_pc->AddParam(DBProcedure::DP_PARAM_OUT, UserDataDBObject::ARG_PC_RATE, DBProcedure::DP_FLOAT);
+			SELECT count_pc/count_total AS `pc_rate`;"
+		);
+
+		$stats_udata_inscription = new DBProcedure(UserDataDBObject::PROC_STATS_INSCRIPTIONS,
+			"SELECT DATE_FORMAT(creation_date, '%Y-%m') AS month, COUNT(*) as count
+				FROM `dol_udata`
+				GROUP BY DATE_FORMAT(creation_date, '%Y-%m')
+				ORDER BY creation_date
+				LIMIT 12;"
+		);
+
+		$stats_udata_members = new DBProcedure(UserDataDBObject::PROC_STATS_MEMBERS,
+			"SET @runtot:=0;
+				SELECT
+				   q1.date,
+				   q1.count,
+				   (@runtot := @runtot + q1.count) AS total
+				FROM
+				   (SELECT
+				       `creation_date` AS date,
+				       COUNT(*) AS count
+				    FROM  `dol_udata`
+				    WHERE  disabled=0
+				    GROUP  BY date
+				    ORDER  BY date) AS q1;"
+		);
+
+		$stats_invalid_admm = new DBProcedure(UserDataDBObject::PROC_INVALID_ADMM,
+		"SELECT division, COUNT(*) as invalid_count
+			FROM
+
+			(SELECT a.user_id, division, end_date FROM
+
+			(SELECT user_id, division FROM
+			(SELECT m1.*
+			FROM `dol_udata_position` m1 LEFT JOIN `dol_udata_position` m2
+			 ON (m1.user_id = m2.user_id AND m1.since < m2.since)
+			WHERE m2.id IS NULL
+			) AS a
+			JOIN (SELECT label, division FROM `com_position`) AS b ON b.label=a.position) AS a
+
+			LEFT OUTER JOIN
+
+			(SELECT user_id, end_date
+			FROM
+			(SELECT m1.*
+			FROM `dol_adm_membership` m1 LEFT JOIN `dol_adm_membership` m2
+			 ON (m1.user_id = m2.user_id AND m1.end_date < m2.end_date)
+			WHERE m2.id IS NULL) AS a
+			WHERE a.end_date > NOW() AND fee=1 AND form=1 AND certif=1) AS b
+
+			ON a.user_id = b.user_id) AS a
+			WHERE end_date IS NULL
+			GROUP BY division;"
+		);
 
 
 		// -- add procedures
 		parent::addProcedure($stats_udata_division);
 		parent::addProcedure($stats_udata_ag);
 		parent::addProcedure($stats_udata_pc);
+		parent::addProcedure($stats_udata_inscription);
+		parent::addProcedure($stats_udata_members);
+		parent::addProcedure($stats_invalid_admm);
 
 	}
 

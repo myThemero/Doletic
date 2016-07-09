@@ -578,6 +578,9 @@ var DoleticUIModule = new function() {
 				// --- BUILD GRAPHS
 				var divisionStats = data.object.division;
 				var agStats = data.object.ag;
+				var inscStats = data.object.inscription;
+				var memberStats = data.object.members;
+				$('#div_title').html(divisionStats.description[0]);
 				Plotly.plot("div_graph", [{
 						values: divisionStats.count,
 						labels: divisionStats.division,
@@ -587,6 +590,7 @@ var DoleticUIModule = new function() {
 						margin: { t:0 }
 					}
 				);
+				$('#ag_title').html(agStats.description[0]);
 				Plotly.plot("ag_graph", [{
 						y: agStats.count,
 						x: agStats.ag,
@@ -604,12 +608,47 @@ var DoleticUIModule = new function() {
 						barmode: 'stack'
 					}
 				);
+				$('#insc_title').html(inscStats.description[0]);
+				Plotly.plot("insc_graph", [{
+						y: inscStats.count,
+						x: inscStats.month,
+						name: 'Recrutés',
+						type: 'bar'
+					}], 
+					{
+						margin: { t:0 },
+					}
+				);
+				Plotly.plot("insc_graph", [{
+						y: memberStats.total,
+						x: memberStats.date,
+						name: 'Cumul',
+						type: 'scatter'
+					}], 
+					{
+						margin: { t:0 },
+					}
+				);
 
-				// --- FILL TABLE
+				// --- FILL INVALID ADMM TABLE
+				var invalidAdmm = data.object.invalid_admm;
+				var invalidHtml = "";
+				for(var i=0; i<invalidAdmm.division.length; i++) {
+					invalidHtml += "<tr><td>" + invalidAdmm.division[i] + "</td><td>" + invalidAdmm.invalid_count[i] + "</td></tr>"
+				}
+				$('#invalid_body').html(invalidHtml);
+
+				// --- FILL INDICATOR TABLE
 				var pcStats = data.object.pc;
 				var tbody = $('#indicators_body');
 				tbody.html("");
-				tbody.append("<td>" + pcStats.description + "</td><td>" + Number(pcStats.pc_rate)*100 + "%</td><td>" + Number(pcStats.expected_result)*100 + "%</td>");
+				var tr = "<tr class=";
+				if(pcStats.pc_rate >= pcStats.expected_result) {
+					tr += '"positive">';
+				} else {
+					tr +='"negative">';
+				}
+				tbody.append(tr + "<td>" + pcStats.description + "</td><td>" + Number(pcStats.pc_rate)*100 + "%</td><td>" + Number(pcStats.expected_result)*100 + "%</td></tr>");
 
 			} else {
 				// use default service service error handler
