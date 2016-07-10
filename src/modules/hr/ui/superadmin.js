@@ -23,6 +23,8 @@ var DoleticUIModule = new function() {
 		$('#det').hide();
 		//Draw graphs
 		DoleticUIModule.drawGraphs();
+		DoleticUIModule.fillValueIndicators();
+		DoleticUIModule.fillTableIndicators();
 		// fill user and team list. User first to fill user_list global array
 		$.when($.ajax(DoleticUIModule.fillUsersList())).then(DoleticUIModule.fillTeamsList());
 		// fill country field
@@ -571,98 +573,24 @@ var DoleticUIModule = new function() {
 	}
 
 	this.drawGraphs = function() {
-		IndicatorServicesInterface.processAllValueByModule('hr', function(data) {
-			console.log(data.object);
+		IndicatorServicesInterface.processAllGraphByModule('hr', function(data) {
+			//console.log(data.object);
+			DoleticMasterInterface.drawGraphs(data.object, 'graphs');
 		});
-		/*UserDataServicesInterface.getGlobalStats(function(data) {
-			// if no service error
-			if(data.code == 0 && data.object != "[]") {
-				console.log(data.object);
-				// --- BUILD GRAPHS
-				var divisionStats = data.object.division;
-				var agStats = data.object.ag;
-				var inscStats = data.object.inscription;
-				var memberStats = data.object.members;
-				$('#div_title').html(divisionStats.description[0]);
-				Plotly.plot("div_graph", [{
-						values: divisionStats.count,
-						labels: divisionStats.division,
-						type: 'pie'
-					}], 
-					{
-						margin: { t:0 }
-					}
-				);
-				$('#ag_title').html(agStats.description[0]);
-				Plotly.plot("ag_graph", [{
-						y: agStats.count,
-						x: agStats.ag,
-						name: 'Recrutés',
-						type: 'bar'
-					},
-					{
-						y: agStats.presence,
-						x: agStats.ag,
-						name: 'Présents',
-						type: 'bar'
-					}], 
-					{
-						margin: { t:0 },
-						barmode: 'stack'
-					}
-				);
-				$('#insc_title').html(inscStats.description[0]);
-				Plotly.plot("insc_graph", [{
-						y: inscStats.count,
-						x: inscStats.month,
-						name: 'Recrutés',
-						type: 'bar'
-					}], 
-					{
-						margin: { t:0 },
-					}
-				);
-				Plotly.plot("insc_graph", [{
-						y: memberStats.total,
-						x: memberStats.date,
-						name: 'Cumul',
-						type: 'scatter'
-					}], 
-					{
-						margin: { t:0 },
-					}
-				);
+	}
 
-				// --- FILL INVALID ADMM TABLE
-				var invalidAdmm = data.object.invalid_admm;
-				var invalidHtml = "";
-				for(var i=0; i<invalidAdmm.division.length; i++) {
-					invalidHtml += '<tr><td><a href="#memlist" class="invadmm_link">' + invalidAdmm.division[i] + "</a></td><td>" + invalidAdmm.invalid_count[i] + "</td></tr>"
-				}
-				$('#invalid_body').html(invalidHtml);
-				$('.invadmm_link').click(function() {
-					$('#user_table_Pôle').dropdown("set selected", $(this).html()).change();;
-					$('#memlist').click();
-				});
+	this.fillValueIndicators = function() {
+		IndicatorServicesInterface.processAllValueByModule('hr', function(data) {
+			//console.log(data.object);
+			DoleticMasterInterface.fillValueIndicators(data.object, 'indicators_body');
+		});
+	}
 
-				// --- FILL INDICATOR TABLE
-				var pcStats = data.object.pc;
-				var tbody = $('#indicators_body');
-				tbody.html("");
-				var tr = "<tr class=";
-				if(pcStats.result >= pcStats.expected_result && pcStats.expected_greater || pcStats.result <= pcStats.expected_result && !pcStats.expected_greater) {
-					tr += '"positive">';
-				} else {
-					tr +='"negative">';
-				}
-				tbody.append(tr + "<td>" + pcStats.description + "</td><td>" + Number(pcStats.result) + pcStats.expected_unit + "</td><td>" + Number(pcStats.expected_result) + pcStats.expected_unit + "</td></tr>");
-
-			} else {
-				// use default service service error handler
-				DoleticServicesInterface.handleServiceError(data);
-			}
-		});*/
-		
+	this.fillTableIndicators = function() {
+		IndicatorServicesInterface.processAllTableByModule('hr', function(data) {
+			console.log(data.object);
+			DoleticMasterInterface.fillTableIndicators(data.object, 'tables');
+		});
 	}
 
 	this.showUserDetails = function(userId) {

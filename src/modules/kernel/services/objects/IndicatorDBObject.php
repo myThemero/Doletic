@@ -1094,10 +1094,10 @@ class IndicatorServices extends AbstractObjectServices {
 		// -- init ETIC indicators table --------------------------------------------------------------------
 		$indicators = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
 			array(IndicatorDBObject::PROC_STATS_UDATA_DIVISION, "hr", "Répartition des membres par pôle", Indicator::GRAPH_TYPE, NULL, 'pie', NULL, "division_graph"),
-			array(IndicatorDBObject::PROC_STATS_AG_PRESENCE, "hr", "Présences aux AG sur membres recrutés", Indicator::GRAPH_TYPE, NULL, 'bar', "Présents", "ag_graph"),
+			array(IndicatorDBObject::PROC_STATS_AG_PRESENCE, "hr", "Présences aux AG sur membres recrutés", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés;Présents", "ag_graph"),
 			array(IndicatorDBObject::PROC_STATS_PC_RATE, "hr", "Taux de membres au PC", Indicator::VALUE_TYPE, NULL, 30, '%', 1),
-			array(IndicatorDBObject::PROC_STATS_AG_PRESENCE, "hr", "Inscriptions par mois", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés", "ag_graph"),
-			array(IndicatorDBObject::PROC_STATS_MEMBERS, "hr", "Evolution des membres", Indicator::GRAPH_TYPE, NULL, "scatter", "Cumul", "members_graph"),
+			array(IndicatorDBObject::PROC_STATS_INSCRIPTIONS, "hr", "Inscriptions par mois", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés", "insc_graph"),
+			//array(IndicatorDBObject::PROC_STATS_MEMBERS, "hr", "Evolution des membres", Indicator::GRAPH_TYPE, NULL, "scatter", "Cumul", "members_graph"),
 			array(IndicatorDBObject::PROC_INVALID_ADMM, "hr", "Adhésions invalides par pôle", Indicator::TABLE_TYPE, NULL, "Pôle", "Nombre")
 		    );
 		foreach ($indicators as $attr) {

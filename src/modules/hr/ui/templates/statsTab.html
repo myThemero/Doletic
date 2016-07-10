@@ -3,58 +3,10 @@
         <div class="nine wide center aligned column"> 
             <div id="refresh_indicators" class="ui olive button" onClick="DoleticUIModule.drawGraphs();">Actualiser les indicateurs</div> 
             <div class="row" id="graphs">
-                <div class="ui horizontal divider" id="div_title"> 
-                    
-                </div> 
-                <div class="plotly-graph" id="div_graph">
-                    
-                </div>
-                <div class="ui horizontal divider" id="ag_title"> 
-                    
-                </div> 
-                <div class="plotly-graph" id="ag_graph">
-                    
-                </div>
-                <div class="ui horizontal divider" id="insc_title"> 
-                    
-                </div> 
-                <div class="plotly-graph" id="insc_graph">
-                    
-                </div>
             </div>
         </div>
         <div class="seven wide column"> 
-            <div class="ui horizontal divider"> 
-                Adhésions invalides (administrateurs)
-            </div>
-            <div class="row"> 
-                <table class="ui very basic single line striped table">
-                    <thead>
-                        <tr>
-                            <th>Pôle</th>
-                            <th>Nombre</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invalid_body">
-                        <!-- INVALID MEMBERSHIPS LIST GOES THERE -->
-                    </tbody>
-                </table>
-            </div>
-            <div class="ui horizontal divider"> 
-                Adhésions invalides (intervenants)
-            </div>
-            <div class="row">
-                <table class="ui very basic single line striped table">
-                    <thead>
-                        <tr>
-                            <th>Département INSA</th>
-                            <th>Nombre</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invalid_int_body">
-                        <!-- INVALID MEMBERSHIPS LIST GOES THERE -->
-                    </tbody>
-                </table>
+            <div id="tables">
             </div>
             <div class="ui horizontal divider"> 
                 Indicateurs RH

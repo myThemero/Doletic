@@ -423,6 +423,85 @@ var DoleticMasterInterface = new function() {
     });
   }
 
+  this.drawGraphs = function(data, div_id) {
+    var container = $('#' + div_id);
+    for(var i = 0; i<data.length; i++) {
+      var html = '<div class="ui horizontal divider">' + data[i].description + '</div>'
+      html += '<div class="plotly-graph" id="' + data[i].graph_name + '"></div>'
+      container.append(html);
+      var dataSet = [];
+      var options = {};
+      switch(data[i].graph_type) {
+        case 'pie':
+          dataSet = [{
+            values: data[i].results[1],
+            labels: data[i].results[1],
+            type: 'pie'
+          }];
+          options = { margin: { t: 0 } };
+          break;
+        case 'bar':
+          for(var j=1; j<data[i].results.length; j++) {
+            dataSet.push({
+              y: data[i].results[j],
+              x: data[i].results[0],
+              name: data[i].legend[j-1],
+              type: 'bar'
+            });
+          }
+          options = { 
+            margin: { t: 0 },
+            barmode: 'stack'
+           };
+          break;
+
+        case 'scatter':
+          for(var j=1; j<data[i].results.length; j++) {
+            dataSet.push({
+              y: data[i].results[j],
+              x: data[i].results[0],
+              name: data[i].legend[j-1],
+              type: 'scatter'
+            });
+          }
+          options = { margin: { t: 0 } };
+          break;
+      }
+      Plotly.plot(data[i].graph_name, dataSet, options);
+    }
+  }
+
+  this.fillValueIndicators = function(data, tbody_id) {
+    var container = $('#' + tbody_id);
+    var html = "";
+    for(var i = 0 ; i<data.length; i++) {
+      var result = data[i].results[0][0];
+      var tr = "<tr class=";
+      if( result >= data[i].expected_result && data[i].expected_greater || result <= data[i].expected_result && !data[i].expected_greater) {
+        tr += '"positive">';
+      } else {
+        tr +='"negative">';
+      }
+      html += tr + "<td>" + data[i].description + "</td><td>" + Number(result) + data[i].unit + "</td><td>" + Number(data[i].expected_result) + data[i].unit + "</td></tr>"
+    }
+    container.html(html);
+  }
+
+  this.fillTableIndicators = function(data, div_id) {
+    var container = $('#' + div_id);
+    for(var i = 0; i<data.length; i++) {
+      var html = '<div class="ui horizontal divider">' + data[i].description + '</div>';
+      html += '<div class="row"><table class="ui very basic single line striped table"><thead><tr><th>';
+      html += data[i].label_column + '</th><th>' + data[i].result_column + '</th></tr></thead><tbody id="indictab_' + i + '"></tbody></table></div>';
+      container.append(html);
+      var rows = "";
+      for(var j = 0; j<data[i].results[0].length; j++) {
+        rows += '<tr><td>' + data[i].results[0][j] + '</td><td>' + data[i].results[1][j] + '</td></tr>';
+      }
+      $('#indictab_' + i).html(rows);
+    }
+  }
+
   this.toggleSidebar = function(id) {
     $(".ui.sidebar.visible").sidebar("toggle");
     $("#"+id).sidebar("toggle");
