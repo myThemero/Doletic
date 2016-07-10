@@ -154,7 +154,6 @@ var UserDataServicesInterface = new function() {
       DELETE:"delete",
       DISABLE:"disable",
       ENABLE:"enable",
-      STATS:"stats"
     }
   };
 
@@ -313,10 +312,6 @@ var UserDataServicesInterface = new function() {
             successHandler); 
   }
 
-  this.getGlobalStats = function(successHandler) {
-    return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.STATS, {}, successHandler); 
-  }
-
 }
 
 // ----------------------- USER INTERFACE SERVICES CLASS ----------------------------------
@@ -457,14 +452,22 @@ var IndicatorServicesInterface = new function() {
     ACTION: {
       GET_BY_ID:'byid',
       GET_ALL:'all',
+      GET_ALL_BY_MODULE:'allbymod',
       GET_ALL_VALUE:'allval',
       GET_ALL_GRAPH:'allgra',
       GET_ALL_TABLE:'alltab',
+      GET_ALL_VALUE_BY_MODULE:'allvalbymod',
+      GET_ALL_GRAPH_BY_MODULE:'allgrabymod',
+      GET_ALL_TABLE_BY_MODULE:'alltabbymod',
       PROCESS_BY_ID:'procbyid',
       PROCESS_ALL:'procall',
+      PROCESS_ALL_BY_MODULE:'procallbymod',
       PROCESS_ALL_VALUE:'procval',
       PROCESS_ALL_GRAPH:'procgra',
       PROCESS_ALL_TABLE:'proctab',
+      PROCESS_ALL_VALUE_BY_MODULE:'procvalbymod',
+      PROCESS_ALL_GRAPH_BY_MODULE:'procgrabymod',
+      PROCESS_ALL_TABLE_BY_MODULE:'proctabbymod',
       INSERT_VALUE:'insval',
       INSERT_GRAPH:'insgra',
       INSERT_TABLE:'instab',
@@ -484,9 +487,41 @@ var IndicatorServicesInterface = new function() {
             successHandler); 
   }
 
+  this.processAll = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_ALL, 
+            {}, 
+            successHandler); 
+  }
+
+  this.getAllByModule = function(module, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_BY_MODULE, 
+            {
+              module: module
+            }, 
+            successHandler); 
+  }
+
+  this.processAllByModule = function(module, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_ALL_BY_MODULE, 
+            {
+              module: module
+            }, 
+            successHandler); 
+  }
+
   this.getById = function(id, successHandler) {
     return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_BY_ID, 
+            { id: id }, 
+            successHandler); 
+  }
+
+  this.processById = function(id, successHandler) {
+    return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_BY_ID, 
             { id: id }, 
             successHandler); 
   }
@@ -498,9 +533,23 @@ var IndicatorServicesInterface = new function() {
             successHandler); 
   }
 
+  this.processAllValue = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_ALL_VALUE, 
+            {}, 
+            successHandler); 
+  }
+
   this.getAllGraph = function(successHandler) {
    return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_ALL_GRAPH, 
+            {}, 
+            successHandler); 
+  }
+
+  this.processAllGraph = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_ALL_GRAPH, 
             {}, 
             successHandler); 
   }
@@ -509,6 +558,67 @@ var IndicatorServicesInterface = new function() {
    return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_ALL_TABLE, 
             {}, 
+            successHandler); 
+  }
+
+  this.processAllTable = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_ALL_TABLE, 
+            {}, 
+            successHandler); 
+  }
+
+  this.getAllValueByModule = function(module, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_VALUE_BY_MODULE, 
+            {
+              module: module 
+            }, 
+            successHandler); 
+  }
+
+  this.processAllValueByModule = function(module, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_ALL_VALUE_BY_MODULE, 
+            {
+              module: module 
+            }, 
+            successHandler); 
+  }
+
+  this.getAllGraphByModule = function(module, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_GRAPH_BY_MODULE, 
+            {
+              module: module 
+            }, 
+            successHandler); 
+  }
+
+  this.processAllGraphByModule = function(module, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_ALL_GRAPH_BY_MODULE, 
+            {
+              module: module 
+            }, 
+            successHandler); 
+  }
+
+  this.getAllTableByModule = function(module, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_TABLE_BY_MODULE, 
+            {
+              module: module 
+            },
+            successHandler); 
+  }
+
+  this.processAllTableByModule = function(module, successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.PROCESS_ALL_TABLE_BY_MODULE, 
+            {
+              module: module 
+            }, 
             successHandler); 
   }
 

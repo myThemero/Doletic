@@ -106,7 +106,7 @@ class DB {
 		if($this->dbmanager->DebuggingModeEnabled()) {
 			var_dump("RawQuery:sql: " . $sql);
 		} else {
-			return $this->pdo->query($sql)->fetchAll();
+			return $this->pdo->query($sql)->fetchAll(PDO::FETCH_NUM);
 		}
 	}
 }

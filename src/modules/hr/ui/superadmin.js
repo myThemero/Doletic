@@ -571,7 +571,10 @@ var DoleticUIModule = new function() {
 	}
 
 	this.drawGraphs = function() {
-		UserDataServicesInterface.getGlobalStats(function(data) {
+		IndicatorServicesInterface.processAllValueByModule('hr', function(data) {
+			console.log(data.object);
+		});
+		/*UserDataServicesInterface.getGlobalStats(function(data) {
 			// if no service error
 			if(data.code == 0 && data.object != "[]") {
 				console.log(data.object);
@@ -658,7 +661,7 @@ var DoleticUIModule = new function() {
 				// use default service service error handler
 				DoleticServicesInterface.handleServiceError(data);
 			}
-		});
+		});*/
 		
 	}
 

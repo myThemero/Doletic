@@ -1004,31 +1004,6 @@ class UserDataServices extends AbstractObjectServices {
 			// --- execute SQL query
 			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
 		}
-
-		// -- init ETIC indicators table --------------------------------------------------------------------
-		$indicators = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
-			"division" 		=> array("Répartition des membres par pôle", UserDataDBObject::PROC_STATS_UDATA_DIVISION, NULL, NULL, NULL, NULL),
-			"ag" 			=> array("Présences aux AG sur membres recrutés", UserDataDBObject::PROC_STATS_AG_PRESENCE, NULL, NULL, NULL, NULL),
-			"pc"			=> array("Taux de membres au PC", UserDataDBObject::PROC_STATS_PC_RATE, NULL, "30", "%", 1),
-			"inscription" 	=> array("Inscriptions par mois", UserDataDBObject::PROC_STATS_INSCRIPTIONS, NULL, NULL, NULL, NULL),
-			"members"		=> array("Evolution des membres", UserDataDBObject::PROC_STATS_MEMBERS, NULL, NULL, NULL, NULL),
-			"invalid_admm"	=> array("Adhésions invalides par pôle", UserDataDBObject::PROC_INVALID_ADMM, NULL, NULL, NULL, NULL)
-		    );
-		// --- retrieve SQL query
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_INDICATORS)->GetINSERTQuery();
-		foreach ($indicators as $indicator => $attr) {
-			// --- create param array
-			$sql_params = array(":".UserDataDBObject::COL_LABEL => $indicator,
-								":".UserDataDBObject::COL_DESCRIPTION => $attr[0],
-								":".UserDataDBObject::COL_PROCEDURE => $attr[1],
-								":".UserDataDBObject::COL_PARAMS => $attr[2],
-								":".UserDataDBObject::COL_EXPECTED_RESULT => $attr[3],
-								":".UserDataDBObject::COL_EXPECTED_UNIT => $attr[4],
-								":".UserDataDBObject::COL_EXPECTED_GREATER => $attr[5]
-								);
-			// --- execute SQL query
-			parent::getDBConnection()->PrepareExecuteQuery($sql,$sql_params);
-		}
 	}
 
 }
@@ -1051,7 +1026,6 @@ class UserDataDBObject extends AbstractDBObject {
 	const TABL_COM_DIVISION		= "com_division";
 	const TABL_COM_POSITION		= "com_position";
 	const TABL_AG 				= "com_ag";
-	const TABL_INDICATORS		="dol_udata_indicators";
 	// --- columns
 	const COL_ID 				= "id";
 	const COL_USER_ID  			= "user_id";
@@ -1079,21 +1053,6 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_PRESENCE 			= "presence";
 	const COL_DIVISION			= "division";
 	const COL_DISABLED			= "disabled";
-	const COL_PROCEDURE			= "procedure";
-	const COL_PARAMS			= "params";
-	const COL_EXPECTED_RESULT	= "expected_result";
-	const COL_EXPECTED_UNIT		= "expected_unit";
-	const COL_EXPECTED_GREATER	= "expected_greater";
-	const COL_DESCRIPTION		= "description";
-	// -- procedures
-	const PROC_STATS_UDATA_DIVISION 	= "stats_udata_division";
-	const PROC_STATS_AG_PRESENCE 		= "stats_udata_ag";
-	const PROC_STATS_PC_RATE			= "stats_udata_pc";
-	const PROC_STATS_INSCRIPTIONS		= "stats_udata_inscription";
-	const PROC_STATS_MEMBERS			= "stats_udata_members";
-	const PROC_INVALID_ADMM				= "stats_invalid_admm";
-	// -- procedures args
-	const ARG_PC_RATE			= "pc_rate";
 	// -- attributes
 
 	// -- functions
@@ -1167,16 +1126,6 @@ class UserDataDBObject extends AbstractDBObject {
 			->AddForeignKey(UserDataDBObject::TABL_USER_POSITION.'_fk1', UserDataDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE)
 			->AddForeignKey(UserDataDBObject::TABL_USER_POSITION.'_fk2', UserDataDBObject::COL_POSITION, UserDataDBObject::TABL_COM_POSITION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 
-		$dol_udata_indicators = new DBTable(UserDataDBObject::TABL_INDICATORS);
-		$dol_udata_indicators
-			->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true)
-			->AddColumn(UserDataDBObject::COL_DESCRIPTION, DBTable::DT_VARCHAR, 255, false)
-			->AddColumn(UserDataDBObject::COL_PROCEDURE, DBTable::DT_VARCHAR, 255, false)
-			->AddColumn(UserDataDBObject::COL_PARAMS, DBTable::DT_VARCHAR, 255)
-			->AddColumn(UserDataDBObject::COL_EXPECTED_RESULT, DBTable::DT_VARCHAR, 255)
-			->AddColumn(UserDataDBObject::COL_EXPECTED_UNIT, DBTable::DT_VARCHAR, 255)
-			->AddColumn(UserDataDBObject::COL_EXPECTED_GREATER, DBTable::DT_INT, 0);
-
 		// -- add tables
 		parent::addTable($com_gender);
 		parent::addTable($com_country);
@@ -1187,116 +1136,6 @@ class UserDataDBObject extends AbstractDBObject {
 		parent::addTable($com_ag);
 		parent::addTable($dol_udata);
 		parent::addTable($dol_udata_position);
-		parent::addTable($dol_udata_indicators);
-
-		// -- create procedures
-		// -- UserData by division
-		$sql_params = array(":".UserDataDBObject::COL_DISABLED => "0");
-		// create sql query
-		$sql_query = DBTable::GetJOINQuery(
-			DBTable::GetJOINQuery(
-				$this->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery(array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_DISABLED)), 
-				$this->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery()
-			),
-			$this->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(),
-			array(UserDataDBObject::COL_POSITION, UserDataDBObject::COL_LABEL),
-			DBTable::DT_INNER,
-			"",
-			true,
-			UserDataDBObject::COL_DIVISION
-		);
-		$stats_udata_division = new DBProcedure(UserDataDBObject::PROC_STATS_UDATA_DIVISION, $sql_query);
-		$stats_udata_division->replaceSQLParams($sql_params);
-
-		// -- UserData by AG
-		$stats_udata_ag = new DBProcedure(UserDataDBObject::PROC_STATS_AG_PRESENCE,
-			"SELECT b.ag, count, presence FROM(
-				SELECT 
-					ag, 
-				    COUNT(*) AS count  
-				FROM `dol_udata`
-				GROUP BY ag) AS a
-				RIGHT OUTER JOIN (SELECT *
-				      FROM `com_ag`) AS b
-				ON a.ag = b.ag;"
-		);
-
-		$stats_udata_pc = new DBProcedure(UserDataDBObject::PROC_STATS_PC_RATE,
-		"DECLARE count_pc INT DEFAULT 0;
-			DECLARE count_total INT DEFAULT 0;
-
-			SELECT COUNT(*) INTO count_pc
-			FROM `dol_udata`
-			WHERE insa_dept='PC' AND disabled=0;
-
-			SELECT COUNT(*) INTO count_total
-			FROM `dol_udata`
-			WHERE disabled=0;
-
-			SELECT 100*count_pc/count_total AS `result`;"
-		);
-
-		$stats_udata_inscription = new DBProcedure(UserDataDBObject::PROC_STATS_INSCRIPTIONS,
-			"SELECT DATE_FORMAT(creation_date, '%Y-%m') AS month, COUNT(*) as count
-				FROM `dol_udata`
-				GROUP BY DATE_FORMAT(creation_date, '%Y-%m')
-				ORDER BY creation_date
-				LIMIT 12;"
-		);
-
-		$stats_udata_members = new DBProcedure(UserDataDBObject::PROC_STATS_MEMBERS,
-			"SET @runtot:=0;
-				SELECT
-				   q1.date,
-				   q1.count,
-				   (@runtot := @runtot + q1.count) AS total
-				FROM
-				   (SELECT
-				       `creation_date` AS date,
-				       COUNT(*) AS count
-				    FROM  `dol_udata`
-				    WHERE  disabled=0
-				    GROUP  BY date
-				    ORDER  BY date) AS q1;"
-		);
-
-		$stats_invalid_admm = new DBProcedure(UserDataDBObject::PROC_INVALID_ADMM,
-		"SELECT division, COUNT(*) as invalid_count
-			FROM
-
-			(SELECT a.user_id, division, end_date FROM
-
-			(SELECT user_id, division FROM
-			(SELECT m1.*
-			FROM `dol_udata_position` m1 LEFT JOIN `dol_udata_position` m2
-			 ON (m1.user_id = m2.user_id AND m1.since < m2.since)
-			WHERE m2.id IS NULL
-			) AS a
-			JOIN (SELECT label, division FROM `com_position`) AS b ON b.label=a.position) AS a
-
-			LEFT OUTER JOIN
-
-			(SELECT user_id, end_date
-			FROM
-			(SELECT m1.*
-			FROM `dol_adm_membership` m1 LEFT JOIN `dol_adm_membership` m2
-			 ON (m1.user_id = m2.user_id AND m1.end_date < m2.end_date)
-			WHERE m2.id IS NULL) AS a
-			WHERE a.end_date > NOW() AND fee=1 AND form=1 AND certif=1) AS b
-
-			ON a.user_id = b.user_id) AS a
-			WHERE end_date IS NULL
-			GROUP BY division;"
-		);
-
-
-		// -- add procedures
-		parent::addProcedure($stats_udata_division);
-		parent::addProcedure($stats_udata_ag);
-		parent::addProcedure($stats_udata_pc);
-		parent::addProcedure($stats_udata_inscription);
-		parent::addProcedure($stats_udata_members);
-		parent::addProcedure($stats_invalid_admm);
 
 	}
 
