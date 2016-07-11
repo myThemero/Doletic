@@ -1098,7 +1098,8 @@ class IndicatorServices extends AbstractObjectServices {
 			array(IndicatorDBObject::PROC_STATS_PC_RATE, "hr", "Taux de membres au PC", Indicator::VALUE_TYPE, NULL, 30, '%', 1),
 			array(IndicatorDBObject::PROC_STATS_INSCRIPTIONS, "hr", "Inscriptions par mois", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés", "insc_graph"),
 			//array(IndicatorDBObject::PROC_STATS_MEMBERS, "hr", "Evolution des membres", Indicator::GRAPH_TYPE, NULL, "scatter", "Cumul", "members_graph"),
-			array(IndicatorDBObject::PROC_INVALID_ADMM, "hr", "Adhésions invalides par pôle", Indicator::TABLE_TYPE, NULL, "Pôle", "Nombre")
+			array(IndicatorDBObject::PROC_INVALID_ADMM, "hr", "Adhésions administrateur invalides", Indicator::TABLE_TYPE, NULL, "Pôle", "Nombre"),
+			array(IndicatorDBObject::PROC_INVALID_INTM, "hr", "Adhésions intervenant invalides", Indicator::TABLE_TYPE, NULL, "Département INSA", "Nombre")
 		    );
 		foreach ($indicators as $attr) {
 			switch($attr[3]) {
@@ -1175,6 +1176,7 @@ class IndicatorDBObject extends AbstractDBObject {
 	const PROC_STATS_INSCRIPTIONS		= "stats_udata_inscription";
 	const PROC_STATS_MEMBERS			= "stats_udata_members";
 	const PROC_INVALID_ADMM				= "stats_invalid_admm";
+	const PROC_INVALID_INTM				= "stats_invalid_intm";
 	// -- functions
 
 	public function __construct($module) {
@@ -1308,6 +1310,21 @@ class IndicatorDBObject extends AbstractDBObject {
 			GROUP BY division;"
 		);
 
+		$stats_invalid_intm = new DBProcedure(IndicatorDBObject::PROC_INVALID_INTM,
+			"SELECT insa_dept, COUNT(*) AS count FROM(
+			    SELECT user_id, insa_dept
+			    FROM dol_udata
+				WHERE disabled=0) AS a
+
+			NATURAL JOIN
+
+			(SELECT user_id, start_date
+			FROM dol_int_membership
+			WHERE fee=0 OR form=0 OR certif=0 OR rib=0 OR identity=0) as b
+
+			GROUP BY insa_dept;"
+		);
+
 
 		// -- add procedures
 		parent::addProcedure($stats_udata_division);
@@ -1316,6 +1333,7 @@ class IndicatorDBObject extends AbstractDBObject {
 		parent::addProcedure($stats_udata_inscription);
 		parent::addProcedure($stats_udata_members);
 		parent::addProcedure($stats_invalid_admm);
+		parent::addProcedure($stats_invalid_intm);
 	}
 
 	/**

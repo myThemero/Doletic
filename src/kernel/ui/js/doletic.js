@@ -496,7 +496,7 @@ var DoleticMasterInterface = new function() {
       container.append(html);
       var rows = "";
       for(var j = 0; j<data[i].results[0].length; j++) {
-        rows += '<tr><td>' + data[i].results[0][j] + '</td><td>' + data[i].results[1][j] + '</td></tr>';
+        rows += '<tr><td><a href="#" class="indicval_label">' + data[i].results[0][j] + '</a></td><td>' + data[i].results[1][j] + '</td></tr>';
       }
       $('#indictab_' + i).html(rows);
     }
