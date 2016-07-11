@@ -435,7 +435,7 @@ var DoleticMasterInterface = new function() {
         case 'pie':
           dataSet = [{
             values: data[i].results[1],
-            labels: data[i].results[1],
+            labels: data[i].results[0],
             type: 'pie'
           }];
           options = { margin: { t: 0 } };

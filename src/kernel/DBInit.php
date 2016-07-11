@@ -175,6 +175,18 @@ class FakeDataFunction extends AbstractFunction {
 					UserDataServices::PARAM_AG 		=> "2015-10-04",
 					UserDataServices::PARAM_POSITION 		=> "Trésorier"
 						));
+
+		$kernel->GetDBObject(IntMembershipDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+				->GetResponseData(IntMembershipServices::INSERT, array(
+					IntMembershipServices::PARAM_USER				=> 1,
+					IntMembershipServices::PARAM_START				=> "2016-02-02",
+					IntMembershipServices::PARAM_FEE				=> 0,
+					IntMembershipServices::PARAM_FORM				=> 1,
+					IntMembershipServices::PARAM_CERTIF				=> 1,
+					IntMembershipServices::PARAM_RIB				=> 1,
+					IntMembershipServices::PARAM_IDENTITY			=> 0
+					));
+
 		$kernel->GetDBObject(TeamDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
 				->GetResponseData(TeamServices::INSERT, array(
 					TeamServices::PARAM_LEADER_ID 			=> 1,
