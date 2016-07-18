@@ -138,6 +138,9 @@ var UserDataServicesInterface = new function() {
       GET_USER_DATA_BY_ID:"byidud",
       GET_USER_LAST_POS:"lastpos",
       GET_ALL_USER_DATA:"allud",
+      GET_ALL_BY_DIV:"allbydiv",
+      GET_ALL_BY_POS:"allbypos",
+      GET_ALL_BY_DPT:"allbydpt",
       GET_ALL_GENDERS:"allg",
       GET_ALL_COUNTRIES:"allc",
       GET_ALL_INSA_DEPTS:"alldept",
@@ -159,6 +162,30 @@ var UserDataServicesInterface = new function() {
 
   this.getAll = function(successHandler) {
    return DoleticServicesInterface.callService(this.meta.OBJECT,this.meta.ACTION.GET_ALL_USER_DATA,{},successHandler); 
+  }
+
+  this.getAllByDivision = function(division, successHandler) {
+   return DoleticServicesInterface.callService(this.meta.OBJECT,this.meta.ACTION.GET_ALL_BY_DIV,
+     {
+        division: division
+     },
+     successHandler); 
+  }
+
+  this.getAllByPosition = function(position, successHandler) {
+   return DoleticServicesInterface.callService(this.meta.OBJECT,this.meta.ACTION.GET_ALL_BY_POS,
+      {
+        position: position
+      },
+      successHandler); 
+  }
+
+  this.getAllByDept = function(insaDept, successHandler) {
+   return DoleticServicesInterface.callService(this.meta.OBJECT,this.meta.ACTION.GET_ALL_BY_DPT,
+      {
+        insaDept: insaDept
+      },
+      successHandler); 
   }
 
   this.getAllGenders = function(successHandler) {

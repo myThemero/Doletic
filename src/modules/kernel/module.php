@@ -74,6 +74,9 @@ class KernelModule extends AbstractModule {
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_USER_LAST_POS 		=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_USER_RG_CODE 		=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_USER_DATA 		=> RightsMap::G_RMASK,	// everyone
+				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_BY_DIV 		=> RightsMap::G_RMASK,	// everyone
+				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_BY_POS 		=> RightsMap::G_RMASK,	// everyone
+				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_BY_DPT 		=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_GENDERS 		=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_COUNTRIES 		=> RightsMap::G_RMASK,	// everyone
 				UserDataDBObject::OBJ_NAME.':'.UserDataServices::GET_ALL_INSA_DEPTS 	=> RightsMap::G_RMASK,	// everyone

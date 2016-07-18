@@ -588,7 +588,7 @@ var DoleticUIModule = new function() {
 
 	this.fillTableIndicators = function() {
 		IndicatorServicesInterface.processAllTableByModule('hr', function(data) {
-			console.log(data.object);
+			//console.log(data.object);
 			DoleticMasterInterface.fillTableIndicators(data.object, 'tables');
 			$('#indictab_0 .indicval_label').click(function() {
 				$('#user_table_Pôle').dropdown('set selected', $(this).html()).change();

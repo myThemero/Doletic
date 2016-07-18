@@ -365,7 +365,30 @@ class DBTable {
 		return $query;
 	}
 
-	static function GetJOINQuery($query1, $query2, $joinOn = array(), $type = DBTable::DT_INNER, $leftRight = "", $count=false, $groupBy = null) {
+	public function GetLastOfEachQuery($key, $orderBy, $where = array(DBTable::EVERYWHERE), $operator = array(), $or = false) {
+		$link = " AND ";
+		if($or) {
+			$link = " OR ";
+		}
+		$query = "SELECT m1.*
+			FROM `" . $this->name . "` m1 
+			LEFT JOIN `" . $this->name . "` m2
+			ON (m1." . $key . " = m2." . $key . " AND m1." . $orderBy . " < m2." . $orderBy . ")";
+		$query .= " WHERE ";
+		if(!in_array(DBTable::EVERYWHERE, $where) && !empty($where)) {
+			foreach ($where as $column) {
+				$col_operator = DBTable::OP_EQUALS;
+				if(array_key_exists($column, $operator)) {
+					$col_operator = $operator[$column];
+				}
+				$query .= "m1.`".$column."`".$col_operator.":".$column.$link;
+			}
+		}
+		$query .= "m2.id IS NULL";
+		return $query;
+	}
+
+	static function GetJOINQuery($query1, $query2, $joinOn = array(), $type = DBTable::DT_INNER, $leftRight = "", $count=false, $groupBy = null , $joinOperator = array()) {
 		if(empty($joinOn)) {
 			$type = DBTable::DT_NATURAL;
 		}
@@ -380,7 +403,20 @@ class DBTable {
 		}
 		$query .= " FROM (" . trim($query1, ';').") AS a " . $leftRight . " " . $type . " JOIN (".trim($query2, ';').") AS b";
 		if(!empty($joinOn)) {
-			$query .= " ON a." . $joinOn[0] . " = b." . $joinOn[1];
+			$query .= " ON ";
+			$allEquals = empty($joinOperator);
+			for($i = 0; $i<count($joinOn); $i += 2) {
+				if($i > 0) {
+					$query .= " AND ";
+				}
+				$query .= "a." . $joinOn[$i];
+				if($allEquals) {
+					$query .= "=";
+				} else {
+					$query .= $joinOperator[($i/2)];
+				}
+				$query .= "b." . $joinOn[($i+1)] . " ";
+			}
 		}
 		if(isset($groupBy)) {
 			$query .= " GROUP BY `".$groupBy . "`";
@@ -400,4 +436,5 @@ class DBTable {
 		}
 		return $query;
 	}
+
 }

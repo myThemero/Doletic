@@ -1225,9 +1225,13 @@ class IndicatorDBObject extends AbstractDBObject {
 
 		// -- create procedures
 		// -- UserData by division
-		$stats_udata_division = new DBProcedure(IndicatorDBObject::PROC_STATS_UDATA_DIVISION, "
-		SELECT division, COUNT(*) AS count FROM (SELECT * FROM (SELECT * FROM `dol_udata` WHERE `disabled`=0) AS a  NATURAL JOIN (SELECT * FROM `dol_udata_position`) AS b) AS a  INNER JOIN (SELECT * FROM `com_position`) AS b ON a.position = b.label GROUP BY `division`;
-			");
+		$stats_udata_division = new DBProcedure(IndicatorDBObject::PROC_STATS_UDATA_DIVISION, " 
+		SELECT division, COUNT(*) AS count FROM (SELECT * FROM `com_position` AS a  INNER JOIN (SELECT m1.*
+			FROM `dol_udata_position` m1 LEFT JOIN `dol_udata_position` m2
+			 ON (m1.user_id = m2.user_id AND m1.since < m2.since)
+			WHERE m2.id IS NULL
+			) AS b ON (a.label=b.position)) AS a  INNER JOIN (SELECT * FROM `dol_udata` WHERE `disabled`=0) AS b ON a.user_id = b.user_id GROUP BY `division`;
+			 ");
 
 		// -- UserData by AG
 		$stats_udata_ag = new DBProcedure(IndicatorDBObject::PROC_STATS_AG_PRESENCE,

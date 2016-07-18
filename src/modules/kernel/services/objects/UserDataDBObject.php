@@ -219,6 +219,7 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_CITY			="city";
 	const PARAM_POSTAL_CODE		="postalCode";
 	const PARAM_COUNTRY 		= "country";
+	const PARAM_DIVISION 		= "division";
 	const PARAM_SCHOOL_YEAR 	= "schoolYear";
 	const PARAM_INSA_DEPT 		= "insaDept";
 	const PARAM_POSITION  		= "position";
@@ -228,6 +229,9 @@ class UserDataServices extends AbstractObjectServices {
 	const PARAM_PRESENCE 		= "presence";
 	// --- internal services (actions)
 	const GET_USER_DATA_BY_ID 	= "byidud";
+	const GET_ALL_BY_DIV		= "allbydiv";
+	const GET_ALL_BY_POS		= "allbypos";
+	const GET_ALL_BY_DPT		= "allbydpt";
 	const GET_CURRENT_USER_DATA	= "currud";
 	const GET_USER_LAST_POS     = "lastpos";
 	const GET_ALL_USER_POS      = "allupos";
@@ -272,6 +276,12 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__get_user_rgcode();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_USER_DATA)) {
 			$data = $this->__get_all_user_data();
+		} else if(!strcmp($action, UserDataServices::GET_ALL_BY_DIV)) {
+			$data = $this->__get_all_user_data_by_division($params[UserDataServices::PARAM_DIVISION]);
+		} else if(!strcmp($action, UserDataServices::GET_ALL_BY_POS)) {
+			$data = $this->__get_all_user_data_by_position($params[UserDataServices::PARAM_POSITION]);
+		} else if(!strcmp($action, UserDataServices::GET_ALL_BY_DPT)) {
+			$data = $this->__get_all_user_data_by_insa_dept($params[UserDataServices::PARAM_INSA_DEPT]);
 		} else if(!strcmp($action, UserDataServices::GET_ALL_GENDERS)) {
 			$data = $this->__get_all_genders();
 		} else if(!strcmp($action, UserDataServices::GET_ALL_COUNTRIES)) {
@@ -382,6 +392,126 @@ class UserDataServices extends AbstractObjectServices {
 					$row[UserDataDBObject::COL_DISABLED],
 					$row[UserDataDBObject::COL_CREATION_DATE],
 					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
+			}
+		}
+		return $udata;
+	}
+
+	private function __get_all_user_data_by_division($division) {
+		$sql_params = array(":".UserDataDBObject::COL_DIVISION => $division);
+		$sql1 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL),
+			array(UserDataDBObject::COL_DIVISION));
+		$sql2 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetLastOfEachQuery(
+				UserDataDBObject::COL_USER_ID,
+				UserDataDBObject::COL_SINCE
+			);
+		$sql3 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery();
+		$sql = DBTable::GetJOINQuery(DBTable::GetJOINQuery($sql1, $sql2, array(UserDataDBObject::COL_LABEL, UserDataDBObject::COL_POSITION)), $sql3, array(UserDataDBObject::COL_USER_ID, UserDataDBObject::COL_USER_ID));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for udata and fill it
+		$udata = array();
+		if(isset($pdos)) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($udata, new UserData(
+					$row[UserDataDBObject::COL_ID],
+					$row[UserDataDBObject::COL_USER_ID],
+					$row[UserDataDBObject::COL_GENDER],
+					$row[UserDataDBObject::COL_FIRSTNAME],
+					$row[UserDataDBObject::COL_LASTNAME],
+					$row[UserDataDBObject::COL_BIRTHDATE],
+					$row[UserDataDBObject::COL_TEL],
+					$row[UserDataDBObject::COL_EMAIL],
+					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_CITY],
+					$row[UserDataDBObject::COL_POSTAL_CODE],
+					$row[UserDataDBObject::COL_COUNTRY],
+					$row[UserDataDBObject::COL_SCHOOL_YEAR],
+					$row[UserDataDBObject::COL_INSA_DEPT],
+					$row[UserDataDBObject::COL_AVATAR_ID],
+					$row[UserDataDBObject::COL_AG],
+					$row[UserDataDBObject::COL_DISABLED],
+					$row[UserDataDBObject::COL_CREATION_DATE],
+					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
+			}
+		}
+		return $udata;
+	}
+
+	private function __get_all_user_data_by_position($position) {
+		$sql_params = array(":".UserDataDBObject::COL_POSITION => $position);
+		// create sql request
+		$sql1 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery();
+		$sql2 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetLastOfEachQuery(
+				UserDataDBObject::COL_USER_ID,
+				UserDataDBObject::COL_SINCE,
+				array(UserDataDBObject::COL_POSITION)
+			);
+		$sql = DBTable::GetJOINQuery($sql1, $sql2);
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for udata and fill it
+		$udata = array();
+		if(isset($pdos)) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($udata, new UserData(
+					$row[UserDataDBObject::COL_ID],
+					$row[UserDataDBObject::COL_USER_ID],
+					$row[UserDataDBObject::COL_GENDER],
+					$row[UserDataDBObject::COL_FIRSTNAME],
+					$row[UserDataDBObject::COL_LASTNAME],
+					$row[UserDataDBObject::COL_BIRTHDATE],
+					$row[UserDataDBObject::COL_TEL],
+					$row[UserDataDBObject::COL_EMAIL],
+					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_CITY],
+					$row[UserDataDBObject::COL_POSTAL_CODE],
+					$row[UserDataDBObject::COL_COUNTRY],
+					$row[UserDataDBObject::COL_SCHOOL_YEAR],
+					$row[UserDataDBObject::COL_INSA_DEPT],
+					$row[UserDataDBObject::COL_AVATAR_ID],
+					$row[UserDataDBObject::COL_AG],
+					$row[UserDataDBObject::COL_DISABLED],
+					$row[UserDataDBObject::COL_CREATION_DATE],
+					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
+			}
+		}
+		return $udata;
+	}
+
+	private function __get_all_user_data_by_insa_dept($dept) {
+		// create sql params array
+		$sql_params = array(":".UserDataDBObject::COL_INSA_DEPT => $dept);
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetSELECTQuery(
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_INSA_DEPT));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for udata and fill it
+		$udata = array();
+		if(isset($pdos)) {
+			while( ($row = $pdos->fetch()) !== false) {
+				array_push($udata, new UserData(
+					$row[UserDataDBObject::COL_ID],
+					$row[UserDataDBObject::COL_USER_ID],
+					$row[UserDataDBObject::COL_GENDER],
+					$row[UserDataDBObject::COL_FIRSTNAME],
+					$row[UserDataDBObject::COL_LASTNAME],
+					$row[UserDataDBObject::COL_BIRTHDATE],
+					$row[UserDataDBObject::COL_TEL],
+					$row[UserDataDBObject::COL_EMAIL],
+					$row[UserDataDBObject::COL_ADDRESS],
+					$row[UserDataDBObject::COL_CITY],
+					$row[UserDataDBObject::COL_POSTAL_CODE],
+					$row[UserDataDBObject::COL_COUNTRY],
+					$row[UserDataDBObject::COL_SCHOOL_YEAR],
+					$row[UserDataDBObject::COL_INSA_DEPT],
+					$row[UserDataDBObject::COL_AVATAR_ID],
+					$row[UserDataDBObject::COL_AG],
+					$row[UserDataDBObject::COL_DISABLED],
+					$row[UserDataDBObject::COL_CREATION_DATE],
+					$this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
 			}
 		}
 		return $udata;
