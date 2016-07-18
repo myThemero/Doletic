@@ -585,12 +585,10 @@ class UserDataServices extends AbstractObjectServices {
 		$sql_params = array(":".UserDataDBObject::COL_USER_ID => $userId);
 		// create sql request
 		$sql1 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_USER_ID),
-			array(),
-			array(UserDataDBObject::COL_SINCE => DBTable::ORDER_DESC));
+			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_USER_ID));
 		$sql2 = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
 						array(DBTable::SELECT_ALL));
-		$sql = DBTable::GetJOINQuery($sql1, $sql2, array(UserDataDBObject::COL_POSITION, UserDataDBObject::COL_LABEL));
+		$sql = DBTable::GetJOINQuery($sql1, $sql2, array(UserDataDBObject::COL_POSITION, UserDataDBObject::COL_LABEL), DBTable::DT_INNER, "", false, null, array(), array(UserDataDBObject::COL_SINCE => DBTable::ORDER_DESC));
 		// execute SQL query and save result
 		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
 		// create an empty array for udata and fill it

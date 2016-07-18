@@ -388,7 +388,7 @@ class DBTable {
 		return $query;
 	}
 
-	static function GetJOINQuery($query1, $query2, $joinOn = array(), $type = DBTable::DT_INNER, $leftRight = "", $count=false, $groupBy = null , $joinOperator = array()) {
+	static function GetJOINQuery($query1, $query2, $joinOn = array(), $type = DBTable::DT_INNER, $leftRight = "", $count=false, $groupBy = null , $joinOperator = array(), $orderby = array()) {
 		if(empty($joinOn)) {
 			$type = DBTable::DT_NATURAL;
 		}
@@ -417,6 +417,14 @@ class DBTable {
 				}
 				$query .= "b." . $joinOn[($i+1)] . " ";
 			}
+		}
+		// check if order by
+		if(sizeof($orderby) > 0) {
+			$query .= " ORDER BY ";
+			foreach ($orderby as $column => $order) {
+				$query .= "`".$column."` ".$order.",";
+			}
+			$query = trim($query, " ,");
 		}
 		if(isset($groupBy)) {
 			$query .= " GROUP BY `".$groupBy . "`";
