@@ -15,6 +15,7 @@ abstract class AbstractModule {
 	private $authors = null;
 	private $dependencies = null;
 	private $db_objects = null;
+	private $db_services = null;
 	private $uis = null;
 	private $rights_map = null;
 	private $ui_disabled = null;
@@ -52,6 +53,12 @@ abstract class AbstractModule {
 	 */
 	public function GetDBObjects() {
 		return $this->db_objects;
+	}
+	/**
+	 *
+	 */
+	public function GetDBServices() {
+		return $this->db_services;
 	}
 	/**
 	 *
@@ -116,6 +123,7 @@ abstract class AbstractModule {
 		$this->authors = $authors;
 		$this->dependencies = $dependencies;
 		$this->db_objects = array();
+		$this->db_services = array();
 		$this->uis = array();
 		$this->rights_map = new RightsMap($groups, $rules);
 		$this->ui_disabled = $uiDisabled;
@@ -123,6 +131,10 @@ abstract class AbstractModule {
 
 	protected function addDBObject($object) {
 		$this->db_objects[$object->GetName()] = $object;
+	}
+
+	protected function addDBService($service) {
+		$this->db_services[$service->GetName()] = $service;
 	}
 
 	protected function addUI($uiName, $uiCode) {

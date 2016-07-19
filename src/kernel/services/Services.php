@@ -19,6 +19,7 @@ class Services {
 	const PPARAM_PARAMS 	= "params"; 
 	// --- services internal consts
 	const OBJ_SERVICE 		= "service";
+	const OBJ_MOD_SERVICE	= "mod";
 	// --- high-level services
 	const SERVICE_UPLOAD 		= "upload";
 	const SERVICE_DOWNLOAD		= "download";
@@ -81,6 +82,12 @@ class Services {
 				$response = new ServiceResponse("", ServiceResponse::ERR_INSUFFICIENT_RIGHTS, "Insufficient rights to access this service.");
 			}
 		} // else an atomic service is called -> redirect call to object specific services
+		else if(strpos($post[Services::PPARAM_OBJ], Services::OBJ_MOD_SERVICE) === 0) {
+			$module = $kernel->GetModule(str_replace(Services::OBJ_MOD_SERVICE, "", $post[Services::PPARAM_OBJ]));
+			if($this->__check_rights_module($module, $post[Services::PPARAM_OBJ].':'.$post[Services::PPARAM_ACT])) {
+				
+			}
+		}
 		else {
 			// declare response var
 			$response = null;

@@ -47,6 +47,16 @@ class ModuleManager extends AbstractManager {
 	/**
 	 *
 	 */
+	public function GetModulesDBServices() {
+		$dbservices = array();
+		foreach ($this->modules as $module) {
+			$dbservices = array_merge($dbservices, $module->GetDBServices());
+		}
+		return $dbservices;
+	}
+	/**
+	 *
+	 */
 	public function GetModulesJSServices() {
 		$js_services = array();
 		foreach ($this->modules as $module) {

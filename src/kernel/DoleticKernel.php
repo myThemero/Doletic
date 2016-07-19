@@ -11,6 +11,7 @@ require_once "managers/UIManager.php";
 require_once "loaders/ModuleLoader.php";
 require_once "loaders/WrapperLoader.php";
 require_once "loaders/DBObjectLoader.php";
+require_once "loaders/DBServiceLoader.php";
 require_once "loaders/CronTaskLoader.php";
 require_once "objects/mailer/Mailer.php";
 
@@ -56,6 +57,8 @@ class DoleticKernel {
 	 	$this->module_ldr = new ModuleLoader($this, $this->module_mgr);
 	 	// -- create db object loader after module loader
 	 	$this->dbobject_ldr = new DBObjectLoader($this, $this->db_mgr);
+	 	// -- create db service loader after module loader
+	 	$this->dbservice_ldr = new DBServiceLoader($this, $this->db_mgr);
 	 	// -- create wrapper objects after db object loader
 	 	$this->wrapper_mgr = new WrapperManager($this);
 	 	$this->wrapper_ldr = new WrapperLoader($this, $this->wrapper_mgr);
@@ -90,6 +93,9 @@ class DoleticKernel {
 		 	// -8- initialize db objects loader (load db objects including modules db objects)
 		 	$this->dbobject_ldr->Init($this->module_mgr->GetModulesDBObjects());
 		 	$this->__info("Database Object Loader initialized.");
+		 	// -8- initialize db services loader (load db services including modules db services)
+		 	$this->dbservice_ldr->Init($this->module_mgr->GetModulesDBServices());
+		 	$this->__info("Database Service Loader initialized.");
 		 	// -9- initialize wrapper manager
 		 	$this->wrapper_mgr->Init();
 		 	$this->__info("Wrapper Manager initialized.");
@@ -112,6 +118,12 @@ class DoleticKernel {
 	public function Terminate() {
 		// add last actions to do before terminating kernel
 		// nothing to do for now
+	}
+
+	// --- module management
+
+	public function GetModule($code) {
+		return $this->module_mgr->GetModule($code);
 	}
 
 	// --- authentication management ---------------------------------------------------------
@@ -250,6 +262,9 @@ class DoleticKernel {
 	}
 	public function GetDBObject($objKey) {
 		return $this->dbobject_ldr->GetDBObject($objKey);
+	}
+	public function GetDBService($serKey) {
+		return $this->dbservice_ldr->GetDBService($serKey);
 	}
 
 	// --- wrappers management -------------------------------------------------------------------
