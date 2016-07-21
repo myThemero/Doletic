@@ -10,30 +10,33 @@ require_once "managers/SettingsManager.php";
 abstract class AbstractDBService {
 
 	// -- attributes
-	private $module = null;
+	private $modules = null;
 	private $db_connection = null;
 	private $name = null;
-	private $current_user = null;
+	private $db_tables = null;
 
 	// -- functions
 
 	/**
-	 *	@brief Returns DBObject name
+	 *	@brief Returns DBService name
 	 */
 	public function GetName() {
 		return $this->name;
 	}
 
-	public function GetModule() {
-		return $this->module;
+	public function GetModules() {
+		return $this->modules;
+	}
+
+	public function GetTable($tableName) {
+		return $this->tables[$tableName];
+	}
+
+	public function GetAllTables() {
+		return $this->tables;
 	}
 
 	abstract public function GetResponseData($action, $params);
-
-	/**
-	 *	@brief Returns all services associated with this object
-	 */
-	abstract public function GetServices($currentUser);
 
 	public function SetDBConnection($dbConnection) {
 		$this->db_connection = $dbConnection;
@@ -41,11 +44,17 @@ abstract class AbstractDBService {
 
 # PROTECTED & PRIVATE #########################################################
 
-	protected function __construct($module, $name, &$currentUser, &$db_connection) {
-		$this->current_user = $currentUser;
-		$this->module = $module;
-		$this->db_connection = $db_connection;
+	protected function __construct($modules, $name) {
+		$this->modules = $modules;
 		$this->name = $name;
+		$this->db_tables = array();
+		foreach($this->modules as $module) {
+			foreach($module->GetDBObjects() as $dbo) {
+				foreach($dbo->GetAllTables() as $table) {
+					$db_tables[$table->GetName()] = $table;
+				}
+			}
+		}
 	}
 
 	protected function getCurrentUser() {

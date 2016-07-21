@@ -10,6 +10,7 @@ require_once "../modules/kernel/services/objects/UserDataDBObject.php";
 require_once "../modules/kernel/services/objects/OVHWrapperDBObject.php";
 require_once "../modules/kernel/services/objects/LogDBObject.php";
 require_once "../modules/kernel/services/objects/IndicatorDBObject.php";
+require_once "../modules/kernel/services/KernelDBService.php";
 
 class KernelModule extends AbstractModule {
 
@@ -133,6 +134,10 @@ class KernelModule extends AbstractModule {
 		parent::addDBObject(new OVHWrapperDBObject($this));
 		parent::addDBObject(new LogDBObject($this));
 		parent::addDBObject(new IndicatorDBObject($this));
+
+		// -- add module specific db services
+		parent::addDBService(new KernelDBService($this));
+
 		// -- add module specific ui
 		parent::addUI('Home','home');	// refer to couple (home.js, home.css)
 		parent::addUI('Login','login');	// refer to couple (login.js, login.css)

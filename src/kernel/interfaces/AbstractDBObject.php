@@ -29,6 +29,10 @@ abstract class AbstractDBObject {
 		return $this->tables[$tableName];
 	}
 
+	public function GetAllTables() {
+		return $this->tables;
+	}
+
 	public function GetProcedure($procedureName) {
 		return $this->procedures[$procedureName];
 	}

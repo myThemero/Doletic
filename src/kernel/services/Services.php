@@ -83,9 +83,33 @@ class Services {
 			}
 		} // else an atomic service is called -> redirect call to object specific services
 		else if(strpos($post[Services::PPARAM_OBJ], Services::OBJ_MOD_SERVICE) === 0) {
-			$module = $kernel->GetModule(str_replace(Services::OBJ_MOD_SERVICE, "", $post[Services::PPARAM_OBJ]));
-			if($this->__check_rights_module($module, $post[Services::PPARAM_OBJ].':'.$post[Services::PPARAM_ACT])) {
-				
+			// declare response var
+			$response = null;
+			// retreive db object
+			$service = $this->kernel->GetDBService($post[Services::PPARAM_OBJ]);
+			if(isset($service)) {
+				// check rights
+				if($this->__check_rights_module($module, $post[Services::PPARAM_OBJ].':'.$post[Services::PPARAM_ACT])) {
+					// retreive response data
+					if(array_key_exists(Services::PPARAM_PARAMS, $post)) {
+						$data = $services->GetResponseData(
+										$post[Services::PPARAM_ACT], 
+										$post[Services::PPARAM_PARAMS]);
+					} else {
+						$data = $services->GetResponseData(
+										$post[Services::PPARAM_ACT], 
+										array());
+					}
+					if(isset($data)) {
+						$response = new ServiceResponse($data);
+					} else {
+						$response = new ServiceResponse("[]"); // empty return from service
+					}	
+				} else {
+					$response = new ServiceResponse("", ServiceResponse::ERR_INSUFFICIENT_RIGHTS, "Insufficient rights to access this service.");
+				}
+			} else {
+				$response = new ServiceResponse("", ServiceResponse::ERR_MISSING_OBJ, "Service is missing.");
 			}
 		}
 		else {
