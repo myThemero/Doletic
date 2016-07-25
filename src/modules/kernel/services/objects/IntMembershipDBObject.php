@@ -113,6 +113,12 @@ public function jsonSerialize() {
 	public function GetIdentity() {
 		return $this->identity;
 	}
+	/**
+	 * @brief
+	 */
+	public function IsValid() {
+		return ($this->fee && $this->form && $this->certif && $this->rib && $this->identity);
+	}
 }
 
 /**
@@ -134,6 +140,7 @@ class IntMembershipServices extends AbstractObjectServices {
 	const GET_INT_MEMBERSHIP_BY_ID 	= "byidim";
 	const GET_ALL_INT_MEMBERSHIPS   = "allim";
 	const GET_USER_INT_MEMBERSHIPS  = "alluim";
+	const GET_ALL_CURRENT_INT_MEMBERSHIPS = "allcurintm";
 	const INSERT 		    = "insert";
 	const UPDATE            = "update";
 	const DELETE            = "delete";
@@ -151,6 +158,8 @@ class IntMembershipServices extends AbstractObjectServices {
 			$data = $this->__get_int_membership_by_id($params[IntMembershipServices::PARAM_ID]);
 		} else if(!strcmp($action, IntMembershipServices::GET_ALL_INT_MEMBERSHIPS)) {
 			$data = $this->__get_all_int_memberships();
+		} else if(!strcmp($action, IntMembershipServices::GET_ALL_CURRENT_INT_MEMBERSHIPS)) {
+			$data = $this->__get_all_current_int_memberships();
 		} else if(!strcmp($action, IntMembershipServices::GET_USER_INT_MEMBERSHIPS)) {
 			$data = $this->__get_user_int_memberships($params[IntMembershipServices::PARAM_USER]);
 		} else if(!strcmp($action, IntMembershipServices::INSERT)) {
@@ -226,6 +235,35 @@ class IntMembershipServices extends AbstractObjectServices {
 					$row[IntMembershipDBObject::COL_CERTIF],
 					$row[IntMembershipDBObject::COL_RIB],
 					$row[IntMembershipDBObject::COL_IDENTITY]));
+			}
+		}
+		return $int_memberships;
+	}
+
+	private function __get_all_current_int_memberships() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(IntMembershipDBObject::TABL_INT_MEMBERSHIP)->GetLastOfEachQuery(
+			IntMembershipDBObject::COL_ID,
+			IntMembershipDBObject::COL_START_DATE
+		);
+
+		$sql_params = array();
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for adm_memberships and fill it
+		$int_memberships = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				$int_memberships[$row[IntMembershipDBObject::COL_USER_ID]] = new IntMembership(
+					$row[IntMembershipDBObject::COL_ID], 
+					$row[IntMembershipDBObject::COL_USER_ID], 
+					$row[IntMembershipDBObject::COL_START_DATE],  
+					$row[IntMembershipDBObject::COL_FEE],
+					$row[IntMembershipDBObject::COL_FORM],
+					$row[IntMembershipDBObject::COL_CERTIF],
+					$row[IntMembershipDBObject::COL_RIB],
+					$row[IntMembershipDBObject::COL_IDENTITY]
+				);
 			}
 		}
 		return $int_memberships;

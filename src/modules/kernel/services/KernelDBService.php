@@ -7,6 +7,9 @@ require_once "objects/DBTable.php";
 class KernelDBService extends AbstractDBService {
 
 	// -- consts
+	const VALID_MEMBERSHIP = "Valide";
+	const INVALID_MEMBERSHIP = "Invalide";
+	const NO_MEMBERSHIP = "Non";
 	// --- service name
 	const SERV_NAME = "modkernel";
 	// --- params keys
@@ -37,48 +40,30 @@ class KernelDBService extends AbstractDBService {
 # PROTECTED & PRIVATE ####################################################
 
 	private function __get_all_user_data_with_status() {
-		$data = parent::GetModule()
+		$udata = parent::GetModule()
 			->GetDBObject(UserDataDBObject::OBJ_NAME)
 			->GetServices($this->GetCurrentUser())
 			->GetResponseData(UserDataServices::GET_ALL_USER_DATA, array());
-		foreach($data as $udata) {
-			//$udata->SetAdmmStatus();
-			//$udata->SetIntmStatus();
+		$admm_status = parent::GetModule()
+			->GetDBObject(AdmMembershipDBObject::OBJ_NAME)
+			->GetServices($this->GetCurrentUser())
+			->GetResponseData(AdmMembershipServices::GET_ALL_CURRENT_ADM_MEMBERSHIPS, array());
+		$intm_status = parent::GetModule()
+			->GetDBObject(IntMembershipDBObject::OBJ_NAME)
+			->GetServices($this->GetCurrentUser())
+			->GetResponseData(IntMembershipServices::GET_ALL_CURRENT_INT_MEMBERSHIPS, array());
+		foreach($udata as $user) {
+			if(array_key_exists($user->GetUserId(), $admm_status)) {
+				$user->SetAdmmStatus($admm_status[$user->GetUserId()]->isValid() ? KernelDBService::VALID_MEMBERSHIP : KernelDBService::INVALID_MEMBERSHIP);
+			} else {
+				$user->SetAdmmStatus(KernelDBService::NO_MEMBERSHIP);
+			}
+			if(array_key_exists($user->GetUserId(), $intm_status)) {
+				$user->SetIntmStatus($intm_status[$user->GetUserId()]->isValid() ? KernelDBService::VALID_MEMBERSHIP : KernelDBService::INVALID_MEMBERSHIP);
+			} else {
+				$user->SetIntmStatus(KernelDBService::NO_MEMBERSHIP);
+			}
 		}
-		return $data;
-	}
-
-	private function __get_all_user_positions($userId) {
-		// create sql params array
-		$sql_params = array(":".UserDataDBObject::COL_USER_ID => $userId);
-		// create sql request
-		$sql1 = parent::GetTable(UserDataDBObject::TABL_USER_POSITION)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(UserDataDBObject::COL_USER_ID));
-		$sql2 = parent::GetTable(UserDataDBObject::TABL_COM_POSITION)->GetSELECTQuery(
-						array(DBTable::SELECT_ALL));
-		$sql = DBTable::GetJOINQuery($sql1, $sql2, array(UserDataDBObject::COL_POSITION, UserDataDBObject::COL_LABEL), DBTable::DT_INNER, "", false, null, array(), array(UserDataDBObject::COL_SINCE => DBTable::ORDER_DESC));
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create an empty array for udata and fill it
-		$positions = array();
-		while( ($row = $pdos->fetch()) !== false) {
-			array_push($positions, array(
-					UserDataDBObject::COL_LABEL => $row[UserDataDBObject::COL_LABEL],
-					UserDataDBObject::COL_SINCE => $row[UserDataDBObject::COL_SINCE],
-					UserDataDBObject::COL_RG_CODE => $row[UserDataDBObject::COL_RG_CODE],
-					UserDataDBObject::COL_DIVISION => $row[UserDataDBObject::COL_DIVISION]
-				));
-		}
-		return $positions;
-	}
-
-	private function __get_all_intervenants() {
-		$udata = array();
-		return $udata;
-	}
-
-	private function __get_all_valid_intervenants() {
-		$udata = array();
 		return $udata;
 	}
 

@@ -13,7 +13,6 @@ abstract class AbstractDBService {
 	private $module = null;
 	private $db_connection = null;
 	private $name = null;
-	private $db_tables = null;
 	private $current_user = null;
 
 	// -- functions
@@ -34,14 +33,6 @@ abstract class AbstractDBService {
 		return $this->module;
 	}
 
-	public function GetTable($tableName) {
-		return $this->tables[$tableName];
-	}
-
-	public function GetAllTables() {
-		return $this->tables;
-	}
-
 	abstract public function GetResponseData($action, $params);
 
 	public function SetDBConnection($dbConnection) {
@@ -53,12 +44,6 @@ abstract class AbstractDBService {
 	protected function __construct($module, $name) {
 		$this->module = $module;
 		$this->name = $name;
-		$this->db_tables = array();
-		foreach($this->module->GetDBObjects() as $dbo) {
-			foreach($dbo->GetAllTables() as $table) {
-				$db_tables[$table->GetName()] = $table;
-			}
-		}
 	}
 
 	protected function getCurrentUser() {

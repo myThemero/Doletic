@@ -9,6 +9,8 @@ require_once "../modules/kernel/services/objects/UserDBObject.php";
 require_once "../modules/kernel/services/objects/UserDataDBObject.php";
 require_once "../modules/kernel/services/objects/OVHWrapperDBObject.php";
 require_once "../modules/kernel/services/objects/LogDBObject.php";
+require_once "../modules/kernel/services/objects/AdmMembershipDBObject.php";
+require_once "../modules/kernel/services/objects/IntMembershipDBObject.php";
 require_once "../modules/kernel/services/objects/IndicatorDBObject.php";
 require_once "../modules/kernel/services/KernelDBService.php";
 
@@ -123,6 +125,23 @@ class KernelModule extends AbstractModule {
 
 				KernelDBService::SERV_NAME.':'.KernelDBService::GET_ALL_UDATA_WITH_STATUS	=> RightsMap::G_RMASK,  // everyone
 
+				// ---- adm_membership object services
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_ADM_MEMBERSHIP_BY_ID => RightsMap::A_RMASK,	// only super admin 
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_ALL_ADM_MEMBERSHIPS 	=> RightsMap::G_RMASK,	// everyone 
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS => RightsMap::G_RMASK,  // everyone
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::GET_CURRENT_ADM_MEMBERSHIP => RightsMap::G_RMASK,  // everyone
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::INSERT 		=> RightsMap::A_RMASK,  // admin 
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::UPDATE 		=> RightsMap::A_RMASK,	// admin 
+				AdmMembershipDBObject::OBJ_NAME.':'.AdmMembershipServices::DELETE 		=> RightsMap::A_RMASK,  // admin
+
+				// ---- adm_membership object services
+				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::GET_INT_MEMBERSHIP_BY_ID => RightsMap::A_RMASK,	// only super admin 
+				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::GET_ALL_INT_MEMBERSHIPS 	=> RightsMap::G_RMASK,	// everyone 
+				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::GET_USER_INT_MEMBERSHIPS => RightsMap::G_RMASK,  // everyone
+				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::INSERT 				=> RightsMap::A_RMASK,  // admin 
+				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::UPDATE 				=> RightsMap::A_RMASK,	// admin 
+				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::DELETE 				=> RightsMap::A_RMASK,  // admin
+
 				),
 				false // disable ui must be true in production version
 			);
@@ -135,6 +154,8 @@ class KernelModule extends AbstractModule {
 		parent::addDBObject(new UserDataDBObject($this));
 		parent::addDBObject(new OVHWrapperDBObject($this));
 		parent::addDBObject(new LogDBObject($this));
+		parent::addDBObject(new AdmMembershipDBObject($this));
+		parent::addDBObject(new IntMembershipDBObject($this));
 		parent::addDBObject(new IndicatorDBObject($this));
 
 		// -- add module specific db services

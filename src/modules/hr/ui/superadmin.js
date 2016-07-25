@@ -313,6 +313,8 @@ var DoleticUIModule = new function() {
                         <th>Pôle</th> \
                         <th>Téléphone</th> \
                         <th>Année</th> \
+                        <th>Admin</th> \
+                        <th>Intervenant</th> \
                         <th>Actions</th> \
                     </tr>\
                 </thead>\
@@ -324,6 +326,8 @@ var DoleticUIModule = new function() {
                         <th>Pôle</th> \
                         <th>Téléphone</th> \
                         <th>Année</th> \
+                        <th>Admin</th> \
+                        <th>Intervenant</th> \
                         <th></th> \
                     </tr>\
                 </tfoot>\
@@ -361,6 +365,8 @@ var DoleticUIModule = new function() {
 								DoleticMasterInterface.select_filter,
 								DoleticMasterInterface.input_filter,
 								DoleticMasterInterface.input_filter,
+								DoleticMasterInterface.select_filter,
+								DoleticMasterInterface.select_filter,
 								DoleticMasterInterface.reset_filter
 								];
 				var selector_content = "<option value>Membre...</option>";
@@ -412,6 +418,8 @@ var DoleticUIModule = new function() {
 		      					<td>" + data.object[i].position[0].division + "</td> \
 		      					<td>" + data.object[i].tel + "</td> \
 		      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
+		      					<td>" + data.object[i].admm_status + "</td>\
+		    					<td>" + data.object[i].intm_status + "</td>\
 		    				<td> \
 		    					<div class=\"ui icon buttons\"> \
 			    					<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \

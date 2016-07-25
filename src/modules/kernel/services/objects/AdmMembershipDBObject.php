@@ -105,8 +105,8 @@ public function jsonSerialize() {
 	/**
 	 * @brief
 	 */
-	public function IsComplete() {
-		return $this->certif && $this->form && $this->fee;
+	public function IsValid() {
+		return ($this->certif && $this->form && $this->fee);
 	}
 
 }
@@ -130,6 +130,7 @@ class AdmMembershipServices extends AbstractObjectServices {
 	const GET_ALL_ADM_MEMBERSHIPS   = "allam";
 	const GET_USER_ADM_MEMBERSHIPS  = "alluam";
 	const GET_CURRENT_ADM_MEMBERSHIP = "valadmm";
+	const GET_ALL_CURRENT_ADM_MEMBERSHIPS	= "allcuradmm";
 	const INSERT 		    = "insert";
 	const UPDATE            = "update";
 	const DELETE            = "delete";
@@ -147,6 +148,8 @@ class AdmMembershipServices extends AbstractObjectServices {
 			$data = $this->__get_adm_membership_by_id($params[AdmMembershipServices::PARAM_ID]);
 		} else if(!strcmp($action, AdmMembershipServices::GET_ALL_ADM_MEMBERSHIPS)) {
 			$data = $this->__get_all_adm_memberships();
+		} else if(!strcmp($action, AdmMembershipServices::GET_ALL_CURRENT_ADM_MEMBERSHIPS)) {
+			$data = $this->__get_all_current_adm_memberships();
 		} else if(!strcmp($action, AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS)) {
 			$data = $this->__get_user_adm_memberships($params[AdmMembershipServices::PARAM_USER]);
 		} else if(!strcmp($action, AdmMembershipServices::GET_CURRENT_ADM_MEMBERSHIP)) {
@@ -220,6 +223,35 @@ class AdmMembershipServices extends AbstractObjectServices {
 					$row[AdmMembershipDBObject::COL_FEE],
 					$row[AdmMembershipDBObject::COL_FORM],
 					$row[AdmMembershipDBObject::COL_CERTIF]));
+			}
+		}
+		return $adm_memberships;
+	}
+
+	private function __get_all_current_adm_memberships() {
+		// create sql request
+		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetLastOfEachQuery(
+			AdmMembershipDBObject::COL_ID,
+			AdmMembershipDBObject::COL_END_DATE,
+			array(AdmMembershipDBObject::COL_END_DATE),
+			array(AdmMembershipDBObject::COL_END_DATE => DBTable::OP_GREATER)
+		);
+
+		$sql_params = array(":" . AdmMembershipDBObject::COL_END_DATE => date('Y-m-d'));
+		// execute SQL query and save result
+		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+		// create an empty array for adm_memberships and fill it
+		$adm_memberships = array();
+		if($pdos != null) {
+			while( ($row = $pdos->fetch()) !== false) {
+				$adm_memberships[$row[AdmMembershipDBObject::COL_USER_ID]] = new AdmMembership(
+					$row[AdmMembershipDBObject::COL_ID], 
+					$row[AdmMembershipDBObject::COL_USER_ID], 
+					$row[AdmMembershipDBObject::COL_START_DATE], 
+					$row[AdmMembershipDBObject::COL_END_DATE], 
+					$row[AdmMembershipDBObject::COL_FEE],
+					$row[AdmMembershipDBObject::COL_FORM],
+					$row[AdmMembershipDBObject::COL_CERTIF]);
 			}
 		}
 		return $adm_memberships;

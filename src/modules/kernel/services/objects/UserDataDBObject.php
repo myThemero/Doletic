@@ -86,7 +86,9 @@ class UserData implements \JsonSerializable {
 			UserDataDBObject::COL_AG => $this->ag,
 			UserDataDBObject::COL_DISABLED => $this->disabled,
 			UserDataDBObject::COL_POSITION => $this->pos, //Not in DB...
-			UserDataDBObject::COL_CREATION_DATE => $this->creation_date
+			UserDataDBObject::COL_CREATION_DATE => $this->creation_date,
+			UserDataDBObject::COL_ADMM_STATUS => $this->admm_status,
+			UserDataDBObject::COL_INTM_STATUS => $this->intm_status
 		];
 	}
 
@@ -1212,6 +1214,8 @@ class UserDataDBObject extends AbstractDBObject {
 	const COL_PRESENCE 			= "presence";
 	const COL_DIVISION			= "division";
 	const COL_DISABLED			= "disabled";
+	const COL_ADMM_STATUS		= "admm_status";
+	const COL_INTM_STATUS		= "intm_status";
 	// -- attributes
 
 	// -- functions
