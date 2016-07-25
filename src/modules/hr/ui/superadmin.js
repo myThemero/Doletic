@@ -294,7 +294,8 @@ var DoleticUIModule = new function() {
 	}
 
 	this.fillUsersList = function() {
-		UserDataServicesInterface.getAll(function(data) {
+		//UserDataServicesInterface.getAll(function(data) {
+		KernelDBServicesInterface.getAllUserDataWithStatus(function(data) {
 			// Delete and recreate table so Datatables is reinitialized
 			$("#user_table_container").html("");
 			$("#disabled_table_container").html("");

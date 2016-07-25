@@ -121,6 +121,8 @@ class KernelModule extends AbstractModule {
 				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::DISABLE				=> RightsMap::SA_RMASK,  // only super-admin
 				IndicatorDBObject::OBJ_NAME.':'.IndicatorServices::ENABLE				=> RightsMap::SA_RMASK,  // only super-admin
 
+				KernelDBService::SERV_NAME.':'.KernelDBService::GET_ALL_UDATA_WITH_STATUS	=> RightsMap::G_RMASK,  // everyone
+
 				),
 				false // disable ui must be true in production version
 			);

@@ -89,14 +89,14 @@ class Services {
 			$service = $this->kernel->GetDBService($post[Services::PPARAM_OBJ]);
 			if(isset($service)) {
 				// check rights
-				if($this->__check_rights_module($module, $post[Services::PPARAM_OBJ].':'.$post[Services::PPARAM_ACT])) {
+				if($this->__check_rights_module($service->GetModule(), $post[Services::PPARAM_OBJ].':'.$post[Services::PPARAM_ACT])) {
 					// retreive response data
 					if(array_key_exists(Services::PPARAM_PARAMS, $post)) {
-						$data = $services->GetResponseData(
+						$data = $service->GetResponseData(
 										$post[Services::PPARAM_ACT], 
 										$post[Services::PPARAM_PARAMS]);
 					} else {
-						$data = $services->GetResponseData(
+						$data = $service->GetResponseData(
 										$post[Services::PPARAM_ACT], 
 										array());
 					}

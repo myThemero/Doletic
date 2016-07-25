@@ -1,3 +1,25 @@
+// ----------------------- DBService INTERFACE SERVICES CLASS ----------------------------------
+
+var KernelDBServicesInterface = new function() {
+
+  this.meta = {
+    // --- (object)
+    OBJECT: 'modkernel',
+    // --- (actions)
+    ACTION: {
+      GET_ALL_UDATA_WITH_STATUS:'alluwsta'
+    }
+  };
+
+  this.getAllUserDataWithStatus = function(successHandler) {
+   return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_UDATA_WITH_STATUS, 
+            {}, 
+            successHandler); 
+  }
+
+}
+
 // ----------------------- COMMENT INTERFACE SERVICES CLASS ----------------------------------
 
 var CommentServicesInterface = new function() {

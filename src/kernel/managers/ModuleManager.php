@@ -23,6 +23,9 @@ class ModuleManager extends AbstractManager {
 
 	public function RegisterModules($modules) {
 		$this->modules = $modules;
+		foreach($this->modules as $module) {
+			$module->setServiceCurrentUser($this->kernel()->GetCurrentUser());
+		}
 	}
 	/**
 	 *

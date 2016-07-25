@@ -10,12 +10,18 @@ require_once "managers/SettingsManager.php";
 abstract class AbstractDBService {
 
 	// -- attributes
-	private $modules = null;
+	private $module = null;
 	private $db_connection = null;
 	private $name = null;
 	private $db_tables = null;
+	private $current_user = null;
 
 	// -- functions
+
+	public function setCurrentUser($currentUser) {
+		$this->current_user = $currentUser;
+		return $this;
+	}
 
 	/**
 	 *	@brief Returns DBService name
@@ -24,8 +30,8 @@ abstract class AbstractDBService {
 		return $this->name;
 	}
 
-	public function GetModules() {
-		return $this->modules;
+	public function GetModule() {
+		return $this->module;
 	}
 
 	public function GetTable($tableName) {
@@ -44,15 +50,13 @@ abstract class AbstractDBService {
 
 # PROTECTED & PRIVATE #########################################################
 
-	protected function __construct($modules, $name) {
-		$this->modules = $modules;
+	protected function __construct($module, $name) {
+		$this->module = $module;
 		$this->name = $name;
 		$this->db_tables = array();
-		foreach($this->modules as $module) {
-			foreach($module->GetDBObjects() as $dbo) {
-				foreach($dbo->GetAllTables() as $table) {
-					$db_tables[$table->GetName()] = $table;
-				}
+		foreach($this->module->GetDBObjects() as $dbo) {
+			foreach($dbo->GetAllTables() as $table) {
+				$db_tables[$table->GetName()] = $table;
 			}
 		}
 	}

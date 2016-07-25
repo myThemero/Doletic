@@ -57,6 +57,12 @@ abstract class AbstractModule {
 	/**
 	 *
 	 */
+	public function GetDBObject($name) {
+		return $this->db_objects[$name];
+	}
+	/**
+	 *
+	 */
 	public function GetDBServices() {
 		return $this->db_services;
 	}
@@ -112,6 +118,15 @@ abstract class AbstractModule {
 	 */
 	public function CheckRights($rgcode, $action) {
 		return ( $this->rights_map->Check($rgcode, $action) === RightsMap::OK );
+	}
+
+	/**
+	 *
+	 */
+	public function setServiceCurrentUser($currentUser) {
+		foreach($this->db_services as $service) {
+			$service->setCurrentUser($currentUser);
+		}
 	}
 
 # PROTECTED & PRIVATE ###################################################

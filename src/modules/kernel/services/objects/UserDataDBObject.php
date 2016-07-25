@@ -12,6 +12,9 @@ require_once "objects/RightsMap.php";
 class UserData implements \JsonSerializable {
 	
 	// -- consts
+	const MEMBERSHIP_MISSING 	= 0;
+	const MEMBERSHIP_EXISTS 	= 1;
+	const MEMBERSHIP_VALID 		= 2;
 
 	// -- attributes
 	private $id = null;
@@ -33,6 +36,8 @@ class UserData implements \JsonSerializable {
 	private $ag = null;
 	private $disabled = false;
 	private $creation_date = null;
+	private $admm_status = null;
+	private $intm_status = null;
 
 	/**
 	*	@brief Constructs a udata
@@ -198,6 +203,32 @@ class UserData implements \JsonSerializable {
 	*/
 	public function GetCreationDate() {
 		return $this->creation_date;
+	}
+	/**
+	*	@brief Returns Admm status
+	*/
+	public function GetAdmmStatus() {
+		return $this->admm_status;
+	}
+	/**
+	*	@brief Returns Intm status
+	*/
+	public function GetIntmStatus() {
+		return $this->intm_status;
+	}
+	/**
+	*	@brief Set Admm status
+	*/
+	public function SetAdmmStatus($status) {
+		$this->admm_status = $status;
+		return $this;
+	}
+	/**
+	*	@brief Set Intm status
+	*/
+	public function SetIntmStatus($status) {
+		$this->intm_status = $status;
+		return $this;
 	}
 
 }
