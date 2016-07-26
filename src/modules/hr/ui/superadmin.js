@@ -404,33 +404,66 @@ var DoleticUIModule = new function() {
 		    				</td> \
 		    				</tr>"
 						} else {
-							content += "<tr><td> \
-		      						<button class=\"ui icon button\" data-title=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname +"\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
-			  							<i class=\"user icon\"></i> \
-									</button> \
-									</td><td> \
-		        				<h4 class=\"ui header\"> \
-		          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
-		            			"<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></div> \
-		        				</div> \
-		      					</h4></td> \
-		      					<td>" + data.object[i].position[0].label + "</td> \
-		      					<td>" + data.object[i].position[0].division + "</td> \
-		      					<td>" + data.object[i].tel + "</td> \
-		      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
-		      					<td>" + data.object[i].admm_status + "</td>\
-		    					<td>" + data.object[i].intm_status + "</td>\
-		    				<td> \
-		    					<div class=\"ui icon buttons\"> \
-			    					<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
-			  							<i class=\"write icon\"></i> \
-									</button> \
-									<button class=\"ui icon button\" data-title=\"Désactiver\" onClick=\"DoleticUIModule.disableUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
-			  							<i class=\"remove user icon\"></i> \
-									</button> \
-								</div> \
-		    				</td> \
-		    				</tr>";
+							var invalid = data.object[i].admm_status == "Invalide" || data.object[i].intm_status == "Invalide" 
+								|| (data.object[i].admm_status == "Non" && data.object[i].intm_status == "Non");
+							if(invalid) {
+								content += "<tr class=\"error\"><td> \
+			      						<button class=\"ui icon button\" data-title=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname +"\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
+				  							<i class=\"user icon\"></i> \
+										</button> \
+										</td><td> \
+			        				<h4 class=\"ui header\"> \
+			          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
+			            			"<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></div> \
+			        				</div> \
+			      					</h4></td> \
+			      					<td>" + data.object[i].position[0].label + "</td> \
+			      					<td>" + data.object[i].position[0].division + "</td> \
+			      					<td>" + data.object[i].tel + "</td> \
+			      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
+			      					<td>" + data.object[i].admm_status + "</td>\
+			    					<td>" + data.object[i].intm_status + "</td>\
+			    				<td> \
+			    					<div class=\"ui icon buttons\"> \
+				    					<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
+				  							<i class=\"write icon\"></i> \
+										</button> \
+										<button class=\"ui icon button\" data-title=\"Désactiver\" onClick=\"DoleticUIModule.disableUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+				  							<i class=\"remove user icon\"></i> \
+										</button> \
+									</div> \
+			    				</td> \
+			    				</tr>";
+							} else {
+								content += "<tr><td> \
+			      						<button class=\"ui icon button\" data-title=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname +"\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails("+data.object[i].user_id+"); return false;\"> \
+				  							<i class=\"user icon\"></i> \
+										</button> \
+										</td><td> \
+			        				<h4 class=\"ui header\"> \
+			          				<div class=\"content\">"  + data.object[i].firstname + " " + data.object[i].lastname +
+			            			"<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">"+data.object[i].email+"</a></div> \
+			        				</div> \
+			      					</h4></td> \
+			      					<td>" + data.object[i].position[0].label + "</td> \
+			      					<td>" + data.object[i].position[0].division + "</td> \
+			      					<td>" + data.object[i].tel + "</td> \
+			      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
+			      					<td>" + data.object[i].admm_status + "</td>\
+			    					<td>" + data.object[i].intm_status + "</td>\
+			    				<td> \
+			    					<div class=\"ui icon buttons\"> \
+				    					<button class=\"ui icon button\" data-title=\"Modifier\" onClick=\"DoleticUIModule.editUser("+data.object[i].id+", "+data.object[i].user_id +"); return false;\"> \
+				  							<i class=\"write icon\"></i> \
+										</button> \
+										<button class=\"ui icon button\" data-title=\"Désactiver\" onClick=\"DoleticUIModule.disableUser("+data.object[i].id+", "+data.object[i].user_id+"); return false;\"> \
+				  							<i class=\"remove user icon\"></i> \
+										</button> \
+									</div> \
+			    				</td> \
+			    				</tr>";
+							}
+							
 						}
 				}
 				content += "</tbody></table>";
