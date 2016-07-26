@@ -9,7 +9,7 @@ var DoleticServicesInterface = new function() {
   /**
    *  Global url to main script
    */
-  this.doleticMainURL = 'http://localhost/src/kernel/Main.php';
+  this.doleticMainURL = '../kernel/Main.php';
   this.serviceErrors = [
   'ERR_NO_ERROR',
   'ERR_MISSING_PARAMS',
