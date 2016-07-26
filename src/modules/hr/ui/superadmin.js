@@ -118,6 +118,7 @@ var DoleticUIModule = new function() {
 	 *	Load the HTML code of the Stats Tab
 	 */
 	this.getStatsTab = function() {
+		$('#agr_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
 		$('#statsTab').load("../modules/hr/ui/templates/statsTab.html");
 	}
 
@@ -125,6 +126,7 @@ var DoleticUIModule = new function() {
 	 *	Load the HTML code of the Members Tab
 	 */
 	this.getMembersTab = function() {
+		$('#user_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
 		$('#membersTab').load("../modules/hr/ui/templates/membersTab.html");
 	}
 
@@ -139,13 +141,16 @@ var DoleticUIModule = new function() {
 	 *	Load the HTML code of the Teams Tab
 	 */
 	 this.getTeamsTab = function() {
-		 $('#teamsTab').load("../modules/hr/ui/templates/teamsTab.html");
+		$('#team_form_modal').remove(); //Necessary to avoid duplicate
+		$('#teamsTab').load("../modules/hr/ui/templates/teamsTab.html");
 	 }
 	 /**
 	 *	Load the HTML code of the Details Tab
 	 */
 	 this.getDetailsTab = function() {
-		 $('#detailsTab').load("../modules/hr/ui/templates/detailsTab.html");
+	 	$('#admm_form_modal').remove(); //Necessary to avoid duplicate
+	 	$('#intm_form_modal').remove(); //Necessary to avoid duplicate
+		$('#detailsTab').load("../modules/hr/ui/templates/detailsTab.html");
 	 }
 
 	this.hasInputError = false;
