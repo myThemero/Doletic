@@ -45,12 +45,12 @@ class DBObjectLoader extends AbstractLoader {
 	public function FullDBReset() {
 		
 		foreach ($this->objects as $key => $object) {
-			if($object->GetModule() == 'kernel') {
+			if($object->GetModule()->GetCode() == 'kernel') {
 				$object->ResetDB();
 			}
 		}
 		foreach ($this->objects as $key => $object) {
-			if($object->GetModule() != 'kernel') {
+			if($object->GetModule()->GetCode() != 'kernel') {
 				$object->ResetDB();
 			}
 		}
