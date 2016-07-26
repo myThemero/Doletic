@@ -1,6 +1,7 @@
 <?php
 
 require_once "interfaces/AbstractModule.php";
+require_once "../modules/kernel/services/objects/UserDataDBObject.php";
 require_once "../modules/hr/services/objects/TeamDBObject.php";
 
 class HrModule extends AbstractModule {

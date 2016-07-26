@@ -906,7 +906,7 @@ class UserDataServices extends AbstractObjectServices {
 
 	private function __update_user_position($userId, $position) {
 		$previousPosition = $this->__get_user_last_position($userId);
-		if($position != $previousPosition[UserDataDBObject::COL_LABEL]) {
+		if(!array_key_exists(UserDataDBObject::COL_LABEL, $previousPosition) || $position != $previousPosition[UserDataDBObject::COL_LABEL]) {
 			// create sql params
 			$sql_params = array(
 				":".UserDataDBObject::COL_ID => "NULL",
