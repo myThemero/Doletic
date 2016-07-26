@@ -11,6 +11,7 @@ require_once "../modules/kernel/services/objects/OVHWrapperDBObject.php";
 require_once "../modules/kernel/services/objects/LogDBObject.php";
 require_once "../modules/kernel/services/objects/AdmMembershipDBObject.php";
 require_once "../modules/kernel/services/objects/IntMembershipDBObject.php";
+require_once "../modules/kernel/services/objects/TeamDBObject.php";
 require_once "../modules/kernel/services/objects/IndicatorDBObject.php";
 require_once "../modules/kernel/services/KernelDBService.php";
 
@@ -142,6 +143,19 @@ class KernelModule extends AbstractModule {
 				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::UPDATE 				=> RightsMap::A_RMASK,	// admin 
 				IntMembershipDBObject::OBJ_NAME.':'.IntMembershipServices::DELETE 				=> RightsMap::A_RMASK,  // admin
 
+				// -- module services
+				// ---- team object services
+				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_TEAM_BY_ID 		=> RightsMap::G_RMASK,	// only super admin 
+				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_TEAM_BY_DIV 		=> RightsMap::G_RMASK,	// only super admin 
+				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_TEAM_MEMBERS 		=> RightsMap::G_RMASK,  // everyone 
+				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_ALL_TEAMS 			=> RightsMap::G_RMASK,	// everyone 
+				TeamDBObject::OBJ_NAME.':'.TeamServices::GET_USER_TEAMS 		=> RightsMap::G_RMASK,  // everyone
+				TeamDBObject::OBJ_NAME.':'.TeamServices::INSERT_MEMBER			=> RightsMap::A_RMASK,	// admin 
+				TeamDBObject::OBJ_NAME.':'.TeamServices::DELETE_MEMBER	 		=> RightsMap::A_RMASK,  // admin 
+				TeamDBObject::OBJ_NAME.':'.TeamServices::INSERT 				=> RightsMap::A_RMASK,  // admin 
+				TeamDBObject::OBJ_NAME.':'.TeamServices::UPDATE 				=> RightsMap::A_RMASK,	// admin 
+				TeamDBObject::OBJ_NAME.':'.TeamServices::DELETE 				=> RightsMap::A_RMASK  // admin
+
 				),
 				false // disable ui must be true in production version
 			);
@@ -156,6 +170,7 @@ class KernelModule extends AbstractModule {
 		parent::addDBObject(new LogDBObject($this));
 		parent::addDBObject(new AdmMembershipDBObject($this));
 		parent::addDBObject(new IntMembershipDBObject($this));
+		parent::addDBObject(new TeamDBObject($this));
 		parent::addDBObject(new IndicatorDBObject($this));
 
 		// -- add module specific db services

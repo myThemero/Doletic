@@ -17,6 +17,7 @@ class Team implements \JsonSerializable {
 	private $id;
 	private $name;
 	private $leader_id;
+	private $leader_name;
 	private $creation_date;
 	private $division;
 	private $members;
@@ -48,6 +49,7 @@ public function jsonSerialize() {
 			TeamDBObject::COL_ID => $this->id,
 			TeamDBObject::COL_NAME => $this->name,
 			TeamDBObject::COL_LEADER_ID => $this->leader_id,
+			TeamDBObject::COL_LEADER_NAME => $this->leader_name,
 			TeamDBObject::COL_CREATION_DATE => $this->creation_date,
 			TeamDBObject::COL_DIVISION => $this->division,
 			TeamDBObject::COL_MEMBER_ID => $this->members,
@@ -76,6 +78,19 @@ public function jsonSerialize() {
 	/**
 	 * @brief
 	 */
+	public function GetLeaderName() {
+		return $this->leader_name;
+	}
+	/**
+	 * @brief
+	 */
+	public function SetLeaderName($name) {
+		$this->leader_name = $name;
+		return $this;
+	}
+	/**
+	 * @brief
+	 */
 	public function GetCreationDate() {
 		return $this->creation_date;
 	}
@@ -90,6 +105,13 @@ public function jsonSerialize() {
 	 */
 	public function GetMembers() {
 		return $this->members;
+	}
+		/**
+	 * @brief
+	 */
+	public function SetMembers($members) {
+		$this->members = $members;
+		return $this;
 	}
 }
 
@@ -393,6 +415,7 @@ class TeamDBObject extends AbstractDBObject {
 	const COL_ID = "id";
 	const COL_NAME = "name";
 	const COL_LEADER_ID = "leader_id";
+	const COL_LEADER_NAME = "leader_name";
 	const COL_CREATION_DATE = "creation_date";
 	const COL_DIVISION = "division";
 	const COL_MEMBER_ID = "member_id";
