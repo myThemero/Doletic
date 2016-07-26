@@ -383,8 +383,6 @@ class UserDataServices extends AbstractObjectServices {
 			$data = $this->__disable_user_data($params[UserDataServices::PARAM_ID]);
 		} else if(!strcmp($action, UserDataServices::ENABLE)) {
 			$data = $this->__enable_user_data($params[UserDataServices::PARAM_ID]);
-		} else if(!strcmp($action, UserDataServices::STATS)) {
-			$data = $this->__get_global_stats();
 		}
 		return $data;
 	}
@@ -907,16 +905,20 @@ class UserDataServices extends AbstractObjectServices {
 	}
 
 	private function __update_user_position($userId, $position) {
-		// create sql params
-		$sql_params = array(
-			":".UserDataDBObject::COL_ID => "NULL",
-			":".UserDataDBObject::COL_USER_ID => $userId,
-			":".UserDataDBObject::COL_POSITION => $position,
-			":".UserDataDBObject::COL_SINCE => date('Y-m-d H:i:s'));
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetINSERTQuery();
-		// execute query
-		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+		$previousPosition = $this->__get_user_last_position($userId);
+		if($position != $previousPosition[UserDataDBObject::COL_LABEL]) {
+			// create sql params
+			$sql_params = array(
+				":".UserDataDBObject::COL_ID => "NULL",
+				":".UserDataDBObject::COL_USER_ID => $userId,
+				":".UserDataDBObject::COL_POSITION => $position,
+				":".UserDataDBObject::COL_SINCE => date('Y-m-d H:i:s'));
+			// create sql request
+			$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetINSERTQuery();
+			// execute query
+			return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+		}
+		return true;
 	}
 
 	private function __update_user_avatar($avatarId) {
@@ -997,44 +999,6 @@ class UserDataServices extends AbstractObjectServices {
 		return $divisions;
 	}
 
-	private function __get_global_stats() {
-		$stats = array();
-		// Get all indicators
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_INDICATORS)->GetSELECTQuery();
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
-		$indicators = array();
-		if($pdos != null) {
-			while( ($row = $pdos->fetch()) !== false) {
-				array_push($indicators, $row);
-			}
-		}
-		foreach($indicators as $indicator) {
-			$stat = array();
-			// Call procedure
-			$params = array();
-			if(isset($indicator[UserDataDBObject::COL_PARAMS]) && $indicator[UserDataDBObject::COL_PARAMS] != "" ) {
-				$params = explode(";", $indicator[UserDataDBObject::COL_PARAMS]);
-			}
-			$query = DBProcedure::GetCALLQueryByName($indicator[UserDataDBObject::COL_PROCEDURE], $params);
-			$result = parent::getDBConnection()->RawQuery($query);
-			if($result != null && !empty($result)) {
-				foreach($result as $r) {
-					$finalRow = array_merge($r, $indicator);
-					foreach($finalRow as $key => $value) {
-						if(!isset($stat[$key])) {
-							$stat[$key] = array();
-						}
-						array_push($stat[$key], $value);
-					}
-				}
-			}
-			$stats[$indicator[UserDataDBObject::COL_LABEL]] = $stat;
-		}
-
-		return $stats;
-	}
 
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
 	
