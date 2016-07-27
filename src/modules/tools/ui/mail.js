@@ -126,29 +126,8 @@ var DoleticUIModule = new function() {
 						$('#user_lastname').html(data.object.lastname);
 						$('#user_phone').html(data.object.tel);
 						$('#user_year').html(data.object.school_year);
-						// retrieve departement label
-						UserDataServicesInterface.getINSADeptById(data.object.insa_dept_id , function(data){
-							if(data.code == 0) {
-								$('#user_departement').html(data.object.detail);
-								// update signature source code when finished
-								DoleticUIModule.updateSignatureSourceCode(); // <!> necessary because asynchronously called 
-							} else {
-								// use doletic services interface to display error
-								DoleticServicesInterface.handleServiceError(data);
-							}
-						});
-						// update signature source code when finished
-						DoleticUIModule.updateSignatureSourceCode(); // <!> necessary because asynchronously called 
-					} else {
-						// use doletic services interface to display error
-						DoleticServicesInterface.handleServiceError(data);		
-					}
-				});
-				// retrieve user last position
-				UserDataServicesInterface.getUserLastPos(data.object.id, function(data){
-					if(data.code == 0) {
-						// set user name
-						$('#user_position').html(data.object.label);
+						$('#user_departement').html(data.object.insa_dept);
+						$('#user_position').html(data.object.position[0].label);
 						// update signature source code when finished
 						DoleticUIModule.updateSignatureSourceCode(); // <!> necessary because asynchronously called 
 					} else {

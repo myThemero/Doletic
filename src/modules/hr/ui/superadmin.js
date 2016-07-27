@@ -63,18 +63,22 @@ var DoleticUIModule = new function() {
 						</div> \
 						<div class=\"ui bottom attached tab segment active\" data-tab=\"stats\"> \
 							<div id=\"statsTab\">\
+								<div class=\"ui loader active\"></div>\
 							</div>\
 					    </div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"memberlist\"> \
 							<div id=\"membersTab\">\
+								<div class=\"ui loader active\"></div>\
 							</div>\
 						</div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"disabledlist\"> \
 							<div id=\"disabledTab\">\
+								<div class=\"ui loader active\"></div>\
 							</div>\
 						</div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"teamlist\"> \
 							<div id=\"teamsTab\">\
+								<div class=\"ui loader active\"></div>\
 							</div>\
 						</div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"userdetails\"> \

@@ -96,7 +96,7 @@ class UIManager extends AbstractManager {
 
 	private function __init_js($modulesJSServices) {
 		// add kernel scripts
-		array_push($this->internal_js, "ui/js_depends/jquery-2.2.0.min.js");
+		array_push($this->internal_js, "ui/js_depends/jquery-3.0.0.min.js");
 		array_push($this->internal_js, "ui/js_depends/plotly-1.5.0.min.js");
 		array_push($this->internal_js, "ui/semantic/dist/semantic.min.js");
 		array_push($this->internal_js, "ui/dataTables/jquery.dataTables.min.js");
