@@ -3,73 +3,81 @@
 require_once "interfaces/AbstractLoader.php";
 
 /**
-* 	@brief
-*/
-class DBObjectLoader extends AbstractLoader {
+ * @brief
+ */
+class DBObjectLoader extends AbstractLoader
+{
 
-	// -- consts
+    // -- consts
 
-	// -- attributes
-	private $objects = null;
+    // -- attributes
+    private $objects = null;
 
-	// -- functions
+    // -- functions
 
-	public function __construct(&$kernel, &$manager) {
-		parent::__construct($kernel, $manager);
-		$this->objects = array();
-	}
+    public function __construct(&$kernel, &$manager)
+    {
+        parent::__construct($kernel, $manager);
+        $this->objects = array();
+    }
 
-	public function Init($modulesDBObjects) {
-		// -- add modules db objects
-		foreach ($modulesDBObjects as $dboname => $dbo) {
-			$this->objects[$dboname] = $dbo;
-		}
-		// -- init db objects connections
-		$this->__connect_db_objects();
-	}
+    public function Init($modulesDBObjects)
+    {
+        // -- add modules db objects
+        foreach ($modulesDBObjects as $dboname => $dbo) {
+            $this->objects[$dboname] = $dbo;
+        }
+        // -- init db objects connections
+        $this->__connect_db_objects();
+    }
 
-	public function GetDBObject($key) {
-		$object = null;
-		if(array_key_exists($key, $this->objects)) {
-			$object = $this->objects[$key];	
-		}
-		return $object; 
-	}
+    public function GetDBObject($key)
+    {
+        $object = null;
+        if (array_key_exists($key, $this->objects)) {
+            $object = $this->objects[$key];
+        }
+        return $object;
+    }
 
-	public function FullDBClear() {
-		foreach ($this->objects as $key => $object) {
-			$object->ClearDB();
-		}
-	}
+    public function FullDBClear()
+    {
+        foreach ($this->objects as $key => $object) {
+            $object->ClearDB();
+        }
+    }
 
-	public function FullDBReset() {
-		
-		foreach ($this->objects as $key => $object) {
-			if($object->GetModule()->GetCode() == 'kernel') {
-				$object->ResetDB();
-			}
-		}
-		foreach ($this->objects as $key => $object) {
-			if($object->GetModule()->GetCode() != 'kernel') {
-				$object->ResetDB();
-			}
-		}
-	}
+    public function FullDBReset()
+    {
 
-	public function FullDBUpdate() {
-		foreach ($this->objects as $key => $object) {
-			$object->UpdateDB();
-		}
-	}
+        foreach ($this->objects as $key => $object) {
+            if ($object->GetModule()->GetCode() == 'kernel') {
+                $object->ResetDB();
+            }
+        }
+        foreach ($this->objects as $key => $object) {
+            if ($object->GetModule()->GetCode() != 'kernel') {
+                $object->ResetDB();
+            }
+        }
+    }
+
+    public function FullDBUpdate()
+    {
+        foreach ($this->objects as $key => $object) {
+            $object->UpdateDB();
+        }
+    }
 
 # PROTECTED & PRIVATE ######################################################
 
-	private function __connect_db_objects() {
-		foreach ($this->objects as $dbo) {
-			$dbo->SetDBConnection(
-				$this->manager()->getOpenConnectionTo(
-				parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
-		}
-	}
+    private function __connect_db_objects()
+    {
+        foreach ($this->objects as $dbo) {
+            $dbo->SetDBConnection(
+                $this->manager()->getOpenConnectionTo(
+                    parent::kernel()->SettingValue(SettingsManager::KEY_DBNAME)));
+        }
+    }
 
 }

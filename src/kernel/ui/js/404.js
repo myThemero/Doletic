@@ -1,21 +1,21 @@
-var DoleticUIModule = new function() {
-	/**
-	 *	Parent abstract module
-	 */
-	this.super = new AbstractDoleticUIModule('404_UIModule', 'Paul Dautry', '1.0dev');
-	/**
-	 *	Override render function
-	 */
-	this.render = function(htmlNode) {
-		this.super.render(htmlNode, this);
-		// remove logout button 
-		DoleticMasterInterface.removeUserNotLoggedUselessButtons();
-	}
-	/**
-	 *	Override build function
-	 */
-	this.build = function() {
-		return "<div class=\"holder\"> \
+var DoleticUIModule = new function () {
+    /**
+     *    Parent abstract module
+     */
+    this.super = new AbstractDoleticUIModule('404_UIModule', 'Paul Dautry', '1.0dev');
+    /**
+     *    Override render function
+     */
+    this.render = function (htmlNode) {
+        this.super.render(htmlNode, this);
+        // remove logout button 
+        DoleticMasterInterface.removeUserNotLoggedUselessButtons();
+    };
+    /**
+     *    Override build function
+     */
+    this.build = function () {
+        return "<div class=\"holder\"> \
 				  <div class=\"ui two column centered middle aligned grid container\"> \
 					<div class=\"column\"> \
 					  <div id=\"error_msg\" class=\"ui icon message\"> \
@@ -35,11 +35,11 @@ var DoleticUIModule = new function() {
 					</div> \
 				   </div> \
 				</div>";
-	}
-	/**
-	 *	Override uploadSuccessHandler
-	 */
-	this.uploadSuccessHandler = function(id, data) {
-		this.super.uploadSuccessHandler(id, data);
-	}
-}
+    };
+    /**
+     *    Override uploadSuccessHandler
+     */
+    this.uploadSuccessHandler = function (id, data) {
+        this.super.uploadSuccessHandler(id, data);
+    }
+};

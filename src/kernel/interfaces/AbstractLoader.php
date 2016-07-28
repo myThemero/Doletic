@@ -1,27 +1,31 @@
 <?php
 
 /**
-* 	@brief
-*/
-abstract class AbstractLoader {
+ * @brief
+ */
+abstract class AbstractLoader
+{
 
-	// -- attributes
-	private $kernel = null;
-	private $manager = null;
-	
-	// -- functions
+    // -- attributes
+    private $kernel = null;
+    private $manager = null;
 
-	protected function __construct(&$kernel, &$manager) {
-		$this->kernel = $kernel;
-		$this->manager = $manager;
-	}
+    // -- functions
 
-	protected function kernel() {
-		return $this->kernel;
-	}
+    protected function __construct(&$kernel, &$manager)
+    {
+        $this->kernel = $kernel;
+        $this->manager = $manager;
+    }
 
-	protected function manager() {
-		return $this->manager;
-	} 
+    protected function kernel()
+    {
+        return $this->kernel;
+    }
+
+    protected function manager()
+    {
+        return $this->manager;
+    }
 
 }

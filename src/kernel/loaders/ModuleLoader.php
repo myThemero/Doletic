@@ -1,40 +1,46 @@
-<?php 
+<?php
 
 require_once "interfaces/AbstractLoader.php";
 // load all modules descriptions
 foreach (new DirectoryIterator(ModuleLoader::MODS_DIR) as $fileInfo) {
-	if($fileInfo->isDot()) continue;
-	if($fileInfo->isDir()) {
-		require_once ModuleLoader::MODS_DIR."/".$fileInfo->getFilename()."/module.php";
-	}
+    if ($fileInfo->isDot()) continue;
+    if ($fileInfo->isDir()) {
+        require_once ModuleLoader::MODS_DIR . "/" . $fileInfo->getFilename() . "/module.php";
+    }
 }
 
 /**
-* 	@brief
-*/
-class ModuleLoader extends AbstractLoader {
+ * @brief
+ */
+class ModuleLoader extends AbstractLoader
+{
 
-	// -- consts
-	const MODS_DIR = "../modules";
-	// -- static
-	public static $_MODULES = array();
-	// -- functions
+    // -- consts
+    const MODS_DIR = "../modules";
+    // -- static
+    public static $_MODULES = array();
 
-	public function __construct(&$kernel, &$manager) {
-		// -- construct parent
-		parent::__construct($kernel, $manager);
-	}
+    // -- functions
 
-	/**
-	 *
-	 */
-	public function Init() {
-		parent::manager()->RegisterModules(ModuleLoader::$_MODULES);
-	}
-	/**
-	 *
-	 */
-	public static function RegisterModule($module) {
-		ModuleLoader::$_MODULES[$module->GetCode()] = $module;
-	}
+    public function __construct(&$kernel, &$manager)
+    {
+        // -- construct parent
+        parent::__construct($kernel, $manager);
+    }
+
+    /**
+     *
+     */
+    public function Init()
+    {
+        parent::manager()->RegisterModules(ModuleLoader::$_MODULES);
+    }
+
+    /**
+     *
+     */
+    public static function RegisterModule($module)
+    {
+        ModuleLoader::$_MODULES[$module->GetCode()] = $module;
+    }
 }

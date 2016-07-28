@@ -2,23 +2,26 @@
 
 require_once "interfaces/AbstractCronTask.php";
 
-class CleanLogsTask extends AbstractCronTask {
+class CleanLogsTask extends AbstractCronTask
+{
 
-	// -- consts
+    // -- consts
 
-	// -- attributes
+    // -- attributes
 
-	// -- functions
-	public function __construct() {
-		parent::__construct(
-			"clean_logs", 
-			"02 2 * * *" // execution tous les jours à 02:02
-		);
-	}
+    // -- functions
+    public function __construct()
+    {
+        parent::__construct(
+            "clean_logs",
+            "02 2 * * *" // execution tous les jours à 02:02
+        );
+    }
 
-	public function Run() {
-		echo parent::GetName()." -> RUN !";
-	}
+    public function Run()
+    {
+        echo parent::GetName() . " -> RUN !";
+    }
 
 }
 

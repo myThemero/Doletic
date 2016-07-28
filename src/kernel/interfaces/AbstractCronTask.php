@@ -1,29 +1,34 @@
 <?php
 
 /**
-* @brief
-*/
-abstract class AbstractCronTask {
-	
-	// -- attributes
-	private $name 		= null;
-	private $frequency 	= null;
-	// -- functions
+ * @brief
+ */
+abstract class AbstractCronTask
+{
 
-	public function GetName() {
-		return $this->name;
-	}
+    // -- attributes
+    private $name = null;
+    private $frequency = null;
 
-	public function GetFrequency() {
-		return $this->frequency;
-	}
+    // -- functions
 
-	abstract public function Run();
+    public function GetName()
+    {
+        return $this->name;
+    }
+
+    public function GetFrequency()
+    {
+        return $this->frequency;
+    }
+
+    abstract public function Run();
 
 # PROTECTED & PRIVATE #########################################
 
-	protected function __construct($name, $frequency) {
-		$this->name	= $name;
-		$this->frequency = $frequency;
-	}
+    protected function __construct($name, $frequency)
+    {
+        $this->name = $name;
+        $this->frequency = $frequency;
+    }
 }

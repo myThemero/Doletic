@@ -1,21 +1,24 @@
 <?php
 
 /**
-* 	@brief
-*/
-abstract class AbstractManager {
+ * @brief
+ */
+abstract class AbstractManager
+{
 
-	// -- attributes
-	private $kernel = null;
-	
-	// -- functions
+    // -- attributes
+    private $kernel = null;
 
-	public function __construct(&$kernel) {
-		$this->kernel = $kernel;
-	}
+    // -- functions
 
-	protected function kernel() {
-		return $this->kernel;
-	} 
+    public function __construct(&$kernel)
+    {
+        $this->kernel = $kernel;
+    }
+
+    protected function kernel()
+    {
+        return $this->kernel;
+    }
 
 }

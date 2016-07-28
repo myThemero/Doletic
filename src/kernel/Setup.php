@@ -5,8 +5,8 @@
 /**
  *  Tasks :
  *      + create 'uploads' and 'tmp' folders with appropriate permissions.
- *		+ init database
+ *        + init database
  *      + setup cron trigger
  *      + propose to configure mailer
- *		+ propose to configure ovh wrapper
+ *        + propose to configure ovh wrapper
  */
