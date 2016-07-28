@@ -1,23 +1,23 @@
-var DoleticUIModule = new function() {
-	/**
-	 *	Parent abstract module
-	 */
-	this.super = new AbstractDoleticUIModule('Mail_UIModule', 'Paul Dautry', '1.0dev');
-	/**
-	 *	Override render function
-	 */
-	this.render = function(htmlNode) {
-		this.super.render(htmlNode, this);
-		// enable special popup
-		$('#copy_btn').popup({popup:'#copy_popup'});
-		// fill category field
-		DoleticUIModule.generateSignature();
-	}
-	/**
-	 *	Override build function
-	 */
-	this.build = function() {
-		return "<div class=\"ui two column grid container\"> \
+var DoleticUIModule = new function () {
+    /**
+     *    Parent abstract module
+     */
+    this.super = new AbstractDoleticUIModule('Mail_UIModule', 'Paul Dautry', '1.0dev');
+    /**
+     *    Override render function
+     */
+    this.render = function (htmlNode) {
+        this.super.render(htmlNode, this);
+        // enable special popup
+        $('#copy_btn').popup({popup: '#copy_popup'});
+        // fill category field
+        DoleticUIModule.generateSignature();
+    }
+    /**
+     *    Override build function
+     */
+    this.build = function () {
+        return "<div class=\"ui two column grid container\"> \
 				  <div class=\"row\"> \
 				  </div> \
 				  <div class=\"row\"> \
@@ -54,37 +54,37 @@ var DoleticUIModule = new function() {
 				  <div class=\"row\"> \
 				  </div> \
 				</div>";
-	}
-	/**
-	 *	Override uploadSuccessHandler
-	 */
-	this.uploadSuccessHandler = function(id, data) {
-		this.super.uploadSuccessHandler(id, data);
-	}
+    }
+    /**
+     *    Override uploadSuccessHandler
+     */
+    this.uploadSuccessHandler = function (id, data) {
+        this.super.uploadSuccessHandler(id, data);
+    }
 
-	this.nightMode = function(on) {
-	    if(on) {
-	    	$('#title_seg').attr('class', 'html ui top attached segment inverted');
-	    	$('#content_seg').attr('class', 'ui instructive attached segment inverted');
-	    	$('#footer_seg').attr('class', 'ui instructive bottom attached segment inverted');
-	    } else {
-	    	$('#title_seg').attr('class', 'html ui top attached segment');
-	    	$('#content_seg').attr('class', 'ui instructive attached segment');
-	    	$('#footer_seg').attr('class', 'ui instructive bottom attached segment');
-	    }
-  	}
+    this.nightMode = function (on) {
+        if (on) {
+            $('#title_seg').attr('class', 'html ui top attached segment inverted');
+            $('#content_seg').attr('class', 'ui instructive attached segment inverted');
+            $('#footer_seg').attr('class', 'ui instructive bottom attached segment inverted');
+        } else {
+            $('#title_seg').attr('class', 'html ui top attached segment');
+            $('#content_seg').attr('class', 'ui instructive attached segment');
+            $('#footer_seg').attr('class', 'ui instructive bottom attached segment');
+        }
+    }
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
-	this.generateSignature = function() { 
-		// create html signature content
-		var html = " \
+    this.generateSignature = function () {
+        // create html signature content
+        var html = " \
 <table style=\"color: #000000; font-size: medium;\">\n \
   <tbody>\n \
     <tr>\n \
       <td style=\"padding-right: 15px;\">\n \
-        <a href=\""+DoleticConfig.JE.website_url+"\" target=\"_blank\">\n \
-          <img src=\""+DoleticConfig.JE.logo_url+"\" alt=\"\" width=\"97\" height=\"76\" />\n \
+        <a href=\"" + DoleticConfig.JE.website_url + "\" target=\"_blank\">\n \
+          <img src=\"" + DoleticConfig.JE.logo_url + "\" alt=\"\" width=\"97\" height=\"76\" />\n \
         </a>\n \
       </td>\n \
       <td style=\"font-size: 13px; line-height: 14px; font-family: Helvetica,sans-serif;\">\n \
@@ -102,50 +102,50 @@ var DoleticUIModule = new function() {
           </span>\n \
           <br />\n \
           <span style=\"display: inline-block; margin-top: 2px; color: #888888;\">\n \
-            <span>"+DoleticConfig.JE.school+"&nbsp;-&nbsp;Département&nbsp;<span id=\"user_departement\"></span>&nbsp;-&nbsp;<span id=\"user_year\"></span>&nbsp;année</span>\n \
+            <span>" + DoleticConfig.JE.school + "&nbsp;-&nbsp;Département&nbsp;<span id=\"user_departement\"></span>&nbsp;-&nbsp;<span id=\"user_year\"></span>&nbsp;année</span>\n \
           </span>\n \
         </p>\n \
       </td>\n \
     </tr>\n \
   </tbody>\n \
 </table>\n";
-		// put html signature into preview zone
-		$('#preview_zone').html(html);
-		// fill signature fields using user data
-		DoleticServicesInterface.getCurrentUser(function(data) {
-			if(data.code == 0) {
-				// set mail
-				var mail = data.object.username+DoleticConfig.JE.mail_domain;
-				$('#mail_lnk').attr('href', 'mailto:'+mail);
-				$('#user_mail').html(mail);
-				// retrieve user data
-				UserDataServicesInterface.getById(data.object.id, function(data){
-					if(data.code == 0) {
-						// set firstname, lastname, phone and year
-						$('#user_firstname').html(data.object.firstname);
-						$('#user_lastname').html(data.object.lastname);
-						$('#user_phone').html(data.object.tel);
-						$('#user_year').html(data.object.school_year);
-						$('#user_departement').html(data.object.insa_dept);
-						$('#user_position').html(data.object.position[0].label);
-						// update signature source code when finished
-						DoleticUIModule.updateSignatureSourceCode(); // <!> necessary because asynchronously called 
-					} else {
-						// use doletic services interface to display error
-						DoleticServicesInterface.handleServiceError(data);		
-					}
-				});
-				// update signature source code when finished
-				DoleticUIModule.updateSignatureSourceCode();
-			} else {
-				// update signature source code when finished
-				DoleticUIModule.updateSignatureSourceCode(); // <!> necessary because asynchronously called 
-			}
-		});
-	}
+        // put html signature into preview zone
+        $('#preview_zone').html(html);
+        // fill signature fields using user data
+        DoleticServicesInterface.getCurrentUser(function (data) {
+            if (data.code == 0) {
+                // set mail
+                var mail = data.object.username + DoleticConfig.JE.mail_domain;
+                $('#mail_lnk').attr('href', 'mailto:' + mail);
+                $('#user_mail').html(mail);
+                // retrieve user data
+                UserDataServicesInterface.getById(data.object.id, function (data) {
+                    if (data.code == 0) {
+                        // set firstname, lastname, phone and year
+                        $('#user_firstname').html(data.object.firstname);
+                        $('#user_lastname').html(data.object.lastname);
+                        $('#user_phone').html(data.object.tel);
+                        $('#user_year').html(data.object.school_year);
+                        $('#user_departement').html(data.object.insa_dept);
+                        $('#user_position').html(data.object.position[0].label);
+                        // update signature source code when finished
+                        DoleticUIModule.updateSignatureSourceCode(); // <!> necessary because asynchronously called
+                    } else {
+                        // use doletic services interface to display error
+                        DoleticServicesInterface.handleServiceError(data);
+                    }
+                });
+                // update signature source code when finished
+                DoleticUIModule.updateSignatureSourceCode();
+            } else {
+                // update signature source code when finished
+                DoleticUIModule.updateSignatureSourceCode(); // <!> necessary because asynchronously called
+            }
+        });
+    }
 
-	this.updateSignatureSourceCode = function() {
-		$('#code_zone').html($('#preview_zone').html());
-	}
+    this.updateSignatureSourceCode = function () {
+        $('#code_zone').html($('#preview_zone').html());
+    }
 
 }

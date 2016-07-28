@@ -1,42 +1,50 @@
-<div class="ui two column grid container"> 
-    <div class="row"> 
+<div class="ui two column grid container">
+    <div class="row">
         <div class="ui buttons">
-            <div id="addteam_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewTeamForm();">Ajouter une équipe</div>
-            <div id="refresh_team_btn" class="ui olive button" onClick="DoleticUIModule.fillTeamsList();">Actualiser la liste</div> 
-            <div id="excel_team_btn" class="ui yellow button" onClick="alert('Fonction non implémentée...')">Exporter au format Excel</div> 
+            <div id="addteam_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewTeamForm();">Ajouter une
+                équipe
+            </div>
+            <div id="refresh_team_btn" class="ui olive button" onClick="DoleticUIModule.fillTeamsList();">Actualiser la
+                liste
+            </div>
+            <div id="excel_team_btn" class="ui yellow button" onClick="alert('Fonction non implémentée...')">Exporter au
+                format Excel
+            </div>
         </div>
-    </div> 
-    <div class="row"> 
-        <div class="sixteen wide column" id="team_table_container"> 
+    </div>
+    <div class="row">
+        <div class="sixteen wide column" id="team_table_container">
             <!--Team table will go there-->
-        </div> 
-        <div class="ui modal" id="team_form_modal"> 
-            <form id="team_form" class="ui form segment"> 
-                <h4 class="ui dividing header">Ajout d'une équipe</h4> 
-                <div id="tname_field" class="twelve wide required field"> 
-                    <label>Nom</label> 
-                    <input id="tname" placeholder="Nom d'équipe..." type="text"/> 
-                </div> 
-                <div class="twelve wide required field"> 
-                    <label>Chef d'équipe</label> 
-                    <select id="leader" class="ui fluid search dropdown user-drop"> 
-                        <!-- LEADERS WILL GO HERE --> 
-                    </select> 
-                </div> 
-                <div class="twelve wide required field"> 
-                    <label>Pôle associé</label> 
-                    <select id="division" class="ui fluid search dropdown"> 
-                        <!-- DIVISIONS WILL GO HERE --> 
-                    </select> 
-                </div> 
-                <div class="ui hr_center small buttons"> 
-                    <div id="abort_btn" class="ui button" onClick="DoleticUIModule.cancelNewTeamForm();">Annuler</div> 
-                    <div class="or" data-text="ou"></div> 
-                    <div id="addteam_btn" class="ui green button" onClick="DoleticUIModule.insertNewTeam();return false;">Ajouter</div> 
+        </div>
+        <div class="ui modal" id="team_form_modal">
+            <form id="team_form" class="ui form segment">
+                <h4 class="ui dividing header">Ajout d'une équipe</h4>
+                <div id="tname_field" class="twelve wide required field">
+                    <label>Nom</label>
+                    <input id="tname" placeholder="Nom d'équipe..." type="text"/>
+                </div>
+                <div class="twelve wide required field">
+                    <label>Chef d'équipe</label>
+                    <select id="leader" class="ui fluid search dropdown user-drop">
+                        <!-- LEADERS WILL GO HERE -->
+                    </select>
+                </div>
+                <div class="twelve wide required field">
+                    <label>Pôle associé</label>
+                    <select id="division" class="ui fluid search dropdown">
+                        <!-- DIVISIONS WILL GO HERE -->
+                    </select>
+                </div>
+                <div class="ui hr_center small buttons">
+                    <div id="abort_btn" class="ui button" onClick="DoleticUIModule.cancelNewTeamForm();">Annuler</div>
+                    <div class="or" data-text="ou"></div>
+                    <div id="addteam_btn" class="ui green button"
+                         onClick="DoleticUIModule.insertNewTeam();return false;">Ajouter
+                    </div>
                 </div>
             </form>
-        </div> 
-    </div> 
-    <div class="row"> 
-    </div> 
+        </div>
+    </div>
+    <div class="row">
+    </div>
 </div> 

@@ -3,428 +3,464 @@
 require_once "interfaces/AbstractDBObject.php";
 require_once "interfaces/AbstractObjectServices.php";
 require_once "objects/DBProcedure.php";
-require_once "objects/DBTable.php"; 
+require_once "objects/DBTable.php";
 
 /**
  * @brief AdmMembership object
  */
-class AdmMembership implements \JsonSerializable {
-	
-	// -- consts
-	const AUTO_ID = -1;
+class AdmMembership implements \JsonSerializable
+{
 
-	// -- attributes
-	private $id;
-	private $user_id;
-	private $start_date;
-	private $end_date;
-	private $fee;
-	private $form;
-	private $certif;
+    // -- consts
+    const AUTO_ID = -1;
 
-	/**
-	*	@brief Constructs a adm_membership
-	*	@param int $userId
-	*		User's ID 
-	*	@param string $startDate
-	*		Membership start date
-	*	@param string $endDate
-	*		Membership end date
-	*	@param bool $fee
-	*		Membership fee
-	*   @param bool $form
-	*		Member registration form
-	*   @param bool $certif
-	*		School certificate
-	*/
-	public function __construct($id, $userId, $startDate, $endDate, $fee, $form, $certif) {
-		$this->id = intval($id);
-		$this->user_id = intval($userId);
-		$this->start_date = $startDate;
-		$this->end_date = $endDate;
-		$this->fee = (bool)$fee;
-		$this->form = (bool)$form;
-		$this->certif = (bool)$certif;
-	}
+    // -- attributes
+    private $id;
+    private $user_id;
+    private $start_date;
+    private $end_date;
+    private $fee;
+    private $form;
+    private $certif;
 
-public function jsonSerialize() {
-		return [
-			AdmMembershipDBObject::COL_ID => $this->id,
-			AdmMembershipDBObject::COL_USER_ID => $this->user_id,
-			AdmMembershipDBObject::COL_START_DATE => $this->start_date,
-			AdmMembershipDBObject::COL_END_DATE => $this->end_date,
-			AdmMembershipDBObject::COL_FEE => $this->fee,
-			AdmMembershipDBObject::COL_FORM => $this->form,
-			AdmMembershipDBObject::COL_CERTIF => $this->certif
-		];
-	}
+    /**
+     * @brief Constructs a adm_membership
+     * @param int $userId
+     *        User's ID
+     * @param string $startDate
+     *        Membership start date
+     * @param string $endDate
+     *        Membership end date
+     * @param bool $fee
+     *        Membership fee
+     * @param bool $form
+     *        Member registration form
+     * @param bool $certif
+     *        School certificate
+     */
+    public function __construct($id, $userId, $startDate, $endDate, $fee, $form, $certif)
+    {
+        $this->id = intval($id);
+        $this->user_id = intval($userId);
+        $this->start_date = $startDate;
+        $this->end_date = $endDate;
+        $this->fee = (bool)$fee;
+        $this->form = (bool)$form;
+        $this->certif = (bool)$certif;
+    }
 
-	/**
-	 * @brief Returns object's id
-	 * @return int
-	 */
-	public function GetId() {
-		return $this->id;
-	}
-	/**
-	 * @brief
-	 */
-	public function GetUserId() {
-		return $this->user_id;
-	}
-	/**
-	 * @brief 
-	 */
-	public function GetStartDate() {
-		return $this->start_date;
-	}
-	/**
-	 * @brief
-	 */
-	public function GetEndDate() {
-		return $this->end_date;
-	}
-	/**
-	 * @brief
-	 */
-	public function GetFee() {
-		return $this->fee;
-	}
-	/**
-	 * @brief 
-	 */
-	public function GetForm() {
-		return $this->form;
-	}
-	/**
-	 * @brief
-	 */
-	public function GetCertif() {
-		return $this->certif;
-	}
-	/**
-	 * @brief
-	 */
-	public function IsValid() {
-		return ($this->certif && $this->form && $this->fee);
-	}
+    public function jsonSerialize()
+    {
+        return [
+            AdmMembershipDBObject::COL_ID => $this->id,
+            AdmMembershipDBObject::COL_USER_ID => $this->user_id,
+            AdmMembershipDBObject::COL_START_DATE => $this->start_date,
+            AdmMembershipDBObject::COL_END_DATE => $this->end_date,
+            AdmMembershipDBObject::COL_FEE => $this->fee,
+            AdmMembershipDBObject::COL_FORM => $this->form,
+            AdmMembershipDBObject::COL_CERTIF => $this->certif
+        ];
+    }
+
+    /**
+     * @brief Returns object's id
+     * @return int
+     */
+    public function GetId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @brief
+     */
+    public function GetUserId()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * @brief
+     */
+    public function GetStartDate()
+    {
+        return $this->start_date;
+    }
+
+    /**
+     * @brief
+     */
+    public function GetEndDate()
+    {
+        return $this->end_date;
+    }
+
+    /**
+     * @brief
+     */
+    public function GetFee()
+    {
+        return $this->fee;
+    }
+
+    /**
+     * @brief
+     */
+    public function GetForm()
+    {
+        return $this->form;
+    }
+
+    /**
+     * @brief
+     */
+    public function GetCertif()
+    {
+        return $this->certif;
+    }
+
+    /**
+     * @brief
+     */
+    public function IsValid()
+    {
+        return ($this->certif && $this->form && $this->fee);
+    }
 
 }
 
 /**
  * @brief AdmMembership object related services
  */
-class AdmMembershipServices extends AbstractObjectServices {
-	
-	// -- consts
-	// --- params
-	const PARAM_ID 			= "id";
-	const PARAM_USER		= "userId";
-	const PARAM_START	 	= "startDate";
-	const PARAM_END		 	= "endDate";
-	const PARAM_FEE			= "fee";
-	const PARAM_FORM 		= "form";
-	const PARAM_CERTIF	 	= "certif";
-	// --- actions
-	const GET_ADM_MEMBERSHIP_BY_ID 	= "byidam";
-	const GET_ALL_ADM_MEMBERSHIPS   = "allam";
-	const GET_USER_ADM_MEMBERSHIPS  = "alluam";
-	const GET_CURRENT_ADM_MEMBERSHIP = "valadmm";
-	const GET_ALL_CURRENT_ADM_MEMBERSHIPS	= "allcuradmm";
-	const INSERT 		    = "insert";
-	const UPDATE            = "update";
-	const DELETE            = "delete";
+class AdmMembershipServices extends AbstractObjectServices
+{
 
-	// -- functions
+    // -- consts
+    // --- params
+    const PARAM_ID = "id";
+    const PARAM_USER = "userId";
+    const PARAM_START = "startDate";
+    const PARAM_END = "endDate";
+    const PARAM_FEE = "fee";
+    const PARAM_FORM = "form";
+    const PARAM_CERTIF = "certif";
+    // --- actions
+    const GET_ADM_MEMBERSHIP_BY_ID = "byidam";
+    const GET_ALL_ADM_MEMBERSHIPS = "allam";
+    const GET_USER_ADM_MEMBERSHIPS = "alluam";
+    const GET_CURRENT_ADM_MEMBERSHIP = "valadmm";
+    const GET_ALL_CURRENT_ADM_MEMBERSHIPS = "allcuradmm";
+    const INSERT = "insert";
+    const UPDATE = "update";
+    const DELETE = "delete";
 
-	// --- construct
-	public function __construct($currentUser, $dbObject, $dbConnection) {
-		parent::__construct($currentUser, $dbObject, $dbConnection);
-	}
+    // -- functions
 
-	public function GetResponseData($action, $params) {
-		$data = null;
-		if(!strcmp($action, AdmMembershipServices::GET_ADM_MEMBERSHIP_BY_ID)) {
-			$data = $this->__get_adm_membership_by_id($params[AdmMembershipServices::PARAM_ID]);
-		} else if(!strcmp($action, AdmMembershipServices::GET_ALL_ADM_MEMBERSHIPS)) {
-			$data = $this->__get_all_adm_memberships();
-		} else if(!strcmp($action, AdmMembershipServices::GET_ALL_CURRENT_ADM_MEMBERSHIPS)) {
-			$data = $this->__get_all_current_adm_memberships();
-		} else if(!strcmp($action, AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS)) {
-			$data = $this->__get_user_adm_memberships($params[AdmMembershipServices::PARAM_USER]);
-		} else if(!strcmp($action, AdmMembershipServices::GET_CURRENT_ADM_MEMBERSHIP)) {
-			$data = $this->__get_current_adm_membership($params[AdmMembershipServices::PARAM_USER]);
-		} else if(!strcmp($action, AdmMembershipServices::INSERT)) {
-			$data = $this->__insert_adm_membership(
-				$params[AdmMembershipServices::PARAM_USER],
-				$params[AdmMembershipServices::PARAM_START],
-				$params[AdmMembershipServices::PARAM_END],
-				$params[AdmMembershipServices::PARAM_FEE],
-				$params[AdmMembershipServices::PARAM_FORM],
-				$params[AdmMembershipServices::PARAM_CERTIF]);
-		} else if(!strcmp($action, AdmMembershipServices::UPDATE)) {
-			$data = $this->__update_adm_membership(
-				$params[AdmMembershipServices::PARAM_ID],
-				$params[AdmMembershipServices::PARAM_USER],
-				$params[AdmMembershipServices::PARAM_START],
-				$params[AdmMembershipServices::PARAM_END],
-				$params[AdmMembershipServices::PARAM_FEE],
-				$params[AdmMembershipServices::PARAM_FORM],
-				$params[AdmMembershipServices::PARAM_CERTIF]);
-		} else if(!strcmp($action, AdmMembershipServices::DELETE)) {
-			$data = $this->__delete_adm_membership($params[AdmMembershipServices::PARAM_ID]);
-		}
-		return $data;
-	}
+    // --- construct
+    public function __construct($currentUser, $dbObject, $dbConnection)
+    {
+        parent::__construct($currentUser, $dbObject, $dbConnection);
+    }
+
+    public function GetResponseData($action, $params)
+    {
+        $data = null;
+        if (!strcmp($action, AdmMembershipServices::GET_ADM_MEMBERSHIP_BY_ID)) {
+            $data = $this->__get_adm_membership_by_id($params[AdmMembershipServices::PARAM_ID]);
+        } else if (!strcmp($action, AdmMembershipServices::GET_ALL_ADM_MEMBERSHIPS)) {
+            $data = $this->__get_all_adm_memberships();
+        } else if (!strcmp($action, AdmMembershipServices::GET_ALL_CURRENT_ADM_MEMBERSHIPS)) {
+            $data = $this->__get_all_current_adm_memberships();
+        } else if (!strcmp($action, AdmMembershipServices::GET_USER_ADM_MEMBERSHIPS)) {
+            $data = $this->__get_user_adm_memberships($params[AdmMembershipServices::PARAM_USER]);
+        } else if (!strcmp($action, AdmMembershipServices::GET_CURRENT_ADM_MEMBERSHIP)) {
+            $data = $this->__get_current_adm_membership($params[AdmMembershipServices::PARAM_USER]);
+        } else if (!strcmp($action, AdmMembershipServices::INSERT)) {
+            $data = $this->__insert_adm_membership(
+                $params[AdmMembershipServices::PARAM_USER],
+                $params[AdmMembershipServices::PARAM_START],
+                $params[AdmMembershipServices::PARAM_END],
+                $params[AdmMembershipServices::PARAM_FEE],
+                $params[AdmMembershipServices::PARAM_FORM],
+                $params[AdmMembershipServices::PARAM_CERTIF]);
+        } else if (!strcmp($action, AdmMembershipServices::UPDATE)) {
+            $data = $this->__update_adm_membership(
+                $params[AdmMembershipServices::PARAM_ID],
+                $params[AdmMembershipServices::PARAM_USER],
+                $params[AdmMembershipServices::PARAM_START],
+                $params[AdmMembershipServices::PARAM_END],
+                $params[AdmMembershipServices::PARAM_FEE],
+                $params[AdmMembershipServices::PARAM_FORM],
+                $params[AdmMembershipServices::PARAM_CERTIF]);
+        } else if (!strcmp($action, AdmMembershipServices::DELETE)) {
+            $data = $this->__delete_adm_membership($params[AdmMembershipServices::PARAM_ID]);
+        }
+        return $data;
+    }
 
 # PROTECTED & PRIVATE ###############################################################
 
-	// --- consult
+    // --- consult
 
-	private function __get_adm_membership_by_id($id) {
-		// create sql params array
-		$sql_params = array(":".AdmMembershipDBObject::COL_ID => $id);
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_ID));
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create adm_membership var
-		$adm_membership = null;
-		if($pdos != null) {
-			if( ($row = $pdos->fetch()) !== false) {
-				$adm_membership = new AdmMembership(
-					$row[AdmMembershipDBObject::COL_ID], 
-					$row[AdmMembershipDBObject::COL_USER_ID], 
-					$row[AdmMembershipDBObject::COL_START_DATE], 
-					$row[AdmMembershipDBObject::COL_END_DATE], 
-					$row[AdmMembershipDBObject::COL_FEE],
-					$row[AdmMembershipDBObject::COL_FORM],
-					$row[AdmMembershipDBObject::COL_CERTIF]);
-			}
-		}
-		return $adm_membership;
-	}
+    private function __get_adm_membership_by_id($id)
+    {
+        // create sql params array
+        $sql_params = array(":" . AdmMembershipDBObject::COL_ID => $id);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_ID));
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create adm_membership var
+        $adm_membership = null;
+        if ($pdos != null) {
+            if (($row = $pdos->fetch()) !== false) {
+                $adm_membership = new AdmMembership(
+                    $row[AdmMembershipDBObject::COL_ID],
+                    $row[AdmMembershipDBObject::COL_USER_ID],
+                    $row[AdmMembershipDBObject::COL_START_DATE],
+                    $row[AdmMembershipDBObject::COL_END_DATE],
+                    $row[AdmMembershipDBObject::COL_FEE],
+                    $row[AdmMembershipDBObject::COL_FORM],
+                    $row[AdmMembershipDBObject::COL_CERTIF]);
+            }
+        }
+        return $adm_membership;
+    }
 
-	private function __get_all_adm_memberships() {
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery();
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
-		// create an empty array for adm_memberships and fill it
-		$adm_memberships = array();
-		if($pdos != null) {
-			while( ($row = $pdos->fetch()) !== false) {
-				array_push($adm_memberships, new AdmMembership(
-					$row[AdmMembershipDBObject::COL_ID], 
-					$row[AdmMembershipDBObject::COL_USER_ID], 
-					$row[AdmMembershipDBObject::COL_START_DATE], 
-					$row[AdmMembershipDBObject::COL_END_DATE], 
-					$row[AdmMembershipDBObject::COL_FEE],
-					$row[AdmMembershipDBObject::COL_FORM],
-					$row[AdmMembershipDBObject::COL_CERTIF]));
-			}
-		}
-		return $adm_memberships;
-	}
+    private function __get_all_adm_memberships()
+    {
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery();
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+        // create an empty array for adm_memberships and fill it
+        $adm_memberships = array();
+        if ($pdos != null) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($adm_memberships, new AdmMembership(
+                    $row[AdmMembershipDBObject::COL_ID],
+                    $row[AdmMembershipDBObject::COL_USER_ID],
+                    $row[AdmMembershipDBObject::COL_START_DATE],
+                    $row[AdmMembershipDBObject::COL_END_DATE],
+                    $row[AdmMembershipDBObject::COL_FEE],
+                    $row[AdmMembershipDBObject::COL_FORM],
+                    $row[AdmMembershipDBObject::COL_CERTIF]));
+            }
+        }
+        return $adm_memberships;
+    }
 
-	private function __get_all_current_adm_memberships() {
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetLastOfEachQuery(
-			AdmMembershipDBObject::COL_ID,
-			AdmMembershipDBObject::COL_END_DATE,
-			array(AdmMembershipDBObject::COL_END_DATE),
-			array(AdmMembershipDBObject::COL_END_DATE => DBTable::OP_GREATER)
-		);
+    private function __get_all_current_adm_memberships()
+    {
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetLastOfEachQuery(
+            AdmMembershipDBObject::COL_ID,
+            AdmMembershipDBObject::COL_END_DATE,
+            array(AdmMembershipDBObject::COL_END_DATE),
+            array(AdmMembershipDBObject::COL_END_DATE => DBTable::OP_GREATER)
+        );
 
-		$sql_params = array(":" . AdmMembershipDBObject::COL_END_DATE => date('Y-m-d'));
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create an empty array for adm_memberships and fill it
-		$adm_memberships = array();
-		if($pdos != null) {
-			while( ($row = $pdos->fetch()) !== false) {
-				$adm_memberships[$row[AdmMembershipDBObject::COL_USER_ID]] = new AdmMembership(
-					$row[AdmMembershipDBObject::COL_ID], 
-					$row[AdmMembershipDBObject::COL_USER_ID], 
-					$row[AdmMembershipDBObject::COL_START_DATE], 
-					$row[AdmMembershipDBObject::COL_END_DATE], 
-					$row[AdmMembershipDBObject::COL_FEE],
-					$row[AdmMembershipDBObject::COL_FORM],
-					$row[AdmMembershipDBObject::COL_CERTIF]);
-			}
-		}
-		return $adm_memberships;
-	}
+        $sql_params = array(":" . AdmMembershipDBObject::COL_END_DATE => date('Y-m-d'));
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create an empty array for adm_memberships and fill it
+        $adm_memberships = array();
+        if ($pdos != null) {
+            while (($row = $pdos->fetch()) !== false) {
+                $adm_memberships[$row[AdmMembershipDBObject::COL_USER_ID]] = new AdmMembership(
+                    $row[AdmMembershipDBObject::COL_ID],
+                    $row[AdmMembershipDBObject::COL_USER_ID],
+                    $row[AdmMembershipDBObject::COL_START_DATE],
+                    $row[AdmMembershipDBObject::COL_END_DATE],
+                    $row[AdmMembershipDBObject::COL_FEE],
+                    $row[AdmMembershipDBObject::COL_FORM],
+                    $row[AdmMembershipDBObject::COL_CERTIF]);
+            }
+        }
+        return $adm_memberships;
+    }
 
-	private function __get_user_adm_memberships($userId) {
-		// create sql params array
-		$sql_params = array(":".AdmMembershipDBObject::COL_USER_ID => $userId);
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_USER_ID));
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create an empty array for adm_memberships and fill it
-		$adm_memberships = array();
-		if(isset($pdos)) {
-			while( ($row = $pdos->fetch()) !== false) {
-				array_push($adm_memberships, new AdmMembership(
-					$row[AdmMembershipDBObject::COL_ID], 
-					$row[AdmMembershipDBObject::COL_USER_ID], 
-					$row[AdmMembershipDBObject::COL_START_DATE], 
-					$row[AdmMembershipDBObject::COL_END_DATE], 
-					$row[AdmMembershipDBObject::COL_FEE], 
-					$row[AdmMembershipDBObject::COL_FORM], 
-					$row[AdmMembershipDBObject::COL_CERTIF]));
-			}
-		}
-		return $adm_memberships;
-	}
+    private function __get_user_adm_memberships($userId)
+    {
+        // create sql params array
+        $sql_params = array(":" . AdmMembershipDBObject::COL_USER_ID => $userId);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_USER_ID));
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create an empty array for adm_memberships and fill it
+        $adm_memberships = array();
+        if (isset($pdos)) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($adm_memberships, new AdmMembership(
+                    $row[AdmMembershipDBObject::COL_ID],
+                    $row[AdmMembershipDBObject::COL_USER_ID],
+                    $row[AdmMembershipDBObject::COL_START_DATE],
+                    $row[AdmMembershipDBObject::COL_END_DATE],
+                    $row[AdmMembershipDBObject::COL_FEE],
+                    $row[AdmMembershipDBObject::COL_FORM],
+                    $row[AdmMembershipDBObject::COL_CERTIF]));
+            }
+        }
+        return $adm_memberships;
+    }
 
-	private function __get_current_adm_membership($userId) {
-		// create sql params array
-		$sql_params = array(":".AdmMembershipDBObject::COL_USER_ID => $userId,
-							":".AdmMembershipDBObject::COL_END_DATE => date('Y-m-d'));
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
-			array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_USER_ID, AdmMembershipDBObject::COL_END_DATE),
-			array(AdmMembershipDBObject::COL_END_DATE => DBTable::OP_GREATER),
-			array(),
-			1);
-		// execute SQL query and save result
-		$pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-		// create an empty array for adm_memberships and fill it
-		$adm_membership = null;
-		if(isset($pdos)) {
-			if( ($row = $pdos->fetch()) !== false) {
-				$adm_membership = new AdmMembership(
-					$row[AdmMembershipDBObject::COL_ID], 
-					$row[AdmMembershipDBObject::COL_USER_ID], 
-					$row[AdmMembershipDBObject::COL_START_DATE], 
-					$row[AdmMembershipDBObject::COL_END_DATE], 
-					$row[AdmMembershipDBObject::COL_FEE], 
-					$row[AdmMembershipDBObject::COL_FORM], 
-					$row[AdmMembershipDBObject::COL_CERTIF]);
-			}
-		}
-		return $adm_membership;
-	}
+    private function __get_current_adm_membership($userId)
+    {
+        // create sql params array
+        $sql_params = array(":" . AdmMembershipDBObject::COL_USER_ID => $userId,
+            ":" . AdmMembershipDBObject::COL_END_DATE => date('Y-m-d'));
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL), array(AdmMembershipDBObject::COL_USER_ID, AdmMembershipDBObject::COL_END_DATE),
+            array(AdmMembershipDBObject::COL_END_DATE => DBTable::OP_GREATER),
+            array(),
+            1);
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create an empty array for adm_memberships and fill it
+        $adm_membership = null;
+        if (isset($pdos)) {
+            if (($row = $pdos->fetch()) !== false) {
+                $adm_membership = new AdmMembership(
+                    $row[AdmMembershipDBObject::COL_ID],
+                    $row[AdmMembershipDBObject::COL_USER_ID],
+                    $row[AdmMembershipDBObject::COL_START_DATE],
+                    $row[AdmMembershipDBObject::COL_END_DATE],
+                    $row[AdmMembershipDBObject::COL_FEE],
+                    $row[AdmMembershipDBObject::COL_FORM],
+                    $row[AdmMembershipDBObject::COL_CERTIF]);
+            }
+        }
+        return $adm_membership;
+    }
 
-	// --- modify
+    // --- modify
 
-	private function __insert_adm_membership($userId, $startDate, $endDate, $fee, $form, $certif) {
-		// create sql params
-		$sql_params = array(
-			":".AdmMembershipDBObject::COL_ID => "NULL",
-			":".AdmMembershipDBObject::COL_USER_ID => $userId,
-			":".AdmMembershipDBObject::COL_START_DATE => $startDate,
-			":".AdmMembershipDBObject::COL_END_DATE => $endDate,
-			":".AdmMembershipDBObject::COL_FEE => (int)($fee === 'true'),
-			":".AdmMembershipDBObject::COL_FORM => (int)($form === 'true'),
-			":".AdmMembershipDBObject::COL_CERTIF => (int)($certif === 'true'));
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetINSERTQuery();
-		// execute query
-		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
-	}
+    private function __insert_adm_membership($userId, $startDate, $endDate, $fee, $form, $certif)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . AdmMembershipDBObject::COL_ID => "NULL",
+            ":" . AdmMembershipDBObject::COL_USER_ID => $userId,
+            ":" . AdmMembershipDBObject::COL_START_DATE => $startDate,
+            ":" . AdmMembershipDBObject::COL_END_DATE => $endDate,
+            ":" . AdmMembershipDBObject::COL_FEE => (int)($fee === 'true'),
+            ":" . AdmMembershipDBObject::COL_FORM => (int)($form === 'true'),
+            ":" . AdmMembershipDBObject::COL_CERTIF => (int)($certif === 'true'));
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetINSERTQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
 
-	private function __update_adm_membership($id, $userId, $startDate, $endDate, $fee, $form, $certif) {
-		// create sql params
-		$sql_params = array(
-			":".AdmMembershipDBObject::COL_ID => $id,
-			":".AdmMembershipDBObject::COL_USER_ID => $userId,
-			":".AdmMembershipDBObject::COL_START_DATE => $startDate,
-			":".AdmMembershipDBObject::COL_END_DATE => $endDate,
-			":".AdmMembershipDBObject::COL_FEE => (int)($fee === 'true'),
-			":".AdmMembershipDBObject::COL_FORM => (int)($form === 'true'),
-			":".AdmMembershipDBObject::COL_CERTIF => (int)($certif === 'true'));
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetUPDATEQuery();
-		// execute query
-		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
-	}	
+    private function __update_adm_membership($id, $userId, $startDate, $endDate, $fee, $form, $certif)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . AdmMembershipDBObject::COL_ID => $id,
+            ":" . AdmMembershipDBObject::COL_USER_ID => $userId,
+            ":" . AdmMembershipDBObject::COL_START_DATE => $startDate,
+            ":" . AdmMembershipDBObject::COL_END_DATE => $endDate,
+            ":" . AdmMembershipDBObject::COL_FEE => (int)($fee === 'true'),
+            ":" . AdmMembershipDBObject::COL_FORM => (int)($form === 'true'),
+            ":" . AdmMembershipDBObject::COL_CERTIF => (int)($certif === 'true'));
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetUPDATEQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
 
-	private function __delete_adm_membership($id) {
-		// create sql params
-		$sql_params = array(":".AdmMembershipDBObject::COL_ID => $id);
-		// create sql request
-		$sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetDELETEQuery();
-		// execute query
-		return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
-	}
+    private function __delete_adm_membership($id)
+    {
+        // create sql params
+        $sql_params = array(":" . AdmMembershipDBObject::COL_ID => $id);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP)->GetDELETEQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
 
 
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
-	
-	/**
-	 *	---------!---------!---------!---------!---------!---------!---------!---------!---------
-	 *  !  							DATABASE CONSISTENCY WARNING 							    !
-	 *  !  																					    !
-	 *  !  Please respect the following points :   												!
-	 *	!  - When adding static data to existing data => always add at the end of the list      !
-	 *  !  - Never remove data (or ensure that no database element use one as a foreign key)    !
-	 *	---------!---------!---------!---------!---------!---------!---------!---------!---------
-	 */
-	public function ResetStaticData() {
-		
-	}
+
+    /**
+     *    ---------!---------!---------!---------!---------!---------!---------!---------!---------
+     *  !                            DATABASE CONSISTENCY WARNING                                !
+     *  !                                                                                        !
+     *  !  Please respect the following points :                                                !
+     *    !  - When adding static data to existing data => always add at the end of the list      !
+     *  !  - Never remove data (or ensure that no database element use one as a foreign key)    !
+     *    ---------!---------!---------!---------!---------!---------!---------!---------!---------
+     */
+    public function ResetStaticData()
+    {
+
+    }
 
 }
 
 /**
- *	@brief AdmMembership object interface
+ * @brief AdmMembership object interface
  */
-class AdmMembershipDBObject extends AbstractDBObject {
+class AdmMembershipDBObject extends AbstractDBObject
+{
 
-	// -- consts
-	// --- object name
-	const OBJ_NAME = "adm_membership";
-	// --- tables
-	const TABL_ADM_MEMBERSHIP = "dol_adm_membership";
-	// --- columns
-	const COL_ID = "id";
-	const COL_USER_ID = "user_id";
-	const COL_START_DATE = "start_date";
-	const COL_END_DATE = "end_date";
-	const COL_FEE = "fee";
-	const COL_FORM = "form";
-	const COL_CERTIF = "certif";
-	// -- attributes
+    // -- consts
+    // --- object name
+    const OBJ_NAME = "adm_membership";
+    // --- tables
+    const TABL_ADM_MEMBERSHIP = "dol_adm_membership";
+    // --- columns
+    const COL_ID = "id";
+    const COL_USER_ID = "user_id";
+    const COL_START_DATE = "start_date";
+    const COL_END_DATE = "end_date";
+    const COL_FEE = "fee";
+    const COL_FORM = "form";
+    const COL_CERTIF = "certif";
+    // -- attributes
 
-	// -- functions
+    // -- functions
 
-	public function __construct($module) {
-		// -- construct parent
-		parent::__construct($module, AdmMembershipDBObject::OBJ_NAME);
-		// -- create tables
-		// --- dol_adm_membership table
-		$dol_adm_membership = new DBTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP);
-		$dol_adm_membership
-			->AddColumn(AdmMembershipDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
-			->AddColumn(AdmMembershipDBObject::COL_USER_ID, DBTable::DT_INT, 11, false)
-			->AddColumn(AdmMembershipDBObject::COL_START_DATE, DBTable::DT_VARCHAR, 255, false)
-			->AddColumn(AdmMembershipDBObject::COL_END_DATE, DBTable::DT_VARCHAR, 255, false)
-			->AddColumn(AdmMembershipDBObject::COL_FEE, DBTable::DT_INT, 1, false) // boolean
-			->AddColumn(AdmMembershipDBObject::COL_FORM, DBTable::DT_INT, 1, false) // boolean
-			->AddColumn(AdmMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false) // boolean
-			->AddForeignKey(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP.'_fk1', AdmMembershipDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
+    public function __construct($module)
+    {
+        // -- construct parent
+        parent::__construct($module, AdmMembershipDBObject::OBJ_NAME);
+        // -- create tables
+        // --- dol_adm_membership table
+        $dol_adm_membership = new DBTable(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP);
+        $dol_adm_membership
+            ->AddColumn(AdmMembershipDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+            ->AddColumn(AdmMembershipDBObject::COL_USER_ID, DBTable::DT_INT, 11, false)
+            ->AddColumn(AdmMembershipDBObject::COL_START_DATE, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(AdmMembershipDBObject::COL_END_DATE, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(AdmMembershipDBObject::COL_FEE, DBTable::DT_INT, 1, false)// boolean
+            ->AddColumn(AdmMembershipDBObject::COL_FORM, DBTable::DT_INT, 1, false)// boolean
+            ->AddColumn(AdmMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false)// boolean
+            ->AddForeignKey(AdmMembershipDBObject::TABL_ADM_MEMBERSHIP . '_fk1', AdmMembershipDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
 
-		// -- add tables
-		parent::addTable($dol_adm_membership);
-	}
-	/**
-	 *	@brief Returns all services associated with this object
-	 */
-	public function GetServices($currentUser) {
-		return new AdmMembershipServices($currentUser, $this, $this->getDBConnection());
-	}
-	/**
-	 *	Initialize static data
-	 */
-	public function ResetStaticData() {
-		$services = new AdmMembershipServices(null, $this, $this->getDBConnection());
-		$services->ResetStaticData();
-	}
+        // -- add tables
+        parent::addTable($dol_adm_membership);
+    }
+
+    /**
+     * @brief Returns all services associated with this object
+     */
+    public function GetServices($currentUser)
+    {
+        return new AdmMembershipServices($currentUser, $this, $this->getDBConnection());
+    }
+
+    /**
+     *    Initialize static data
+     */
+    public function ResetStaticData()
+    {
+        $services = new AdmMembershipServices(null, $this, $this->getDBConnection());
+        $services->ResetStaticData();
+    }
 
 }
