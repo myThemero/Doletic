@@ -26,7 +26,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.fillValueIndicators();
         DoleticUIModule.fillTableIndicators();
         // fill user and team list. User first to fill user_list global array
-        $.when(DoleticUIModule.fillUsersList()).done(DoleticUIModule.fillTeamsList());
+        DoleticUIModule.fillUsersList(DoleticUIModule.fillTeamsList);
         // fill country field
         DoleticUIModule.fillCountrySelector();
         // fill gender field
@@ -302,8 +302,9 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.fillUsersList = function () {
-        //UserDataServicesInterface.getAll(function(data) {
+    this.fillUsersList = function (callback) {
+        // Optional callback
+        callback = callback || 0;
         KernelDBServicesInterface.getAllUserDataWithStatus(function (data) {
             // Delete and recreate table so Datatables is reinitialized
             $("#user_table_container").html("");
@@ -482,6 +483,9 @@ var DoleticUIModule = new function () {
                 DoleticMasterInterface.makeDataTables('disabled_table', filters);
                 $('.user-drop').html(selector_content);
                 $('#leader').dropdown();
+                if (callback != 0) {
+                    callback();
+                }
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -647,7 +651,6 @@ var DoleticUIModule = new function () {
             });
         });
     };
-
 
 
     this.fillUserDetails = function (userId) {
