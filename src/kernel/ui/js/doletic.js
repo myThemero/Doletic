@@ -498,16 +498,20 @@ var DoleticMasterInterface = new function () {
 
     this.fillTableIndicators = function (data, div_id) {
         var container = $('#' + div_id);
-        for (var i = 0; i < data.length; i++) {
-            var html = '<div class="ui horizontal divider">' + data[i].description + '</div>';
-            html += '<div class="row"><table class="ui very basic single line striped table"><thead><tr><th>';
-            html += data[i].label_column + '</th><th>' + data[i].result_column + '</th></tr></thead><tbody id="indictab_' + i + '"></tbody></table></div>';
-            container.append(html);
-            var rows = "";
-            for (var j = 0; j < data[i].results[0].length; j++) {
-                rows += '<tr><td><a href="#" class="indicval_label">' + data[i].results[0][j] + '</a></td><td>' + data[i].results[1][j] + '</td></tr>';
+        if (data != null) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].results[0] != null) {
+                    var html = '<div class="ui horizontal divider">' + data[i].description + '</div>';
+                    html += '<div class="row"><table class="ui very basic single line striped table"><thead><tr><th>';
+                    html += data[i].label_column + '</th><th>' + data[i].result_column + '</th></tr></thead><tbody id="indictab_' + i + '"></tbody></table></div>';
+                    container.append(html);
+                    var rows = "";
+                    for (var j = 0; j < data[i].results[0].length; j++) {
+                        rows += '<tr><td><a href="#" class="indicval_label">' + data[i].results[0][j] + '</a></td><td>' + data[i].results[1][j] + '</td></tr>';
+                    }
+                }
+                $('#indictab_' + i).html(rows);
             }
-            $('#indictab_' + i).html(rows);
         }
     };
 

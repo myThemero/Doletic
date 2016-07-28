@@ -26,7 +26,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.fillValueIndicators();
         DoleticUIModule.fillTableIndicators();
         // fill user and team list. User first to fill user_list global array
-        $.when($.ajax(DoleticUIModule.fillUsersList())).then(DoleticUIModule.fillTeamsList());
+        $.when(DoleticUIModule.fillUsersList()).done(DoleticUIModule.fillTeamsList());
         // fill country field
         DoleticUIModule.fillCountrySelector();
         // fill gender field
@@ -647,7 +647,8 @@ var DoleticUIModule = new function () {
             });
         });
     };
-    
+
+
 
     this.fillUserDetails = function (userId) {
         // activate items in tabs
