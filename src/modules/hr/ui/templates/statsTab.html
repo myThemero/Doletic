@@ -38,8 +38,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" id="agr_table_container">
-                </div>
                 <div class="row">
                     <div class="ui modal" id="agr_form_modal">
                         <div class="ui segment">
@@ -47,7 +45,12 @@
                                 <h4 class="ui dividing header">Ajouter une AGR</h4>
                                 <div id="agr_field" class="sxiteen wide required field">
                                     <label>Date</label>
-                                    <input id="agr" placeholder="Nom..." type="text"/>
+                                    <div class="ui calendar" id="agr_calendar">
+                                        <div class="ui input left icon">
+                                            <i class="calendar icon"></i>
+                                            <input type="text" placeholder="AAAA-mm-jj"/>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div id="agr_pr_field" class="sxiteen wide required field">
                                     <label>Etudiants présents</label>
@@ -65,6 +68,8 @@
                             </form>
                         </div>
                     </div>
+                </div>
+                <div class="row" id="agr_table_container">
                 </div>
             </div>
         </div>

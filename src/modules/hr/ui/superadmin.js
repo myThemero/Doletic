@@ -123,7 +123,20 @@ var DoleticUIModule = new function () {
      */
     this.getStatsTab = function () {
         $('#agr_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
-        $('#statsTab').load("../modules/hr/ui/templates/statsTab.html");
+        $('#statsTab').load("../modules/hr/ui/templates/statsTab.html", function () {
+            $('#agr_calendar').calendar({
+                type: 'date',
+                formatter: {
+                    date: function (date) {
+                        if (!date) return '';
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+                        return year + '-' + month + '-' + day;
+                    }
+                }
+            });
+        });
     };
 
     /**
@@ -131,7 +144,20 @@ var DoleticUIModule = new function () {
      */
     this.getMembersTab = function () {
         $('#user_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
-        $('#membersTab').load("../modules/hr/ui/templates/membersTab.html");
+        $('#membersTab').load("../modules/hr/ui/templates/membersTab.html", function () {
+            $('#birthdate_calendar').calendar({
+                type: 'date',
+                formatter: {
+                    date: function (date) {
+                        if (!date) return '';
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+                        return year + '-' + month + '-' + day;
+                    }
+                }
+            });
+        });
     };
 
     /**
@@ -154,7 +180,20 @@ var DoleticUIModule = new function () {
     this.getDetailsTab = function () {
         $('#admm_form_modal').remove(); //Necessary to avoid duplicate
         $('#intm_form_modal').remove(); //Necessary to avoid duplicate
-        $('#detailsTab').load("../modules/hr/ui/templates/detailsTab.html");
+        $('#detailsTab').load("../modules/hr/ui/templates/detailsTab.html", function () {
+            $('#admm_scalendar, #admm_ecalendar, #intm_calendar').calendar({
+                type: 'date',
+                formatter: {
+                    date: function (date) {
+                        if (!date) return '';
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+                        return year + '-' + month + '-' + day;
+                    }
+                }
+            });
+        });
     };
 
     this.hasInputError = false;

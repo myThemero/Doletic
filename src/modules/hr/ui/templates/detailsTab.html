@@ -106,11 +106,21 @@
             <h4 class="ui dividing header">Ajout d'une adhésion</h4>
             <div id="sdatea_field" class="sixteen wide required field">
                 <label>Date de début</label>
-                <input id="sdatea" placeholder="YYYY-MM-JJ" type="text"/>
+                <div class="ui calendar" id="admm_scalendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input id="sdatea" placeholder="AAAA-mm-jj" type="text"/>
+                    </div>
+                </div>
             </div>
             <div id="edate_field" class="sixteen wide required field">
                 <label>Date de fin</label>
-                <input id="edate" placeholder="YYYY-MM-JJ" type="text"/>
+                <div class="ui calendar" id="admm_ecalendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input id="edate" placeholder="AAAA-mm-jj" type="text"/>
+                    </div>
+                </div>
             </div>
             <div class="sixteen wide required field">
                 <label>Documents présents</label>
@@ -136,7 +146,12 @@
             <h4 class="ui dividing header">Ajout d'une adhésion</h4>
             <div id="sdatei_field" class="sixteen wide required field">
                 <label>Date de début</label>
-                <input id="sdatei" placeholder="YYYY-MM-JJ" type="text"/>
+                <div class="ui calendar" id="intm_calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input id="sdatei" placeholder="AAAA-mm-jj" type="text"/>
+                    </div>
+                </div>
             </div>
             <div class="sixteen wide required field">
                 <label>Documents présents</label>
