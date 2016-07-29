@@ -515,7 +515,7 @@ var DoleticUIModule = new function () {
 								            <th>Pôle</th> \
 								            <th>Membres</th> \
 								            <th>Actions</th> \
-								        </tr>_\
+								        </tr>\
 								    </thead>\
 								    <tfoot> \
 								        <tr>\
