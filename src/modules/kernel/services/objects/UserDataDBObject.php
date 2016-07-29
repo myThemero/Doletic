@@ -1091,12 +1091,20 @@ class UserDataServices extends AbstractObjectServices
     public function ResetStaticData()
     {
         // -- init gender table --------------------------------------------------------------------
-        $genders = array("M.", "Mlle", "Mme");
+        $genders = array(
+            ["M.", "Monsieur"],
+            ["Mlle", "Mademoiselle"],
+            ["Mme", "Madame"],
+            ["Mtre", "Maitre"]
+        );
         // --- retrieve SQL query
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_GENDER)->GetINSERTQuery();
         foreach ($genders as $gender) {
             // --- create param array
-            $sql_params = array(":" . UserDataDBObject::COL_LABEL => $gender);
+            $sql_params = array(
+                ":" . UserDataDBObject::COL_LABEL => $gender[0],
+                ":" . UserDataDBObject::COL_DETAIL => $gender[1]
+            );
             // --- execute SQL query
             parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         }
@@ -1270,7 +1278,9 @@ class UserDataDBObject extends AbstractDBObject
         // -- create tables
         // --- com_gender table
         $com_gender = new DBTable(UserDataDBObject::TABL_COM_GENDER);
-        $com_gender->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
+        $com_gender
+            ->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true)
+            ->AddColumn(UserDataDBObject::COL_DETAIL, DBTable::DT_VARCHAR, 255, false, "");
         // --- com_country table
         $com_country = new DBTable(UserDataDBObject::TABL_COM_COUNTRY);
         $com_country->AddColumn(UserDataDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);

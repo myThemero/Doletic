@@ -971,6 +971,7 @@ var DoleticUIModule = new function () {
                 Boolean(options[2].selected),
                 Boolean(options[3].selected),
                 Boolean(options[4].selected),
+                $('#secu_int').val(),
                 function (data) {
                     DoleticUIModule.addIntMembershipHandler(userId, data);
                 });
@@ -1119,6 +1120,7 @@ var DoleticUIModule = new function () {
                 if (data.object.identity == 1) {
                     options.push("4");
                 }
+                $('#secu_int').val(data.object.secu_number);
                 $('#docs_int').dropdown("set exactly", options);
                 $('#intm_btn').html("Confirmer");
                 $('#intm_btn').attr("onClick", "DoleticUIModule.updateIntMembership(" + id + ", " + userId + "); return false;");
@@ -1198,6 +1200,7 @@ var DoleticUIModule = new function () {
                 Boolean(options[2].selected),
                 Boolean(options[3].selected),
                 Boolean(options[4].selected),
+                $('#secu_int').val(),
                 function (data) {
                     DoleticUIModule.editIntMembershipHandler(userId, data);
                 }
@@ -1475,6 +1478,10 @@ var DoleticUIModule = new function () {
         var valid = true;
         if (!DoleticMasterInterface.checkDate($('#sdatei').val())) {
             $('#sdatei_field').addClass("error");
+            valid = false;
+        }
+        if (!/^\d{13}$/.test($('#secu_int').val().trim())) {
+            $('#secu_int').addClass("error");
             valid = false;
         }
         if (!valid) {

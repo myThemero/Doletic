@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractScript.php";
 require_once "DoleticKernel.php";
+include_once "../../migrate/DBFill.php";
 
 //________________________________________________________________________________________________________________________
 // ------------- declare script functions --------------------------------------------------------------------------------
@@ -28,6 +29,33 @@ class ResetDBFunction extends AbstractFunction
         parent::endlog("done !");
         $kernel = null;
         parent::info("-- dbinit process ends --");
+    }
+}
+
+class DataMigrationFunction extends AbstractFunction
+{
+    public function __construct($script)
+    {
+        parent::__construct($script,
+            'Data Migration',
+            '-dm',
+            '--data-migration',
+            "Adds data from a remote database.");
+    }
+
+    public function Execute()
+    {
+
+        parent::info("-- data migration process starts --");
+
+        $dbfill = new DBFill();
+        $data = $dbfill->fetchData()->getFetchedData();
+        var_dump($data['gender']);
+        /*$kernel = new DoleticKernel();    // instantiate
+        $kernel->Init();                // initialize
+        $kernel->ConnectDB();            // connect database*/
+
+
     }
 }
 
@@ -193,7 +221,8 @@ class FakeDataFunction extends AbstractFunction
                 IntMembershipServices::PARAM_FORM => 1,
                 IntMembershipServices::PARAM_CERTIF => 1,
                 IntMembershipServices::PARAM_RIB => 1,
-                IntMembershipServices::PARAM_IDENTITY => 0
+                IntMembershipServices::PARAM_IDENTITY => 0,
+                IntMembershipServices::PARAM_SECU_NUMBER => 1234567890123
             ));
 
         $kernel->GetDBObject(TeamDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
@@ -253,6 +282,7 @@ class FakeDataFunction extends AbstractFunction
     }
 }
 
+
 //________________________________________________________________________________________________________________________
 // ------------- declare script in itself --------------------------------------------------------------------------------
 
@@ -266,6 +296,7 @@ class DBInitializerScript extends AbstractScript
         // ---- add script functions
         parent::addFunction(new ResetDBFunction($this));
         parent::addFunction(new FakeDataFunction($this));
+        parent::addFunction(new DataMigrationFunction($this));
     }
 }
 

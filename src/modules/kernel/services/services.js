@@ -902,7 +902,7 @@ var IntMembershipServicesInterface = new function () {
             {id: id},
             successHandler);
     };
-    this.insert = function (userId, startDate, fee, form, certif, rib, identity, successHandler) {
+    this.insert = function (userId, startDate, fee, form, certif, rib, identity, secuNumber, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT,
             {
@@ -912,11 +912,12 @@ var IntMembershipServicesInterface = new function () {
                 form: form,
                 certif: certif,
                 rib: rib,
-                identity: identity
+                identity: identity,
+                secuNumber: secuNumber
             },
             successHandler);
     };
-    this.update = function (id, userId, startDate, fee, form, certif, rib, identity, successHandler) {
+    this.update = function (id, userId, startDate, fee, form, certif, rib, identity, secuNumber, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE,
             {
@@ -927,7 +928,8 @@ var IntMembershipServicesInterface = new function () {
                 form: form,
                 certif: certif,
                 rib: rib,
-                identity: identity
+                identity: identity,
+                secuNumber: secuNumber
             },
             successHandler);
     };

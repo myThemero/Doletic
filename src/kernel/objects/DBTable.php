@@ -15,6 +15,7 @@ class DBTable
     const KEY_INDEX = "index";
     // --- data types
     const DT_INT = "int";
+    const DT_BIGINT_UNSIGNED = "bigint unsigned";
     const DT_VARCHAR = "varchar";
     const DT_TEXT = "text";
     const DT_DATE = "date";

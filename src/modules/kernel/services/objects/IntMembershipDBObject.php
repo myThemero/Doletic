@@ -23,6 +23,7 @@ class IntMembership implements \JsonSerializable
     private $certif;
     private $rib;
     private $identity;
+    private $secu_number;
 
     /**
      * @brief Constructs a int_membership
@@ -41,7 +42,7 @@ class IntMembership implements \JsonSerializable
      * @param bool $identity
      *        User's id card
      */
-    public function __construct($id, $userId, $startDate, $fee, $form, $certif, $rib, $identity)
+    public function __construct($id, $userId, $startDate, $fee, $form, $certif, $rib, $identity, $secuNumber)
     {
         $this->id = intval($id);
         $this->user_id = intval($userId);
@@ -51,6 +52,7 @@ class IntMembership implements \JsonSerializable
         $this->certif = (bool)$certif;
         $this->rib = (bool)$rib;
         $this->identity = (bool)$identity;
+        $this->secu_number = $secuNumber;
     }
 
     public function jsonSerialize()
@@ -63,7 +65,8 @@ class IntMembership implements \JsonSerializable
             IntMembershipDBObject::COL_FORM => $this->form,
             IntMembershipDBObject::COL_CERTIF => $this->certif,
             IntMembershipDBObject::COL_RIB => $this->rib,
-            IntMembershipDBObject::COL_IDENTITY => $this->identity
+            IntMembershipDBObject::COL_IDENTITY => $this->identity,
+            IntMembershipDBObject::COL_SECU_NUMBER => $this->secu_number
         ];
     }
 
@@ -135,6 +138,14 @@ class IntMembership implements \JsonSerializable
     /**
      * @brief
      */
+    public function getSecuNumber()
+    {
+        return $this->secu_number;
+    }
+
+    /**
+     * @brief
+     */
     public function IsValid()
     {
         return ($this->fee && $this->form && $this->certif && $this->rib && $this->identity);
@@ -157,6 +168,7 @@ class IntMembershipServices extends AbstractObjectServices
     const PARAM_CERTIF = "certif";
     const PARAM_RIB = "rib";
     const PARAM_IDENTITY = "identity";
+    const PARAM_SECU_NUMBER = "secuNumber";
     // --- actions
     const GET_INT_MEMBERSHIP_BY_ID = "byidim";
     const GET_ALL_INT_MEMBERSHIPS = "allim";
@@ -193,7 +205,8 @@ class IntMembershipServices extends AbstractObjectServices
                 $params[IntMembershipServices::PARAM_FORM],
                 $params[IntMembershipServices::PARAM_CERTIF],
                 $params[IntMembershipServices::PARAM_RIB],
-                $params[IntMembershipServices::PARAM_IDENTITY]);
+                $params[IntMembershipServices::PARAM_IDENTITY],
+                $params[IntMembershipServices::PARAM_SECU_NUMBER]);
         } else if (!strcmp($action, IntMembershipServices::UPDATE)) {
             $data = $this->__update_int_membership(
                 $params[IntMembershipServices::PARAM_ID],
@@ -203,7 +216,8 @@ class IntMembershipServices extends AbstractObjectServices
                 $params[IntMembershipServices::PARAM_FORM],
                 $params[IntMembershipServices::PARAM_CERTIF],
                 $params[IntMembershipServices::PARAM_RIB],
-                $params[IntMembershipServices::PARAM_IDENTITY]);
+                $params[IntMembershipServices::PARAM_IDENTITY],
+                $params[IntMembershipServices::PARAM_SECU_NUMBER]);
         } else if (!strcmp($action, IntMembershipServices::DELETE)) {
             $data = $this->__delete_int_membership($params[IntMembershipServices::PARAM_ID]);
         }
@@ -235,7 +249,8 @@ class IntMembershipServices extends AbstractObjectServices
                     $row[IntMembershipDBObject::COL_FORM],
                     $row[IntMembershipDBObject::COL_CERTIF],
                     $row[IntMembershipDBObject::COL_RIB],
-                    $row[IntMembershipDBObject::COL_IDENTITY]);
+                    $row[IntMembershipDBObject::COL_IDENTITY],
+                    $row[IntMembershipDBObject::COL_SECU_NUMBER]);
             }
         }
         return $int_membership;
@@ -259,7 +274,8 @@ class IntMembershipServices extends AbstractObjectServices
                     $row[IntMembershipDBObject::COL_FORM],
                     $row[IntMembershipDBObject::COL_CERTIF],
                     $row[IntMembershipDBObject::COL_RIB],
-                    $row[IntMembershipDBObject::COL_IDENTITY]));
+                    $row[IntMembershipDBObject::COL_IDENTITY],
+                    $row[IntMembershipDBObject::COL_SECU_NUMBER]));
             }
         }
         return $int_memberships;
@@ -288,7 +304,8 @@ class IntMembershipServices extends AbstractObjectServices
                     $row[IntMembershipDBObject::COL_FORM],
                     $row[IntMembershipDBObject::COL_CERTIF],
                     $row[IntMembershipDBObject::COL_RIB],
-                    $row[IntMembershipDBObject::COL_IDENTITY]
+                    $row[IntMembershipDBObject::COL_IDENTITY],
+                    $row[IntMembershipDBObject::COL_SECU_NUMBER]
                 );
             }
         }
@@ -316,7 +333,8 @@ class IntMembershipServices extends AbstractObjectServices
                     $row[IntMembershipDBObject::COL_FORM],
                     $row[IntMembershipDBObject::COL_CERTIF],
                     $row[IntMembershipDBObject::COL_RIB],
-                    $row[IntMembershipDBObject::COL_IDENTITY]));
+                    $row[IntMembershipDBObject::COL_IDENTITY],
+                    $row[IntMembershipDBObject::COL_SECU_NUMBER]));
             }
         }
         return $int_memberships;
@@ -324,7 +342,7 @@ class IntMembershipServices extends AbstractObjectServices
 
     // --- modify
 
-    private function __insert_int_membership($userId, $startDate, $fee, $form, $certif, $rib, $identity)
+    private function __insert_int_membership($userId, $startDate, $fee, $form, $certif, $rib, $identity, $secuNumber)
     {
         // create sql params
         $sql_params = array(
@@ -335,14 +353,15 @@ class IntMembershipServices extends AbstractObjectServices
             ":" . IntMembershipDBObject::COL_FORM => (int)($form === 'true'),
             ":" . IntMembershipDBObject::COL_CERTIF => (int)($certif === 'true'),
             ":" . IntMembershipDBObject::COL_RIB => (int)($rib === 'true'),
-            ":" . IntMembershipDBObject::COL_IDENTITY => (int)($identity === 'true'));
+            ":" . IntMembershipDBObject::COL_IDENTITY => (int)($identity === 'true'),
+            ":" . IntMembershipDBObject::COL_SECU_NUMBER => $secuNumber);
         // create sql request
         $sql = parent::getDBObject()->GetTable(IntMembershipDBObject::TABL_INT_MEMBERSHIP)->GetINSERTQuery();
         // execute query
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
-    private function __update_int_membership($id, $userId, $startDate, $fee, $form, $certif, $rib, $identity)
+    private function __update_int_membership($id, $userId, $startDate, $fee, $form, $certif, $rib, $identity, $secuNumber)
     {
         // create sql params
         $sql_params = array(
@@ -353,7 +372,8 @@ class IntMembershipServices extends AbstractObjectServices
             ":" . IntMembershipDBObject::COL_FORM => (int)($form === 'true'),
             ":" . IntMembershipDBObject::COL_CERTIF => (int)($certif === 'true'),
             ":" . IntMembershipDBObject::COL_RIB => (int)($rib === 'true'),
-            ":" . IntMembershipDBObject::COL_IDENTITY => (int)($identity === 'true'));
+            ":" . IntMembershipDBObject::COL_IDENTITY => (int)($identity === 'true'),
+            ":" . IntMembershipDBObject::COL_SECU_NUMBER => $secuNumber);
         // create sql request
         $sql = parent::getDBObject()->GetTable(IntMembershipDBObject::TABL_INT_MEMBERSHIP)->GetUPDATEQuery();
         // execute query
@@ -408,6 +428,7 @@ class IntMembershipDBObject extends AbstractDBObject
     const COL_CERTIF = "certif";
     const COL_RIB = "rib";
     const COL_IDENTITY = "identity";
+    const COL_SECU_NUMBER = "secu_number";
     // -- attributes
 
     // -- functions
@@ -428,6 +449,7 @@ class IntMembershipDBObject extends AbstractDBObject
             ->AddColumn(IntMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false)// boolean
             ->AddColumn(IntMembershipDBObject::COL_RIB, DBTable::DT_INT, 1, false)// boolean
             ->AddColumn(IntMembershipDBObject::COL_IDENTITY, DBTable::DT_INT, 1, false)// boolean
+            ->AddColumn(IntMembershipDBObject::COL_SECU_NUMBER, DBTable::DT_VARCHAR, 13, false)// boolean
             ->AddForeignKey(IntMembershipDBObject::TABL_INT_MEMBERSHIP . '_fk1', IntMembershipDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
 
         // -- add tables
