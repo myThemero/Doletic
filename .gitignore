@@ -2,3 +2,4 @@ config/
 uploads
 tmp
 html/
+/migrate/
