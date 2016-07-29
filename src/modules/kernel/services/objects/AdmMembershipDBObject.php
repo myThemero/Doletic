@@ -343,7 +343,7 @@ class AdmMembershipServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . AdmMembershipDBObject::COL_ID => "NULL",
+            ":" . AdmMembershipDBObject::COL_ID => null,
             ":" . AdmMembershipDBObject::COL_USER_ID => $userId,
             ":" . AdmMembershipDBObject::COL_START_DATE => $startDate,
             ":" . AdmMembershipDBObject::COL_END_DATE => $endDate,

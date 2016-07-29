@@ -374,7 +374,7 @@ class TicketServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . TicketDBObject::COL_ID => "NULL",
+            ":" . TicketDBObject::COL_ID => null,
             ":" . TicketDBObject::COL_SENDER_ID => parent::getCurrentUser()->GetId(),
             ":" . TicketDBObject::COL_RECEIVER_ID => $receiverId,
             ":" . TicketDBObject::COL_SUBJECT => $subject,
@@ -469,7 +469,7 @@ class TicketServices extends AbstractObjectServices
         $sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_CATEGO)->GetINSERTQuery();
         foreach ($categories as $category) {
             // --- create param array
-            $sql_params = array(":" . TicketDBObject::COL_ID => "NULL",
+            $sql_params = array(":" . TicketDBObject::COL_ID => null,
                 ":" . TicketDBObject::COL_LABEL => $category);
             // --- execute SQL query
             parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
@@ -480,7 +480,7 @@ class TicketServices extends AbstractObjectServices
         $sql = parent::getDBObject()->GetTable(TicketDBObject::TABL_STATUS)->GetINSERTQuery();
         foreach ($statuses as $index => $status) {
             // --- create param array
-            $sql_params = array(":" . TicketDBObject::COL_ID => "NULL",
+            $sql_params = array(":" . TicketDBObject::COL_ID => null,
                 ":" . TicketDBObject::COL_LABEL => $status);
             // --- execute SQL query
             parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);

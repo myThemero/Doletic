@@ -265,7 +265,7 @@ class ContactServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . ContactDBObject::COL_ID => "NULL",
+            ":" . ContactDBObject::COL_ID => null,
             ":" . ContactDBObject::COL_FIRSTNAME => $gender,
             ":" . ContactDBObject::COL_FIRSTNAME => $firstname,
             ":" . ContactDBObject::COL_LASTNAME => $lastname,

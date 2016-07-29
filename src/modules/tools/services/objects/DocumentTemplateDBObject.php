@@ -217,7 +217,7 @@ class DocumentTemplateServices extends AbstractObjectServices
     private function __insert_document_template($uploadId, $name, $type)
     {
         // create sql params array
-        $sql_params = array(":" . DocumentTemplateDBObject::COL_ID => "NULL",
+        $sql_params = array(":" . DocumentTemplateDBObject::COL_ID => null,
             ":" . DocumentTemplateDBObject::COL_UPLOAD_ID => $uploadId,
             ":" . DocumentTemplateDBObject::COL_NAME => $name,
             ":" . DocumentTemplateDBObject::COL_TYPE => $type);

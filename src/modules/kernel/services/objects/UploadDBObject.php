@@ -252,7 +252,7 @@ class UploadServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . UploadDBObject::COL_ID => "NULL",
+            ":" . UploadDBObject::COL_ID => null,
             ":" . UploadDBObject::COL_USER_ID => $userId,
             ":" . UploadDBObject::COL_TIMESTAMP => date(DateTime::ISO8601),
             ":" . UploadDBObject::COL_FILENAME => $filename,

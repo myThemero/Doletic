@@ -268,7 +268,7 @@ class FirmServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . FirmDBObject::COL_ID => "NULL",
+            ":" . FirmDBObject::COL_ID => null,
             ":" . FirmDBObject::COL_SIRET => $siret,
             ":" . FirmDBObject::COL_NAME => $name,
             ":" . FirmDBObject::COL_ADDRESS => $address,

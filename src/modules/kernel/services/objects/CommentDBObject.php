@@ -175,7 +175,7 @@ class CommentServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . CommentDBObject::COL_ID => "NULL",
+            ":" . CommentDBObject::COL_ID => null,
             ":" . CommentDBObject::COL_USER_ID => $userId,
             ":" . CommentDBObject::COL_DATE => date(DateTime::ISO8601),
             ":" . CommentDBObject::COL_DATA => $data);

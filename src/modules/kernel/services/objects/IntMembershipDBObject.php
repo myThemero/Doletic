@@ -346,7 +346,7 @@ class IntMembershipServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . IntMembershipDBObject::COL_ID => "NULL",
+            ":" . IntMembershipDBObject::COL_ID => null,
             ":" . IntMembershipDBObject::COL_USER_ID => $userId,
             ":" . IntMembershipDBObject::COL_START_DATE => $startDate,
             ":" . IntMembershipDBObject::COL_FEE => (int)($fee === 'true'),

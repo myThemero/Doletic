@@ -207,7 +207,7 @@ class MailingListServices extends AbstractObjectServices
     private function __subscribe($maillistId)
     {
         // create sql params array
-        $sql_params = array(":" . MailingListDBObject::COL_ID => "NULL",
+        $sql_params = array(":" . MailingListDBObject::COL_ID => null,
             ":" . MailingListDBObject::COL_MAILLIST_ID => $maillistId,
             ":" . MailingListDBObject::COL_USER_ID => $this->getCurrentUser()->GetId());
         // create sql request
@@ -219,7 +219,7 @@ class MailingListServices extends AbstractObjectServices
     private function __affect($userId, $maillistId)
     {
         // create sql params array
-        $sql_params = array(":" . MailingListDBObject::COL_ID => "NULL",
+        $sql_params = array(":" . MailingListDBObject::COL_ID => null,
             ":" . MailingListDBObject::COL_MAILLIST_ID => $maillistId,
             ":" . MailingListDBObject::COL_USER_ID => $userId);
         // create sql request
@@ -243,7 +243,7 @@ class MailingListServices extends AbstractObjectServices
     private function __insert_maillist($canSubscribe, $name)
     {
         // create sql params array
-        $sql_params = array(":" . MailingListDBObject::COL_ID => "NULL",
+        $sql_params = array(":" . MailingListDBObject::COL_ID => null,
             ":" . MailingListDBObject::COL_CAN_SUBSCRIBE => ($canSubscribe === "true" ? 1 : 0),
             ":" . MailingListDBObject::COL_NAME => $name);
         // create sql request
