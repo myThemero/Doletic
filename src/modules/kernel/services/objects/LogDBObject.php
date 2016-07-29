@@ -226,7 +226,7 @@ class LogServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . LogDBObject::COL_ID => "NULL",
+            ":" . LogDBObject::COL_ID => null,
             ":" . LogDBObject::COL_CRITICITY => $criticity,
             ":" . LogDBObject::COL_TIMESTAMP => date(DateTime::ISO8601),
             ":" . LogDBObject::COL_SCRIPT => $script,

@@ -885,7 +885,7 @@ class UserDataServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . UserDataDBObject::COL_ID => "NULL",
+            ":" . UserDataDBObject::COL_ID => null,
             ":" . UserDataDBObject::COL_USER_ID => $userId,
             ":" . UserDataDBObject::COL_GENDER => $gender,
             ":" . UserDataDBObject::COL_FIRSTNAME => $firstname,
@@ -899,7 +899,7 @@ class UserDataServices extends AbstractObjectServices
             ":" . UserDataDBObject::COL_COUNTRY => $country,
             ":" . UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
             ":" . UserDataDBObject::COL_INSA_DEPT => $insaDept,
-            ":" . UserDataDBObject::COL_AVATAR_ID => "NULL",
+            ":" . UserDataDBObject::COL_AVATAR_ID => null,
             ":" . UserDataDBObject::COL_AG => $ag,
             ":" . UserDataDBObject::COL_DISABLED => false,
             ":" . UserDataDBObject::COL_CREATION_DATE => date('Y-m-d'));
@@ -945,7 +945,7 @@ class UserDataServices extends AbstractObjectServices
             ":" . UserDataDBObject::COL_COUNTRY => $country,
             ":" . UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
             ":" . UserDataDBObject::COL_INSA_DEPT => $insaDept,
-            ":" . UserDataDBObject::COL_AVATAR_ID => "NULL",
+            ":" . UserDataDBObject::COL_AVATAR_ID => null,
             ":" . UserDataDBObject::COL_AG => $ag);
         // create sql request
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(array(
@@ -980,7 +980,7 @@ class UserDataServices extends AbstractObjectServices
         if (!array_key_exists(UserDataDBObject::COL_LABEL, $previousPosition) || $position != $previousPosition[UserDataDBObject::COL_LABEL]) {
             // create sql params
             $sql_params = array(
-                ":" . UserDataDBObject::COL_ID => "NULL",
+                ":" . UserDataDBObject::COL_ID => null,
                 ":" . UserDataDBObject::COL_USER_ID => $userId,
                 ":" . UserDataDBObject::COL_POSITION => $position,
                 ":" . UserDataDBObject::COL_SINCE => date('Y-m-d H:i:s'));

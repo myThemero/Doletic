@@ -268,7 +268,7 @@ class UserServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . UserDBObject::COL_ID => "NULL",
+            ":" . UserDBObject::COL_ID => null,
             ":" . UserDBObject::COL_USERNAME => $username,
             ":" . UserDBObject::COL_PASSWORD => $hash,
             ":" . UserDBObject::COL_LAST_CON_TSMP => date(DateTime::ISO8601),

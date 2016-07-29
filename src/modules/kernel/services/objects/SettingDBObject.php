@@ -182,7 +182,7 @@ class SettingServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . SettingDBObject::COL_ID => "NULL",
+            ":" . SettingDBObject::COL_ID => null,
             ":" . SettingDBObject::COL_KEY => $key,
             ":" . SettingDBObject::COL_VALUE => $value);
         // create sql request

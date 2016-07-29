@@ -242,7 +242,7 @@ class ModuleServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . ModuleDBObject::COL_ID => "NULL",
+            ":" . ModuleDBObject::COL_ID => null,
             ":" . ModuleDBObject::COL_NAME => $name,
             ":" . ModuleDBObject::COL_VERSION => $version,
             ":" . ModuleDBObject::COL_AUTHORS => $authors,

@@ -350,7 +350,7 @@ class TeamServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . TeamDBObject::COL_ID => "NULL",
+            ":" . TeamDBObject::COL_ID => null,
             ":" . TeamDBObject::COL_NAME => $name,
             ":" . TeamDBObject::COL_LEADER_ID => $leaderId,
             ":" . TeamDBObject::COL_CREATION_DATE => date('Y-m-d'),

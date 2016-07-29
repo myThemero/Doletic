@@ -986,7 +986,7 @@ class IndicatorServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . IndicatorDBObject::COL_ID => "NULL",
+            ":" . IndicatorDBObject::COL_ID => null,
             ":" . IndicatorDBObject::COL_PROCEDURE => $procedure,
             ":" . IndicatorDBObject::COL_MODULE => $module,
             ":" . IndicatorDBObject::COL_DESCRIPTION => $description,
@@ -1010,7 +1010,7 @@ class IndicatorServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . IndicatorDBObject::COL_ID => "NULL",
+            ":" . IndicatorDBObject::COL_ID => null,
             ":" . IndicatorDBObject::COL_PROCEDURE => $procedure,
             ":" . IndicatorDBObject::COL_MODULE => $module,
             ":" . IndicatorDBObject::COL_DESCRIPTION => $description,
@@ -1034,7 +1034,7 @@ class IndicatorServices extends AbstractObjectServices
     {
         // create sql params
         $sql_params = array(
-            ":" . IndicatorDBObject::COL_ID => "NULL",
+            ":" . IndicatorDBObject::COL_ID => null,
             ":" . IndicatorDBObject::COL_PROCEDURE => $procedure,
             ":" . IndicatorDBObject::COL_MODULE => $module,
             ":" . IndicatorDBObject::COL_DESCRIPTION => $description,
