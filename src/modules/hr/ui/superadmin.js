@@ -124,18 +124,7 @@ var DoleticUIModule = new function () {
     this.getStatsTab = function () {
         $('#agr_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
         $('#statsTab').load("../modules/hr/ui/templates/statsTab.html", function () {
-            $('#agr_calendar').calendar({
-                type: 'date',
-                formatter: {
-                    date: function (date) {
-                        if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
-                    }
-                }
-            });
+            DoleticMasterInterface.makeDefaultCalendar('agr_calendar');
         });
     };
 
@@ -145,18 +134,7 @@ var DoleticUIModule = new function () {
     this.getMembersTab = function () {
         $('#user_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
         $('#membersTab').load("../modules/hr/ui/templates/membersTab.html", function () {
-            $('#birthdate_calendar').calendar({
-                type: 'date',
-                formatter: {
-                    date: function (date) {
-                        if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
-                    }
-                }
-            });
+            DoleticMasterInterface.makeDefaultCalendar('birthdate_calendar');
         });
     };
 
@@ -181,18 +159,9 @@ var DoleticUIModule = new function () {
         $('#admm_form_modal').remove(); //Necessary to avoid duplicate
         $('#intm_form_modal').remove(); //Necessary to avoid duplicate
         $('#detailsTab').load("../modules/hr/ui/templates/detailsTab.html", function () {
-            $('#admm_scalendar, #admm_ecalendar, #intm_calendar').calendar({
-                type: 'date',
-                formatter: {
-                    date: function (date) {
-                        if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
-                    }
-                }
-            });
+            DoleticMasterInterface.makeDefaultCalendar('admm_scalendar');
+            DoleticMasterInterface.makeDefaultCalendar('admm_ecalendar');
+            DoleticMasterInterface.makeDefaultCalendar('intm_calendar');
         });
     };
 
@@ -287,7 +256,6 @@ var DoleticUIModule = new function () {
                 }
                 // insert html content
                 $('#position').html(content).dropdown();
-                //$('#position_f').append(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -420,7 +388,6 @@ var DoleticUIModule = new function () {
                 ];
                 var selector_content = "<option value>Membre...</option>";
                 for (var i = 0; i < data.object.length; i++) {
-                    //DoleticUIModule.createUserDetails(data.object[i]);
                     window.user_list[data.object[i].id] = data.object[i];
 
                     selector_content += "<option value=\"" + data.object[i].user_id + "\">"
@@ -930,7 +897,7 @@ var DoleticUIModule = new function () {
     };
 
     this.clearNewAGRForm = function () {
-        $('#agr').val("");
+        $('#agr_date').val("");
         $('#agr_pr').val("");
     };
 
@@ -977,7 +944,7 @@ var DoleticUIModule = new function () {
 
     this.insertNewAdmMembership = function (userId) {
         if (DoleticUIModule.checkNewAdmMembershipForm()) {
-            // retreive missing information
+            // retrieve missing information
             var options = document.getElementById("docs_adm").options;
             AdmMembershipServicesInterface.insert(
                 userId, // Retenir l'utilisateur concerné
@@ -994,7 +961,7 @@ var DoleticUIModule = new function () {
 
     this.insertNewIntMembership = function (userId) {
         if (DoleticUIModule.checkNewIntMembershipForm()) {
-            // retreive missing information
+            // retrieve missing information
             var options = document.getElementById("docs_int").options;
             IntMembershipServicesInterface.insert(
                 userId,
@@ -1012,7 +979,7 @@ var DoleticUIModule = new function () {
 
     this.insertNewAGR = function () {
         if (DoleticUIModule.checkNewAGRForm()) {
-            var ag = $("#agr").val();
+            var ag = $("#agr_date").val();
             var pr = $("#agr_pr").val();
             UserDataServicesInterface.insertAg(ag, pr, function (data) {
                 // if no service error
@@ -1202,7 +1169,7 @@ var DoleticUIModule = new function () {
     this.updateAdmMembership = function (id, userId) {
         // ADD OTHER TESTS
         if (DoleticUIModule.checkNewAdmMembershipForm()) {
-            // retreive missing information
+            // retrieve missing information
             var options = document.getElementById("docs_adm").options;
             AdmMembershipServicesInterface.update(id,
                 userId, // Retenir l'utilisateur concerné
@@ -1221,7 +1188,7 @@ var DoleticUIModule = new function () {
     this.updateIntMembership = function (id, userId) {
         // ADD OTHER TESTS
         if (DoleticUIModule.checkNewIntMembershipForm()) {
-            // retreive missing information
+            // retrieve missing information
             var options = document.getElementById("docs_int").options;
             IntMembershipServicesInterface.update(id,
                 userId, // Retenir l'utilisateur concerné
@@ -1519,8 +1486,8 @@ var DoleticUIModule = new function () {
 
     this.checkNewAGRForm = function () {
         var valid = true;
-        if (!DoleticMasterInterface.checkDate($('#agr').val())) {
-            $('#agr').addClass("error");
+        if (!DoleticMasterInterface.checkDate($('#agr_date').val())) {
+            $('#agr_date').addClass("error");
             valid = false;
         }
         if (!$('#agr_pr').val() < 0) {

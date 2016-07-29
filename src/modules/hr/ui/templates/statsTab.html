@@ -38,40 +38,38 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="ui modal" id="agr_form_modal">
-                        <div class="ui segment">
-                            <form class="ui form">
-                                <h4 class="ui dividing header">Ajouter une AGR</h4>
-                                <div id="agr_field" class="sxiteen wide required field">
-                                    <label>Date</label>
-                                    <div class="ui calendar" id="agr_calendar">
-                                        <div class="ui input left icon">
-                                            <i class="calendar icon"></i>
-                                            <input type="text" placeholder="AAAA-mm-jj"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="agr_pr_field" class="sxiteen wide required field">
-                                    <label>Etudiants présents</label>
-                                    <input id="agr_pr" placeholder="Présences..." type="number"/>
-                                </div>
-                                <div class="ui hr_center small buttons">
-                                    <div id="abort__agr_btn" class="ui button"
-                                         onClick="DoleticUIModule.cancelNewAGRForm();">Annuler
-                                    </div>
-                                    <div class="or" data-text="ou"></div>
-                                    <div id="add_agr_btn" class="ui green button"
-                                         onClick="DoleticUIModule.insertNewAGR();">Ajouter
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
                 <div class="row" id="agr_table_container">
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div class="ui modal" id="agr_form_modal">
+    <div class="ui segment">
+        <form class="ui form">
+            <h4 class="ui dividing header">Ajouter une AGR</h4>
+            <div id="agr_field" class="sxiteen wide required field">
+                <label>Date</label>
+                <div class="ui calendar" id="agr_calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input type="text" placeholder="AAAA-mm-jj" id="agr_date"/>
+                    </div>
+                </div>
+            </div>
+            <div id="agr_pr_field" class="sxiteen wide required field">
+                <label>Etudiants présents</label>
+                <input id="agr_pr" placeholder="Présences..." type="number"/>
+            </div>
+            <div class="ui hr_center small buttons">
+                <div id="abort__agr_btn" class="ui button"
+                     onClick="DoleticUIModule.cancelNewAGRForm();">Annuler
+                </div>
+                <div class="or" data-text="ou"></div>
+                <div id="add_agr_btn" class="ui green button"
+                     onClick="DoleticUIModule.insertNewAGR();">Ajouter
+                </div>
+            </div>
+        </form>
     </div>
 </div>

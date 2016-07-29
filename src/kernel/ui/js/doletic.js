@@ -518,7 +518,24 @@ var DoleticMasterInterface = new function () {
     this.toggleSidebar = function (id) {
         $(".ui.sidebar.visible").sidebar("toggle");
         $("#" + id).sidebar("toggle");
-    }
+    };
+
+    this.makeDefaultCalendar = function (id) {
+        $("#" + id).calendar({
+            type: 'date',
+            formatter: {
+                date: function (date) {
+                    if (!date) return '';
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return year + '-'
+                        + (Number(month) < 10 ? '0' : '') + month + '-'
+                        + (Number(day) < 10 ? '0' : '') + day;
+                }
+            }
+        });
+    };
 
 };
 
