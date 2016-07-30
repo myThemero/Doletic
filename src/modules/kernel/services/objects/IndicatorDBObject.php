@@ -1166,6 +1166,8 @@ class IndicatorServices extends AbstractObjectServices
             array(IndicatorDBObject::PROC_STATS_INT_DEPT, "hr", "Répartition des consultants par département", Indicator::GRAPH_TYPE, NULL, 'pie', NULL, "dept_graph"),
             array(IndicatorDBObject::PROC_STATS_AG_PRESENCE, "hr", "Présences aux AG sur membres recrutés", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés;Présents", "ag_graph"),
             array(IndicatorDBObject::PROC_STATS_PC_RATE, "hr", "Taux de membres au PC", Indicator::VALUE_TYPE, NULL, 30, '%', 1),
+            array(IndicatorDBObject::PROC_STATS_ADMIN, "hr", "Nombre de membres actifs", Indicator::VALUE_TYPE, NULL, 50, '', 1),
+            array(IndicatorDBObject::PROC_STATS_INTER, "hr", "Nombre de consultants", Indicator::VALUE_TYPE, NULL, 100, '', 1),
             array(IndicatorDBObject::PROC_STATS_INSCRIPTIONS, "hr", "Inscriptions par mois", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés", "insc_graph"),
             //array(IndicatorDBObject::PROC_STATS_MEMBERS, "hr", "Evolution des membres", Indicator::GRAPH_TYPE, NULL, "scatter", "Cumul", "members_graph"),
             array(IndicatorDBObject::PROC_INVALID_ADMM, "hr", "Adhésions administrateur invalides", Indicator::TABLE_TYPE, NULL, "Pôle", "Nombre"),
@@ -1245,6 +1247,8 @@ class IndicatorDBObject extends AbstractDBObject
     const PROC_STATS_INT_DEPT = "stats_int_dept";
     const PROC_STATS_AG_PRESENCE = "stats_udata_ag";
     const PROC_STATS_PC_RATE = "stats_udata_pc";
+    const PROC_STATS_ADMIN = "stats_admin";
+    const PROC_STATS_INTER = "stats_inter";
     const PROC_STATS_INSCRIPTIONS = "stats_udata_inscription";
     const PROC_STATS_MEMBERS = "stats_udata_members";
     const PROC_INVALID_ADMM = "stats_invalid_admm";
@@ -1344,6 +1348,36 @@ class IndicatorDBObject extends AbstractDBObject
 			SELECT 100*count_pc/count_total AS `result`;"
         );
 
+        $stats_udata_admin = new DBProcedure(IndicatorDBObject::PROC_STATS_ADMIN, "
+            SELECT COUNT( * ) 
+            FROM (
+            
+            SELECT user_id
+            FROM  `dol_udata` 
+            WHERE disabled =0
+            ) AS a
+            JOIN (
+            
+            SELECT user_id
+            FROM  `dol_adm_membership`
+            ) AS b ON ( a.user_id = b.user_id );
+            ");
+
+        $stats_udata_inter = new DBProcedure(IndicatorDBObject::PROC_STATS_INTER, "
+            SELECT COUNT( * ) 
+            FROM (
+            
+            SELECT user_id
+            FROM  `dol_udata` 
+            WHERE disabled =0
+            ) AS a
+            JOIN (
+            
+            SELECT user_id
+            FROM  `dol_int_membership`
+            ) AS b ON ( a.user_id = b.user_id );
+            ");
+
         $stats_udata_inscription = new DBProcedure(IndicatorDBObject::PROC_STATS_INSCRIPTIONS,
             "SELECT DATE_FORMAT(creation_date, '%Y-%m') AS month, COUNT(*) as count
 				FROM `dol_udata`
@@ -1418,6 +1452,8 @@ class IndicatorDBObject extends AbstractDBObject
         parent::addProcedure($stats_int_dept);
         parent::addProcedure($stats_udata_ag);
         parent::addProcedure($stats_udata_pc);
+        parent::addProcedure($stats_udata_admin);
+        parent::addProcedure($stats_udata_inter);
         parent::addProcedure($stats_udata_inscription);
         parent::addProcedure($stats_udata_members);
         parent::addProcedure($stats_invalid_admm);
