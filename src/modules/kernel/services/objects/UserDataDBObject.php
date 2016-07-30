@@ -901,7 +901,7 @@ class UserDataServices extends AbstractObjectServices
             ":" . UserDataDBObject::COL_INSA_DEPT => $insaDept,
             ":" . UserDataDBObject::COL_AVATAR_ID => null,
             ":" . UserDataDBObject::COL_AG => $ag,
-            ":" . UserDataDBObject::COL_DISABLED => false,
+            ":" . UserDataDBObject::COL_DISABLED => 0,
             ":" . UserDataDBObject::COL_CREATION_DATE => date('Y-m-d'));
         // create sql request
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetINSERTQuery();
