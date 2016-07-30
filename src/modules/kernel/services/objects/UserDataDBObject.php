@@ -36,6 +36,7 @@ class UserData implements \JsonSerializable
     private $pos = null;
     private $ag = null;
     private $disabled = false;
+    private $old = false;
     private $creation_date = null;
     private $admm_status = null;
     private $intm_status = null;
@@ -45,7 +46,7 @@ class UserData implements \JsonSerializable
      */
     public function __construct($id, $userId, $gender, $firstname, $lastname, $birthdate,
                                 $tel, $email, $address, $city, $postalCode, $country, $schoolYear,
-                                $insaDept, $avatarId, $ag, $disabled, $creationDate, $pos)
+                                $insaDept, $avatarId, $ag, $disabled, $old, $creationDate, $pos)
     {
         $this->id = intval($id);
         $this->user_id = intval($userId);
@@ -65,6 +66,7 @@ class UserData implements \JsonSerializable
         $this->pos = $pos;
         $this->ag = $ag;
         $this->disabled = (bool)$disabled;
+        $this->old = (bool)$old;
         $this->creation_date = $creationDate;
     }
 
@@ -88,6 +90,7 @@ class UserData implements \JsonSerializable
             UserDataDBObject::COL_AVATAR_ID => $this->avatar_id,
             UserDataDBObject::COL_AG => $this->ag,
             UserDataDBObject::COL_DISABLED => $this->disabled,
+            UserDataDBObject::COL_OLD => $this->old,
             UserDataDBObject::COL_POSITION => $this->pos, //Not in DB...
             UserDataDBObject::COL_CREATION_DATE => $this->creation_date,
             UserDataDBObject::COL_ADMM_STATUS => $this->admm_status,
@@ -240,7 +243,15 @@ class UserData implements \JsonSerializable
     }
 
     /**
-     * @brief Returns UserData disabled
+     * @brief Returns UserData old
+     */
+    public function GetOld()
+    {
+        return $this->old;
+    }
+
+    /**
+     * @brief Returns UserData creation date
      */
     public function GetCreationDate()
     {
@@ -305,7 +316,7 @@ class UserDataServices extends AbstractObjectServices
     const PARAM_SCHOOL_YEAR = "schoolYear";
     const PARAM_INSA_DEPT = "insaDept";
     const PARAM_POSITION = "position";
-    const PARAM_CREATIO_DATE = "creationDate";
+    const PARAM_CREATION_DATE = "creationDate";
     const PARAM_AVATAR_ID = "avatarId";
     const PARAM_AG = "ag";
     const PARAM_PRESENCE = "presence";
@@ -336,7 +347,8 @@ class UserDataServices extends AbstractObjectServices
     const DELETE = "delete";
     const DISABLE = "disable";
     const ENABLE = "enable";
-    const STATS = "stats";
+    const TAG_OLD = "old";
+    const UNTAG_OLD = "unold";
     // -- functions
 
     // -- construct
@@ -434,6 +446,10 @@ class UserDataServices extends AbstractObjectServices
             $data = $this->__disable_user_data($params[UserDataServices::PARAM_ID]);
         } else if (!strcmp($action, UserDataServices::ENABLE)) {
             $data = $this->__enable_user_data($params[UserDataServices::PARAM_ID]);
+        } else if (!strcmp($action, UserDataServices::TAG_OLD)) {
+            $data = $this->__tag_old_user_data($params[UserDataServices::PARAM_ID]);
+        } else if (!strcmp($action, UserDataServices::UNTAG_OLD)) {
+            $data = $this->__untag_old_user_data($params[UserDataServices::PARAM_ID]);
         }
         return $data;
     }
@@ -473,6 +489,7 @@ class UserDataServices extends AbstractObjectServices
                     $row[UserDataDBObject::COL_AVATAR_ID],
                     $row[UserDataDBObject::COL_AG],
                     $row[UserDataDBObject::COL_DISABLED],
+                    $row[UserDataDBObject::COL_OLD],
                     $row[UserDataDBObject::COL_CREATION_DATE],
                     $this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
             }
@@ -516,6 +533,7 @@ class UserDataServices extends AbstractObjectServices
                     $row[UserDataDBObject::COL_AVATAR_ID],
                     $row[UserDataDBObject::COL_AG],
                     $row[UserDataDBObject::COL_DISABLED],
+                    $row[UserDataDBObject::COL_OLD],
                     $row[UserDataDBObject::COL_CREATION_DATE],
                     $this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
             }
@@ -558,6 +576,7 @@ class UserDataServices extends AbstractObjectServices
                     $row[UserDataDBObject::COL_AVATAR_ID],
                     $row[UserDataDBObject::COL_AG],
                     $row[UserDataDBObject::COL_DISABLED],
+                    $row[UserDataDBObject::COL_OLD],
                     $row[UserDataDBObject::COL_CREATION_DATE],
                     $this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
             }
@@ -596,6 +615,7 @@ class UserDataServices extends AbstractObjectServices
                     $row[UserDataDBObject::COL_AVATAR_ID],
                     $row[UserDataDBObject::COL_AG],
                     $row[UserDataDBObject::COL_DISABLED],
+                    $row[UserDataDBObject::COL_OLD],
                     $row[UserDataDBObject::COL_CREATION_DATE],
                     $this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
             }
@@ -634,6 +654,7 @@ class UserDataServices extends AbstractObjectServices
                     $row[UserDataDBObject::COL_AVATAR_ID],
                     $row[UserDataDBObject::COL_AG],
                     $row[UserDataDBObject::COL_DISABLED],
+                    $row[UserDataDBObject::COL_OLD],
                     $row[UserDataDBObject::COL_CREATION_DATE],
                     $this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
             }
@@ -731,6 +752,7 @@ class UserDataServices extends AbstractObjectServices
                     $row[UserDataDBObject::COL_AVATAR_ID],
                     $row[UserDataDBObject::COL_AG],
                     $row[UserDataDBObject::COL_DISABLED],
+                    $row[UserDataDBObject::COL_OLD],
                     $row[UserDataDBObject::COL_CREATION_DATE],
                     $this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID])));
             }
@@ -851,6 +873,7 @@ class UserDataServices extends AbstractObjectServices
                     $row[UserDataDBObject::COL_AVATAR_ID],
                     $row[UserDataDBObject::COL_AG],
                     $row[UserDataDBObject::COL_DISABLED],
+                    $row[UserDataDBObject::COL_OLD],
                     $row[UserDataDBObject::COL_CREATION_DATE],
                     $this->__get_all_user_positions($row[UserDataDBObject::COL_USER_ID]));
             }
@@ -902,6 +925,7 @@ class UserDataServices extends AbstractObjectServices
             ":" . UserDataDBObject::COL_AVATAR_ID => null,
             ":" . UserDataDBObject::COL_AG => $ag,
             ":" . UserDataDBObject::COL_DISABLED => 0,
+            ":" . UserDataDBObject::COL_OLD => 0,
             ":" . UserDataDBObject::COL_CREATION_DATE => date('Y-m-d'));
         // create sql request
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetINSERTQuery();
@@ -1049,6 +1073,33 @@ class UserDataServices extends AbstractObjectServices
         // execute query
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
+
+    private function __tag_old_user_data($id)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . UserDataDBObject::COL_ID => $id,
+            ":" . UserDataDBObject::COL_OLD => true);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(
+            array(UserDataDBObject::COL_OLD));
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
+    private function __untag_old_user_data($id)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . UserDataDBObject::COL_ID => $id,
+            ":" . UserDataDBObject::COL_OLD => false);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(
+            array(UserDataDBObject::COL_OLD));
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
 
     private function __delete_ag($ag)
     {
@@ -1265,6 +1316,7 @@ class UserDataDBObject extends AbstractDBObject
     const COL_PRESENCE = "presence";
     const COL_DIVISION = "division";
     const COL_DISABLED = "disabled";
+    const COL_OLD = "old";
     const COL_ADMM_STATUS = "admm_status";
     const COL_INTM_STATUS = "intm_status";
     // -- attributes
@@ -1327,6 +1379,7 @@ class UserDataDBObject extends AbstractDBObject
             ->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, true, "-1")
             ->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(UserDataDBObject::COL_DISABLED, DBTable::DT_INT, 1, false)
+            ->AddColumn(UserDataDBObject::COL_OLD, DBTable::DT_INT, 1, false)
             ->AddColumn(UserDataDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false)
             ->AddForeignKey(UserDataDBObject::TABL_USER_DATA . '_fk1', UserDataDBObject::COL_GENDER, UserDataDBObject::TABL_COM_GENDER, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
             ->AddForeignKey(UserDataDBObject::TABL_USER_DATA . '_fk2', UserDataDBObject::COL_COUNTRY, UserDataDBObject::TABL_COM_COUNTRY, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)

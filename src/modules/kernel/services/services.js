@@ -186,7 +186,9 @@ var UserDataServicesInterface = new function () {
             UPDATE_AVATAR: "updateava",
             DELETE: "delete",
             DISABLE: "disable",
-            ENABLE: "enable"
+            ENABLE: "enable",
+            TAG_OLD: "old",
+            UNTAG_OLD: "unold"
         }
     };
 
@@ -363,6 +365,24 @@ var UserDataServicesInterface = new function () {
     this.enable = function (id, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.ENABLE,
+            {
+                id: id
+            },
+            successHandler);
+    }
+
+    this.tagOld = function (id, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.TAG_OLD,
+            {
+                id: id
+            },
+            successHandler);
+    };
+
+    this.untagOld = function (id, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.UNTAG_OLD,
             {
                 id: id
             },
