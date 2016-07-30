@@ -1308,7 +1308,7 @@ class IndicatorDBObject extends AbstractDBObject
 			FROM `dol_udata_position` m1 LEFT JOIN `dol_udata_position` m2
 			 ON (m1.user_id = m2.user_id AND m1.since < m2.since)
 			WHERE m2.id IS NULL
-			) AS b ON (a.label=b.position)) AS a  INNER JOIN (SELECT * FROM `dol_udata` WHERE `disabled`=0) AS b ON a.user_id = b.user_id GROUP BY `division`;
+			) AS b ON (a.label=b.position)) AS a  INNER JOIN (SELECT * FROM `dol_udata` WHERE `disabled`=0 AND `old`=0) AS b ON a.user_id = b.user_id GROUP BY `division`;
 			 ");
 
         // -- Intervenants by INSA dept
@@ -1354,7 +1354,7 @@ class IndicatorDBObject extends AbstractDBObject
             
             SELECT user_id
             FROM  `dol_udata` 
-            WHERE disabled =0
+            WHERE disabled =0 AND old=0
             ) AS a
             JOIN (
             
@@ -1369,7 +1369,7 @@ class IndicatorDBObject extends AbstractDBObject
             
             SELECT user_id
             FROM  `dol_udata` 
-            WHERE disabled =0
+            WHERE disabled =0 AND old=0
             ) AS a
             JOIN (
             
@@ -1397,7 +1397,7 @@ class IndicatorDBObject extends AbstractDBObject
 				       `creation_date` AS date,
 				       COUNT(*) AS count
 				    FROM  `dol_udata`
-				    WHERE  disabled=0
+				    WHERE  disabled=0 AND old=0
 				    GROUP  BY date
 				    ORDER  BY date) AS q1;"
         );
@@ -1435,7 +1435,7 @@ class IndicatorDBObject extends AbstractDBObject
             "SELECT insa_dept, COUNT(*) AS count FROM(
 			    SELECT user_id, insa_dept
 			    FROM dol_udata
-				WHERE disabled=0) AS a
+				WHERE disabled=0 AND old=0) AS a
 
 			NATURAL JOIN
 

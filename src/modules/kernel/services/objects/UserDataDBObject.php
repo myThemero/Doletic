@@ -836,7 +836,9 @@ class UserDataServices extends AbstractObjectServices
         $labels = array();
         if (isset($pdos)) {
             while (($row = $pdos->fetch()) !== false) {
-                array_push($labels, $row[UserDataDBObject::COL_LABEL]);
+                if ($row[UserDataDBObject::COL_LABEL] != UserDataDBObject::VAL_OLD) {
+                    array_push($labels, $row[UserDataDBObject::COL_LABEL]);
+                }
             }
         }
         return $labels;
@@ -970,6 +972,7 @@ class UserDataServices extends AbstractObjectServices
             ":" . UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
             ":" . UserDataDBObject::COL_INSA_DEPT => $insaDept,
             ":" . UserDataDBObject::COL_AVATAR_ID => null,
+            ":" . UserDataDBObject::COL_OLD => ($position == UserDataDBObject::VAL_OLD),
             ":" . UserDataDBObject::COL_AG => $ag);
         // create sql request
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(array(
@@ -988,6 +991,7 @@ class UserDataServices extends AbstractObjectServices
             UserDataDBObject::COL_SCHOOL_YEAR,
             UserDataDBObject::COL_INSA_DEPT,
             UserDataDBObject::COL_AVATAR_ID,
+            UserDataDBObject::COL_OLD,
             UserDataDBObject::COL_AG
         ));
         // execute query
@@ -1014,6 +1018,28 @@ class UserDataServices extends AbstractObjectServices
             return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         }
         return true;
+    }
+
+    private function __remove_last_user_position($userId)
+    {
+        $positions = $this->__get_all_user_positions($userId);
+        if (count($positions) < 2) {
+            return true;
+        }
+        // create sql params
+        $sql_params = array(
+            ":" . UserDataDBObject::COL_USER_ID => $userId,
+            ":" . UserDataDBObject::COL_POSITION => $positions[0][UserDataDBObject::COL_LABEL],
+            ":" . UserDataDBObject::COL_SINCE => $positions[0][UserDataDBObject::COL_SINCE]
+        );
+        // create sql query
+        $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)
+            ->GetDELETEQuery(array(
+                UserDataDBObject::COL_USER_ID,
+                UserDataDBObject::COL_POSITION,
+                UserDataDBObject::COL_SINCE));
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
     private function __update_user_avatar($avatarId)
@@ -1084,7 +1110,10 @@ class UserDataServices extends AbstractObjectServices
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(
             array(UserDataDBObject::COL_OLD));
         // execute query
-        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+        if (parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+            return $this->__update_user_position($id, UserDataDBObject::VAL_OLD);
+        }
+        return false;
     }
 
     private function __untag_old_user_data($id)
@@ -1097,7 +1126,10 @@ class UserDataServices extends AbstractObjectServices
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(
             array(UserDataDBObject::COL_OLD));
         // execute query
-        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+        if (parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+            return $this->__remove_last_user_position($id);
+        }
+        return false;
     }
 
 
@@ -1252,7 +1284,7 @@ class UserDataServices extends AbstractObjectServices
             "Junior Com" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "Com"), // U  | M | D
             "Chargé d'affaire" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "UA"), // U  | M | D
             "Junior Qualité" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "Qualité"), // U  | M | D
-            "Ancien membre" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Ancien"), // G  | C | D
+            UserDataDBObject::VAL_OLD => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Ancien"), // G  | C | D
             "Intervenant" => array((RightsMap::G_R | RightsMap::I_G | RightsMap::D_G), "Intervenant"), // G  | I | D
             "Client" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Client") // G  | C | D
         );
@@ -1320,6 +1352,7 @@ class UserDataDBObject extends AbstractDBObject
     const COL_ADMM_STATUS = "admm_status";
     const COL_INTM_STATUS = "intm_status";
     // -- attributes
+    const VAL_OLD = "Ancien membre";
 
     // -- functions
 
