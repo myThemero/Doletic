@@ -330,8 +330,8 @@ var DoleticUIModule = new function () {
                         <th>Pôle</th> \
                         <th>Téléphone</th> \
                         <th>Année</th> \
-                        <th>Admin</th> \
-                        <th>Intervenant</th> \
+                        <th>Actif</th> \
+                        <th>Consultant</th> \
                         <th>Actions</th> \
                     </tr>\
                 </thead>\
@@ -343,8 +343,8 @@ var DoleticUIModule = new function () {
                         <th>Pôle</th> \
                         <th>Téléphone</th> \
                         <th>Année</th> \
-                        <th>Admin</th> \
-                        <th>Intervenant</th> \
+                        <th>Actif</th> \
+                        <th>Consultant</th> \
                         <th></th> \
                     </tr>\
                 </tfoot>\
@@ -412,8 +412,15 @@ var DoleticUIModule = new function () {
 		    					<div class=\"ui icon buttons\"> \
 			    					<button class=\"ui icon button\" data-tooltip=\"Réactiver\" onClick=\"DoleticUIModule.restoreUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 			  							<i class=\"refresh icon\"></i> \
-									</button> \
-									<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+									</button>" + (data.object[i].old ?
+                            "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
+				  				<i class=\"add user icon\"></i> \
+							</button>"
+                                :
+                            "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
+				  					<i class=\"student icon\"></i> \
+							</button>") +
+                            "<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 			  							<i class=\"remove icon\"></i> \
 									</button> \
 								</div> \
@@ -443,8 +450,15 @@ var DoleticUIModule = new function () {
 			    					<div class=\"ui icon buttons\"> \
 				    					<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 				  							<i class=\"write icon\"></i> \
-										</button> \
-										<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+										</button>" + (data.object[i].old ?
+                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
+				  				<i class=\"add user icon\"></i> \
+							</button>"
+                                    :
+                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
+				  					<i class=\"student icon\"></i> \
+							</button>") +
+                                "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 				  							<i class=\"remove user icon\"></i> \
 										</button> \
 									</div> \
@@ -471,8 +485,15 @@ var DoleticUIModule = new function () {
 			    					<div class=\"ui icon buttons\"> \
 				    					<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 				  							<i class=\"write icon\"></i> \
-										</button> \
-										<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+										</button>" + (data.object[i].old ?
+                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
+				  				<i class=\"add user icon\"></i> \
+							</button>"
+                                    :
+                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
+				  					<i class=\"student icon\"></i> \
+							</button>") +
+                                "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 				  							<i class=\"remove user icon\"></i> \
 										</button> \
 									</div> \
@@ -1294,6 +1315,26 @@ var DoleticUIModule = new function () {
             DoleticMasterInterface.hideConfirmModal);
     };
 
+    this.tagOld = function (id) {
+        // Confirmation
+        DoleticMasterInterface.showConfirmModal("Confirmer le marquage", "\<i class=\"student icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir marquer cet utilisateur ? Il ou elle ne sera plus comptabilisé(e) dans les statistiques.",
+            function () {
+                DoleticUIModule.tagOldUserHandler(id);
+            },
+            DoleticMasterInterface.hideConfirmModal);
+    };
+
+    this.untagOld = function (id) {
+        // Confirmation
+        DoleticMasterInterface.showConfirmModal("Confirmer le marquage", "\<i class=\"add user icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir marquer cet utilisateur ? Il ou elle sera de nouveau comptabilisé(e) dans les statistiques.",
+            function () {
+                DoleticUIModule.untagOldUserHandler(id);
+            },
+            DoleticMasterInterface.hideConfirmModal);
+    };
+
     this.updateTeamModal = function (id) {
         $("#add_tmember_select" + id).dropdown('restore defaults');
         TeamServicesInterface.getTeamMembers(id, function (data) {
@@ -1582,6 +1623,32 @@ var DoleticUIModule = new function () {
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.tagOldUserHandler = function (id) {
+        UserDataServicesInterface.tagOld(id, function (data) {
+            // if no service error
+            if (data.code == 0) {
+                DoleticMasterInterface.hideConfirmModal();
+                DoleticMasterInterface.showSuccess("Opération réussi !", "L'utilisateur a été marqué comme ancien membre.");
+                DoleticUIModule.fillUsersList();
+            } else {
+
+            }
+        });
+    };
+
+    this.untagOldUserHandler = function (id) {
+        UserDataServicesInterface.untagOld(id, function (data) {
+            // if no service error
+            if (data.code == 0) {
+                DoleticMasterInterface.hideConfirmModal();
+                DoleticMasterInterface.showSuccess("Opération réussie !", "L'utilisateur a été marqué comme membre actuel.");
+                DoleticUIModule.fillUsersList();
+            } else {
+
             }
         });
     };
