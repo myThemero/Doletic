@@ -1163,6 +1163,7 @@ class IndicatorServices extends AbstractObjectServices
         // -- init ETIC indicators table --------------------------------------------------------------------
         $indicators = array(//definition: RightsMap::x_R  | RightsMap::x_G (| RightsMap::x_G)*
             array(IndicatorDBObject::PROC_STATS_UDATA_DIVISION, "hr", "Répartition des membres par pôle", Indicator::GRAPH_TYPE, NULL, 'pie', NULL, "division_graph"),
+            array(IndicatorDBObject::PROC_STATS_INT_DEPT, "hr", "Répartition des consultants par département", Indicator::GRAPH_TYPE, NULL, 'pie', NULL, "dept_graph"),
             array(IndicatorDBObject::PROC_STATS_AG_PRESENCE, "hr", "Présences aux AG sur membres recrutés", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés;Présents", "ag_graph"),
             array(IndicatorDBObject::PROC_STATS_PC_RATE, "hr", "Taux de membres au PC", Indicator::VALUE_TYPE, NULL, 30, '%', 1),
             array(IndicatorDBObject::PROC_STATS_INSCRIPTIONS, "hr", "Inscriptions par mois", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés", "insc_graph"),
@@ -1241,6 +1242,7 @@ class IndicatorDBObject extends AbstractDBObject
     // -- attributes
     // -- procedures
     const PROC_STATS_UDATA_DIVISION = "stats_udata_division";
+    const PROC_STATS_INT_DEPT = "stats_int_dept";
     const PROC_STATS_AG_PRESENCE = "stats_udata_ag";
     const PROC_STATS_PC_RATE = "stats_udata_pc";
     const PROC_STATS_INSCRIPTIONS = "stats_udata_inscription";
@@ -1304,6 +1306,15 @@ class IndicatorDBObject extends AbstractDBObject
 			WHERE m2.id IS NULL
 			) AS b ON (a.label=b.position)) AS a  INNER JOIN (SELECT * FROM `dol_udata` WHERE `disabled`=0) AS b ON a.user_id = b.user_id GROUP BY `division`;
 			 ");
+
+        // -- Intervenants by INSA dept
+        $stats_int_dept = new DBProcedure(IndicatorDBObject::PROC_STATS_INT_DEPT, "
+            SELECT a.insa_dept, COUNT(*) AS count FROM (
+              SELECT user_id, insa_dept FROM `dol_udata` WHERE disabled=0) AS a 
+              JOIN (
+              SELECT user_id FROM `dol_int_membership` ) AS b 
+              ON (a.user_id = b.user_id) GROUP BY a.insa_dept;
+        ");
 
         // -- UserData by AG
         $stats_udata_ag = new DBProcedure(IndicatorDBObject::PROC_STATS_AG_PRESENCE,
@@ -1404,6 +1415,7 @@ class IndicatorDBObject extends AbstractDBObject
 
         // -- add procedures
         parent::addProcedure($stats_udata_division);
+        parent::addProcedure($stats_int_dept);
         parent::addProcedure($stats_udata_ag);
         parent::addProcedure($stats_udata_pc);
         parent::addProcedure($stats_udata_inscription);
