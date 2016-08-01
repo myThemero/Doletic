@@ -172,14 +172,14 @@ var DoleticUIModule = new function () {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
-                var content = "<option value=\"\">Pays</option>";
+                var content = '';
                 //DoleticUIModule.country_list = data.object;
                 // iterate over values to build options
                 for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
+                    content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#country').html(content).dropdown();
+                $('#country_search .menu').html(content).dropdown();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -192,13 +192,13 @@ var DoleticUIModule = new function () {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
-                var content = "<option value=\"\">Civilité...</option>";
+                var content = '';
                 // iterate over values to build options
                 for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
+                    content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#gender').html(content).dropdown();
+                $('#gender_search .menu').html(content).dropdown();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -211,13 +211,13 @@ var DoleticUIModule = new function () {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
-                var content = "<option value=\"\">Département...</option>";
+                var content = '';
                 // iterate over values to build options
                 for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + data.object[i].label + "\">" + data.object[i].label + "</option>\n";
+                    content += '<div class="item" data-value="' + data.object[i].label + '">' + data.object[i].label + '</div>';
                 }
                 // insert html content
-                $('#dept').html(content).dropdown();
+                $('#dept_search .menu').html(content).dropdown();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -230,13 +230,13 @@ var DoleticUIModule = new function () {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
-                var content = "<option value=\"\">Année...</option>";
+                var content = '';
                 // iterate over values to build options
                 for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
+                    content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#schoolyear').html(content).dropdown();
+                $('#schoolyear_search .menu').html(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -255,14 +255,12 @@ var DoleticUIModule = new function () {
                 for (var i = 0; i < data.object.length; i++) {
                     if (data.object[i] == "Ancien membre") {
                         content += '<div id="old_position" class="disabled item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
-                        //content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
                     } else {
                         content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
-                        //content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
                     }
                 }
                 // insert html content
-                $('#position_search .menu').html(content)/*.dropdown()*/;
+                $('#position_search .menu').html(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -275,13 +273,13 @@ var DoleticUIModule = new function () {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
-                var content = "<option value=\"\">Pôle...</option>";
+                var content = '';
                 // iterate over values to build options
                 for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
+                    content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#division').html(content).dropdown();
+                $('#division_search .menu').html(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -299,14 +297,14 @@ var DoleticUIModule = new function () {
 										<tbody id="agr_body">';
                 // iterate over values to build options
                 for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + data.object[i].ag + "\">" + data.object[i].ag + "</option>\n";
+                    content += '<div class="item" data-value="' + data.object[i].ag + '">' + data.object[i].ag + '</div>';
                     table_content += "<tr><td>" + data.object[i].ag + "</td><td>" + data.object[i].presence + "</td><td><button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAGR('" + data.object[i].ag + "'); return false;\"> \
 			  									<i class=\"remove icon\"></i>Retirer \
 											</button></td></tr>";
                 }
                 table_content += '</tbody></table>';
                 // insert html content
-                $('#ag').html(content).dropdown();
+                $('#ag_search .menu').html(content);
                 $('#agr_table_container').html(table_content);
                 DoleticMasterInterface.makeDataTables('agr_table', []);
             } else {
@@ -393,13 +391,13 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.select_filter,
                     DoleticMasterInterface.reset_filter
                 ];
-                var selector_content = "<option value>Membre...</option>";
+                var selector_content = "";
                 for (var i = 0; i < data.object.length; i++) {
                     window.user_list[data.object[i].id] = data.object[i];
 
-                    selector_content += "<option value=\"" + data.object[i].user_id + "\">"
+                    selector_content += '<div class="item" data-value="' + data.object[i].user_id + '">'
+                        + data.object[i].firstname + ' ' + data.object[i].lastname + '</div>';
 
-                        + data.object[i].firstname + " " + data.object[i].lastname + "</option>\n";
                     if (data.object[i].disabled) {
                         disabled_content += "<tr><td> \
 		      						<button class=\"ui icon button\" data-tooltip=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname + "\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails(" + data.object[i].user_id + "); return false;\"> \
@@ -515,8 +513,8 @@ var DoleticUIModule = new function () {
                 $('#disabled_table_container').append(disabled_content);
                 DoleticMasterInterface.makeDataTables('user_table', filters);
                 DoleticMasterInterface.makeDataTables('disabled_table', filters);
-                $('.user-drop').html(selector_content).dropdown();
-                //$('#leader').dropdown();
+                //$('#leader_search .menu').html(selector_content);
+                $('.user-drop .menu').html(selector_content);
                 if (callback != 0) {
                     callback();
                 }
@@ -608,6 +606,7 @@ var DoleticUIModule = new function () {
 	  			<div class=\"row\"> \
 	  				<div class=\"ten wide column\"> \
 	  					<table class=\"ui very basic single line striped table\"><tbody id=\"members_" + team.id + "\">";
+
         for (var i = 0; i < team.member_id.length; i++) {
             modal += "		<tr><td> \
 						  <i class=\"large user middle aligned icon\"></i></td><td>\
@@ -616,6 +615,7 @@ var DoleticUIModule = new function () {
                 + window.user_list[team.member_id[i]].lastname;
             modal += "</strong></div><div class=\"description\">" + window.user_list[team.member_id[i]].position[0].label + "</div>\
 						  </div>";
+
             if (team.member_id[i] != team.leader_id) {
                 modal += "<td><button class=\"ui small icon button\"onClick=\"DoleticUIModule.deleteTeamMember(" + team.id + ", " + team.member_id[i] + "); return false;\"> \
 	  									<i class=\"remove icon\"></i>Retirer \
@@ -623,6 +623,7 @@ var DoleticUIModule = new function () {
             } else {
                 modal += "<td> (Chef d'équipe) </td>";
             }
+
             modal += "</td></tr>";
         }
         modal += "		</tbody></table> \
@@ -632,13 +633,19 @@ var DoleticUIModule = new function () {
  						 <h4 class=\"ui dividing header\">Ajouter des membres</h4>\
  						 <div class=\"required field\"> \
 							<label>Membre à ajouter</label> \
-			      				<select id=\"add_tmember_select" + team.id + "\" class=\"ui fluid search dropdown user-drop\" multiple >";
+			      				<div id=\"add_tmember_select" + team.id + "\" class=\"ui fluid multiple search selection dropdown user-drop\">" +
+            "<input type=\"hidden\"/>" +
+            "<i class=\"dropdown icon\"></i>" +
+            "<div class=\"default text\">Membre...</div>" +
+            "<div class=\"menu\">";
+
         for (var i = 0; i < window.user_list.length; i++) {
             if (typeof window.user_list[i] !== 'undefined') {
-                modal += "<option value=\"" + window.user_list[i].id + "\">" + window.user_list[i].firstname + " " + window.user_list[i].lastname + "</option>";
+                modal += "<div class=\"item\" id=\"memoption_" + team.id + "_" + window.user_list[i].id + "\" data-value=\"" + window.user_list[i].id + "\">" + window.user_list[i].firstname + " " + window.user_list[i].lastname + "</div>";
             }
         }
-        modal += "</select> \
+
+        modal += "</div></div> \
 		  				 </div> \
 		  				 <div id=\"add_tmember_btn" + team.id + "\" class=\"ui green button\" onClick=\"DoleticUIModule.insertTeamMember(" + team.id + ");\">Ajouter</div> \
  						</form>\
@@ -939,7 +946,7 @@ var DoleticUIModule = new function () {
                 UserServicesInterface.insert(data.object.username, data.object.pass, function (data) {
                     // Insert user data in db SELECT ?
                     UserDataServicesInterface.insert(data.object,
-                        $('#gender option:selected').text(),
+                        $('#gender_search').dropdown('get value'),
                         $('#firstname').val(),
                         $('#lastname').val(),
                         $('#birthdate').val(),
@@ -948,11 +955,11 @@ var DoleticUIModule = new function () {
                         $('#address').val(),
                         $('#city').val(),
                         $('#postalcode').val(),
-                        $('#country option:selected').text(),
-                        $('#schoolyear option:selected').text(),
-                        $('#dept option:selected').text(),
+                        $('#country_search').dropdown('get value'),
+                        $('#schoolyear_search').dropdown('get value'),
+                        $('#dept_search').dropdown('get value'),
                         $('#position_search').dropdown('get value'),
-                        $('#ag option:selected').text(),
+                        $('#ag_search').dropdown('get value'),
                         DoleticUIModule.addUserHandler);
                 });
             });
@@ -964,8 +971,8 @@ var DoleticUIModule = new function () {
             // retreive missing information
             TeamServicesInterface.insert(
                 $('#tname').val(),
-                $('#leader').val(),
-                $('#division option:selected').text(),
+                $('#leader_search').dropdown('get value'),
+                $('#division_search').dropdown('get value'),
                 DoleticUIModule.addTeamHandler
             );
         }
@@ -1029,13 +1036,7 @@ var DoleticUIModule = new function () {
     };
 
     this.insertTeamMember = function (id) {
-        var select = document.getElementById("add_tmember_select" + id);
-        var options = [];
-        for (var i = 0; i < select.options.length; i++) {
-            if (select.options[i].selected) {
-                options.push(select.options[i].value);
-            }
-        }
+        var options = $('#add_tmember_select' + id).dropdown('get value').split(',');
         TeamServicesInterface.insertMember(id, options, function (data) {
             // if no service error
             if (data.code == 0) {
@@ -1053,7 +1054,6 @@ var DoleticUIModule = new function () {
             // if no service error
             if (data.code == 0 && data.object != "[]") {
                 $('#old_position').removeClass('disabled');
-                $('#position_search').dropdown();
                 $('#firstname').val(data.object.firstname);
                 $('#firstname').prop('readonly', true);
                 $('#lastname').val(data.object.lastname);
@@ -1064,12 +1064,12 @@ var DoleticUIModule = new function () {
                 $('#postalcode').val(data.object.postal_code);
                 $('#tel').val(data.object.tel);
                 $('#mail').val(data.object.email);
-                $('#schoolyear').dropdown("set selected", data.object.school_year);
-                $('#dept').dropdown("set selected", data.object.insa_dept);
-                $('#gender').dropdown("set selected", data.object.gender);
+                $('#schoolyear_search').dropdown("set selected", data.object.school_year);
+                $('#dept_search').dropdown("set selected", data.object.insa_dept);
+                $('#gender_search').dropdown("set selected", data.object.gender);
                 $('#position_search').dropdown("set selected", data.object.position[0].label);
-                $('#country').dropdown("set selected", data.object.country);
-                $('#ag').dropdown("set selected", data.object.ag);
+                $('#country_search').dropdown("set selected", data.object.country);
+                $('#ag_search').dropdown("set selected", data.object.ag);
                 $('#adduser_btn').html("Confirmer");
                 $('#adduser_btn').attr("onClick", "DoleticUIModule.updateUser(" + id + ", " + user_id + "); return false;");
                 $('#user_form_modal').modal('show');
@@ -1166,7 +1166,7 @@ var DoleticUIModule = new function () {
         if (DoleticUIModule.checkNewUserForm()) {
             // Insert user data in db SELECT ?
             UserDataServicesInterface.update(id, user_id,
-                $('#gender option:selected').text(),
+                $('#gender_search').dropdown('get value'),
                 $('#firstname').val(),
                 $('#lastname').val(),
                 $('#birthdate').val(),
@@ -1175,11 +1175,11 @@ var DoleticUIModule = new function () {
                 $('#address').val(),
                 $('#city').val(),
                 $('#postalcode').val(),
-                $('#country option:selected').text(),
-                $('#schoolyear option:selected').text(),
-                $('#dept option:selected').text(),
+                $('#country_search').dropdown('get value'),
+                $('#schoolyear_search').dropdown('get value'),
+                $('#dept_search').dropdown('get value'),
                 $('#position_search').dropdown('get value'),
-                $('#ag option:selected').text(),
+                $('#ag_search').dropdown('get value'),
                 DoleticUIModule.editUserHandler
             );
         }
@@ -1191,8 +1191,8 @@ var DoleticUIModule = new function () {
             // Update team data in DB
             TeamServicesInterface.update(id,
                 $('#tname').val(),
-                $('#leader').val(),
-                $('#division option:selected').text(),
+                $('#leader_search').dropdown('get value'),
+                $('#division_search').dropdown('get value'),
                 DoleticUIModule.editTeamHandler
             );
         }
@@ -1348,7 +1348,7 @@ var DoleticUIModule = new function () {
         $("#add_tmember_select" + id).dropdown('restore defaults');
         TeamServicesInterface.getTeamMembers(id, function (data) {
             window.team_list[id].members = data.object;
-            html = "";
+            var html = "";
             for (var i = 0; i < data.object.length; i++) {
                 html += "		<tr><td> \
 							  <i class=\"large user middle aligned icon\"></i></td><td>\
@@ -1357,6 +1357,7 @@ var DoleticUIModule = new function () {
                     + window.user_list[data.object[i]].lastname;
                 html += "</strong></div><div class=\"description\">" + window.user_list[data.object[i]].position[0].label + "</div>\
 							  </div>";
+
                 if (data.object[i] != window.team_list[id].leader_id) {
                     html += "<td><button class=\"ui small icon button\"onClick=\"DoleticUIModule.deleteTeamMember(" + id + ", " + data.object[i] + "); return false;\"> \
 		  									<i class=\"remove icon\"></i>Retirer \
@@ -1364,6 +1365,7 @@ var DoleticUIModule = new function () {
                 } else {
                     html += "<td> (Chef d'équipe) </td>";
                 }
+
                 html += "</td></tr>";
                 $("#members_" + id).html(html);
             }
@@ -1456,19 +1458,19 @@ var DoleticUIModule = new function () {
             $('#postalcode_field').addClass("error");
             valid = false;
         }
-        if ($('#gender option:selected').text() == "") {
+        if ($('#gender_search').dropdown('get value') == "") {
             $('#gender_field').addClass("error");
             valid = false;
         }
-        if ($('#country option:selected').text() == "") {
+        if ($('#country_search').dropdown('get value') == "") {
             $('#country_field').addClass("error");
             valid = false;
         }
-        if ($('#schoolyear option:selected').text() == "") {
+        if ($('#schoolyear_search').dropdown('get value') == "") {
             $('#schoolyear_field').addClass("error");
             valid = false;
         }
-        if ($('#dept option:selected').text() == "") {
+        if ($('#dept_search').dropdown('get value') == "") {
             $('#dept_field').addClass("error");
             valid = false;
         }
@@ -1490,11 +1492,11 @@ var DoleticUIModule = new function () {
             $('#tname_field').addClass("error");
             valid = false;
         }
-        if ($('#leader option:selected').text() == "") {
+        if ($('#leader_search').dropdown('get value') == "") {
             $('#leader_field').addClass("error");
             valid = false;
         }
-        if ($('#division option:selected').text() == "") {
+        if ($('#division_search').dropdown('get value') == "") {
             $('#division_field').addClass("error");
             valid = false;
         }

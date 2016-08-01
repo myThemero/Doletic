@@ -25,15 +25,25 @@
                 </div>
                 <div class="twelve wide required field">
                     <label>Chef d'équipe</label>
-                    <select id="leader" class="ui fluid search dropdown user-drop">
-                        <!-- LEADERS WILL GO HERE -->
-                    </select>
+                    <div id="leader_search" class="ui fluid search selection dropdown user-drop">
+                        <input type="hidden" id="leader"/>
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Chef d'équipe...</div>
+                        <div class="menu">
+                            <!-- USERS WILL GO HERE -->
+                        </div>
+                    </div>
                 </div>
                 <div class="twelve wide required field">
                     <label>Pôle associé</label>
-                    <select id="division" class="ui fluid search dropdown">
-                        <!-- DIVISIONS WILL GO HERE -->
-                    </select>
+                    <div id="division_search" class="ui fluid search selection dropdown">
+                        <input type="hidden" id="division"/>
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Pôle...</div>
+                        <div class="menu">
+                            <!-- DIVISIONS WILL GO HERE -->
+                        </div>
+                    </div>
                 </div>
                 <div class="ui hr_center small buttons">
                     <div id="abort_btn" class="ui button" onClick="DoleticUIModule.cancelNewTeamForm();">Annuler</div>

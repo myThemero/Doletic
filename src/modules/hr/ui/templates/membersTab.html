@@ -37,9 +37,14 @@
             <div class="fields">
                 <div class="twelve wide required field" id="gender_field">
                     <label>Civilité</label>
-                    <select id="gender" class="ui fluid search dropdown">
-                        <!-- GENDERS WILL GO HERE -->
-                    </select>
+                    <div id="gender_search" class="ui fluid search selection dropdown">
+                        <input type="hidden" id="gender"/>
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Civilité...</div>
+                        <div class="menu">
+                            <!-- GENDERS WILL GO HERE -->
+                        </div>
+                    </div>
                 </div>
                 <div id="birthdate_field" class="twelve wide required field">
                     <label>Date de naissance</label>
@@ -77,21 +82,37 @@
             </div>
             <div class="sixteen wide required field" id="country_field">
                 <label>Pays</label>
-                <select id="country" class="ui fluid search dropdown">
-                    <!-- COUNTRIES WILL GO HERE -->
-                </select>
+                <div id="country_search" class="ui fluid search selection dropdown">
+                    <input type="hidden" id="country"/>
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Pays...</div>
+                    <div class="menu">
+                        <!-- COUNTRIES WILL GO HERE -->
+                    </div>
+                </div>
             </div>
             <div class="fields">
                 <div class="sixteen wide required field" id="schoolyear_field">
                     <label>Année d'étude</label>
-                    <select id="schoolyear" class="ui fluid search dropdown">
-                    </select>
+                    <div id="schoolyear_search" class="ui fluid search selection dropdown">
+                        <input type="hidden" id="schoolyear"/>
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Année...</div>
+                        <div class="menu">
+                            <!-- YEARS WILL GO HERE -->
+                        </div>
+                    </div>
                 </div>
                 <div class="sixteen wide required field" id="dept_field">
                     <label>Département</label>
-                    <select id="dept" class="ui fluid search dropdown">
-                        <!-- DEPTS WILL GO HERE -->
-                    </select>
+                    <div id="dept_search" class="ui fluid search selection dropdown">
+                        <input type="hidden" id="dept"/>
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Département...</div>
+                        <div class="menu">
+                            <!-- DEPTS WILL GO HERE -->
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="fields">
@@ -108,9 +129,14 @@
                 </div>
                 <div class="seven wide required field" id="ag_field">
                     <label>AG de recrutement</label>
-                    <select id="ag" class="ui fluid search dropdown">
-                        <!-- AGS WILL GO HERE -->
-                    </select>
+                    <div id="ag_search" class="ui fluid search selection dropdown">
+                        <input type="hidden" id="ag"/>
+                        <i class="dropdown icon"></i>
+                        <div class="default text">AGR...</div>
+                        <div class="menu">
+                            <!-- AGRS WILL GO HERE -->
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="ui hr_center small buttons">
