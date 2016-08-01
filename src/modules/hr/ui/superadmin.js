@@ -135,6 +135,7 @@ var DoleticUIModule = new function () {
         $('#user_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
         $('#membersTab').load("../modules/hr/ui/templates/membersTab.html", function () {
             DoleticMasterInterface.makeDefaultCalendar('birthdate_calendar');
+            $('#toggle_old').change(DoleticUIModule.fillUsersList);
         });
     };
 
@@ -317,6 +318,9 @@ var DoleticUIModule = new function () {
     this.fillUsersList = function (callback) {
         // Optional callback
         callback = callback || 0;
+
+        // Load old members
+        var showOld = $('#toggle_old').prop('checked');
         KernelDBServicesInterface.getAllUserDataWithStatus(function (data) {
             // Delete and recreate table so Datatables is reinitialized
             $("#user_table_container").html("");
@@ -395,18 +399,19 @@ var DoleticUIModule = new function () {
                 for (var i = 0; i < data.object.length; i++) {
                     window.user_list[data.object[i].id] = data.object[i];
 
-                    selector_content += '<div class="item" data-value="' + data.object[i].user_id + '">'
-                        + data.object[i].firstname + ' ' + data.object[i].lastname + '</div>';
+                    if (!(data.object[i].old && !showOld)) {
+                        selector_content += '<div class="item" data-value="' + data.object[i].user_id + '">'
+                            + data.object[i].firstname + ' ' + data.object[i].lastname + '</div>';
 
-                    if (data.object[i].disabled) {
-                        disabled_content += "<tr><td> \
+                        if (data.object[i].disabled) {
+                            disabled_content += "<tr><td> \
 		      						<button class=\"ui icon button\" data-tooltip=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname + "\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails(" + data.object[i].user_id + "); return false;\"> \
 			  							<i class=\"user icon\"></i> \
 									</button> \
 									</td><td> \
 		        				<h4 class=\"ui header\"> \
 		          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
-                            "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
+                                "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
 		        				</div> \
 		      					</h4></td> \
 		      					<td>" + data.object[i].position[0].label + "</td> \
@@ -418,66 +423,31 @@ var DoleticUIModule = new function () {
 			    					<button class=\"ui icon button\" data-tooltip=\"Réactiver\" onClick=\"DoleticUIModule.restoreUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 			  							<i class=\"refresh icon\"></i> \
 									</button>" + (data.object[i].old ?
-                            "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
+                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
 				  				<i class=\"add user icon\"></i> \
 							</button>"
-                                :
-                            "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
+                                    :
+                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
 				  					<i class=\"student icon\"></i> \
 							</button>") +
-                            "<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+                                "<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 			  							<i class=\"remove icon\"></i> \
 									</button> \
 								</div> \
 		    				</td> \
 		    				</tr>"
-                    } else {
-                        var invalid = data.object[i].admm_status == "Invalide" || data.object[i].intm_status == "Invalide"
-                            || (data.object[i].admm_status == "Non" && data.object[i].intm_status == "Non");
-                        if (invalid) {
-                            content += "<tr class=\"error\"><td> \
-			      						<button class=\"ui icon button\" data-tooltip=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname + "\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails(" + data.object[i].user_id + "); return false;\"> \
-				  							<i class=\"user icon\"></i> \
-										</button> \
-										</td><td> \
-			        				<h4 class=\"ui header\"> \
-			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
-                                "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
-			        				</div> \
-			      					</h4></td> \
-			      					<td>" + data.object[i].position[0].label + "</td> \
-			      					<td>" + data.object[i].position[0].division + "</td> \
-			      					<td>" + data.object[i].tel + "</td> \
-			      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
-			      					<td>" + data.object[i].admm_status + "</td>\
-			    					<td>" + data.object[i].intm_status + "</td>\
-			    				<td> \
-			    					<div class=\"ui icon buttons\"> \
-				    					<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
-				  							<i class=\"write icon\"></i> \
-										</button>" + (data.object[i].old ?
-                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
-				  				<i class=\"add user icon\"></i> \
-							</button>"
-                                    :
-                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
-				  					<i class=\"student icon\"></i> \
-							</button>") +
-                                "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
-				  							<i class=\"remove user icon\"></i> \
-										</button> \
-									</div> \
-			    				</td> \
-			    				</tr>";
                         } else {
-                            content += "<tr><td> \
+                            var invalid = data.object[i].admm_status == "Invalide" || data.object[i].intm_status == "Invalide"
+                                || (data.object[i].admm_status == "Non" && data.object[i].intm_status == "Non");
+                            if (invalid) {
+                                content += "<tr class=\"error\"><td> \
 			      						<button class=\"ui icon button\" data-tooltip=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname + "\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails(" + data.object[i].user_id + "); return false;\"> \
 				  							<i class=\"user icon\"></i> \
 										</button> \
 										</td><td> \
 			        				<h4 class=\"ui header\"> \
 			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
-                                "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
+                                    "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
 			        				</div> \
 			      					</h4></td> \
 			      					<td>" + data.object[i].position[0].label + "</td> \
@@ -491,21 +461,57 @@ var DoleticUIModule = new function () {
 				    					<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 				  							<i class=\"write icon\"></i> \
 										</button>" + (data.object[i].old ?
-                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
+                                    "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
 				  				<i class=\"add user icon\"></i> \
 							</button>"
-                                    :
-                                "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
+                                        :
+                                    "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
 				  					<i class=\"student icon\"></i> \
 							</button>") +
-                                "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+                                    "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 				  							<i class=\"remove user icon\"></i> \
 										</button> \
 									</div> \
 			    				</td> \
 			    				</tr>";
-                        }
+                            } else {
+                                content += "<tr><td> \
+			      						<button class=\"ui icon button\" data-tooltip=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname + "\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails(" + data.object[i].user_id + "); return false;\"> \
+				  							<i class=\"user icon\"></i> \
+										</button> \
+										</td><td> \
+			        				<h4 class=\"ui header\"> \
+			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
+                                    "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
+			        				</div> \
+			      					</h4></td> \
+			      					<td>" + data.object[i].position[0].label + "</td> \
+			      					<td>" + data.object[i].position[0].division + "</td> \
+			      					<td>" + data.object[i].tel + "</td> \
+			      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
+			      					<td>" + data.object[i].admm_status + "</td>\
+			    					<td>" + data.object[i].intm_status + "</td>\
+			    				<td> \
+			    					<div class=\"ui icon buttons\"> \
+				    					<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+				  							<i class=\"write icon\"></i> \
+										</button>" + (data.object[i].old ?
+                                    "<button class=\"ui icon button\" data-tooltip=\"Marquer comme membre actuel\" onClick=\"DoleticUIModule.untagOld(" + data.object[i].id + "); return false;\"> \
+				  				<i class=\"add user icon\"></i> \
+							</button>"
+                                        :
+                                    "<button class=\"ui icon button\" data-tooltip=\"Marquer comme ancien membre\" onClick=\"DoleticUIModule.tagOld(" + data.object[i].id + "); return false;\"> \
+				  					<i class=\"student icon\"></i> \
+							</button>") +
+                                    "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableUser(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+				  							<i class=\"remove user icon\"></i> \
+										</button> \
+									</div> \
+			    				</td> \
+			    				</tr>";
+                            }
 
+                        }
                     }
                 }
                 content += "</tbody></table>";

@@ -1,14 +1,25 @@
 <div class="ui two column grid container">
     <div class="row">
-        <div class="ui buttons">
-            <div id="adduser_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewUserForm();">Ajouter un
-                membre
+        <div class="twelve wide column">
+            <div class="ui buttons">
+                <div id="adduser_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewUserForm();">Ajouter
+                    un
+                    membre
+                </div>
+                <div id="refresh_user_btn" class="ui olive button" onClick="DoleticUIModule.fillUsersList();">Actualiser
+                    la
+                    liste
+                </div>
+                <div id="excel_user_btn" class="ui yellow button" onClick="alert('Fonction non implémentée...')">
+                    Exporter au
+                    format Excel
+                </div>
             </div>
-            <div id="refresh_user_btn" class="ui olive button" onClick="DoleticUIModule.fillUsersList();">Actualiser la
-                liste
-            </div>
-            <div id="excel_user_btn" class="ui yellow button" onClick="alert('Fonction non implémentée...')">Exporter au
-                format Excel
+        </div>
+        <div class="four wide column">
+            <div class="ui toggle checkbox">
+                <input type="checkbox" id="toggle_old">
+                <label>Afficher les anciens membres</label>
             </div>
         </div>
     </div>
