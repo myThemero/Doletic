@@ -836,9 +836,7 @@ class UserDataServices extends AbstractObjectServices
         $labels = array();
         if (isset($pdos)) {
             while (($row = $pdos->fetch()) !== false) {
-                if ($row[UserDataDBObject::COL_LABEL] != UserDataDBObject::VAL_OLD) {
-                    array_push($labels, $row[UserDataDBObject::COL_LABEL]);
-                }
+                array_push($labels, $row[UserDataDBObject::COL_LABEL]);
             }
         }
         return $labels;
@@ -933,6 +931,7 @@ class UserDataServices extends AbstractObjectServices
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetINSERTQuery();
         // execute query
         if (parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+            $position = $position === UserDataDBObject::VAL_OLD ? UserDataDBObject::VAL_DEFAULT_POS : $position;
             return $this->__update_user_position($userId, $position);
         } else {
             return FALSE;
@@ -1282,7 +1281,7 @@ class UserDataServices extends AbstractObjectServices
             "Junior DSI" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "DSI"), // U  | M | D
             "Junior GRC" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "GRC"), // U  | M | D
             "Junior Com" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "Com"), // U  | M | D
-            "Chargé d'affaire" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "UA"), // U  | M | D
+            UserDataDBObject::VAL_DEFAULT_POS => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "UA"), // U  | M | D
             "Junior Qualité" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "Qualité"), // U  | M | D
             UserDataDBObject::VAL_OLD => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Ancien"), // G  | C | D
             "Intervenant" => array((RightsMap::G_R | RightsMap::I_G | RightsMap::D_G), "Intervenant"), // G  | I | D
@@ -1353,6 +1352,7 @@ class UserDataDBObject extends AbstractDBObject
     const COL_INTM_STATUS = "intm_status";
     // -- attributes
     const VAL_OLD = "Ancien membre";
+    const VAL_DEFAULT_POS = "Chargé d'affaires";
 
     // -- functions
 

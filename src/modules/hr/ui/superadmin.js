@@ -249,13 +249,20 @@ var DoleticUIModule = new function () {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
-                var content = "<option value=\"\">Poste...</option>";
+                //var content = "<option value=\"\">Poste...</option>";
+                var content = "";
                 // iterate over values to build options
                 for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
+                    if (data.object[i] == "Ancien membre") {
+                        content += '<div id="old_position" class="disabled item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
+                        //content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
+                    } else {
+                        content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
+                        //content += "<option value=\"" + data.object[i] + "\">" + data.object[i] + "</option>\n";
+                    }
                 }
                 // insert html content
-                $('#position').html(content).dropdown();
+                $('#position_search .menu').html(content)/*.dropdown()*/;
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -508,8 +515,8 @@ var DoleticUIModule = new function () {
                 $('#disabled_table_container').append(disabled_content);
                 DoleticMasterInterface.makeDataTables('user_table', filters);
                 DoleticMasterInterface.makeDataTables('disabled_table', filters);
-                $('.user-drop').html(selector_content);
-                $('#leader').dropdown();
+                $('.user-drop').html(selector_content).dropdown();
+                //$('#leader').dropdown();
                 if (callback != 0) {
                     callback();
                 }
@@ -887,6 +894,7 @@ var DoleticUIModule = new function () {
         $('#user_form h4').html("Ajout d'un membre");
         $('#firstname').prop('readonly', false);
         $('#lastname').prop('readonly', false);
+        $('#old_position').addClass('disabled');
         $('#user_form .dropdown').dropdown('restore defaults');
 
         $('#adduser_btn').html("Ajouter");
@@ -943,7 +951,7 @@ var DoleticUIModule = new function () {
                         $('#country option:selected').text(),
                         $('#schoolyear option:selected').text(),
                         $('#dept option:selected').text(),
-                        $('#position option:selected').text(),
+                        $('#position_search').dropdown('get value'),
                         $('#ag option:selected').text(),
                         DoleticUIModule.addUserHandler);
                 });
@@ -1044,6 +1052,8 @@ var DoleticUIModule = new function () {
         UserDataServicesInterface.getById(id, function (data) {
             // if no service error
             if (data.code == 0 && data.object != "[]") {
+                $('#old_position').removeClass('disabled');
+                $('#position_search').dropdown();
                 $('#firstname').val(data.object.firstname);
                 $('#firstname').prop('readonly', true);
                 $('#lastname').val(data.object.lastname);
@@ -1057,10 +1067,9 @@ var DoleticUIModule = new function () {
                 $('#schoolyear').dropdown("set selected", data.object.school_year);
                 $('#dept').dropdown("set selected", data.object.insa_dept);
                 $('#gender').dropdown("set selected", data.object.gender);
-                $('#position').dropdown("set selected", data.object.position[0].label);
+                $('#position_search').dropdown("set selected", data.object.position[0].label);
                 $('#country').dropdown("set selected", data.object.country);
                 $('#ag').dropdown("set selected", data.object.ag);
-
                 $('#adduser_btn').html("Confirmer");
                 $('#adduser_btn').attr("onClick", "DoleticUIModule.updateUser(" + id + ", " + user_id + "); return false;");
                 $('#user_form_modal').modal('show');
@@ -1169,7 +1178,7 @@ var DoleticUIModule = new function () {
                 $('#country option:selected').text(),
                 $('#schoolyear option:selected').text(),
                 $('#dept option:selected').text(),
-                $('#position option:selected').text(),
+                $('#position_search').dropdown('get value'),
                 $('#ag option:selected').text(),
                 DoleticUIModule.editUserHandler
             );
@@ -1463,7 +1472,7 @@ var DoleticUIModule = new function () {
             $('#dept_field').addClass("error");
             valid = false;
         }
-        if ($('#position option:selected').text() == "") {
+        if ($('#position_search').dropdown('get value') == "") {
             $('#position_field').addClass("error");
             valid = false;
         }

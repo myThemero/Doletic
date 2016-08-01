@@ -97,9 +97,14 @@
             <div class="fields">
                 <div class="nine wide required field" id="position_field">
                     <label>Position</label>
-                    <select id="position" class="ui fluid search dropdown">
-                        <!-- POSITIONS WILL GO HERE -->
-                    </select>
+                    <div id="position_search" class="ui fluid search selection dropdown">
+                        <input type="hidden" id="position"/>
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Poste...</div>
+                        <div class="menu">
+                            <!-- POSITIONS WILL GO HERE -->
+                        </div>
+                    </div>
                 </div>
                 <div class="seven wide required field" id="ag_field">
                     <label>AG de recrutement</label>
