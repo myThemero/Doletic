@@ -1257,7 +1257,7 @@ class UserDataServices extends AbstractObjectServices
             parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         }
         // -- init ETIC div table --------------------------------------------------------------------
-        $divisions = array("DSI", "UA", "GRC", "Com", "Qualité", "SG", "Présidence", "RH", "Trésorerie", "Client", "Ancien", "Intervenant");
+        $divisions = array("DSI", "UA", "GRC", "Com", "Qualité", "SG", "Présidence", "RH", "Trésorerie", "Client", "Ancien", "Intervenant", "CNJE");
         // --- retrieve SQL query
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_DIVISION)->GetINSERTQuery();
         foreach ($divisions as $division) {
@@ -1272,11 +1272,13 @@ class UserDataServices extends AbstractObjectServices
             "Vice-Président" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "Présidence"), // A  | A | D
             "Secrétaire Général" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "SG"), // A  | A | D
             "Trésorier" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "Trésorerie"), // A  | A | D
+            "Vice-Trésorier" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "Trésorerie"), // A  | A | D
             "Comptable" => array((RightsMap::A_R | RightsMap::M_G | RightsMap::D_G), "Trésorerie"), // A  | M | D
             "Responsable DSI" => array((RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G), "DSI"), // SA | A | D
             "Responsable GRC" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "GRC"), // A  | A | D
             "Responsable Com" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "Com"), // A  | A | D
             "Responsable UA" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "UA"), // A  | A | D
+            "Responsable BU" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "UA"), // A  | A | D
             "Responsable Qualité" => array((RightsMap::A_R | RightsMap::A_G | RightsMap::D_G), "Qualité"), // A  | A | D
             "Junior DSI" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "DSI"), // U  | M | D
             "Junior GRC" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "GRC"), // U  | M | D
@@ -1285,7 +1287,8 @@ class UserDataServices extends AbstractObjectServices
             "Junior Qualité" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "Qualité"), // U  | M | D
             UserDataDBObject::VAL_OLD => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Ancien"), // G  | C | D
             "Intervenant" => array((RightsMap::G_R | RightsMap::I_G | RightsMap::D_G), "Intervenant"), // G  | I | D
-            "Client" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Client") // G  | C | D
+            "Client" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Client"), // G  | C | D
+            "Auditeur CNJE" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "CNJE"), // G  | C | D
         );
         // --- retrieve SQL query
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetINSERTQuery();
