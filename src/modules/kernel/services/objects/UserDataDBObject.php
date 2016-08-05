@@ -1492,7 +1492,7 @@ class UserDataDBObject extends AbstractDBObject
             ->AddColumn(UserDataDBObject::COL_SCHOOL_YEAR, DBTable::DT_INT, 11, false, "")
             ->AddColumn(UserDataDBObject::COL_INSA_DEPT, DBTable::DT_VARCHAR, 255, false, "")
             ->AddColumn(UserDataDBObject::COL_AVATAR_ID, DBTable::DT_INT, 11, true, "-1")
-            ->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(UserDataDBObject::COL_AG, DBTable::DT_VARCHAR, 255, true)
             ->AddColumn(UserDataDBObject::COL_DISABLED, DBTable::DT_INT, 1, false)
             ->AddColumn(UserDataDBObject::COL_OLD, DBTable::DT_INT, 1, false)
             ->AddColumn(UserDataDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false)

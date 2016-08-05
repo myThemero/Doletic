@@ -1308,7 +1308,10 @@ class IndicatorDBObject extends AbstractDBObject
 			FROM `dol_udata_position` m1 LEFT JOIN `dol_udata_position` m2
 			 ON (m1.user_id = m2.user_id AND m1.since < m2.since)
 			WHERE m2.id IS NULL
-			) AS b ON (a.label=b.position)) AS a  INNER JOIN (SELECT * FROM `dol_udata` WHERE `disabled`=0 AND `old`=0) AS b ON a.user_id = b.user_id GROUP BY `division`;
+			) AS b ON (a.label=b.position)) AS a  INNER JOIN (SELECT * FROM `dol_udata` WHERE `disabled`=0 AND `old`=0) AS b 
+			ON a.user_id = b.user_id 
+			WHERE `division` NOT LIKE 'Intervenant'
+			GROUP BY `division`;
 			 ");
 
         // -- Intervenants by INSA dept
@@ -1343,7 +1346,7 @@ class IndicatorDBObject extends AbstractDBObject
 
 			SELECT COUNT(*) INTO count_total
 			FROM `dol_udata`
-			WHERE disabled=0;
+			WHERE disabled=0 AND old=0;
 
 			SELECT 100*count_pc/count_total AS `result`;"
         );
@@ -1427,7 +1430,7 @@ class IndicatorDBObject extends AbstractDBObject
 			WHERE a.end_date > NOW() AND fee=1 AND form=1 AND certif=1) AS b
 
 			ON a.user_id = b.user_id) AS a
-			WHERE end_date IS NULL
+			WHERE end_date IS NULL AND division NOT LIKE 'Ancien' AND division NOT LIKE 'Intervenant'
 			GROUP BY division;"
         );
 

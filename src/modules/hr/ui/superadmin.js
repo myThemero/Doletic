@@ -292,7 +292,7 @@ var DoleticUIModule = new function () {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
-                var content = "";
+                var content = '<div class="item" data-value=""></div>';
                 var table_content = '<table class="ui very basic single line striped table" id="agr_table">\
 										<thead><tr><th>Date</th><th>Présents</th><th>Actions</th></tr></thead>\
 										<tbody id="agr_body">';

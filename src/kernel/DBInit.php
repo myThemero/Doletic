@@ -79,7 +79,7 @@ class DataMigrationFunction extends AbstractFunction
 
         parent::info("-- filling udata position --");
         foreach ($data['user_position'] as $upos) {
-            foreach($upos as $u) {
+            foreach ($upos as $u) {
                 $kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
                     ->GetResponseData(UserDataServices::FORCE_POSITION, $u);
             }
