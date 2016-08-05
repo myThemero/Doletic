@@ -103,6 +103,8 @@ class UserServices extends AbstractObjectServices
     const PARAM_UNAME = "username";
     const PARAM_HASH = "hash";
     const PARAM_TOKEN = "token";
+    const PARAM_LAST_CONNECT_TMSP = "lastConnectTimestamp";
+    const PARAM_SIGNUP_TMSP = "signupTimestamp";
     // --- internal services (actions)
     const GET_USER_BY_ID = "byid";
     const GET_USER_BY_UNAME = "byuname";
@@ -115,6 +117,8 @@ class UserServices extends AbstractObjectServices
     const DELETE = "delete"; // Only available for disabled users for safety reasons
     const DISABLE = "disable";
     const RESTORE = "restore";
+    // -- services that should only be used for data migration
+    const FORCE_INSERT = "forins";
     // -- functions
 
     // -- construct
@@ -137,6 +141,15 @@ class UserServices extends AbstractObjectServices
             $data = $this->__generate_credentials($params[UserDataServices::PARAM_FIRSTNAME], $params[UserDataServices::PARAM_LASTNAME]);
         } else if (!strcmp($action, UserServices::INSERT)) {
             $data = $this->__insert_user($params[UserServices::PARAM_UNAME], $params[UserServices::PARAM_HASH]);
+        } else if (!strcmp($action, UserServices::FORCE_INSERT)) {
+            $data = $this->__force_insert_user(
+                $params[UserServices::PARAM_ID],
+                $params[UserServices::PARAM_UNAME],
+                $params[UserServices::PARAM_HASH],
+                $params[UserServices::PARAM_LAST_CONNECT_TMSP],
+                $params[UserServices::PARAM_SIGNUP_TMSP],
+                $params[UserServices::PARAM_TOKEN]
+            );
         } else if (!strcmp($action, UserServices::UPDATE)) {
             $data = $this->__update_user_password($params[UserServices::PARAM_ID], $params[UserServices::PARAM_HASH]);
         } else if (!strcmp($action, UserServices::UPDATE_TOKEN)) {
@@ -282,6 +295,22 @@ class UserServices extends AbstractObjectServices
         } else {
             return 0;
         }
+    }
+
+    private function __force_insert_user($id, $username, $hash, $lastConnectTimestamp, $signupTimestamp, $token)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . UserDBObject::COL_ID => $id,
+            ":" . UserDBObject::COL_USERNAME => $username,
+            ":" . UserDBObject::COL_PASSWORD => $hash,
+            ":" . UserDBObject::COL_LAST_CON_TSMP => $lastConnectTimestamp,
+            ":" . UserDBObject::COL_SIGNUP_TSMP => $signupTimestamp,
+            ":" . UserDBObject::COL_TOKEN => $token);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetINSERTQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
     private function __disable_user($id)

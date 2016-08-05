@@ -40,7 +40,7 @@ class DataMigrationFunction extends AbstractFunction
             'Data Migration',
             '-dm',
             '--data-migration',
-            "Adds data from a remote database.");
+            "Adds data from a remote database. Requires an external DBFill.php script.");
     }
 
     public function Execute()
@@ -49,12 +49,49 @@ class DataMigrationFunction extends AbstractFunction
         parent::info("-- data migration process starts --");
 
         $dbfill = new DBFill();
-        $data = $dbfill->fetchData()->getFetchedData();
-        var_dump($data['gender']);
-        /*$kernel = new DoleticKernel();    // instantiate
-        $kernel->Init();                // initialize
-        $kernel->ConnectDB();            // connect database*/
+        $data = $dbfill
+            ->fetchData()
+            ->formatFetchedData()
+            ->printFormattedData()
+            ->getFormattedData();
 
+        // Init kernel
+        $kernel = new DoleticKernel();    // instanciate
+        $kernel->Init();                // initialize
+        $kernel->ConnectDB();            // connect database
+
+        // Fill db with formatted data
+        parent::info("-- filling ag --");
+        foreach ($data['ag'] as $ag) {
+            $kernel
+                ->GetDBObject(UserDataDBObject::OBJ_NAME)
+                ->GetServices($kernel->GetCurrentUser())
+                ->GetResponseData(UserDataServices::INSERT_AG, $ag);
+        }
+        parent::info("done !");
+
+        parent::info("-- filling udata --");
+        foreach ($data['user_data'] as $udata) {
+            $kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+                ->GetResponseData(UserDataServices::FORCE_INSERT, $udata);
+        }
+        parent::info("done !");
+
+        parent::info("-- filling udata position --");
+        foreach ($data['user_position'] as $upos) {
+            foreach($upos as $u) {
+                $kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+                    ->GetResponseData(UserDataServices::FORCE_POSITION, $u);
+            }
+        }
+        parent::info("done !");
+
+        parent::info("-- filling user --");
+        foreach ($data['user'] as $user) {
+            $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+                ->GetResponseData(UserServices::FORCE_INSERT, $user);
+        }
+        parent::info("done !");
 
     }
 }

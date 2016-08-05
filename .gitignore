@@ -2,5 +2,6 @@ config/
 uploads
 tmp
 html/
-/migrate/
+/migrate/DBFill.php
+/src/kernel/results.json
 *.swp

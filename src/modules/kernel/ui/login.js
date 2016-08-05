@@ -68,9 +68,9 @@ var DoleticUIModule = new function () {
      *
      */
     this.checkLoginFormInputs = function () {
-        if ($('#uname_input').val().length > 0 &&
+        if (/*$('#uname_input').val().length > 0 &&
             $('#pass_input').val().length > 0 &&
-            $('#uname_input').val().match(/^[\w-]+\.[\w-]+$/g)) {
+            $('#uname_input').val().match(/^[\w-]+\.[\w-]+$/g)*/ true) {
             if (this.hasInputError) {
                 DoleticUIModule.resetLoginForm();
             }

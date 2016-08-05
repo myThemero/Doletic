@@ -320,6 +320,9 @@ class UserDataServices extends AbstractObjectServices
     const PARAM_AVATAR_ID = "avatarId";
     const PARAM_AG = "ag";
     const PARAM_PRESENCE = "presence";
+    const PARAM_DISABLED = "disabled";
+    const PARAM_OLD = "old";
+    const PARAM_SINCE = "since";
     // --- internal services (actions)
     const GET_USER_DATA_BY_ID = "byidud";
     const GET_ALL_BY_DIV = "allbydiv";
@@ -349,6 +352,9 @@ class UserDataServices extends AbstractObjectServices
     const ENABLE = "enable";
     const TAG_OLD = "old";
     const UNTAG_OLD = "unold";
+    // -- services that should not be used except for data migration
+    const FORCE_INSERT = "forins";
+    const FORCE_POSITION = "forpos";
     // -- functions
 
     // -- construct
@@ -415,6 +421,28 @@ class UserDataServices extends AbstractObjectServices
                 $params[UserDataServices::PARAM_INSA_DEPT],
                 $params[UserDataServices::PARAM_POSITION],
                 $params[UserDataServices::PARAM_AG]);
+        } else if (!strcmp($action, UserDataServices::FORCE_INSERT)) {
+            $data = $this->__force_insert_user_data(
+                $params[UserDataServices::PARAM_ID],
+                $params[UserDataServices::PARAM_USER_ID],
+                $params[UserDataServices::PARAM_GENDER],
+                $params[UserDataServices::PARAM_FIRSTNAME],
+                $params[UserDataServices::PARAM_LASTNAME],
+                $params[UserDataServices::PARAM_BIRTHDATE],
+                $params[UserDataServices::PARAM_TEL],
+                $params[UserDataServices::PARAM_EMAIL],
+                $params[UserDataServices::PARAM_ADDRESS],
+                $params[UserDataServices::PARAM_CITY],
+                $params[UserDataServices::PARAM_POSTAL_CODE],
+                $params[UserDataServices::PARAM_COUNTRY],
+                $params[UserDataServices::PARAM_SCHOOL_YEAR],
+                $params[UserDataServices::PARAM_INSA_DEPT],
+                $params[UserDataServices::PARAM_AVATAR_ID],
+                $params[UserDataServices::PARAM_AG],
+                $params[UserDataServices::PARAM_DISABLED],
+                $params[UserDataServices::PARAM_OLD],
+                $params[UserDataServices::PARAM_CREATION_DATE]
+            );
         } else if (!strcmp($action, UserDataServices::UPDATE)) {
             $data = $this->__update_user_data(
                 $params[UserDataServices::PARAM_ID],
@@ -437,6 +465,11 @@ class UserDataServices extends AbstractObjectServices
             $data = $this->__update_user_position(
                 $params[UserDataServices::PARAM_USER_ID],
                 $params[UserDataServices::PARAM_POSITION]);
+        } else if (!strcmp($action, UserDataServices::FORCE_POSITION)) {
+            $data = $this->__force_insert_user_position(
+                $params[UserDataServices::PARAM_USER_ID],
+                $params[UserDataServices::PARAM_POSITION],
+                $params[UserDataServices::PARAM_SINCE]);
         } else if (!strcmp($action, UserDataServices::UPDATE_AVATAR)) {
             $data = $this->__update_user_avatar(
                 $params[UserDataServices::PARAM_AVATAR_ID]);
@@ -938,6 +971,37 @@ class UserDataServices extends AbstractObjectServices
         }
     }
 
+    private function __force_insert_user_data($id, $userId, $gender, $firstname, $lastname, $birthdate,
+                                              $tel, $email, $address, $city, $postalCode, $country, $schoolYear,
+                                              $insaDept, $avatarId, $ag, $disabled, $old, $creationDate)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . UserDataDBObject::COL_ID => $id,
+            ":" . UserDataDBObject::COL_USER_ID => $userId,
+            ":" . UserDataDBObject::COL_GENDER => $gender,
+            ":" . UserDataDBObject::COL_FIRSTNAME => $firstname,
+            ":" . UserDataDBObject::COL_LASTNAME => $lastname,
+            ":" . UserDataDBObject::COL_BIRTHDATE => $birthdate,
+            ":" . UserDataDBObject::COL_TEL => $tel,
+            ":" . UserDataDBObject::COL_EMAIL => $email,
+            ":" . UserDataDBObject::COL_ADDRESS => $address,
+            ":" . UserDataDBObject::COL_CITY => $city,
+            ":" . UserDataDBObject::COL_POSTAL_CODE => $postalCode,
+            ":" . UserDataDBObject::COL_COUNTRY => $country,
+            ":" . UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
+            ":" . UserDataDBObject::COL_INSA_DEPT => $insaDept,
+            ":" . UserDataDBObject::COL_AVATAR_ID => $avatarId,
+            ":" . UserDataDBObject::COL_AG => $ag,
+            ":" . UserDataDBObject::COL_DISABLED => $disabled,
+            ":" . UserDataDBObject::COL_OLD => $old,
+            ":" . UserDataDBObject::COL_CREATION_DATE => $creationDate);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetINSERTQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
 
     private function __insert_ag($ag, $presence)
     {
@@ -1017,6 +1081,20 @@ class UserDataServices extends AbstractObjectServices
             return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         }
         return true;
+    }
+
+    private function __force_insert_user_position($userId, $position, $since)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . UserDataDBObject::COL_ID => null,
+            ":" . UserDataDBObject::COL_USER_ID => $userId,
+            ":" . UserDataDBObject::COL_POSITION => $position,
+            ":" . UserDataDBObject::COL_SINCE => $since);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_POSITION)->GetINSERTQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
     private function __remove_last_user_position($userId)
@@ -1289,6 +1367,7 @@ class UserDataServices extends AbstractObjectServices
             "Intervenant" => array((RightsMap::G_R | RightsMap::I_G | RightsMap::D_G), "Intervenant"), // G  | I | D
             "Client" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Client"), // G  | C | D
             "Auditeur CNJE" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "CNJE"), // G  | C | D
+            "Membre CNJE" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "CNJE") // G  | C | D
         );
         // --- retrieve SQL query
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_POSITION)->GetINSERTQuery();
