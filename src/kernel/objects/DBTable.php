@@ -463,7 +463,7 @@ class DBTable
         return $query;
     }
 
-    static function GetUNIONQuery($query1, $query2, $all = true)
+    static function GetUNIONQuery($query1, $query2, $all = true, $orderBy = null, $limit = null)
     {
         $query = $query1;
         if (strpos($query1, "SELECT") == 0 && strpos($query2, "SELECT") == 0) {
@@ -471,8 +471,15 @@ class DBTable
             if ($all) {
                 $query .= DBTable::ALL . " ";
             }
-            $query .= "(" . trim($query2, ';') . ");";
+            $query .= "(" . trim($query2, ';') . ")";
         }
+        if (isset($orderBy)) {
+            $query .= " ORDER BY " . $orderBy;
+        }
+        if (isset($limit)) {
+            $query .= " LIMIT " . $limit;
+        }
+        $query .= ";";
         return $query;
     }
 

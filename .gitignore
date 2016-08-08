@@ -5,3 +5,4 @@ html/
 /migrate/DBFill.php
 /src/kernel/results.json
 *.swp
+.idea/

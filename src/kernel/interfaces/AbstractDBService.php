@@ -62,4 +62,11 @@ abstract class AbstractDBService
         return $this->db_connection;
     }
 
+    protected function getDBObjectResponseData($object, $action, $params)
+    {
+        return $this->module->GetDBObject($object)
+            ->GetServices($this->current_user)
+            ->GetResponseData($action, $params);
+    }
+
 }

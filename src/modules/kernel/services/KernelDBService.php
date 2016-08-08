@@ -44,18 +44,21 @@ class KernelDBService extends AbstractDBService
 
     private function __get_all_user_data_with_status()
     {
-        $udata = parent::GetModule()
-            ->GetDBObject(UserDataDBObject::OBJ_NAME)
-            ->GetServices($this->GetCurrentUser())
-            ->GetResponseData(UserDataServices::GET_ALL_USER_DATA, array());
-        $admm_status = parent::GetModule()
-            ->GetDBObject(AdmMembershipDBObject::OBJ_NAME)
-            ->GetServices($this->GetCurrentUser())
-            ->GetResponseData(AdmMembershipServices::GET_ALL_CURRENT_ADM_MEMBERSHIPS, array());
-        $intm_status = parent::GetModule()
-            ->GetDBObject(IntMembershipDBObject::OBJ_NAME)
-            ->GetServices($this->GetCurrentUser())
-            ->GetResponseData(IntMembershipServices::GET_ALL_CURRENT_INT_MEMBERSHIPS, array());
+        $udata = parent::getDBObjectResponseData(
+            UserDataDBObject::OBJ_NAME,
+            UserDataServices::GET_ALL_USER_DATA,
+            array()
+        );
+        $admm_status = parent::getDBObjectResponseData(
+            AdmMembershipDBObject::OBJ_NAME,
+            AdmMembershipServices::GET_ALL_CURRENT_ADM_MEMBERSHIPS,
+            array()
+        );
+        $intm_status = parent::getDBObjectResponseData(
+            IntMembershipDBObject::OBJ_NAME,
+            IntMembershipServices::GET_ALL_CURRENT_INT_MEMBERSHIPS,
+            array()
+        );
         foreach ($udata as $user) {
             if (array_key_exists($user->GetUserId(), $admm_status)) {
                 $user->SetAdmmStatus($admm_status[$user->GetUserId()]->isValid() ? KernelDBService::VALID_MEMBERSHIP : KernelDBService::INVALID_MEMBERSHIP);
