@@ -1384,7 +1384,7 @@ class IndicatorDBObject extends AbstractDBObject
         $stats_udata_inscription = new DBProcedure(IndicatorDBObject::PROC_STATS_INSCRIPTIONS,
             "SELECT DATE_FORMAT(creation_date, '%Y-%m') AS month, COUNT(*) as count
 				FROM `dol_udata`
-				GROUP BY DATE_FORMAT(creation_date, '%Y-%m')
+				GROUP BY DATE_FORMAT(creation_date, '%Y-%m'), id
 				ORDER BY creation_date
 				LIMIT 12;"
         );
