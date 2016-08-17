@@ -276,6 +276,38 @@ class FakeDataFunction extends AbstractFunction
             ));
         // --------------------------------------------------------------
         parent::endlog("done !");
+
+        // --- fill userdata
+        parent::info("Filling firm and contact object related tables...", true);
+        // --------------------------------------------------------------
+        // Example firm
+        $kernel->GetDBObject(FirmDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+            ->GetResponseData(FirmServices::INSERT, array(
+                FirmServices::PARAM_SIRET => 123456789,
+                FirmServices::PARAM_NAME => "Acme",
+                FirmServices::PARAM_ADDRESS => "10 rue de l'argent",
+                FirmServices::PARAM_POSTAL_CODE => "66666",
+                FirmServices::PARAM_CITY => "Ville",
+                FirmServices::PARAM_COUNTRY => "France",
+                FirmServices::PARAM_TYPE => "SA",
+                FirmServices::PARAM_LAST_CONTACT => "2015-01-01"
+            ));
+
+        // Example contact
+        $kernel->GetDBObject(ContactDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+            ->GetResponseData(ContactServices::INSERT, array(
+                ContactServices::PARAM_GENDER => "M.",
+                ContactServices::PARAM_FIRSTNAME => "Client",
+                ContactServices::PARAM_LASTNAME => "Doe",
+                ContactServices::PARAM_FIRM_ID => 1,
+                ContactServices::PARAM_EMAIL => "client.doe@gmail.com",
+                ContactServices::PARAM_PHONE => "0700000000",
+                ContactServices::PARAM_CATEGORY => "Client",
+                ContactServices::PARAM_LAST_UPDATE => "2015-01-01"
+            ));
+        // --------------------------------------------------------------
+        parent::endlog("done !");
+
         // --- fill maillist
         parent::info("Filling mailing list object related tables...", true);
         // --------------------------------------------------------------

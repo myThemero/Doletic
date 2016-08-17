@@ -24,19 +24,7 @@ class Firm implements \JsonSerializable
     private $type = null;
     private $last_contact = null;
 
-    /**
-     * @brief Constructs a firm
-     * @param int $senderId
-     *        Sender's ID
-     * @param int $receiverId
-     *        Receiver's ID
-     * @param int $category
-     *        Firm category
-     * @param string $data
-     *        firm data
-     * @param int status
-     *        Firm status
-     */
+
     public function __construct($id, $siret, $name, $address, $postalCode, $city, $country, $type, $lastContact)
     {
         $this->id = intval($id);
@@ -349,7 +337,6 @@ class FirmDBObject extends AbstractDBObject
     const COL_NAME = "name";
     const COL_ADDRESS = "address";
     const COL_POSTAL_CODE = "postal_code";
-    const COL_CATEGORY_ID = "category_id";
     const COL_CITY = "city";
     const COL_COUNTRY = "country";
     const COL_TYPE = "type";
@@ -372,7 +359,6 @@ class FirmDBObject extends AbstractDBObject
             ->AddColumn(FirmDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(FirmDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(FirmDBObject::COL_POSTAL_CODE, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(FirmDBObject::COL_CATEGORY_ID, DBTable::DT_INT, 11, false)
             ->AddColumn(FirmDBObject::COL_CITY, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(FirmDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(FirmDBObject::COL_TYPE, DBTable::DT_VARCHAR, 255, false)
