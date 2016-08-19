@@ -254,12 +254,53 @@ class FakeDataFunction extends AbstractFunction
             ->GetResponseData(IntMembershipServices::INSERT, array(
                 IntMembershipServices::PARAM_USER => 1,
                 IntMembershipServices::PARAM_START => "2016-02-02",
-                IntMembershipServices::PARAM_FEE => 0,
-                IntMembershipServices::PARAM_FORM => 1,
-                IntMembershipServices::PARAM_CERTIF => 1,
-                IntMembershipServices::PARAM_RIB => 1,
-                IntMembershipServices::PARAM_IDENTITY => 0,
+                IntMembershipServices::PARAM_FEE => false,
+                IntMembershipServices::PARAM_FORM => true,
+                IntMembershipServices::PARAM_CERTIF => true,
+                IntMembershipServices::PARAM_RIB => true,
+                IntMembershipServices::PARAM_IDENTITY => false,
                 IntMembershipServices::PARAM_SECU_NUMBER => 1234567890123
+            ));
+
+        $kernel->GetDBObject(IntMembershipDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+            ->GetResponseData(IntMembershipServices::INSERT, array(
+                IntMembershipServices::PARAM_USER => 3,
+                IntMembershipServices::PARAM_START => "2016-02-02",
+                IntMembershipServices::PARAM_FEE => true,
+                IntMembershipServices::PARAM_FORM => true,
+                IntMembershipServices::PARAM_CERTIF => true,
+                IntMembershipServices::PARAM_RIB => true,
+                IntMembershipServices::PARAM_IDENTITY => true,
+                IntMembershipServices::PARAM_SECU_NUMBER => 1234567890123
+            ));
+
+        $kernel->GetDBObject(AdmMembershipDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+            ->GetResponseData(AdmMembershipServices::INSERT, array(
+                AdmMembershipServices::PARAM_USER => 1,
+                AdmMembershipServices::PARAM_START => "2016-02-02",
+                AdmMembershipServices::PARAM_END => "2017-02-02",
+                AdmMembershipServices::PARAM_FEE => true,
+                AdmMembershipServices::PARAM_FORM => true,
+                AdmMembershipServices::PARAM_CERTIF => true
+            ));
+
+        $kernel->GetDBObject(AdmMembershipDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+            ->GetResponseData(AdmMembershipServices::INSERT, array(
+                AdmMembershipServices::PARAM_USER => 2,
+                AdmMembershipServices::PARAM_START => "2016-02-02",
+                AdmMembershipServices::PARAM_END => "2017-02-02",
+                AdmMembershipServices::PARAM_FEE => true,
+                AdmMembershipServices::PARAM_FORM => true,
+                AdmMembershipServices::PARAM_CERTIF => true
+            ));
+        $kernel->GetDBObject(AdmMembershipDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+            ->GetResponseData(AdmMembershipServices::INSERT, array(
+                AdmMembershipServices::PARAM_USER => 4,
+                AdmMembershipServices::PARAM_START => "2016-02-02",
+                AdmMembershipServices::PARAM_END => "2017-02-02",
+                AdmMembershipServices::PARAM_FEE => true,
+                AdmMembershipServices::PARAM_FORM => true,
+                AdmMembershipServices::PARAM_CERTIF => true
             ));
 
         $kernel->GetDBObject(TeamDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())

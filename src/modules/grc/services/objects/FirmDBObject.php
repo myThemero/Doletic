@@ -236,15 +236,15 @@ class FirmServices extends AbstractObjectServices
         if (isset($pdos)) {
             while (($row = $pdos->fetch()) !== false) {
                 array_push($firms, new Firm(
-                    $row[FirmServices::PARAM_ID],
-                    $row[FirmServices::PARAM_SIRET],
-                    $row[FirmServices::PARAM_NAME],
-                    $row[FirmServices::PARAM_ADDRESS],
-                    $row[FirmServices::PARAM_POSTAL_CODE],
-                    $row[FirmServices::PARAM_CITY],
-                    $row[FirmServices::PARAM_COUNTRY],
-                    $row[FirmServices::PARAM_TYPE],
-                    $row[FirmServices::PARAM_LAST_CONTACT]));
+                    $row[FirmDBObject::COL_ID],
+                    $row[FirmDBObject::COL_SIRET],
+                    $row[FirmDBObject::COL_NAME],
+                    $row[FirmDBObject::COL_ADDRESS],
+                    $row[FirmDBObject::COL_POSTAL_CODE],
+                    $row[FirmDBObject::COL_CITY],
+                    $row[FirmDBObject::COL_COUNTRY],
+                    $row[FirmDBObject::COL_TYPE],
+                    $row[FirmDBObject::COL_LAST_CONTACT]));
             }
         }
         return $firms;

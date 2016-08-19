@@ -41,7 +41,7 @@ class Task implements \JsonSerializable
         $this->jeh_cost = $jehCost;
         $this->start_date = $startDate;
         $this->end_date = $endDate;
-        $this->ended = $ended;
+        $this->ended = boolval($ended);
     }
 
 
@@ -57,7 +57,7 @@ class Task implements \JsonSerializable
             TaskDBObject::COL_JEH_COST => $this->jeh_cost,
             TaskDBObject::COL_START_DATE => $this->start_date,
             TaskDBObject::COL_END_DATE => $this->end_date,
-            TaskDBObject::COL_END_DATE => $this->ended
+            TaskDBObject::COL_ENDED => $this->ended
         ];
     }
 
@@ -244,7 +244,6 @@ class TaskServices extends AbstractObjectServices
         } else if (!strcmp($action, TaskServices::INSERT)) {
             $data = $this->__insert_task(
                 $params[TaskServices::PARAM_PROJECT_NUMBER],
-                $params[TaskServices::PARAM_NUMBER],
                 $params[TaskServices::PARAM_NAME],
                 $params[TaskServices::PARAM_DESCRIPTION],
                 $params[TaskServices::PARAM_JEH_AMOUNT],
@@ -262,7 +261,6 @@ class TaskServices extends AbstractObjectServices
         } else if (!strcmp($action, TaskServices::UPDATE)) {
             $data = $this->__update_task(
                 $params[TaskServices::PARAM_ID],
-                $params[TaskServices::PARAM_NUMBER],
                 $params[TaskServices::PARAM_NAME],
                 $params[TaskServices::PARAM_DESCRIPTION],
                 $params[TaskServices::PARAM_JEH_AMOUNT],
@@ -321,7 +319,7 @@ class TaskServices extends AbstractObjectServices
                         $row[TaskDBObject::COL_NAME],
                         $row[TaskDBObject::COL_DESCRIPTION],
                         $row[TaskDBObject::COL_JEH_AMOUNT],
-                        $row[TaskDBObject::COL_JEH_AMOUNT],
+                        $row[TaskDBObject::COL_JEH_COST],
                         $row[TaskDBObject::COL_START_DATE],
                         $row[TaskDBObject::COL_END_DATE],
                         $row[TaskDBObject::COL_ENDED]
@@ -353,7 +351,7 @@ class TaskServices extends AbstractObjectServices
                     $row[TaskDBObject::COL_NAME],
                     $row[TaskDBObject::COL_DESCRIPTION],
                     $row[TaskDBObject::COL_JEH_AMOUNT],
-                    $row[TaskDBObject::COL_JEH_AMOUNT],
+                    $row[TaskDBObject::COL_JEH_COST],
                     $row[TaskDBObject::COL_START_DATE],
                     $row[TaskDBObject::COL_END_DATE],
                     $row[TaskDBObject::COL_ENDED]
@@ -369,7 +367,10 @@ class TaskServices extends AbstractObjectServices
         $sql_params = array(":" . TaskDBObject::COL_PROJECT_NUMBER => $projectNumber);
         // create sql request
         $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_TASK)->GetSELECTQuery(
-            array(DBTable::SELECT_ALL), array(TaskDBObject::COL_PROJECT_NUMBER)
+            array(DBTable::SELECT_ALL),
+            array(TaskDBObject::COL_PROJECT_NUMBER),
+            array(),
+            array(TaskDBObject::COL_NUMBER => DBTable::ORDER_ASC)
         );
         // execute SQL query and save result
         $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
@@ -377,18 +378,17 @@ class TaskServices extends AbstractObjectServices
         $data = array();
         if (isset($pdos)) {
             while (($row = $pdos->fetch()) !== false) {
-                array_push($data, new Task(
-                        $row[TaskDBObject::COL_ID],
-                        $row[TaskDBObject::COL_PROJECT_NUMBER],
-                        $row[TaskDBObject::COL_NUMBER],
-                        $row[TaskDBObject::COL_NAME],
-                        $row[TaskDBObject::COL_DESCRIPTION],
-                        $row[TaskDBObject::COL_JEH_AMOUNT],
-                        $row[TaskDBObject::COL_JEH_AMOUNT],
-                        $row[TaskDBObject::COL_START_DATE],
-                        $row[TaskDBObject::COL_END_DATE],
-                        $row[TaskDBObject::COL_ENDED]
-                    )
+                $data[intval($row[TaskDBObject::COL_NUMBER]) - 1] = new Task(
+                    $row[TaskDBObject::COL_ID],
+                    $row[TaskDBObject::COL_PROJECT_NUMBER],
+                    $row[TaskDBObject::COL_NUMBER],
+                    $row[TaskDBObject::COL_NAME],
+                    $row[TaskDBObject::COL_DESCRIPTION],
+                    $row[TaskDBObject::COL_JEH_AMOUNT],
+                    $row[TaskDBObject::COL_JEH_COST],
+                    $row[TaskDBObject::COL_START_DATE],
+                    $row[TaskDBObject::COL_END_DATE],
+                    $row[TaskDBObject::COL_ENDED]
                 );
             }
         }
@@ -419,7 +419,7 @@ class TaskServices extends AbstractObjectServices
                     $row[TaskDBObject::COL_NAME],
                     $row[TaskDBObject::COL_DESCRIPTION],
                     $row[TaskDBObject::COL_JEH_AMOUNT],
-                    $row[TaskDBObject::COL_JEH_AMOUNT],
+                    $row[TaskDBObject::COL_JEH_COST],
                     $row[TaskDBObject::COL_START_DATE],
                     $row[TaskDBObject::COL_END_DATE],
                     $row[TaskDBObject::COL_ENDED]
@@ -448,10 +448,10 @@ class TaskServices extends AbstractObjectServices
                     TaskDBObject::COL_TASK_ID => $row[TaskDBObject::COL_TASK_ID],
                     TaskDBObject::COL_NUMBER => $row[TaskDBObject::COL_NUMBER],
                     TaskDBObject::COL_CONTENT => $row[TaskDBObject::COL_CONTENT],
-                    TaskDBObject::COL_BILLED => $row[TaskDBObject::COL_BILLED],
-                    TaskDBObject::COL_DELIVERED => $row[TaskDBObject::COL_DELIVERED],
+                    TaskDBObject::COL_BILLED => boolval($row[TaskDBObject::COL_BILLED]),
+                    TaskDBObject::COL_DELIVERED => boolval($row[TaskDBObject::COL_DELIVERED]),
                     TaskDBObject::COL_DELIVERY_DATE => $row[TaskDBObject::COL_DELIVERY_DATE],
-                    TaskDBObject::COL_PAID => $row[TaskDBObject::COL_PAID],
+                    TaskDBObject::COL_PAID => boolval($row[TaskDBObject::COL_PAID]),
                     TaskDBObject::COL_PAYMENT_DATE => $row[TaskDBObject::COL_PAYMENT_DATE]
                 ];
             }
@@ -547,7 +547,7 @@ class TaskServices extends AbstractObjectServices
                         $row[TaskDBObject::COL_NAME],
                         $row[TaskDBObject::COL_DESCRIPTION],
                         $row[TaskDBObject::COL_JEH_AMOUNT],
-                        $row[TaskDBObject::COL_JEH_AMOUNT],
+                        $row[TaskDBObject::COL_JEH_COST],
                         $row[TaskDBObject::COL_START_DATE],
                         $row[TaskDBObject::COL_END_DATE],
                         $row[TaskDBObject::COL_ENDED]
@@ -566,7 +566,10 @@ class TaskServices extends AbstractObjectServices
         );
         // create sql request
         $sql1 = parent::getDBObject()->GetTable(TaskDBObject::TABL_TASK)->GetSELECTQuery(
-            array(DBTable::SELECT_ALL), array(TaskDBObject::COL_PROJECT_NUMBER)
+            array(DBTable::SELECT_ALL),
+            array(TaskDBObject::COL_PROJECT_NUMBER),
+            array(),
+            array(TaskDBObject::COL_NUMBER => DBTable::ORDER_ASC)
         );
         $sql2 = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetSELECTQuery();
         $sql = DBTable::getJOINQuery($sql1, $sql2, [TaskDBObject::COL_ID, TaskDBObject::COL_TASK_ID], DBTable::DT_LEFT);
@@ -576,18 +579,17 @@ class TaskServices extends AbstractObjectServices
         $data = array();
         if (isset($pdos)) {
             while (($row = $pdos->fetch()) !== false) {
-                array_push($data, new Task(
-                        $row[TaskDBObject::COL_ID],
-                        $row[TaskDBObject::COL_PROJECT_NUMBER],
-                        $row[TaskDBObject::COL_NUMBER],
-                        $row[TaskDBObject::COL_NAME],
-                        $row[TaskDBObject::COL_DESCRIPTION],
-                        $row[TaskDBObject::COL_JEH_AMOUNT],
-                        $row[TaskDBObject::COL_JEH_AMOUNT],
-                        $row[TaskDBObject::COL_START_DATE],
-                        $row[TaskDBObject::COL_END_DATE],
-                        $row[TaskDBObject::COL_ENDED]
-                    )
+                $data[intval($row[TaskDBObject::COL_NUMBER]) - 1] = new Task(
+                    $row[TaskDBObject::COL_ID],
+                    $row[TaskDBObject::COL_PROJECT_NUMBER],
+                    $row[TaskDBObject::COL_NUMBER],
+                    $row[TaskDBObject::COL_NAME],
+                    $row[TaskDBObject::COL_DESCRIPTION],
+                    $row[TaskDBObject::COL_JEH_AMOUNT],
+                    $row[TaskDBObject::COL_JEH_COST],
+                    $row[TaskDBObject::COL_START_DATE],
+                    $row[TaskDBObject::COL_END_DATE],
+                    $row[TaskDBObject::COL_ENDED]
                 );
             }
         }
@@ -612,10 +614,10 @@ class TaskServices extends AbstractObjectServices
                         TaskDBObject::COL_TASK_ID => $row[TaskDBObject::COL_TASK_ID],
                         TaskDBObject::COL_NUMBER => $row[TaskDBObject::COL_NUMBER],
                         TaskDBObject::COL_CONTENT => $row[TaskDBObject::COL_CONTENT],
-                        TaskDBObject::COL_BILLED => $row[TaskDBObject::COL_BILLED],
-                        TaskDBObject::COL_DELIVERED => $row[TaskDBObject::COL_DELIVERED],
+                        TaskDBObject::COL_BILLED => boolval($row[TaskDBObject::COL_BILLED]),
+                        TaskDBObject::COL_DELIVERED => boolval($row[TaskDBObject::COL_DELIVERED]),
                         TaskDBObject::COL_DELIVERY_DATE => $row[TaskDBObject::COL_DELIVERY_DATE],
-                        TaskDBObject::COL_PAID => $row[TaskDBObject::COL_PAID],
+                        TaskDBObject::COL_PAID => boolval($row[TaskDBObject::COL_PAID]),
                         TaskDBObject::COL_PAYMENT_DATE => $row[TaskDBObject::COL_PAYMENT_DATE]
                     ]
                 );
@@ -635,21 +637,22 @@ class TaskServices extends AbstractObjectServices
         // execute SQL query and save result
         $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
         // create udata var
-        $data = null;
+        $data = array();
         if (isset($pdos)) {
-            if (($row = $pdos->fetch()) !== false) {
-                $data =
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($data,
                     [
                         TaskDBObject::COL_ID => $row[TaskDBObject::COL_ID],
                         TaskDBObject::COL_TASK_ID => $row[TaskDBObject::COL_TASK_ID],
                         TaskDBObject::COL_NUMBER => $row[TaskDBObject::COL_NUMBER],
                         TaskDBObject::COL_CONTENT => $row[TaskDBObject::COL_CONTENT],
-                        TaskDBObject::COL_BILLED => $row[TaskDBObject::COL_BILLED],
-                        TaskDBObject::COL_DELIVERED => $row[TaskDBObject::COL_DELIVERED],
+                        TaskDBObject::COL_BILLED => boolval($row[TaskDBObject::COL_BILLED]),
+                        TaskDBObject::COL_DELIVERED => boolval($row[TaskDBObject::COL_DELIVERED]),
                         TaskDBObject::COL_DELIVERY_DATE => $row[TaskDBObject::COL_DELIVERY_DATE],
-                        TaskDBObject::COL_PAID => $row[TaskDBObject::COL_PAID],
+                        TaskDBObject::COL_PAID => boolval($row[TaskDBObject::COL_PAID]),
                         TaskDBObject::COL_PAYMENT_DATE => $row[TaskDBObject::COL_PAYMENT_DATE]
-                    ];
+                    ]
+                );
             }
         }
         return $data;
@@ -658,14 +661,14 @@ class TaskServices extends AbstractObjectServices
 
     // -- modify
 
-    private function __insert_task($projectNumber, $number, $name, $description, $jehAmount, $jehCost, $startDate,
+    private function __insert_task($projectNumber, $name, $description, $jehAmount, $jehCost, $startDate,
                                    $endDate)
     {
         // create sql params
         $sql_params = array(
             ":" . TaskDBObject::COL_ID => null,
             ":" . TaskDBObject::COL_PROJECT_NUMBER => $projectNumber,
-            ":" . TaskDBObject::COL_NUMBER => $number,
+            ":" . TaskDBObject::COL_NUMBER => $this->__get_next_task_number($projectNumber),
             ":" . TaskDBObject::COL_NAME => $name,
             ":" . TaskDBObject::COL_DESCRIPTION => $description,
             ":" . TaskDBObject::COL_JEH_AMOUNT => $jehAmount,
@@ -695,18 +698,17 @@ class TaskServices extends AbstractObjectServices
             ":" . TaskDBObject::COL_PAYMENT_DATE => null,
         );
         // create sql request
-        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_TASK)->GetINSERTQuery();
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetINSERTQuery();
         // execute query
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
-    private function __update_task($id, $number, $name, $description, $jehAmount, $jehCost, $startDate,
+    private function __update_task($id, $name, $description, $jehAmount, $jehCost, $startDate,
                                    $endDate)
     {
         // create sql params
         $sql_params = array(
             ":" . TaskDBObject::COL_ID => $id,
-            ":" . TaskDBObject::COL_NUMBER => $number,
             ":" . TaskDBObject::COL_NAME => $name,
             ":" . TaskDBObject::COL_DESCRIPTION => $description,
             ":" . TaskDBObject::COL_JEH_AMOUNT => $jehAmount,
@@ -716,7 +718,6 @@ class TaskServices extends AbstractObjectServices
         );
         // create sql request
         $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_TASK)->GetUPDATEQuery(array(
-                TaskDBObject::COL_NUMBER,
                 TaskDBObject::COL_NAME,
                 TaskDBObject::COL_DESCRIPTION,
                 TaskDBObject::COL_JEH_AMOUNT,
@@ -771,10 +772,11 @@ class TaskServices extends AbstractObjectServices
             ":" . TaskDBObject::COL_BILLED => $billed
         );
         // create sql request
-        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(
-            TaskDBObject::COL_NUMBER,
-            TaskDBObject::COL_CONTENT,
-            TaskDBObject::COL_BILLED
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(array(
+                TaskDBObject::COL_NUMBER,
+                TaskDBObject::COL_CONTENT,
+                TaskDBObject::COL_BILLED
+            )
         );
         // execute query
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
@@ -789,9 +791,10 @@ class TaskServices extends AbstractObjectServices
             ":" . TaskDBObject::COL_DELIVERY_DATE => $deliveryDate
         );
         // create sql request
-        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(
-            TaskDBObject::COL_DELIVERED,
-            TaskDBObject::COL_DELIVERY_DATE
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(array(
+                TaskDBObject::COL_DELIVERED,
+                TaskDBObject::COL_DELIVERY_DATE
+            )
         );
         // execute query
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
@@ -806,9 +809,10 @@ class TaskServices extends AbstractObjectServices
             ":" . TaskDBObject::COL_DELIVERY_DATE => null
         );
         // create sql request
-        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(
-            TaskDBObject::COL_DELIVERED,
-            TaskDBObject::COL_DELIVERY_DATE
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(array(
+                TaskDBObject::COL_DELIVERED,
+                TaskDBObject::COL_DELIVERY_DATE
+            )
         );
         // execute query
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
@@ -823,9 +827,10 @@ class TaskServices extends AbstractObjectServices
             ":" . TaskDBObject::COL_PAYMENT_DATE => $paymentDate
         );
         // create sql request
-        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(
-            TaskDBObject::COL_PAID,
-            TaskDBObject::COL_PAYMENT_DATE
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(array(
+                TaskDBObject::COL_PAID,
+                TaskDBObject::COL_PAYMENT_DATE
+            )
         );
         // execute query
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
@@ -840,9 +845,10 @@ class TaskServices extends AbstractObjectServices
             ":" . TaskDBObject::COL_PAYMENT_DATE => null
         );
         // create sql request
-        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(
-            TaskDBObject::COL_PAID,
-            TaskDBObject::COL_PAYMENT_DATE
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_DELIVERY)->GetUPDATEQuery(array(
+                TaskDBObject::COL_PAID,
+                TaskDBObject::COL_PAYMENT_DATE
+            )
         );
         // execute query
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
@@ -850,12 +856,15 @@ class TaskServices extends AbstractObjectServices
 
     private function __delete_task($id)
     {
+        $projectNumber = $this->__get_task_by_id($id)->getProjectNumber();
         // create sql params
         $sql_params = array(":" . TaskDBObject::COL_ID => $id);
         // create sql request
         $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_TASK)->GetDELETEQuery();
         // execute query
-        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+        if (parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params)) {
+            return $this->__fix_task_numbers($projectNumber);
+        }
     }
 
     private function __delete_delivery($id)
@@ -899,6 +908,61 @@ class TaskServices extends AbstractObjectServices
             return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         }
         return false;
+    }
+
+    private function __get_next_task_number($projectNumber)
+    {
+        // create sql params array
+        $sql_params = array(":" . TaskDBObject::COL_PROJECT_NUMBER => $projectNumber);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_TASK)->GetSELECTQuery(
+            array(TaskDBObject::COL_NUMBER),
+            array(TaskDBObject::COL_PROJECT_NUMBER),
+            array(),
+            array(TaskDBObject::COL_NUMBER => DBTable::ORDER_DESC),
+            1
+        );
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = 0;
+        if (isset($pdos)) {
+            if (($row = $pdos->fetch()) !== false) {
+                $data = intval($row[TaskDBObject::COL_NUMBER]);
+            }
+        }
+        return $data + 1;
+    }
+
+    private function __update_task_number($id, $number)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . TaskDBObject::COL_ID => $id,
+            ":" . TaskDBObject::COL_NUMBER => $number
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_TASK)->GetUPDATEQuery(array(
+                TaskDBObject::COL_NUMBER
+            )
+        );
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
+    private function __fix_task_numbers($projectNumber)
+    {
+        $tasks = $this->__get_tasks_by_project($projectNumber);
+        $n = 1;
+        foreach ($tasks as $task) {
+            if ($task->getNumber() != $n) {
+                if (!$this->__update_task_number($task->getId(), $n)) {
+                    return false;
+                }
+            }
+            $n++;
+        }
+        return true;
     }
 
 
@@ -974,8 +1038,7 @@ class TaskDBObject extends AbstractDBObject
             ->AddColumn(TaskDBObject::COL_START_DATE, DBTable::DT_DATE, -1, false, "")
             ->AddColumn(TaskDBObject::COL_END_DATE, DBTable::DT_DATE, -1, true, "")
             ->AddColumn(TaskDBObject::COL_ENDED, DBTable::DT_INT, 1, false, 0)
-            ->AddForeignKey(TaskDBObject::TABL_TASK . '_fk1', TaskDBObject::COL_PROJECT_NUMBER, ProjectDBObject::TABL_PROJECT, ProjectDBObject::COL_NUMBER, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
-            ->AddUniqueColumns(array(TaskDBObject::COL_PROJECT_NUMBER, TaskDBObject::COL_NUMBER));
+            ->AddForeignKey(TaskDBObject::TABL_TASK . '_fk1', TaskDBObject::COL_PROJECT_NUMBER, ProjectDBObject::TABL_PROJECT, ProjectDBObject::COL_NUMBER, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 
         $dol_delivery = new DBTable(TaskDBObject::TABL_DELIVERY);
         $dol_delivery
@@ -987,7 +1050,7 @@ class TaskDBObject extends AbstractDBObject
             ->AddColumn(TaskDBObject::COL_DELIVERY_DATE, DBTable::DT_VARCHAR, 255, true, null)
             ->AddColumn(TaskDBObject::COL_BILLED, DBTable::DT_INT, 1, false, 0)
             ->AddColumn(TaskDBObject::COL_PAID, DBTable::DT_INT, 1, false, 0)
-            ->AddColumn(TaskDBObject::COL_PAYMENT_DATE, DBTable::DT_DATETIME, -1, true, null)
+            ->AddColumn(TaskDBObject::COL_PAYMENT_DATE, DBTable::DT_VARCHAR, 255, true, null)
             ->AddForeignKey(TaskDBObject::TABL_DELIVERY . '_fk1', TaskDBObject::COL_TASK_ID, TaskDBObject::TABL_TASK, TaskDBObject::COL_ID, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
             ->AddUniqueColumns(array(TaskDBObject::COL_TASK_ID, TaskDBObject::COL_NUMBER));
 

@@ -25,19 +25,17 @@
     <div class="row">
     </div>
 </div>
-<div class="ui modal" id="user_form_modal">
+<div class="ui modal" id="project_form_modal">
     <div class="ui segment">
-        <form id="sollic_form" class="ui form vertical segment">
+        <form id="project_form" class="ui form vertical segment">
             <h4 class="ui dividing header">Ajout d'une sollicitation</h4>
-            <div class="fields">
-                <div id="name_field" class="eight wide required field">
-                    <label>Nom</label>
-                    <input id="name" placeholder="Nom..." type="text"/>
-                </div>
-                <div id="description_field" class="eight wide required field">
-                    <label>Description</label>
-                    <input id="description" placeholder="Description..." type="text"/>
-                </div>
+            <div id="name_field" class="sixteen wide required field">
+                <label>Nom</label>
+                <input id="name" placeholder="Nom..." type="text"/>
+            </div>
+            <div id="description_field" class="sixteen wide required field">
+                <label>Description</label>
+                <textarea id="description" placeholder="Description..."></textarea>
             </div>
             <div class="fields">
                 <div class="twelve wide required field" id="origin_field">
@@ -120,8 +118,35 @@
                 <div id="abort_btn" class="ui button" onClick="DoleticUIModule.cancelNewProjectForm();">Annuler
                 </div>
                 <div class="or" data-text="ou"></div>
-                <div id="adduser_btn" class="ui green button" onClick="DoleticUIModule.insertNewProject();">
+                <div id="addproject_btn" class="ui green button" onClick="DoleticUIModule.insertNewProject();">
                     Ajouter
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="ui modal" id="disable_form_modal">
+    <div class="ui segment">
+        <form id="disable_form" class="ui form vertical segment">
+            <h4 class="ui dividing header">Êtes-vous sûr(e) de vouloir désactiver l'étude ?</h4>
+            <div class="field">
+                <input type="hidden" id="disable_number" value="-1"/>
+            </div>
+            <div id="restoredate_field" class="sixteen wide required field">
+                <label>Date de réactivation</label>
+                <div class="ui calendar" id="disable_calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input id="restoredate" placeholder="AAAA-mm-jj" type="text"/>
+                    </div>
+                </div>
+            </div>
+            <div class="ui hr_center small buttons">
+                <div id="abort_disable" class="ui button" onClick="DoleticUIModule.cancelDisableProjectForm();">Annuler
+                </div>
+                <div class="or" data-text="ou"></div>
+                <div id="disable_btn" class="ui green button" onClick="DoleticUIModule.confirmDisableProject();">
+                    Désactiver
                 </div>
             </div>
         </form>

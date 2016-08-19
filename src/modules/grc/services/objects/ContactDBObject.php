@@ -245,14 +245,14 @@ class ContactServices extends AbstractObjectServices
             while (($row = $pdos->fetch()) !== false) {
                 array_push($contacts, new Contact(
                     $row[ContactDBObject::COL_ID],
-                    $row[ContactServices::PARAM_GENDER],
-                    $row[ContactServices::PARAM_FIRSTNAME],
-                    $row[ContactServices::PARAM_LASTNAME],
-                    $row[ContactServices::PARAM_FIRM_ID],
-                    $row[ContactServices::PARAM_EMAIL],
-                    $row[ContactServices::PARAM_PHONE],
-                    $row[ContactServices::PARAM_CATEGORY],
-                    $row[ContactServices::PARAM_LAST_UPDATE]
+                    $row[ContactDBObject::COL_GENDER],
+                    $row[ContactDBObject::COL_FIRSTNAME],
+                    $row[ContactDBObject::COL_LASTNAME],
+                    $row[ContactDBObject::COL_FIRM_ID],
+                    $row[ContactDBObject::COL_EMAIL],
+                    $row[ContactDBObject::COL_PHONE],
+                    $row[ContactDBObject::COL_CATEGORY],
+                    $row[ContactDBObject::COL_LAST_UPDATE]
                 ));
             }
         }

@@ -505,13 +505,13 @@ class ProjectServices extends AbstractObjectServices
         } else if (!strcmp($action, ProjectServices::GET_AMENDMENT_BY_ID)) {
             $data = $this->__get_amendment_by_id($params[ProjectServices::PARAM_ID]);
         } else if (!strcmp($action, ProjectServices::GET_ALL_AMENDMENT_BY_PROJECT)) {
-            $data = $this->__get_all_amendments_by_project($params[ProjectServices::PARAM_NUMBER]);
+            $data = $this->__get_all_amendments_by_project($params[ProjectServices::PARAM_PROJECT_NUMBER]);
         } else if (!strcmp($action, ProjectServices::GET_ALL_CHADAFF_BY_PROJECT)) {
-            $data = $this->__get_all_chadaffs_by_project($params[ProjectServices::PARAM_NUMBER]);
+            $data = $this->__get_all_chadaffs_by_project($params[ProjectServices::PARAM_PROJECT_NUMBER]);
         } else if (!strcmp($action, ProjectServices::GET_ALL_CONTACT_BY_PROJECT)) {
-            $data = $this->__get_all_contacts_by_project($params[ProjectServices::PARAM_NUMBER]);
+            $data = $this->__get_all_contacts_by_project($params[ProjectServices::PARAM_PROJECT_NUMBER]);
         } else if (!strcmp($action, ProjectServices::GET_ALL_INT_BY_PROJECT)) {
-            $data = $this->__get_all_ints_by_project($params[ProjectServices::PARAM_NUMBER]);
+            $data = $this->__get_all_ints_by_project($params[ProjectServices::PARAM_PROJECT_NUMBER]);
         } else if (!strcmp($action, ProjectServices::INSERT)) {
             $data = $this->__insert_project(
                 $params[ProjectServices::PARAM_NAME],
@@ -1352,7 +1352,8 @@ class ProjectServices extends AbstractObjectServices
                     ProjectDBObject::COL_PROJECT_NUMBER => $row[ProjectDBObject::COL_PROJECT_NUMBER],
                     ProjectDBObject::COL_TYPE => $row[ProjectDBObject::COL_TYPE],
                     ProjectDBObject::COL_CONTENT => $row[ProjectDBObject::COL_CONTENT],
-                    ProjectDBObject::COL_ATTRIBUTABLE => $row[ProjectDBObject::COL_ATTRIBUTABLE]
+                    ProjectDBObject::COL_ATTRIBUTABLE => boolval($row[ProjectDBObject::COL_ATTRIBUTABLE]),
+                    ProjectDBObject::COL_CREATION_DATE => $row[ProjectDBObject::COL_CREATION_DATE]
                 ]);
             }
         }
@@ -1378,7 +1379,8 @@ class ProjectServices extends AbstractObjectServices
                     ProjectDBObject::COL_PROJECT_NUMBER => $row[ProjectDBObject::COL_PROJECT_NUMBER],
                     ProjectDBObject::COL_TYPE => $row[ProjectDBObject::COL_TYPE],
                     ProjectDBObject::COL_CONTENT => $row[ProjectDBObject::COL_CONTENT],
-                    ProjectDBObject::COL_ATTRIBUTABLE => $row[ProjectDBObject::COL_ATTRIBUTABLE]
+                    ProjectDBObject::COL_ATTRIBUTABLE => boolval($row[ProjectDBObject::COL_ATTRIBUTABLE]),
+                    ProjectDBObject::COL_CREATION_DATE => $row[ProjectDBObject::COL_CREATION_DATE]
                 ];
             }
         }
@@ -1404,7 +1406,8 @@ class ProjectServices extends AbstractObjectServices
                     ProjectDBObject::COL_PROJECT_NUMBER => $row[ProjectDBObject::COL_PROJECT_NUMBER],
                     ProjectDBObject::COL_TYPE => $row[ProjectDBObject::COL_TYPE],
                     ProjectDBObject::COL_CONTENT => $row[ProjectDBObject::COL_CONTENT],
-                    ProjectDBObject::COL_ATTRIBUTABLE => $row[ProjectDBObject::COL_ATTRIBUTABLE]
+                    ProjectDBObject::COL_ATTRIBUTABLE => boolval($row[ProjectDBObject::COL_ATTRIBUTABLE]),
+                    ProjectDBObject::COL_CREATION_DATE => $row[ProjectDBObject::COL_CREATION_DATE]
                 ]);
             }
         }
@@ -1473,7 +1476,7 @@ class ProjectServices extends AbstractObjectServices
             while (($row = $pdos->fetch()) !== false) {
                 array_push($data, [
                     ProjectDBObject::COL_ID => $row[ProjectDBObject::COL_ID],
-                    ProjectDBObject::COL_INT_ID => $row[ProjectDBObject::COL_CONTACT_ID],
+                    ProjectDBObject::COL_INT_ID => $row[ProjectDBObject::COL_INT_ID],
                     ProjectDBObject::COL_NUMBER => $row[ProjectDBObject::COL_NUMBER],
                     ProjectDBObject::COL_JEH_ASSIGNED => $row[ProjectDBObject::COL_JEH_ASSIGNED],
                     ProjectDBObject::COL_PAY => $row[ProjectDBObject::COL_PAY]
@@ -1487,7 +1490,7 @@ class ProjectServices extends AbstractObjectServices
     private function __insert_project($name, $description, $origin, $field, $firmId, $mgmtFee, $appFee,
                                       $rebilledFee, $advance, $secret, $critical, $assignCurrent)
     {
-        $number = $this->__get_next_study_number();
+        $number = $this->__get_next_project_number();
         $sql_params = array(
             ":" . ProjectDBObject::COL_NUMBER => $number,
             ":" . ProjectDBObject::COL_NAME => $name,
@@ -1518,7 +1521,7 @@ class ProjectServices extends AbstractObjectServices
         // execute query
         $result = parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         if ($result && $assignCurrent) {
-            return $this->assign_chadaff($number, $this->getCurrentUser()->getId());
+            return $this->__assign_chadaff($number, $this->getCurrentUser()->getId());
         }
         return $result;
     }
@@ -1794,7 +1797,9 @@ class ProjectServices extends AbstractObjectServices
     private function __assign_int($number, $intId, $jehAssigned, $pay)
     {
         $sql_params = array(
+            ":" . ProjectDBObject::COL_ID => null,
             ":" . ProjectDBObject::COL_PROJECT_NUMBER => $number,
+            ":" . ProjectDBObject::COL_NUMBER => $this->__get_next_int_number($number),
             ":" . ProjectDBObject::COL_INT_ID => $intId,
             ":" . ProjectDBObject::COL_JEH_ASSIGNED => $jehAssigned,
             ":" . ProjectDBObject::COL_PAY => $pay
@@ -1900,6 +1905,7 @@ class ProjectServices extends AbstractObjectServices
     private function __insert_amendment($number, $type, $content, $attributable, $creationDate)
     {
         $sql_params = array(
+            ":" . ProjectDBObject::COL_ID => null,
             ":" . ProjectDBObject::COL_PROJECT_NUMBER => $number,
             ":" . ProjectDBObject::COL_TYPE => $type,
             ":" . ProjectDBObject::COL_CONTENT => $content,
@@ -2027,13 +2033,17 @@ class ProjectServices extends AbstractObjectServices
 
     // -- special
 
-    private function __get_next_study_number()
+    private function __get_next_project_number()
     {
         // create sql params array
         $sql_params = array();
         // create sql request
         $sql = parent::getDBObject()->GetTable(ProjectDBObject::TABL_PROJECT)->GetSELECTQuery(
-            array(ProjectDBObject::COL_NUMBER)
+            array(ProjectDBObject::COL_NUMBER),
+            array(DBTable::EVERYWHERE),
+            array(),
+            array(ProjectDBObject::COL_NUMBER => DBTable::ORDER_DESC),
+            1
         );
         // execute SQL query and save result
         $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
@@ -2047,6 +2057,33 @@ class ProjectServices extends AbstractObjectServices
         return $data + 1;
     }
 
+    private function __get_next_int_number($number)
+    {
+        // create sql params array
+        $sql_params = array(
+            ":" . ProjectDBObject::COL_PROJECT_NUMBER => $number
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(ProjectDBObject::TABL_INT)->GetSELECTQuery(
+            array(ProjectDBObject::COL_NUMBER),
+            array(ProjectDBObject::COL_PROJECT_NUMBER),
+            array(),
+            array(ProjectDBObject::COL_NUMBER => DBTable::ORDER_DESC),
+            1
+        );
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = 0;
+        if (isset($pdos)) {
+            if (($row = $pdos->fetch()) !== false) {
+                $data = intval($row[ProjectDBObject::COL_NUMBER]);
+            } else {
+                $data = 0;
+            }
+        }
+        return $data + 1;
+    }
 
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
 
@@ -2245,7 +2282,7 @@ class ProjectDBObject extends AbstractDBObject
             ->AddUniqueColumns(array(ProjectDBObject::COL_PROJECT_NUMBER, ProjectDBObject::COL_CONTACT_ID));
 
         // --- dol_chadaff table
-        $dol_chadaff = new DBTable(ProjectDBObject::TABL_CONTACT);
+        $dol_chadaff = new DBTable(ProjectDBObject::TABL_CHADAFF);
         $dol_chadaff
             ->AddColumn(ProjectDBObject::COL_PROJECT_NUMBER, DBTable::DT_INT, 11, false, "")
             ->AddColumn(ProjectDBObject::COL_CHADAFF_ID, DBTable::DT_INT, 11, false, "")
@@ -2263,7 +2300,8 @@ class ProjectDBObject extends AbstractDBObject
             ->AddColumn(ProjectDBObject::COL_JEH_ASSIGNED, DBTable::DT_INT, 11, false, "")
             ->AddColumn(ProjectDBObject::COL_PAY, DBTable::DT_INT, 11, false, "")
             ->AddForeignKey(ProjectDBObject::TABL_INT . '_fk1', ProjectDBObject::COL_INT_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
-            ->AddForeignKey(ProjectDBObject::TABL_INT . '_fk2', ProjectDBObject::COL_PROJECT_NUMBER, ProjectDBObject::TABL_PROJECT, ProjectDBObject::COL_NUMBER, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
+            ->AddForeignKey(ProjectDBObject::TABL_INT . '_fk2', ProjectDBObject::COL_PROJECT_NUMBER, ProjectDBObject::TABL_PROJECT, ProjectDBObject::COL_NUMBER, DBTable::DT_CASCADE, DBTable::DT_CASCADE)
+            ->AddUniqueColumns(array(ProjectDBObject::COL_PROJECT_NUMBER, ProjectDBObject::COL_INT_ID));
 
         // -- add tables
         parent::addTable($dol_origin);

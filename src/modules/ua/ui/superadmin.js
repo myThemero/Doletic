@@ -26,20 +26,13 @@ var DoleticUIModule = new function () {
         // DoleticUIModule.drawGraphs();
         // DoleticUIModule.fillValueIndicators();
         // DoleticUIModule.fillTableIndicators();
-        // // fill projects list
-        DoleticUIModule.fillProjectsList();
-        // // fill country field
-        // DoleticUIModule.fillContactSelector();
-        // // fill gender field
-        // DoleticUIModule.fillFirmSelector();
-        // // fill INSA dept field
-        // DoleticUIModule.fillUserSelectors();
-        // // fill position field
-        // DoleticUIModule.fillOriginSelector();
-        // // fill school year field
-        // DoleticUIModule.fillFieldSelector();
-        // //fill division field
-        // DoleticUIModule.fillUaTeamSelector();
+        DoleticUIModule.fillFirmAndUserLists(DoleticUIModule.fillProjectsList);
+        // fill project field field
+        DoleticUIModule.fillFieldSelector();
+        // fill origin field
+        DoleticUIModule.fillOriginSelector();
+        //fill amendment type field
+        DoleticUIModule.fillAmendmentTypeSelector();
         // activate items in tabs
         $('.menu .item').tab();
     };
@@ -137,7 +130,10 @@ var DoleticUIModule = new function () {
      */
     this.getSollicTab = function () {
         $('#project_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
-        $('#sollicTab').load("../modules/ua/ui/templates/sollicTab.html");
+        $('#disable_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
+        $('#sollicTab').load("../modules/ua/ui/templates/sollicTab.html", function () {
+            DoleticMasterInterface.makeDefaultCalendar('disable_calendar');
+        });
     };
 
     /**
@@ -157,24 +153,81 @@ var DoleticUIModule = new function () {
      *    Load the HTML code of the Details Tab
      */
     this.getDetailsTab = function () {
-        $('#detailsTab').load("../modules/ua/ui/templates/detailsTab.html");
+        $('#detailsTab').load("../modules/ua/ui/templates/detailsTab.html", function () {
+            DoleticMasterInterface.makeDefaultCalendar('amend_scalendar');
+            DoleticMasterInterface.makeDefaultCalendar('task_scalendar');
+            DoleticMasterInterface.makeDefaultCalendar('task_ecalendar');
+            DoleticMasterInterface.makeDefaultCalendar('delivered_calendar');
+            DoleticMasterInterface.makeDefaultCalendar('paid_calendar');
+            DoleticMasterInterface.makeDefaultCalendar('sign_calendar');
+            DoleticMasterInterface.makeDefaultCalendar('end_calendar');
+        });
     };
 
     this.hasInputError = false;
 
-    this.fillCountrySelector = function () {
-        UserDataServicesInterface.getAllCountries(function (data) {
+    this.fillFirmAndUserLists = function (callback) {
+        // Optional callback
+        callback = callback || 0;
+        // Get all users
+        window.user_list = [];
+        KernelDBServicesInterface.getAllUserDataWithStatus(function (data) {
             // if no service error
             if (data.code == 0) {
-                // create content var to build html
-                var content = '';
-                //DoleticUIModule.country_list = data.object;
-                // iterate over values to build options
+                var adm_content = "";
+                var int_content = "";
                 for (var i = 0; i < data.object.length; i++) {
-                    content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
+                    window.user_list[data.object[i].user_id] = data.object[i];
+                    if (data.object[i].admm_status != "Non") {
+                        adm_content += '<div class="item" data-value="' + data.object[i].id + '">'
+                            + data.object[i].firstname + ' ' + data.object[i].lastname + '</div>';
+                    }
+                    if (data.object[i].intm_status != "Non") {
+                        int_content += '<div class="item" data-value="' + data.object[i].id + '">'
+                            + data.object[i].firstname + ' ' + data.object[i].lastname + '</div>';
+                    }
                 }
-                // insert html content
-                $('#country_search .menu').html(content).dropdown();
+                $('#auditor_search .menu').html(adm_content);
+                $('#chadaff_search .menu').html(adm_content);
+                $('#int_search .menu').html(int_content);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+        // Get all firms
+        window.firm_list = [];
+        FirmServicesInterface.getAll(function (data) {
+            // if no service error
+            if (data.code == 0) {
+                var content = '';
+                for (var i = 0; i < data.object.length; i++) {
+                    window.firm_list[data.object[i].id] = data.object[i];
+                    content += '<div class="item" data-value="' + data.object[i].id + '">' + data.object[i].name + '</div>';
+                }
+                $('#firm_search .menu').html(content);
+                // Execute callback
+                if (callback != 0) {
+                    callback();
+                }
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+
+        // Get all contacts
+        window.contact_list = [];
+        ContactServicesInterface.getAll(function (data) {
+            // if no service error
+            if (data.code == 0) {
+                var content = '';
+                for (var i = 0; i < data.object.length; i++) {
+                    window.contact_list[data.object[i].id] = data.object[i];
+                    content += '<div class="item" data-value="' + data.object[i].id + '">' + data.object[i].firstname
+                        + ' ' + data.object[i].lastname + '</div>';
+                }
+                $('#contact_search .menu').html(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -182,26 +235,7 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.fillGenderSelector = function () {
-        UserDataServicesInterface.getAllGenders(function (data) {
-            // if no service error
-            if (data.code == 0) {
-                // create content var to build html
-                var content = '';
-                // iterate over values to build options
-                for (var i = 0; i < data.object.length; i++) {
-                    content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
-                }
-                // insert html content
-                $('#gender_search .menu').html(content).dropdown();
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
-    this.fillINSADeptSelector = function () {
+    this.fillFieldSelector = function () {
         UserDataServicesInterface.getAllINSADepts(function (data) {
             // if no service error
             if (data.code == 0) {
@@ -212,7 +246,7 @@ var DoleticUIModule = new function () {
                     content += '<div class="item" data-value="' + data.object[i].label + '">' + data.object[i].label + '</div>';
                 }
                 // insert html content
-                $('#dept_search .menu').html(content).dropdown();
+                $('#field_search .menu').html(content).dropdown();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -220,8 +254,8 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.fillSchoolYearSelector = function () {
-        UserDataServicesInterface.getAllSchoolYears(function (data) {
+    this.fillAmendmentTypeSelector = function () {
+        ProjectServicesInterface.getAllAmendmentTypes(function (data) {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
@@ -231,7 +265,7 @@ var DoleticUIModule = new function () {
                     content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#schoolyear_search .menu').html(content);
+                $('#amtype_search .menu').html(content).dropdown();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -239,8 +273,8 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.fillPositionSelector = function () {
-        UserDataServicesInterface.getAllPositions(function (data) {
+    this.fillOriginSelector = function () {
+        ProjectServicesInterface.getAllOrigins(function (data) {
             // if no service error
             if (data.code == 0) {
                 // create content var to build html
@@ -248,60 +282,10 @@ var DoleticUIModule = new function () {
                 var content = "";
                 // iterate over values to build options
                 for (var i = 0; i < data.object.length; i++) {
-                    if (data.object[i] == "Ancien membre") {
-                        content += '<div id="old_position" class="disabled item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
-                    } else {
-                        content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
-                    }
-                }
-                // insert html content
-                $('#position_search .menu').html(content);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
-    this.fillDivisionSelector = function () {
-        UserDataServicesInterface.getAllDivisions(function (data) {
-            // if no service error
-            if (data.code == 0) {
-                // create content var to build html
-                var content = '';
-                // iterate over values to build options
-                for (var i = 0; i < data.object.length; i++) {
                     content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#division_search .menu').html(content);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-    this.fillAGSelector = function () {
-        UserDataServicesInterface.getAllAgs(function (data) {
-            // if no service error
-            if (data.code == 0) {
-                // create content var to build html
-                var content = '<div class="item" data-value=""></div>';
-                var table_content = '<table class="ui very basic single line striped table" id="agr_table">\
-										<thead><tr><th>Date</th><th>Présents</th><th>Actions</th></tr></thead>\
-										<tbody id="agr_body">';
-                // iterate over values to build options
-                for (var i = 0; i < data.object.length; i++) {
-                    content += '<div class="item" data-value="' + data.object[i].ag + '">' + data.object[i].ag + '</div>';
-                    table_content += "<tr><td>" + data.object[i].ag + "</td><td>" + data.object[i].presence + "</td><td><button class=\"ui icon button\"onClick=\"DoleticUIModule.deleteAGR('" + data.object[i].ag + "'); return false;\"> \
-			  									<i class=\"remove icon\"></i>Retirer \
-											</button></td></tr>";
-                }
-                table_content += '</tbody></table>';
-                // insert html content
-                $('#ag_search .menu').html(content);
-                $('#agr_table_container').html(table_content);
-                DoleticMasterInterface.makeDataTables('agr_table', []);
+                $('#origin_search .menu').html(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -327,9 +311,11 @@ var DoleticUIModule = new function () {
             <th>Société</th> \
             <th>Date</th> \
             <th>Chargé(s) d'affaires</th> \
-                        <th>Consultant(s)</th> \
-                        <th>Corresp. qualité</th> \
-                        <th>Actions</th> \
+            <th>Consultant(s)</th> \
+            <th>Corresp. qualité</th> \
+            <th>Statut</th> \
+            <th>Actions</th\
+                        > \
                     </tr>\
                 </thead>\
                 <tfoot> \
@@ -340,8 +326,9 @@ var DoleticUIModule = new function () {
                         <th>Société</th> \
                         <th>Date</th> \
                         <th>Chargé(s) d'affaires</th> \
-            <th>Consultant(s)</th> \
-            <th>Corresp. qualité</th> \
+                        <th>Consultant(s)</th> \
+                        <th>Corresp. qualité</th> \
+                        <th>Statut</th> \
             <th></th> \
             </tr>\
             </tfoot>\ ";
@@ -360,19 +347,31 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.select_filter,
                     DoleticMasterInterface.reset_filter
                 ];
 
                 for (var i = 0; i < data.object.length; i++) {
+                    var chadaffHtml = "";
+                    for (var j = 0; j < data.object[i].chadaff_id.length; j++) {
+                        chadaffHtml += data.object[i].chadaff_id[j] + "<br>";
+                    }
+                    chadaffHtml = j == 0 ? "<i>Non assigné</i>" : chadaffHtml;
+                    var intHtml = "";
+                    for (var k = 0; k < data.object[i].int_id.length; k++) {
+                        intHtml += data.object[i].int_id[k] + "<br>";
+                    }
+                    intHtml = k == 0 ? "<i>Non assigné</i>" : intHtml;
                     var row = "<tr>" +
-                        "<td><button class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
+                        "<td><button onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                         "<td>" + data.object[i].name + "</td>" +
                         "<td>" + data.object[i].field + "</td>" +
-                        "<td>" + data.object[i].firm_id + "</td>" +
+                        "<td>" + window.firm_list[data.object[i].firm_id].name + "</td>" +
                         "<td>" + data.object[i].creation_date + "</td>" +
-                        "<td>" + data.object[i].chadaff_id + "</td>" + // Change this
-                        "<td>" + data.object[i].int_id + "</td>" + // Change this
-                        "<td>" + data.object[i].auditor_id + "</td>"; // Change this
+                        "<td>" + chadaffHtml + "</td>" + // Change this
+                        "<td>" + intHtml + "</td>" + // Change this
+                        "<td>" + (data.object[i].auditor_id != null ? window.user_list[data.object[i].auditor_id].firstname + ' ' + window.user_list[data.object[i].auditor_id].lastname : "<i>Non assigné</i>") + "</td>" +
+                        "<td>" + data.object[i].status + "</td>";
 
                     if (data.object[i].disabled) {
                         disabled_content += row + "<td><div class=\"ui icon buttons\">" +
@@ -382,14 +381,14 @@ var DoleticUIModule = new function () {
                             "<button class=\"ui icon button\" data-tooltip=\"Réactiver\" onClick=\"DoleticUIModule.restoreProject(" + data.object[i].number + "); return false;\">" +
                             "<i class=\"remove icon\"></i>" +
                             "</button>" +
-                            "</div>" +
+                            "</div></td>" +
                             "</tr>";
                     } else if (data.object[i].archived) {
                         archived_content += row + "<td><div class=\"ui icon buttons\">" +
                             "<button class=\"ui icon button\" data-tooltip=\"Restaurer\" onClick=\"DoleticUIModule.unarchiveProject(" + data.object[i].number + "); return false;\">" +
                             "<i class=\"write icon\"></i>" +
                             "</button>" +
-                            "</div>" +
+                            "</div></td>" +
                             "</tr>";
                     } else if (data.object[i].sign_date == null) {
                         sollic_content += row + "<td><div class=\"ui icon buttons\">" +
@@ -399,7 +398,7 @@ var DoleticUIModule = new function () {
                             "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                             "<i class=\"remove icon\"></i>" +
                             "</button>" +
-                            "</div>" +
+                            "</div></td>" +
                             "</tr>";
                     } else {
                         project_content += row + "<td><div class=\"ui icon buttons\">" +
@@ -409,7 +408,7 @@ var DoleticUIModule = new function () {
                             "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                             "<i class=\"remove icon\"></i>" +
                             "</button>" +
-                            "</div>" +
+                            "</div></td>" +
                             "</tr>";
                     }
                 }
@@ -456,16 +455,88 @@ var DoleticUIModule = new function () {
         $('.menu .item').tab();
         $('.dropdown').dropdown();
 
-        UaDBServicesInterface.getFullProjectByNumber(number, function (data) {
+        ProjectServicesInterface.getByNumber(number, function (data) {
             // if no service error
             if (data.code == 0 && data.object != "[]") {
-                $('#det').show();
+                // Fill basic details
+                $('#det_name').html(data.object.name);
+                $('#det_description').html(data.object.description);
+                $('#det_field').html(data.object.field)
+                $('#det_origin').html(data.object.origin);
+                $('#det_status').html(data.object.status);
+                $('#det_creation').html(data.object.creation_date);
+                $('#det_mgmt').html(data.object.mgmt_fee + '€');
+                $('#det_app').html(data.object.app_fee + '€');
+                $('#det_rebilled').html(data.object.rebilled_fee + '€');
+                $('#det_advance').html(data.object.advance + '€');
+                var signhtml = "";
+                if (data.object.end_date != null) {
+                    signhtml = "<i>" + data.object.sign_date + "</i>";
+                } else if (data.object.sign_date == null) {
+                    signhtml = "<button class=\"ui green button\" " +
+                        "onClick=\"DoleticUIModule.showSignForm(); return false;\">" +
+                        "Etude signée" +
+                        "</button>";
+                } else {
+                    signhtml = "<button class=\"ui red button\" " +
+                        "onClick=\"DoleticUIModule.unsignProject(" + data.object.number + "); return false;\"" +
+                        "data-tooltip=\"Annuler la signature\">" +
+                        data.object.sign_date +
+                        "</button>";
+                }
+                $('#det_sign').html(signhtml);
+                var endhtml = "";
+                if (data.object.sign_date == null) {
+                    endhtml = "<i>Etude non signée</i>";
+                } else if (data.object.end_date == null) {
+                    endhtml = "<button class=\"ui green button\" " +
+                        "onClick=\"DoleticUIModule.showEndForm(); return false;\">" +
+                        "Etude terminée" +
+                        "</button>";
+                } else {
+                    endhtml = "<button class=\"ui red button\" " +
+                        "onClick=\"DoleticUIModule.unendProject(" + data.object.number + "); return false;\"" +
+                        "data-tooltip=\"Annuler la clôture\">" +
+                        data.object.end_date +
+                        "</button>";
+                }
+                $('#det_end').html(endhtml);
                 var htmlTitle = "Détails de l'étude " + data.object.number;
                 if (data.object.disabled) {
                     htmlTitle += " (désactivé)";
                 }
-                $('#det').html(htmlTitle);
-                $('#det').click();
+                if (data.object.auditor_id != null) {
+                    var auditor = window.user_list[data.object.auditor_id];
+                    $('#auditor_name').html(auditor.firstname + ' ' + auditor.lastname);
+                    $('#auditor_tel').html(auditor.tel);
+                    $('#auditor_mail').html(auditor.email);
+                    $('#auditor_data').show();
+                    $('#auditor_form').hide();
+                } else {
+                    $('#auditor_data').hide();
+                    $('#auditor_form').show();
+                }
+                $('#auditor_btn').attr('onClick', 'DoleticUIModule.assignAuditor(' + number + '); return false;');
+                $('#editsollic_modal_btn').attr('onClick', 'DoleticUIModule.editProject(' + number + '); return false;');
+                $('#disableproject_btn').attr('onClick', 'DoleticUIModule.disableProject(' + number + '); return false;');
+                $('#addamend_modal_btn').attr('onClick', 'DoleticUIModule.showNewAmendmentForm(' + number + '); return false');
+                $('#addtask_modal_btn').attr('onClick', 'DoleticUIModule.showNewTaskForm(' + number + '); return false');
+                $('#contact_btn').attr('onClick', 'DoleticUIModule.addContact(' + number + '); return false;');
+                $('#int_btn').attr('onClick', 'DoleticUIModule.addInt(' + number + '); return false;');
+                $('#chadaff_btn').attr('onClick', 'DoleticUIModule.addChadaff(' + number + '); return false;');
+                $('#amend_btn').attr('onClick', 'DoleticUIModule.insertNewAmendment(' + number + '); return false;');
+                $('#task_btn').attr('onClick', 'DoleticUIModule.insertNewTask(' + number + '); return false;');
+                $('#sign_btn').attr('onClick', 'DoleticUIModule.signProject(' + number + '); return false;');
+                $('#end_btn').attr('onClick', 'DoleticUIModule.endProject(' + number + '); return false;');
+
+                // Fill lists
+                DoleticUIModule.fillContactList(number);
+                DoleticUIModule.fillIntList(number);
+                DoleticUIModule.fillChadaffList(number);
+                DoleticUIModule.fillAmendmentList(number);
+                DoleticUIModule.fillTaskList(number);
+
+                $('#det').html(htmlTitle).show().click();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -474,183 +545,500 @@ var DoleticUIModule = new function () {
         window.currentDetails = number;
     };
 
+    this.fillContactList = function (number) {
+        ProjectServicesInterface.getAllContactsByProject(number, function (data) {
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                var content = "";
+                for (var i = 0; i < data.object.length; i++) {
+                    var contact = window.contact_list[data.object[i].contact_id];
+                    content += '<tr><td>' + contact.firstname + ' ' + contact.lastname + '</td>' +
+                        '<td>' + contact.phone + '</td>' +
+                        '<td><a href=\"mailto:"' + contact.email + '" target="_blank">' + contact.email + '</a></td>' +
+                        '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeContact('
+                        + number + ', ' + contact.id + '); return false;"><i class="remove icon"></i>' +
+                        '</button> </td></tr>';
+                }
+                $('#project_contacts_body').html(content);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.fillIntList = function (number) {
+        ProjectServicesInterface.getAllIntsByProject(number, function (data) {
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                var content = "";
+                for (var i = 0; i < data.object.length; i++) {
+                    var int = window.user_list[data.object[i].int_id];
+                    content += '<tr><td>' + int.firstname + ' ' + int.lastname + '</td>' +
+                        '<td>' + int.tel + '</td>' +
+                        '<td><a href=\"mailto:"' + int.email + '" target="_blank">' + int.email + '</a></td>' +
+                        '<td>' + data.object[i].jeh_assigned + '</td>' +
+                        '<td>' + data.object[i].pay + '€</td>' +
+                        '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeInt('
+                        + number + ', ' + int.id + '); return false;"><i class="remove icon"></i>' +
+                        '</button> </td></tr>';
+                }
+                $('#project_ints_body').html(content);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.fillChadaffList = function (number) {
+        ProjectServicesInterface.getAllChadaffsByProject(number, function (data) {
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                var content = "";
+                for (var i = 0; i < data.object.length; i++) {
+                    var chadaff = window.user_list[data.object[i].chadaff_id];
+                    content += '<tr><td>' + chadaff.firstname + ' ' + chadaff.lastname + '</td>' +
+                        '<td>' + chadaff.tel + '</td>' +
+                        '<td><a href=\"mailto:"' + chadaff.email + '" target="_blank">' + chadaff.email + '</a></td>' +
+                        '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeChadaff('
+                        + number + ', ' + chadaff.id + '); return false;"><i class="remove icon"></i>' +
+                        '</button> </td></tr>';
+                }
+                $('#project_chadaffs_body').html(content);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.fillTaskList = function (number) {
+        TaskServicesInterface.getByProject(number, function (data) {
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                var content = "";
+                for (var i = 0; i < data.object.length; i++) {
+                    var task = data.object[i];
+                    content += '<tr>' +
+                        '<td><div class="ui icon buttons">' +
+                        (i == 0 ? '' : ('<button class="ui icon button" data-tooltip="Monter" ' +
+                        'onClick="DoleticUIModule.switchTask(' + data.object[task.number - 1].id +
+                        ', ' + data.object[task.number - 2].id + ', ' + number + ');">' +
+                        '<i class="caret up icon"></i>' +
+                        '</button>')) +
+                        ( i == data.object.length - 1 ? '' : ('<button class="ui icon button" data-tooltip="Descendre" ' +
+                        'onClick="DoleticUIModule.switchTask(' + data.object[task.number - 1].id +
+                        ', ' + data.object[task.number].id + ', ' + number + ');">' +
+                        '<i class="caret down icon"></i>' +
+                        '</button>')) +
+                        '</div></td>' +
+                        '<td><button class="ui basic button" data-tooltip="' + task.description + '">' + task.name + '</button></td>' +
+                        '<td>' + task.jeh_amount + '</td>' +
+                        '<td>' + task.jeh_cost + '€</td>' +
+                        '<td>' + task.start_date + '</td>' +
+                        '<td>' + task.end_date + '</td>' +
+                        '<td>' + (task.ended ? 'Oui' : 'Non') + '</td>' +
+                        '<td>' +
+                        '<button class="ui icon button" onClick="DoleticUIModule.showDeliveryModal(' + task.id + '); return false;">' +
+                        '<i class="write icon"></i>' +
+                        'Gérer' +
+                        '</button>' +
+                        '</td>' +
+                        '<td>' +
+                        '<div class="ui icon buttons">' +
+                        '<button class="ui icon button" data-tooltip="Terminer" onClick="DoleticUIModule.' + (task.ended ? 'un' : '') + 'endTask(' + task.id + ', ' + number + '); return false;">' +
+                        '<i class="' + (task.ended ? 'reply' : 'checkmark') + ' icon"></i>' +
+                        '</button>' +
+                        '<button class="ui icon button" data-tooltip="Modifier" onClick="DoleticUIModule.editTask(' + task.id + ', ' + number + '); return false;">' +
+                        '<i class="write icon"></i>' +
+                        '</button>' +
+                        '<button class="ui icon button" data-tooltip="Supprimer" onClick="DoleticUIModule.deleteTask(' + task.id + ', ' + number + '); return false;">' +
+                        '<i class="remove icon"></i>' +
+                        '</button>' +
+                        '</div>' +
+                        '</td>' +
+                        '</tr>';
+                }
+                $('#project_tasks_body').html(content);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.fillDeliveryList = function (taskId) {
+        TaskServicesInterface.getDeliveryByTask(taskId, function (data) {
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                var content = "";
+                for (var i = 0; i < data.object.length; i++) {
+                    var delivery = data.object[i];
+                    content += '<tr>' +
+                        '<td><button class="ui basic button" data-tooltip="' + delivery.content + '">' + delivery.number + '</button></td>' +
+                        '<td>' + (delivery.billed ? 'Oui' : 'Non') + '</td>' +
+                        '<td>' + (delivery.delivered ?
+                        '<button class="ui button" data-tooltip="Annuler livraison" ' +
+                        'onClick="DoleticUIModule.undeliverDelivery(' + delivery.id + ', ' + delivery.task_id + ');">' +
+                        delivery.delivery_date +
+                        '</button>' :
+                        '<button class="ui button" data-tooltip="Marquer comme livré" ' +
+                        'onClick="DoleticUIModule.deliverDelivery(' + delivery.id + ', ' + delivery.task_id + ');">' +
+                        'Non' +
+                        '</button>') +
+                        '</td>' +
+                        '<td>' + (delivery.paid ?
+                        '<button class="ui button" data-tooltip="Annuler paiement" ' +
+                        'onClick="DoleticUIModule.unpayDelivery(' + delivery.id + ', ' + delivery.task_id + ');">' +
+                        delivery.payment_date +
+                        '</button>' :
+                        '<button class="ui button" data-tooltip="Marquer comme payé" ' +
+                        'onClick="DoleticUIModule.payDelivery(' + delivery.id + ', ' + delivery.task_id + ');">' +
+                        'Non' +
+                        '</button>') +
+                        '</td>' +
+                        '<td>' +
+                        '<div class="ui icon buttons">' +
+                        '<button class="ui icon button" data-tooltip="Modifier" ' +
+                        'onClick="DoleticUIModule.editDelivery(' + delivery.id + ', ' + taskId + '); return false;">' +
+                        '<i class="write icon"></i>' +
+                        '</button>' +
+                        '<button class="ui icon button" data-tooltip="Supprimer" ' +
+                        'onClick="DoleticUIModule.deleteDelivery(' + delivery.id + ', ' + taskId + '); return false;">' +
+                        '<i class="remove icon"></i>' +
+                        '</button>' +
+                        '</div>' +
+                        '</td>' +
+                        '</tr>';
+                }
+                $('#task_delivery_body').html(content);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.fillAmendmentList = function (number) {
+        ProjectServicesInterface.getAllAmendmentsByProject(number, function (data) {
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                var content = "";
+                for (var i = 0; i < data.object.length; i++) {
+                    var amendment = data.object[i];
+                    content += '<tr>' +
+                        '<td>' + amendment.creation_date + '</td>' +
+                        '<td>' + amendment.type + '</td>' +
+                        '<td>' +
+                        '<button class="ui button" onClick="DoleticUIModule.showContentModal(\'' + amendment.content + '\'); return false;">Afficher</button>' +
+                        '</td>' +
+                        '<td>' + (amendment.attributable ? 'Oui' : 'Non') + '</td>' +
+                        '<td>' +
+                        '<div class="ui icon buttons">' +
+                        '<button class="ui icon button" data-tooltip="Modifier" ' +
+                        'onClick="DoleticUIModule.editAmendment(' + amendment.id + ', ' + number + '); return false;">' +
+                        '<i class="write icon"></i>' +
+                        '</button>' +
+                        '<button class="ui icon button" data-tooltip="Supprimer" ' +
+                        'onClick="DoleticUIModule.deleteAmendment(' + amendment.id + ', ' + number + '); return false;">' +
+                        '<i class="remove icon"></i>' +
+                        '</button>' +
+                        '</div>' +
+                        '</td>' +
+                        '</tr>'
+                }
+                $('#project_amendments_body').html(content);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.showContentModal = function (content) {
+        $('#content_modal_text').html(content);
+        $('#content_modal').modal('show');
+    };
+
+    this.showDeliveryModal = function (taskId) {
+        DoleticUIModule.clearNewDeliveryForm(taskId);
+        DoleticUIModule.fillDeliveryList(taskId);
+        $('#delivery_modal').modal('show');
+    };
+
+    this.hideContentModal = function () {
+        $('#content_modal').modal('hide');
+    };
+
+    this.hideDeliveryModal = function (taskId) {
+        $('#taskid').val(-1);
+        $('#delivery_modal').modal('hide');
+    };
+
     this.clearNewProjectForm = function () {
-        $('#user_form')[0].reset();
-        $('#user_form h4').html("Ajout d'un membre");
-        $('#firstname').prop('readonly', false);
-        $('#lastname').prop('readonly', false);
-        $('#old_position').addClass('disabled');
-        $('#user_form .dropdown').dropdown('restore defaults');
-
-        $('#adduser_btn').html("Ajouter");
-        $('#adduser_btn').attr("onClick", "DoleticUIModule.insertNewUser(); return false;");
+        $('#project_form')[0].reset();
+        $('#project_form h4').html("Ajout d'une sollicitation");
+        $('#project_form .dropdown').dropdown('restore defaults');
+        $('#current_field').show();
+        $('#addproject_btn').html("Ajouter").attr("onClick", "DoleticUIModule.insertNewProject(); return false;");
     };
 
-    this.clearNewTeamForm = function () {
-        $('#team_form')[0].reset();
-        $('#team_form h4').html("Ajout d'une équipe");
-        $('#team_form .dropdown').dropdown('restore defaults');
-        $('#addteam_btn').html("Ajouter");
-        $('#addteam_btn').attr("onClick", "DoleticUIModule.insertNewTeam(); return false;");
+    this.clearAddChadaff = function () {
+        $('#chadaff_search').dropdown('restore defaults');
     };
 
-    this.clearNewAdmMembershipForm = function (userId) {
-        $('#admm_form')[0].reset();
-        $('#admm_form h4').html("Ajout d'une adhésion");
-        $('#admm_form .dropdown').dropdown('restore defaults');
-        $('#admm_btn').html("Ajouter");
-        $('#admm_btn').attr("onClick", "DoleticUIModule.insertNewAdmMembership(" + userId + "); return false;");
+    this.clearAddInt = function () {
+        $('#int_search').dropdown('restore defaults');
+        $('#jehassigned').val('');
+        $('#jehpay').val('');
     };
 
-    this.clearNewIntMembershipForm = function (userId) {
-        $('#intm_form')[0].reset();
-        $('#intm_form h4').html("Ajout d'une adhésion");
-        $('#intm_form .dropdown').dropdown('restore defaults');
-        $('#intm_btn').html("Ajouter");
-        $('#intm_btn').attr("onClick", "DoleticUIModule.insertNewIntMembership(" + userId + "); return false;");
+    this.clearAddContact = function () {
+        $('#contact_search').dropdown('restore defaults');
     };
 
-    this.clearNewAGRForm = function () {
-        $('#agr_date').val("");
-        $('#agr_pr').val("");
+    this.clearDisableProjectForm = function (number) {
+        $('#disable_form')[0].reset();
+        $('#disable_number').val(number);
     };
 
-    this.insertNewUser = function () {
+    this.clearNewAmendmentForm = function (number) {
+        $('#amend_form h4').html("Ajout d'un avenant");
+        $('#amend_form')[0].reset();
+        $('#amtype_search').dropdown('restore defaults');
+        $('#amend_btn').html("Ajouter").attr("onClick", "DoleticUIModule.insertNewAmendment(" + number + "); return false;");
+    };
+
+    this.clearNewTaskForm = function (number) {
+        $('#task_form')[0].reset();
+        $('#task_form h4').html("Ajout d'une phase");
+        $('#task_form .dropdown').dropdown('restore defaults');
+        $('#task_btn').html("Ajouter").attr("onClick", "DoleticUIModule.insertNewTask(" + number + "); return false;");
+    };
+
+    this.clearNewDeliveryForm = function (taskId) {
+        $('#delivery_form')[0].reset();
+        $('#taskid').val(taskId);
+        $('#delivery_form h4').html("Ajout d'un livrable");
+        $('#delivery_form .dropdown').dropdown('restore defaults');
+        $('#delivery_btn').html("Ajouter").attr("onClick", "DoleticUIModule.insertNewDelivery(" + taskId + "); return false;");
+    };
+
+    this.insertNewProject = function () {
         // ADD OTHER TESTS
-        if (DoleticUIModule.checkNewUserForm()) {
-            // generate credentials according to db
-            UserServicesInterface.generateCredentials($('#firstname').val().trim(), $('#lastname').val().trim(), function (data) {
-                // Insert new user in db
-                UserServicesInterface.insert(data.object.username, data.object.pass, function (data) {
-                    // Insert user data in db SELECT ?
-                    UserDataServicesInterface.insert(data.object,
-                        $('#gender_search').dropdown('get value'),
-                        $('#firstname').val(),
-                        $('#lastname').val(),
-                        $('#birthdate').val(),
-                        $('#tel').val(),
-                        $('#mail').val(),
-                        $('#address').val(),
-                        $('#city').val(),
-                        $('#postalcode').val(),
-                        $('#country_search').dropdown('get value'),
-                        $('#schoolyear_search').dropdown('get value'),
-                        $('#dept_search').dropdown('get value'),
-                        $('#position_search').dropdown('get value'),
-                        $('#ag_search').dropdown('get value'),
-                        DoleticUIModule.addUserHandler);
-                });
-            });
+        if (DoleticUIModule.checkNewProjectForm()) {
+            // Insert new project in db
+            ProjectServicesInterface.insert(
+                $('#name').val(),
+                $('#description').val(),
+                $('#origin_search').dropdown('get value'),
+                $('#field_search').dropdown('get value'),
+                $('#firm_search').dropdown('get value'),
+                $('#mgmt').val(),
+                $('#app').val(),
+                $('#rebilled').val(),
+                $('#advance').val(),
+                $('#secret').prop('checked') ? 1 : 0,
+                $('#critical').prop('checked') ? 1 : 0,
+                $('#current').prop('checked') ? 1 : 0,
+                DoleticUIModule.addProjectHandler);
+        } else {
+
         }
     };
 
-    this.insertNewTeam = function () {
-        if (DoleticUIModule.checkNewTeamForm()) {
+    this.insertNewTask = function (number) {
+        if (DoleticUIModule.checkNewTaskForm()) {
             // retreive missing information
-            TeamServicesInterface.insert(
+            TaskServicesInterface.insert(
+                number,
                 $('#tname').val(),
-                $('#leader_search').dropdown('get value'),
-                $('#division_search').dropdown('get value'),
-                DoleticUIModule.addTeamHandler
+                $('#tdescription').val(),
+                $('#jehamount').val(),
+                $('#jehcost').val(),
+                $('#sdatea').val(),
+                $('#edate').val(),
+                function (data) {
+                    DoleticUIModule.addTaskHandler(data, number);
+                }
             );
         }
     };
 
-    this.insertNewAdmMembership = function (userId) {
-        if (DoleticUIModule.checkNewAdmMembershipForm()) {
-            // retrieve missing information
-            var options = document.getElementById("docs_adm").options;
-            AdmMembershipServicesInterface.insert(
-                userId, // Retenir l'utilisateur concerné
-                $('#sdatea').val(),
-                $('#edate').val(),
-                Boolean(options[0].selected),
-                Boolean(options[1].selected),
-                Boolean(options[2].selected),
+    this.insertNewDelivery = function (taskId) {
+        if (DoleticUIModule.checkNewDeliveryForm()) {
+            // retreive missing information
+            TaskServicesInterface.insertDelivery(
+                taskId,
+                $('#delnumber').val(),
+                $('#delcontent').val(),
+                $('#billed').prop('checked') ? 1 : 0,
                 function (data) {
-                    DoleticUIModule.addAdmMembershipHandler(userId, data);
-                });
-        }
-    };
-
-    this.insertNewIntMembership = function (userId) {
-        if (DoleticUIModule.checkNewIntMembershipForm()) {
-            // retrieve missing information
-            var options = document.getElementById("docs_int").options;
-            IntMembershipServicesInterface.insert(
-                userId,
-                $('#sdatei').val(),
-                Boolean(options[0].selected),
-                Boolean(options[1].selected),
-                Boolean(options[2].selected),
-                Boolean(options[3].selected),
-                Boolean(options[4].selected),
-                $('#secu_int').val(),
-                function (data) {
-                    DoleticUIModule.addIntMembershipHandler(userId, data);
-                });
-        }
-    };
-
-    this.insertNewAGR = function () {
-        if (DoleticUIModule.checkNewAGRForm()) {
-            var ag = $("#agr_date").val();
-            var pr = $("#agr_pr").val();
-            UserDataServicesInterface.insertAg(ag, pr, function (data) {
-                // if no service error
-                if (data.code == 0) {
-                    DoleticUIModule.clearNewAGRForm();
-                    // alert user that creation is a success
-                    DoleticMasterInterface.showSuccess("Création réussie !", "L'AGR a été ajoutée avec succès !");
-                    // fill AGR list
-                    DoleticUIModule.fillAGSelector();
-                    DoleticUIModule.cancelNewAGRForm();
-                } else {
-                    // use default service service error handler
-                    DoleticServicesInterface.handleServiceError(data);
+                    DoleticUIModule.addDeliveryHandler(data, taskId);
                 }
-            });
+            );
         }
     };
 
-    this.insertTeamMember = function (id) {
-        var options = $('#add_tmember_select' + id).dropdown('get value').split(',');
-        TeamServicesInterface.insertMember(id, options, function (data) {
-            // if no service error
-            if (data.code == 0) {
-                DoleticUIModule.updateTeamModal(id);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
+    this.insertNewAmendment = function (number) {
+        if (DoleticUIModule.checkNewAmendmentForm()) {
+            // retreive missing information
+            ProjectServicesInterface.insertAmendment(
+                number,
+                $('#amtype_search').dropdown('get value'),
+                $('#content_field').val(),
+                $('#attributable').prop('checked') ? 1 : 0,
+                $('#amdate').val(),
+                function (data) {
+                    DoleticUIModule.addAmendmentHandler(data, number);
+                }
+            );
+        }
+    };
+
+    this.assignAuditor = function (number) {
+        ProjectServicesInterface.assignProjectAuditor(
+            number,
+            $('#auditor_search').dropdown('get value'),
+            function (data) {
+                DoleticUIModule.editProjectHandler(data, number);
             }
+        );
+    };
+
+    this.editAuditor = function () {
+        $('#auditor_data').hide();
+        $('#auditor_form').show();
+    };
+
+    this.addChadaff = function (number) {
+        ProjectServicesInterface.assignProjectChadaff(
+            number,
+            $('#chadaff_search').dropdown('get value'),
+            function () {
+                DoleticUIModule.clearAddChadaff();
+                DoleticUIModule.fillChadaffList(number);
+            }
+        );
+    };
+
+    this.addContact = function (number) {
+        ProjectServicesInterface.assignProjectContact(
+            number,
+            $('#contact_search').dropdown('get value'),
+            function () {
+                DoleticUIModule.clearAddContact();
+                DoleticUIModule.fillContactList(number);
+            }
+        );
+    };
+
+    this.addInt = function (number) {
+        ProjectServicesInterface.assignProjectInt(
+            number,
+            $('#int_search').dropdown('get value'),
+            $('#jehassigned').val(),
+            $('#jehpay').val(),
+            function () {
+                DoleticUIModule.clearAddInt();
+                DoleticUIModule.fillIntList(number);
+            }
+        );
+    };
+
+    this.removeChadaff = function (number, id) {
+        // Confirmation
+        DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove user icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir supprimer le chargé d'affaires ? Il ne sera plus lié à l'étude.",
+            function () {
+                ProjectServicesInterface.removeProjectChadaff(
+                    number,
+                    id,
+                    function () {
+                        DoleticMasterInterface.hideConfirmModal();
+                        DoleticUIModule.fillChadaffList(number);
+                    }
+                );
+            },
+            DoleticMasterInterface.hideConfirmModal
+        );
+    };
+
+    this.removeContact = function (number, id) {
+        // Confirmation
+        DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove user icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir supprimer le contact ? Il ne sera plus lié à l'étude.",
+            function () {
+                ProjectServicesInterface.removeProjectContact(
+                    number,
+                    id,
+                    function () {
+                        DoleticMasterInterface.hideConfirmModal();
+                        DoleticUIModule.fillContactList(number);
+                    }
+                );
+            },
+            DoleticMasterInterface.hideConfirmModal
+        );
+    };
+
+    this.removeInt = function (number, id) {
+        // Confirmation
+        DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove user icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir supprimer le consultant ? Il ne sera plus lié à l'étude.",
+            function () {
+                ProjectServicesInterface.removeProjectInt(
+                    number,
+                    id,
+                    function () {
+                        DoleticMasterInterface.hideConfirmModal();
+                        DoleticUIModule.fillIntList(number);
+                    }
+                );
+            },
+            DoleticMasterInterface.hideConfirmModal
+        );
+    };
+
+    this.endTask = function (id, number) {
+        TaskServicesInterface.endTask(id, function (data) {
+            DoleticUIModule.editTaskHandler(data, number);
         });
     };
 
-    this.editUser = function (id, user_id) {
-        $('#user_form h4').html("Edition d'un membre");
-        UserDataServicesInterface.getById(id, function (data) {
+    this.unendTask = function (id, number) {
+        TaskServicesInterface.unendTask(id, function (data) {
+            DoleticUIModule.editTaskHandler(data, number);
+        });
+    };
+
+    this.switchTask = function (id1, id2, number) {
+        TaskServicesInterface.switchTaskNumbers(id1, id2, function (data) {
+            DoleticUIModule.editTaskHandler(data, number);
+        });
+    };
+
+    this.editProject = function (number) {
+        $('#project_form h4').html("Edition d'une étude");
+        ProjectServicesInterface.getByNumber(number, function (data) {
             // if no service error
             if (data.code == 0 && data.object != "[]") {
-                $('#old_position').removeClass('disabled');
-                $('#firstname').val(data.object.firstname);
-                $('#firstname').prop('readonly', true);
-                $('#lastname').val(data.object.lastname);
-                $('#lastname').prop('readonly', true);
-                $('#birthdate').val(data.object.birthdate);
-                $('#city').val(data.object.city);
-                $('#address').val(data.object.address);
-                $('#postalcode').val(data.object.postal_code);
-                $('#tel').val(data.object.tel);
-                $('#mail').val(data.object.email);
-                $('#schoolyear_search').dropdown("set selected", data.object.school_year);
-                $('#dept_search').dropdown("set selected", data.object.insa_dept);
-                $('#gender_search').dropdown("set selected", data.object.gender);
-                $('#position_search').dropdown("set selected", data.object.position[0].label);
-                $('#country_search').dropdown("set selected", data.object.country);
-                $('#ag_search').dropdown("set selected", data.object.ag);
-                $('#adduser_btn').html("Confirmer");
-                $('#adduser_btn').attr("onClick", "DoleticUIModule.updateUser(" + id + ", " + user_id + "); return false;");
-                $('#user_form_modal').modal('show');
+                $('#name').val(data.object.name);
+                $('#description').val(data.object.description);
+                $('#origin_search').dropdown("set selected", data.object.origin);
+                $('#field_search').dropdown("set selected", data.object.field);
+                $('#firm_search').dropdown("set selected", data.object.firm_id);
+                $('#mgmt').val(data.object.mgmt_fee);
+                $('#app').val(data.object.app_fee);
+                $('#rebilled').val(data.object.rebilled_fee);
+                $('#advance').val(data.object.advance);
+                $('#secret').val(data.object.secret);
+                $('#critical').val(data.object.critical);
+                $('#current_field').hide();
+                $('#addproject_btn').html("Confirmer");
+                $('#addproject_btn').attr("onClick", "DoleticUIModule.updateProject(" + number + "); return false;");
+                $('#project_form_modal').modal('show');
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -658,46 +1046,72 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.editTeam = function (id) {
-        $('#team_form h4').html("Edition d'une équipe");
-        TeamServicesInterface.getById(id, function (data) {
+    this.showSignForm = function () {
+        $('#sign_form')[0].reset();
+        $('#sign_form_modal').modal('show');
+    };
+
+    this.signProject = function (number) {
+        ProjectServicesInterface.signProject(
+            number,
+            $('#signdate').val(),
+            function (data) {
+                $('#sign_form_modal').modal('hide');
+                DoleticUIModule.editProjectHandler(data, number);
+            }
+        );
+    };
+
+    this.unsignProject = function (number) {
+        // Confirmation
+        DoleticMasterInterface.showConfirmModal("Confirmer l'annulation ?", "\<i class=\"remove user icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir annuler la signature ? Le chargé d'affaires pourra de nouveau modifier les données",
+            function () {
+                DoleticUIModule.unsignProjectHandler(number);
+            },
+            DoleticMasterInterface.hideConfirmModal);
+    };
+
+    this.showEndForm = function () {
+        $('#end_form')[0].reset();
+        $('#end_form_modal').modal('show');
+    };
+
+    this.endProject = function (number) {
+        ProjectServicesInterface.endProject(
+            number,
+            $('#enddate').val(),
+            function (data) {
+                $('#end_form_modal').modal('hide');
+                DoleticUIModule.editProjectHandler(data, number);
+            }
+        );
+    };
+
+    this.unendProject = function (number) {
+        // Confirmation
+        DoleticMasterInterface.showConfirmModal("Confirmer l'annulation ?", "\<i class=\"remove user icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir annuler la clôture ?",
+            function () {
+                DoleticUIModule.unendProjectHandler(number);
+            },
+            DoleticMasterInterface.hideConfirmModal);
+    };
+
+    this.editTask = function (id, number) {
+        $('#task_form h4').html("Edition d'une phase");
+        TaskServicesInterface.getById(id, function (data) {
             // if no service error
             if (data.code == 0 && data.object != "[]") {
                 $('#tname').val(data.object.name);
-                $('#division').dropdown("set selected", data.object.division);
-                $('#leader').dropdown("set selected", data.object.leader_id);
-                $('#addteam_btn').html("Confirmer");
-                $('#addteam_btn').attr("onClick", "DoleticUIModule.updateTeam(" + id + "); return false;");
-                $('#team_form_modal').modal('show');
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
-    this.editAdmMembership = function (id, userId) {
-        $('#admm_form_modal').modal('show');
-        $('#admm_form h4').html("Edition d'une adhésion");
-        AdmMembershipServicesInterface.getById(id, function (data) {
-            // if no service error
-            if (data.code == 0 && data.object != "[]") {
+                $('#tasknumber').val(data.object.number);
+                $('#tdescription').val(data.object.description);
+                $('#jehamount').val(data.object.jeh_amount);
+                $('#jehcost').val(data.object.jeh_cost);
                 $('#sdatea').val(data.object.start_date);
                 $('#edate').val(data.object.end_date);
-                $('#ag').dropdown("set selected", Number(data.object.ag) - 1);
-                var options = [];
-                if (data.object.fee == 1) {
-                    options.push("0");
-                }
-                if (data.object.form == 1) {
-                    options.push("1");
-                }
-                if (data.object.certif == 1) {
-                    options.push("2");
-                }
-                $('#docs_adm').dropdown("set exactly", options);
-                $('#admm_btn').html("Confirmer");
-                $('#admm_btn').attr("onClick", "DoleticUIModule.updateAdmMembership(" + id + ", " + userId + "); return false;");
+                $('#task_btn').html("Confirmer").attr("onClick", "DoleticUIModule.updateTask(" + id + ", " + number + "); return false;");
+                $('#task_form_modal').modal('show');
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -705,33 +1119,17 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.editIntMembership = function (id, userId) {
-        $('#intm_form_modal').modal('show');
-        $('#intm_form h4').html("Edition d'une adhésion");
-        IntMembershipServicesInterface.getById(id, function (data) {
+    this.editDelivery = function (id, taskId) {
+        $('#delivery_form').show().find('h4').html("Edition d'un livrable");
+        TaskServicesInterface.getDeliveryById(id, function (data) {
             // if no service error
             if (data.code == 0 && data.object != "[]") {
-                $('#sdatei').val(data.object.start_date);
-                var options = [];
-                if (data.object.fee == 1) {
-                    options.push("0");
-                }
-                if (data.object.form == 1) {
-                    options.push("1");
-                }
-                if (data.object.certif == 1) {
-                    options.push("2");
-                }
-                if (data.object.rib == 1) {
-                    options.push("3");
-                }
-                if (data.object.identity == 1) {
-                    options.push("4");
-                }
-                $('#secu_int').val(data.object.secu_number);
-                $('#docs_int').dropdown("set exactly", options);
-                $('#intm_btn').html("Confirmer");
-                $('#intm_btn').attr("onClick", "DoleticUIModule.updateIntMembership(" + id + ", " + userId + "); return false;");
+                $('#taskid').val(data.object.task_id);
+                $('#delnumber').val(data.object.number);
+                $('#delcontent').val(data.object.content);
+                $('#billed').prop('checked', data.object.billed);
+                $('#delivery_btn').html("Confirmer").attr("onClick", "DoleticUIModule.updateDelivery(" + id + ", " + taskId + "); return false;");
+                $('#delivery_modal').modal('show');
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -739,528 +1137,545 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.updateUser = function (id, user_id) {
+    this.editAmendment = function (id, number) {
+        $('#amend_form h4').html("Edition d'un Avenant");
+        ProjectServicesInterface.getAmendmentById(id, function (data) {
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                $('#amdate').val(data.object.creation_date);
+                $('#amtype_search').dropdown("set selected", data.object.type);
+                $('#attributable').val(data.object.attributable);
+                $('#content_field').val(data.object.content);
+                $('#amend_btn').html("Confirmer").attr("onClick", "DoleticUIModule.updateAmendment(" + id + ", " + number + "); return false;");
+                $('#amend_form_modal').modal('show');
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.updateProject = function (number) {
         // ADD OTHER TESTS
-        if (DoleticUIModule.checkNewUserForm()) {
+        if (DoleticUIModule.checkNewProjectForm()) {
             // Insert user data in db SELECT ?
-            UserDataServicesInterface.update(id, user_id,
-                $('#gender_search').dropdown('get value'),
-                $('#firstname').val(),
-                $('#lastname').val(),
-                $('#birthdate').val(),
-                $('#tel').val(),
-                $('#mail').val(),
-                $('#address').val(),
-                $('#city').val(),
-                $('#postalcode').val(),
-                $('#country_search').dropdown('get value'),
-                $('#schoolyear_search').dropdown('get value'),
-                $('#dept_search').dropdown('get value'),
-                $('#position_search').dropdown('get value'),
-                $('#ag_search').dropdown('get value'),
-                DoleticUIModule.editUserHandler
+            ProjectServicesInterface.update(
+                number,
+                $('#name').val(),
+                $('#description').val(),
+                $('#origin_search').dropdown('get value'),
+                $('#field_search').dropdown('get value'),
+                $('#firm_search').dropdown('get value'),
+                $('#mgmt').val(),
+                $('#app').val(),
+                $('#rebilled').val(),
+                $('#advance').val(),
+                $('#secret').prop('checked') ? 1 : 0,
+                $('#critical').prop('checked') ? 1 : 0,
+                function (data) {
+                    DoleticUIModule.editProjectHandler(data, number);
+                }
             );
         }
     };
 
-    this.updateTeam = function (id) {
+    this.updateTask = function (id, number) {
         // ADD OTHER TESTS
-        if (DoleticUIModule.checkNewTeamForm()) {
+        if (DoleticUIModule.checkNewTaskForm()) {
             // Update team data in DB
-            TeamServicesInterface.update(id,
+            TaskServicesInterface.update(
+                id,
                 $('#tname').val(),
-                $('#leader_search').dropdown('get value'),
-                $('#division_search').dropdown('get value'),
-                DoleticUIModule.editTeamHandler
-            );
-        }
-    };
-
-    this.updateAdmMembership = function (id, userId) {
-        // ADD OTHER TESTS
-        if (DoleticUIModule.checkNewAdmMembershipForm()) {
-            // retrieve missing information
-            var options = document.getElementById("docs_adm").options;
-            AdmMembershipServicesInterface.update(id,
-                userId, // Retenir l'utilisateur concerné
+                $('#tdescription').val(),
+                $('#jehamount').val(),
+                $('#jehcost').val(),
                 $('#sdatea').val(),
                 $('#edate').val(),
-                Boolean(options[0].selected),
-                Boolean(options[1].selected),
-                Boolean(options[2].selected),
                 function (data) {
-                    DoleticUIModule.editAdmMembershipHandler(userId, data);
+                    DoleticUIModule.editTaskHandler(data, number);
                 }
             );
         }
     };
 
-    this.updateIntMembership = function (id, userId) {
-        // ADD OTHER TESTS
-        if (DoleticUIModule.checkNewIntMembershipForm()) {
-            // retrieve missing information
-            var options = document.getElementById("docs_int").options;
-            IntMembershipServicesInterface.update(id,
-                userId, // Retenir l'utilisateur concerné
-                $('#sdatei').val(),
-                Boolean(options[0].selected),
-                Boolean(options[1].selected),
-                Boolean(options[2].selected),
-                Boolean(options[3].selected),
-                Boolean(options[4].selected),
-                $('#secu_int').val(),
+    this.updateDelivery = function (id, taskId) {
+        if (DoleticUIModule.checkNewDeliveryForm()) {
+            // retreive missing information
+            TaskServicesInterface.updateDelivery(
+                id,
+                $('#delnumber').val(),
+                $('#delcontent').val(),
+                $('#billed').prop('checked') ? 1 : 0,
                 function (data) {
-                    DoleticUIModule.editIntMembershipHandler(userId, data);
+                    DoleticUIModule.editDeliveryHandler(data, taskId);
                 }
             );
         }
     };
 
-    this.deleteUser = function (id, user_id) {
+    this.payDelivery = function (id, taskId) {
+        $('#delivery_form').hide();
+        $('#paid_btn').attr('onClick', 'DoleticUIModule.confirmPayDelivery(' + id + ', ' + taskId + '); return false;');
+        $('#paid_form').show();
+        $('#paydate').focus();
+    };
+
+    this.confirmPayDelivery = function (id, taskId) {
+        TaskServicesInterface.payDelivery(
+            id,
+            $('#paydate').val(),
+            function (data) {
+                DoleticUIModule.cancelPaidForm();
+                DoleticUIModule.editDeliveryHandler(data, taskId);
+            }
+        );
+    };
+
+    this.unpayDelivery = function (id, taskId) {
+        TaskServicesInterface.unpayDelivery(
+            id,
+            function (data) {
+                DoleticUIModule.editDeliveryHandler(data, taskId);
+            }
+        );
+    };
+
+    this.deliverDelivery = function (id, taskId) {
+        $('#delivery_form').hide();
+        $('#delivered_btn').attr('onClick', 'DoleticUIModule.confirmDeliverDelivery(' + id + ', ' + taskId + '); return false;');
+        $('#delivered_form').show();
+        $('#deldate').focus();
+    };
+
+    this.confirmDeliverDelivery = function (id, taskId) {
+        TaskServicesInterface.deliverDelivery(
+            id,
+            $('#deldate').val(),
+            function (data) {
+                DoleticUIModule.cancelDeliveredForm();
+                DoleticUIModule.editDeliveryHandler(data, taskId);
+            }
+        );
+    };
+
+    this.undeliverDelivery = function (id, taskId) {
+        TaskServicesInterface.undeliverDelivery(
+            id,
+            function (data) {
+                DoleticUIModule.editDeliveryHandler(data, taskId);
+            }
+        );
+    };
+
+    this.updateAmendment = function (id, number) {
+        if (DoleticUIModule.checkNewAmendmentForm()) {
+            // retreive missing information
+            ProjectServicesInterface.updateAmendment(
+                id,
+                $('#amtype_search').dropdown('get value'),
+                $('#content_field').val(),
+                $('#attributable').prop('checked') ? 1 : 0,
+                $('#amdate').val(),
+                function (data) {
+                    DoleticUIModule.editAmendmentHandler(data, number);
+                }
+            );
+        }
+    };
+
+    this.deleteProject = function (number) {
         // Confirmation
         DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove user icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir supprimer l'utilisateur ? Cette opération est irréversible.",
+            "Etes-vous sûr de vouloir supprimer l'étude ? Cette opération est irréversible.",
             function () {
-                DoleticUIModule.deleteUserHandler(id, user_id);
+                DoleticUIModule.deleteProjectHandler(number);
             },
             DoleticMasterInterface.hideConfirmModal);
     };
 
-    this.deleteTeam = function (id) {
+    this.deleteTask = function (id, number) {
         // Confirmation
         DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir supprimer l'équipe ? Cette opération est irréversible.",
+            "Etes-vous sûr de vouloir supprimer la phase ? Cette opération est irréversible.",
             function () {
-                DoleticUIModule.deleteTeamHandler(id);
+                DoleticUIModule.deleteTaskHandler(id, number);
             },
             DoleticMasterInterface.hideConfirmModal);
     };
 
-    this.deleteAdmMembership = function (id, userId) {
-        // Confirmation
-        DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.",
-            function () {
-                DoleticUIModule.deleteAdmMembershipHandler(id, userId);
-            },
-            DoleticMasterInterface.hideConfirmModal
-        );
-    };
-
-    this.deleteIntMembership = function (id, userId) {
-        // Confirmation
-        DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir supprimer l'adhésion ? Cette opération est irréversible.",
-            function () {
-                DoleticUIModule.deleteIntMembershipHandler(id, userId);
-            },
-            DoleticMasterInterface.hideConfirmModal
-        );
-    };
-
-    this.deleteAGR = function (ag) {
-        // Confirmation
-        DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir supprimer l'AGR ? Cette opération est irréversible.",
-            function () {
-                DoleticUIModule.deleteAGRHandler(ag);
-            },
-            DoleticMasterInterface.hideConfirmModal
-        );
-    };
-
-    this.deleteTeamMember = function (id, memberId) {
-        TeamServicesInterface.deleteMember(id, memberId, function (data) {
-            // if no service error
-            if (data.code == 0) {
-                DoleticUIModule.updateTeamModal(id);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
+    this.deleteDelivery = function (id, taskId) {
+        TaskServicesInterface.deleteDelivery(id, function (data) {
+            DoleticUIModule.deleteDeliveryHandler(data, taskId);
         });
     };
 
-    this.disableUser = function (id, user_id) {
+    this.deleteAmendment = function (id, number) {
         // Confirmation
-        DoleticMasterInterface.showConfirmModal("Confirmer la désactivation", "\<i class=\"remove icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir désactiver cet utilisateur ? Il ou elle ne pourra plus se connecter à Doletic jusqu'à réactivation.",
+        DoleticMasterInterface.showConfirmModal("Confirmer la suppression", "\<i class=\"remove icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir supprimer l'avenant ? Cette opération est irréversible.",
             function () {
-                DoleticUIModule.disableUserHandler(id, user_id);
+                DoleticUIModule.deleteAmendmentHandler(id, number);
             },
             DoleticMasterInterface.hideConfirmModal);
-
     };
 
-    this.restoreUser = function (id, user_id) {
+    this.disableProject = function (number) {
+        // Confirmation
+        DoleticUIModule.clearDisableProjectForm(number);
+        $('#disable_form_modal').modal('show');
+    };
+
+    this.confirmDisableProject = function () {
+        ProjectServicesInterface.disable(
+            $('#disable_number').val(),
+            $('#restoredate').val(),
+            DoleticUIModule.disableProjectHandler
+        );
+    };
+
+    this.restoreProject = function (number) {
         // Confirmation
         DoleticMasterInterface.showConfirmModal("Confirmer la réactivation", "\<i class=\"remove icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir réactiver cet utilisateur ? Il ou elle pourra de nouveau accéder à Doletic.",
+            "Etes-vous sûr de vouloir réactiver cete étude plus tôt que prévu ? Elle sera de nouveau éditable.",
             function () {
-                DoleticUIModule.restoreUserHandler(id, user_id);
+                DoleticUIModule.restoreProjectHandler(number);
             },
             DoleticMasterInterface.hideConfirmModal);
     };
 
-    this.tagOld = function (id) {
+    this.archiveProject = function (number) {
         // Confirmation
-        DoleticMasterInterface.showConfirmModal("Confirmer le marquage", "\<i class=\"student icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir marquer cet utilisateur ? Il ou elle ne sera plus comptabilisé(e) dans les statistiques.",
+        DoleticMasterInterface.showConfirmModal("Confirmer l'archivage", "\<i class=\"student icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir archiver cette étude ? Elle ne sera considérée comme terminée ou rompue.",
             function () {
-                DoleticUIModule.tagOldUserHandler(id);
+                DoleticUIModule.archiveProjectHandler(number);
             },
             DoleticMasterInterface.hideConfirmModal);
     };
 
-    this.untagOld = function (id) {
+    this.unarchiveProject = function (number) {
         // Confirmation
-        DoleticMasterInterface.showConfirmModal("Confirmer le marquage", "\<i class=\"add user icon\"\>\<\/i\>",
-            "Etes-vous sûr de vouloir marquer cet utilisateur ? Il ou elle sera de nouveau comptabilisé(e) dans les statistiques.",
+        DoleticMasterInterface.showConfirmModal("Confirmer le désarchivage", "\<i class=\"add user icon\"\>\<\/i\>",
+            "Etes-vous sûr de vouloir désarchiver cette étude ? Elle ne sera plus considérée comme terminée ou rompue.",
             function () {
-                DoleticUIModule.untagOldUserHandler(id);
+                DoleticUIModule.unarchiveProjectHandler(number)
             },
             DoleticMasterInterface.hideConfirmModal);
     };
 
-    this.updateTeamModal = function (id) {
-        $("#add_tmember_select" + id).dropdown('restore defaults');
-        TeamServicesInterface.getTeamMembers(id, function (data) {
-            window.team_list[id].members = data.object;
-            var html = "";
-            for (var i = 0; i < data.object.length; i++) {
-                html += "		<tr><td> \
-							  <i class=\"large user middle aligned icon\"></i></td><td>\
-							  <div class=\"content\">\
-							    <div class=\"header\"><strong>" + window.user_list[data.object[i]].firstname + " "
-                    + window.user_list[data.object[i]].lastname;
-                html += "</strong></div><div class=\"description\">" + window.user_list[data.object[i]].position[0].label + "</div>\
-							  </div>";
+    // Show forms
 
-                if (data.object[i] != window.team_list[id].leader_id) {
-                    html += "<td><button class=\"ui small icon button\"onClick=\"DoleticUIModule.deleteTeamMember(" + id + ", " + data.object[i] + "); return false;\"> \
-		  									<i class=\"remove icon\"></i>Retirer \
-								</button></td>";
-                } else {
-                    html += "<td> (Chef d'équipe) </td>";
-                }
-
-                html += "</td></tr>";
-                $("#members_" + id).html(html);
-            }
-        });
+    this.showNewProjectForm = function () {
+        DoleticUIModule.clearNewProjectForm();
+        $('#project_form_modal').modal('show');
     };
 
-    this.showNewUserForm = function () {
-        DoleticUIModule.clearNewUserForm();
-        $('#user_form_modal').modal('show');
+    this.cancelNewProjectForm = function () {
+        DoleticUIModule.clearNewProjectForm();
+        $('#project_form_modal').modal('hide');
     };
 
-    this.cancelNewUserForm = function () {
-        DoleticUIModule.clearNewUserForm();
-        $('#user_form_modal').modal('hide');
+    this.cancelDisableProjectForm = function () {
+        DoleticUIModule.clearDisableProjectForm();
+        $('#disable_form_modal').modal('hide');
     };
 
-    this.showNewTeamForm = function () {
-        DoleticUIModule.clearNewTeamForm();
-        $('#team_form_modal').modal('show');
+    this.showNewTaskForm = function (number) {
+        DoleticUIModule.clearNewTaskForm(number);
+        $('#task_form_modal').modal('show');
     };
 
-    this.cancelNewTeamForm = function () {
-        DoleticUIModule.clearNewTeamForm();
-        $('#team_form_modal').modal('hide');
+    this.cancelNewTaskForm = function (number) {
+        DoleticUIModule.clearNewTaskForm(number);
+        $('#task_form_modal').modal('hide');
     };
 
-    this.showNewAdmMembershipForm = function (id) {
-        DoleticUIModule.clearNewAdmMembershipForm(id);
-        $('#admm_form_modal').modal('show');
+    this.showNewAmendmentForm = function (number) {
+        DoleticUIModule.clearNewAmendmentForm(number);
+        $('#amend_form_modal').modal('show');
     };
 
-    this.cancelNewAdmMembershipForm = function (id) {
-        DoleticUIModule.clearNewAdmMembershipForm(id);
-        $('#admm_form_modal').modal('hide');
+    this.cancelNewAmendmentForm = function (number) {
+        DoleticUIModule.clearNewAmendmentForm(number);
+        $('#amend_form_modal').modal('hide');
     };
 
-    this.showNewIntMembershipForm = function (id) {
-        DoleticUIModule.clearNewIntMembershipForm(id);
-        $('#intm_form_modal').modal('show');
+    this.cancelPaidForm = function () {
+        $('#delivery_form').show();
+        $('#paid_form').hide()[0].reset();
     };
 
-    this.cancelNewIntMembershipForm = function (id) {
-        DoleticUIModule.clearNewIntMembershipForm(id);
-        $('#intm_form_modal').modal('hide');
+    this.cancelDeliveredForm = function () {
+        $('#delivery_form').show();
+        $('#delivered_form').hide()[0].reset();
     };
 
-    this.showNewAGRForm = function () {
-        DoleticUIModule.clearNewAGRForm();
-        $('#agr_form_modal').modal('show');
-    };
-
-    this.cancelNewAGRForm = function () {
-        DoleticUIModule.clearNewAGRForm();
-        $('#agr_form_modal').modal('hide');
-    };
-
-    this.checkNewUserForm = function () {
-        $('#user_form .field').removeClass("error");
+    this.checkNewProjectForm = function () {
+        $('#project_form .field').removeClass("error");
         var valid = true;
         var errorString = "";
-        if (!DoleticMasterInterface.checkName($('#firstname').val())) {
-            $('#firstname_field').addClass("error");
+        if (!DoleticMasterInterface.checkName($('#name').val())) {
+            $('#name_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkName($('#lastname').val())) {
-            $('#lastname_field').addClass("error");
+        if ($('#origin_search').dropdown('get value') == "") {
+            $('#origin_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkDate($('#birthdate').val())) {
-            $('#birthdate_field').addClass("error");
+        if ($('#field_search').dropdown('get value') == "") {
+            $('#field_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkTel($('#tel').val())) {
-            $('#tel_field').addClass("error");
+        if ($('#firm_search').dropdown('get value') == "") {
+            $('#firm_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkMail($('#mail').val())) {
-            $('#mail_field').addClass("error");
+        if (!DoleticMasterInterface.checkInt($('#mgmt').val())) {
+            $('#mgmt_field').addClass("error");
             valid = false;
         }
-        if ($('#address').val() == "") {
-            $('#address_field').addClass("error");
+        if (!DoleticMasterInterface.checkInt($('#app').val())) {
+            $('#app_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkName($('#city').val())) {
-            $('#city_field').addClass("error");
+        if (!DoleticMasterInterface.checkInt($('#rebilled').val())) {
+            $('#rebilled_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkPostalCode($('#postalcode').val())) {
-            $('#postalcode_field').addClass("error");
-            valid = false;
-        }
-        if ($('#gender_search').dropdown('get value') == "") {
-            $('#gender_field').addClass("error");
-            valid = false;
-        }
-        if ($('#country_search').dropdown('get value') == "") {
-            $('#country_field').addClass("error");
-            valid = false;
-        }
-        if ($('#schoolyear_search').dropdown('get value') == "") {
-            $('#schoolyear_field').addClass("error");
-            valid = false;
-        }
-        if ($('#dept_search').dropdown('get value') == "") {
-            $('#dept_field').addClass("error");
-            valid = false;
-        }
-        if ($('#position_search').dropdown('get value') == "") {
-            $('#position_field').addClass("error");
+        if (!DoleticMasterInterface.checkInt($('#advance').val())) {
+            $('#advance_field').addClass("error");
             valid = false;
         }
         if (!valid) {
-            $('#user_form').transition('shake');
+            $('#project_form').transition('shake');
             DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
         }
         return valid;
     };
 
-    this.checkNewTeamForm = function () {
-        $('#team_form .field').removeClass("error");
+    this.checkNewTaskForm = function () {
+        $('#task_form .field').removeClass("error");
         var valid = true;
         if ($('#tname').val() == "") {
             $('#tname_field').addClass("error");
             valid = false;
         }
-        if ($('#leader_search').dropdown('get value') == "") {
-            $('#leader_field').addClass("error");
-            valid = false;
-        }
-        if ($('#division_search').dropdown('get value') == "") {
-            $('#division_field').addClass("error");
-            valid = false;
-        }
-        if (!valid) {
-            $('#team_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
-        }
-        return valid;
-    };
-
-    this.checkNewAdmMembershipForm = function () {
-        $('#admm_form .field').removeClass("error");
-        var valid = true;
         if (!DoleticMasterInterface.checkDate($('#sdatea').val())) {
             $('#sdatea_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkDate($('#edate').val())) {
+        if (!DoleticMasterInterface.checkDate($('#edate').val()) || $('#edate').val() < $('#sdatea').val()) {
             $('#edate_field').addClass("error");
             valid = false;
         }
+        if (!DoleticMasterInterface.checkInt($('#jehamount').val())) {
+            $('#jehamount_field').addClass("error");
+            valid = false;
+        }
+        if (!DoleticMasterInterface.checkInt($('#jehcost').val())) {
+            $('#jehcost_field').addClass("error");
+            valid = false;
+        }
         if (!valid) {
-            $('#admm_form').transition('shake');
+            $('#task_form').transition('shake');
             DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
         }
         return valid;
     };
 
-    this.checkNewIntMembershipForm = function () {
-        $('#intm_form .field').removeClass("error");
+    this.checkNewDeliveryForm = function () {
+        $('#delivery_form .field').removeClass("error");
         var valid = true;
-        if (!DoleticMasterInterface.checkDate($('#sdatei').val())) {
-            $('#sdatei_field').addClass("error");
-            valid = false;
-        }
-        if (!/^\d{13}$/.test($('#secu_int').val().trim())) {
-            $('#secu_int').addClass("error");
+        if (!DoleticMasterInterface.checkInt($('#delnumber').val())) {
+            $('#delnumber_field').addClass("error");
             valid = false;
         }
         if (!valid) {
-            $('#intm_form').transition('shake');
+            $('#delivery_form').transition('shake');
             DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
         }
         return valid;
     };
 
-    this.checkNewAGRForm = function () {
+    this.checkNewAmendmentForm = function () {
+        $('#amend_form .field').removeClass("error");
         var valid = true;
-        if (!DoleticMasterInterface.checkDate($('#agr_date').val())) {
-            $('#agr_date').addClass("error");
+        if (!DoleticMasterInterface.checkDate($('#amdate').val())) {
+            $('#amdate_field').addClass("error");
             valid = false;
         }
-        if (!$('#agr_pr').val() < 0) {
-            $('#agr_pr').addClass("error");
+        if ($('#type_search').dropdown('get value') == "") {
+            $('#type_field').addClass("error");
             valid = false;
+        }
+        if (!valid) {
+            $('#amendment_form').transition('shake');
+            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
         }
         return valid;
     };
 
 
     // --- HANDLERS
-    this.addUserHandler = function (data) {
+    this.addProjectHandler = function (data) {
+        // if no service error
+        if (data.code == 0) {
+            // clear project form
+            DoleticUIModule.cancelNewProjectForm();
+            // alert user that creation is a success
+            DoleticMasterInterface.showSuccess("Création réussie !", "L'étude a été créée avec succès !");
+            // fill project list
+            DoleticUIModule.fillProjectsList();
+        } else {
+            // use default service service error handler
+            DoleticServicesInterface.handleServiceError(data);
+        }
+    };
+
+    this.editProjectHandler = function (data, number) {
+        // if no service error
+        if (data.code == 0) {
+            // clear project form
+            DoleticUIModule.cancelNewProjectForm();
+            // alert user that creation is a success
+            DoleticMasterInterface.showSuccess("Edition réussie !", "L'étude a été modifiée avec succès !");
+            // fill project list
+            DoleticUIModule.fillProjectsList();
+            if (window.currentDetails == number) {
+                DoleticUIModule.fillProjectDetails(number);
+            }
+        } else {
+            // use default service service error handler
+            DoleticServicesInterface.handleServiceError(data);
+        }
+    };
+
+    this.disableProjectHandler = function (data) {
+        // if no service error
+        if (data.code == 0) {
+            // clear disable project form
+            DoleticUIModule.cancelDisableProjectForm();
+            // alert user that disable is a success
+            DoleticMasterInterface.showSuccess("Désactivation réussie !", "L'étude a été désactivée avec succès !");
+            // fill project list
+            DoleticUIModule.fillProjectsList();
+        } else {
+            // use default service service error handler
+            DoleticServicesInterface.handleServiceError(data);
+        }
+    };
+
+    this.restoreProjectHandler = function (number) {
+        ProjectServicesInterface.enable(number, function (data) {
+            // if no service error
+            if (data.code == 0) {
+                DoleticMasterInterface.hideConfirmModal();
+                // alert user that restore is a success
+                DoleticMasterInterface.showSuccess("Restauration réussie !", "L'étude a été restaurée avec succès !");
+                DoleticUIModule.fillProjectsList();
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.archiveProjectHandler = function (number) {
+        ProjectServicesInterface.archiveProject(number, function (data) {
+            // if no service error
+            if (data.code == 0) {
+                DoleticMasterInterface.hideConfirmModal();
+                DoleticMasterInterface.showSuccess("Opération réussie !", "L'étude a été archivée.");
+                DoleticUIModule.fillProjectsList();
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.unarchiveProjectHandler = function (number) {
+        ProjectServicesInterface.unarchiveProject(number, function (data) {
+            // if no service error
+            if (data.code == 0) {
+                DoleticMasterInterface.hideConfirmModal();
+                DoleticMasterInterface.showSuccess("Opération réussie !", "L'étude a été retirée des archives.");
+                DoleticUIModule.fillProjectsList();
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.deleteProjectHandler = function (number) {
+        ProjectServicesInterface.delete(number, function (data) {
+            // if no service error
+            if (data.code == 0) {
+                DoleticMasterInterface.hideConfirmModal();
+                DoleticMasterInterface.showSuccess("Suppression réussie !", "L'étude a été supprimée avec succès !");
+                DoleticUIModule.fillProjectsList();
+                if (window.currentDetails = number) {
+                    $("#det").hide();
+                }
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.unsignProjectHandler = function (number) {
+        ProjectServicesInterface.unsignProject(number, function (data) {
+            DoleticMasterInterface.hideConfirmModal();
+            DoleticUIModule.editProjectHandler(data, number);
+        });
+    };
+
+    this.unendProjectHandler = function (number) {
+        ProjectServicesInterface.unendProject(number, function (data) {
+            DoleticMasterInterface.hideConfirmModal();
+            DoleticUIModule.editProjectHandler(data, number);
+        });
+    };
+
+    this.addTaskHandler = function (data, number) {
         // if no service error
         if (data.code == 0) {
             // clear ticket form
-            DoleticUIModule.cancelNewUserForm();
+            DoleticUIModule.cancelNewTaskForm(number);
             // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Création réussie !", "L'utilisateur a été créé avec succès !");
+            DoleticMasterInterface.showSuccess("Création réussie !", "La phase a été créée avec succès !");
             // fill ticket list
-            DoleticUIModule.fillUsersList();
+            DoleticUIModule.fillTaskList(number);
         } else {
             // use default service service error handler
             DoleticServicesInterface.handleServiceError(data);
         }
     };
 
-    this.editUserHandler = function (data) {
+    this.editTaskHandler = function (data, number) {
         // if no service error
         if (data.code == 0) {
             // clear ticket form
-            DoleticUIModule.cancelNewUserForm();
+            DoleticUIModule.cancelNewTaskForm(number);
             // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Edition réussie !", "L'utilisateur a été modifié avec succès !");
+            DoleticMasterInterface.showSuccess("Edition réussie !", "La phase a été modifiée avec succès !");
             // fill ticket list
-            DoleticUIModule.fillUsersList();
+            DoleticUIModule.fillTaskList(number);
         } else {
             // use default service service error handler
             DoleticServicesInterface.handleServiceError(data);
         }
     };
 
-    this.disableUserHandler = function (id, userId) {
-        UserServicesInterface.disable(userId, function (data) {
-            // if no service error
-            if (data.code == 0) {
-                UserDataServicesInterface.disable(id, function (data) {
-                    // if no service error
-                    if (data.code == 0) {
-                        DoleticMasterInterface.hideConfirmModal();
-                        DoleticMasterInterface.showSuccess("Désactivation réussie !", "L'utilisateur a été désactivé.");
-                        DoleticUIModule.fillUsersList();
-                        if (window.currentDetails == userId) {
-                            $('#det').html($('#det').html() + " (désactivé)");
-                        }
-                    } else {
-
-                    }
-                });
-
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
-    this.restoreUserHandler = function (id, userId) {
-        UserServicesInterface.restore(userId, function (data) {
-            // if no service error
-            if (data.code == 0) {
-                UserDataServicesInterface.enable(id, function (data) {
-                    // if no service error
-                    if (data.code == 0) {
-                        DoleticMasterInterface.hideConfirmModal();
-                        DoleticMasterInterface.showSuccess("Réactivation réussie !", "L'utilisateur a été réactivé.");
-                        DoleticUIModule.fillUsersList();
-                        if (window.currentDetails == userId) {
-                            $('#det').html($('#det').html().replace(" (désactivé)", ""));
-                        }
-                    } else {
-                        // use default service service error handler
-                        DoleticServicesInterface.handleServiceError(data);
-                    }
-                });
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
-    this.tagOldUserHandler = function (id) {
-        UserDataServicesInterface.tagOld(id, function (data) {
+    this.deleteTaskHandler = function (id, number) {
+        TaskServicesInterface.delete(id, function (data) {
             // if no service error
             if (data.code == 0) {
                 DoleticMasterInterface.hideConfirmModal();
-                DoleticMasterInterface.showSuccess("Opération réussi !", "L'utilisateur a été marqué comme ancien membre.");
-                DoleticUIModule.fillUsersList();
-            } else {
-
-            }
-        });
-    };
-
-    this.untagOldUserHandler = function (id) {
-        UserDataServicesInterface.untagOld(id, function (data) {
-            // if no service error
-            if (data.code == 0) {
-                DoleticMasterInterface.hideConfirmModal();
-                DoleticMasterInterface.showSuccess("Opération réussie !", "L'utilisateur a été marqué comme membre actuel.");
-                DoleticUIModule.fillUsersList();
-            } else {
-
-            }
-        });
-    };
-
-    this.deleteUserHandler = function (id, userId) {
-        UserDataServicesInterface.delete(id, userId, function (data) {
-            // if no service error
-            if (data.code == 0) {
-                UserServicesInterface.delete(id, function (data) {
-                    // if no service error
-                    if (data.code == 0) {
-                        DoleticMasterInterface.hideConfirmModal();
-                        DoleticMasterInterface.showSuccess("Suppression réussie !", "L'utilisateur a été supprimé avec succès !");
-                        DoleticUIModule.fillUsersList();
-                        DoleticUIModule.fillTeamsList();
-                        if (window.currentDetails = userId) {
-                            $("#det").hide();
-                        }
-                    } else {
-                        // use default service service error handler
-                        DoleticServicesInterface.handleServiceError(data);
-                    }
-                });
+                DoleticMasterInterface.showSuccess("Suppression réussie !", "La phase a été supprimée avec succès !");
+                DoleticUIModule.fillTaskList(number);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -1268,146 +1683,85 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.addTeamHandler = function (data) {
+    this.addDeliveryHandler = function (data, taskId) {
         // if no service error
         if (data.code == 0) {
             // clear ticket form
-            DoleticUIModule.cancelNewTeamForm();
-            // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Création réussie !", "L'équipe a été créée avec succès !");
-            // fill ticket list
-            DoleticUIModule.fillTeamsList();
+            DoleticUIModule.clearNewDeliveryForm(taskId);
+            // fill delivery list
+            DoleticUIModule.fillDeliveryList(taskId);
         } else {
             // use default service service error handler
             DoleticServicesInterface.handleServiceError(data);
         }
     };
 
-    this.editTeamHandler = function (data) {
+    this.editDeliveryHandler = function (data, taskId) {
         // if no service error
         if (data.code == 0) {
             // clear ticket form
-            DoleticUIModule.cancelNewTeamForm();
+            DoleticUIModule.clearNewDeliveryForm(taskId);
+            // fill delivery list
+            DoleticUIModule.fillDeliveryList(taskId);
+        } else {
+            // use default service service error handler
+            DoleticServicesInterface.handleServiceError(data);
+        }
+    };
+
+    this.deleteDeliveryHandler = function (data, taskId) {
+        // if no service error
+        if (data.code == 0) {
+            // fill delivery list
+            DoleticUIModule.fillDeliveryList(taskId);
+        } else {
+            // use default service service error handler
+            DoleticServicesInterface.handleServiceError(data);
+        }
+    };
+
+    this.addAmendmentHandler = function (data, number) {
+        // if no service error
+        if (data.code == 0) {
+            // clear ticket form
+            DoleticUIModule.cancelNewAmendmentForm(number);
             // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Edition réussie !", "L'équipe a été modifiée avec succès !");
+            DoleticMasterInterface.showSuccess("Création réussie !", "L'avenant a été créé avec succès !");
             // fill ticket list
-            DoleticUIModule.fillTeamsList();
+            DoleticUIModule.fillAmendmentList(number);
         } else {
             // use default service service error handler
             DoleticServicesInterface.handleServiceError(data);
         }
     };
 
-    this.deleteTeamHandler = function (id) {
-        TeamServicesInterface.delete(id, function (data) {
+    this.editAmendmentHandler = function (data, number) {
+        // if no service error
+        if (data.code == 0) {
+            // clear ticket form
+            DoleticUIModule.cancelNewAmendmentForm(number);
+            // alert user that creation is a success
+            DoleticMasterInterface.showSuccess("Modification réussie !", "L'avenant a été modifié avec succès !");
+            // fill ticket list
+            DoleticUIModule.fillAmendmentList(number);
+        } else {
+            // use default service service error handler
+            DoleticServicesInterface.handleServiceError(data);
+        }
+    };
+
+    this.deleteAmendmentHandler = function (id, number) {
+        ProjectServicesInterface.deleteAmendment(id, function (data) {
             // if no service error
             if (data.code == 0) {
                 DoleticMasterInterface.hideConfirmModal();
-                DoleticMasterInterface.showSuccess("Suppression réussie !", "L'équipe a été supprimée avec succès !");
-                DoleticUIModule.fillTeamsList();
+                DoleticMasterInterface.showSuccess("Suppression réussie !", "L'avenant a été supprimé avec succès !");
+                DoleticUIModule.fillAmendmentList(number);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
             }
         });
     };
-
-    this.addAdmMembershipHandler = function (userId, data) {
-        // if no service error
-        if (data.code == 0) {
-            DoleticUIModule.cancelNewAdmMembershipForm(userId);
-            // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Création réussie !", "L'adhésion a été ajoutée avec succès !");
-            // fill AdmMemberships list
-            DoleticUIModule.fillAdmMemberships(userId);
-        } else {
-            // use default service service error handler
-            DoleticServicesInterface.handleServiceError(data);
-        }
-    };
-
-    this.editAdmMembershipHandler = function (userId, data) {
-        // if no service error
-        if (data.code == 0) {
-            DoleticUIModule.cancelNewAdmMembershipForm(userId);
-            // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Edition réussie !", "L'adhésion a été modifiée avec succès !");
-            // fill AdmMemberships list
-            DoleticUIModule.fillAdmMemberships(userId);
-        } else {
-            // use default service service error handler
-            DoleticServicesInterface.handleServiceError(data);
-        }
-    };
-
-    this.deleteAdmMembershipHandler = function (id, userId) {
-        AdmMembershipServicesInterface.delete(id, function (data) {
-            // if no service error
-            if (data.code == 0) {
-                DoleticMasterInterface.hideConfirmModal();
-                DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
-                DoleticUIModule.fillAdmMemberships(userId);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
-    this.addIntMembershipHandler = function (userId, data) {
-        // if no service error
-        if (data.code == 0) {
-            DoleticUIModule.cancelNewIntMembershipForm(userId);
-            // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Création réussie !", "L'adhésion a été ajoutée avec succès !");
-            // fill IntMemberships list
-            DoleticUIModule.fillIntMemberships(userId);
-        } else {
-            // use default service service error handler
-            DoleticServicesInterface.handleServiceError(data);
-        }
-    };
-
-    this.editIntMembershipHandler = function (userId, data) {
-        // if no service error
-        if (data.code == 0) {
-            DoleticUIModule.cancelNewIntMembershipForm(userId);
-            // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Edition réussie !", "L'adhésion a été modifiée avec succès !");
-            // fill IntMemberships list
-            DoleticUIModule.fillIntMemberships(userId);
-        } else {
-            // use default service service error handler
-            DoleticServicesInterface.handleServiceError(data);
-        }
-    };
-
-    this.deleteIntMembershipHandler = function (id, userId) {
-        IntMembershipServicesInterface.delete(id, function (data) {
-            // if no service error
-            if (data.code == 0) {
-                DoleticMasterInterface.hideConfirmModal();
-                DoleticMasterInterface.showSuccess("Suppression réussie !", "L'adhésion a été supprimée avec succès !");
-                DoleticUIModule.fillIntMemberships(userId);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
-    this.deleteAGRHandler = function (ag) {
-        UserDataServicesInterface.deleteAg(String(ag), function (data) {
-            // if no service error
-            if (data.code == 0) {
-                DoleticMasterInterface.hideConfirmModal();
-                DoleticMasterInterface.showSuccess("Suppression réussie !", "L'AGR a été supprimée avec succès !");
-                DoleticUIModule.fillAGSelector();
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    }
 
 };

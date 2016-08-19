@@ -18,7 +18,7 @@ var DoleticUIModule = new function () {
         this.refreshMaillistList();
         // refresh doc templates lists
         this.refreshDocTemplateList();
-    }
+    };
     /**
      *    Override build function
      */
@@ -95,7 +95,7 @@ var DoleticUIModule = new function () {
 				  </div> \
 				</div> \
 				" + DoleticUIFactory.makeUploadForm('doc', true);
-    }
+    };
     /**
      *    Override uploadSuccessHandler
      */
@@ -125,7 +125,7 @@ var DoleticUIModule = new function () {
             // treat error case
             this.super.uploadSuccessHandler(id, data1);
         }
-    }
+    };
 
     this.nightMode = function (on) {
         if (on) {
@@ -133,7 +133,7 @@ var DoleticUIModule = new function () {
         } else {
             /// \todo implement here
         }
-    }
+    };
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
@@ -142,7 +142,7 @@ var DoleticUIModule = new function () {
     this.clearMaillistDetails = function () {
         $('#mailing_details').html('Aucun détail à afficher.');
         $('#details_title').html('');
-    }
+    };
 
     this.refreshMaillistList = function () {
         // clear details
@@ -167,7 +167,7 @@ var DoleticUIModule = new function () {
             }
         });
 
-    }
+    };
 
     this.appendMaillistListRecord = function (id, name, canSubscribe) {
         var email = this.formatName(name) + DoleticConfig.JE.mail_domain;
@@ -188,13 +188,13 @@ var DoleticUIModule = new function () {
 							</div>";
         // append new record to list
         $('#mailing_lists').append(html_record);
-    }
+    };
 
     this.resetMaillistForm = function () {
         $('#maillist_form')[0].reset();
         $('#mailing_mail').html('');
         $('#maillist_modal').modal('hide');
-    }
+    };
 
     this.addMaillist = function () {
         // retrieve and check input
@@ -212,7 +212,7 @@ var DoleticUIModule = new function () {
         this.resetMaillistForm();
         // refresh list
         this.refreshMaillistList();
-    }
+    };
 
     this.detailsMaillist = function (id, name) {
         // clear details
@@ -241,12 +241,12 @@ var DoleticUIModule = new function () {
                 DoleticServicesInterface.handleServiceError(data);
             }
         });
-    }
+    };
 
     this.editMaillist = function (id) {
         debugger;
         alert('Still working on this function...');
-    }
+    };
 
     this.trashMaillist = function (id) {
         DoleticMasterInterface.showConfirmModal(
@@ -270,15 +270,15 @@ var DoleticUIModule = new function () {
             function () {
                 DoleticMasterInterface.hideConfirmModal();
             });
-    }
+    };
 
     this.updateMaillistForm = function () {
         $('#mailing_mail').html(this.formatName($('#name_input').val()) + DoleticConfig.JE.mail_domain);
-    }
+    };
 
     this.formatName = function (name) {
         return name.replace(' ', '-').toLowerCase();
-    }
+    };
 
 // -------- document templates functions
 
@@ -298,7 +298,7 @@ var DoleticUIModule = new function () {
                 DoleticServicesInterface.handleServiceError(data);
             }
         });
-    }
+    };
 
     this.refreshDocTemplateList = function () {
         // clear current list
@@ -318,7 +318,7 @@ var DoleticUIModule = new function () {
                 DoleticServicesInterface.handleServiceError(data);
             }
         });
-    }
+    };
 
     this.appendDocTemplateListRecord = function (template) {
         var html_record = '<div class="item"> \
@@ -332,15 +332,15 @@ var DoleticUIModule = new function () {
 							</div>';
         // append record to list
         $('#doc_templates').append(html_record);
-    }
+    };
 
     this.editDocTemplate = function (id) {
         debugger;
         alert('Still working on this function...');
-    }
+    };
 
     this.trashDocTemplate = function (id, uploadId) {
         debugger;
         alert('we are currently working on it...');
     }
-}
+};

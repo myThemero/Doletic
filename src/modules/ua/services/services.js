@@ -386,7 +386,7 @@ var ProjectServicesInterface = new function () {
             successHandler);
     };
 
-    this.insertProject = function (name, description, origin, field, firmId, mgmtFee, appFee, rebilledFee, advance,
+    this.insert = function (name, description, origin, field, firmId, mgmtFee, appFee, rebilledFee, advance,
                                    secret, critical, assignCurrent, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT,
@@ -407,8 +407,8 @@ var ProjectServicesInterface = new function () {
             successHandler);
     };
 
-    this.updateProject = function (number, name, description, origin, field, firmId, mgmtFee, appFee, rebilledFee, advance,
-                                   secret, critical, assignCurrent, successHandler) {
+    this.update = function (number, name, description, origin, field, firmId, mgmtFee, appFee, rebilledFee, advance,
+                                   secret, critical, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE,
             {
@@ -429,7 +429,7 @@ var ProjectServicesInterface = new function () {
     };
 
     this.updateOwnProject = function (number, name, description, origin, field, firmId, mgmtFee, appFee, rebilledFee, advance,
-                                      secret, critical, assignCurrent, successHandler) {
+                                      secret, critical, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE_OWN,
             {
@@ -499,7 +499,7 @@ var ProjectServicesInterface = new function () {
             successHandler);
     };
 
-    this.disableProject = function (number, disabledUntil, successHandler) {
+    this.disable = function (number, disabledUntil, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.DISABLE,
             {
@@ -509,7 +509,7 @@ var ProjectServicesInterface = new function () {
             successHandler);
     };
 
-    this.enableProject = function (number, successHandler) {
+    this.enable = function (number, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.ENABLE,
             {
@@ -873,13 +873,12 @@ var TaskServicesInterface = new function () {
             successHandler);
     };
 
-    this.insert = function (projectNumber, number, name, description, jehAmount, jehCost, startDate, endDate,
+    this.insert = function (projectNumber, name, description, jehAmount, jehCost, startDate, endDate,
                             successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT,
             {
                 projectNumber: projectNumber,
-                number: number,
                 name: name,
                 description: description,
                 jehAmount: jehAmount,
@@ -902,13 +901,12 @@ var TaskServicesInterface = new function () {
             successHandler);
     };
 
-    this.update = function (id, number, name, description, jehAmount, jehCost, startDate, endDate,
+    this.update = function (id, name, description, jehAmount, jehCost, startDate, endDate,
                             successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE,
             {
                 id: id,
-                number: number,
                 name: name,
                 description: description,
                 jehAmount: jehAmount,

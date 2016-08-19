@@ -30,7 +30,7 @@ class Upload implements \JsonSerializable
      * @brief Constructs an upload
      * @param int $userId
      *        Uploader's ID
-     * @param string $uploadDate
+     * @param string $timestamp
      *        Upload timestamp
      * @param string $filename
      *        Upload displayable filename

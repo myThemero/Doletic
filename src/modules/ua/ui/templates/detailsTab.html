@@ -1,89 +1,388 @@
-<div class="ui two column grid container">
-    <div class="four wide column">
-        <div class="ui relaxed divided list">
-            <div class="item">
-                <div class="content">
-                    <div class="header">Nom complet</div>
-                    <div class="description" id="det_name">undefined</div>
+<div class="ui grid container">
+    <div class="row">
+        <div class="sixteen wide column">
+            <div class="ui buttons">
+                <div id="editsollic_modal_btn" class="ui green button" onClick="DoleticUIModule.editProject(-1);">
+                    Modifier l'étude
                 </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="header">Description</div>
-                    <div class="description" id="det_description">undefined</div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="header">Date de naissance</div>
-                    <div class="description" id="det_birth">undefined</div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="header">Année</div>
-                    <div class="description" id="det_year">undefined</div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="header">Téléphone</div>
-                    <div class="description" id="det_tel">undefined</div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="header">Email</div>
-                    <div class="description" id="det_mail">undefined</div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="header">Adresse</div>
-                    <div class="description" id="det_add">undefined</div>
-                    <div class="description" id="det_postal">undefined</div>
-                    <div class="description" id="det_city">undefined</div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="header">Nationalité</div>
-                    <div class="description" id="det_country">undefined</div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <div class="header">AG de recrutement</div>
-                    <div class="description" id="det_ag">undefined</div>
-                </div>
-            </div>
-            <div class="item">
-                <div id="addadmm_modal_btn" class="ui green icon button"
-                     onClick="DoleticUIModule.showNewAdmMembershipForm(-1);">Nouvelle adhésion administrateur
-                </div>
-            </div>
-            <div class="item">
-                <div id="addintm_modal_btn" class="ui green button"
-                     onClick="DoleticUIModule.showNewIntMembershipForm(-1);">Nouvelle adhésion intervenant
+                <div id="disableproject_btn" class="ui yellow button" onClick="DoleticUIModule.disableProject(-1);">
+                    Désactiver l'étude
                 </div>
             </div>
         </div>
     </div>
-    <div class="twelve wide column">
+    <div class="row">
+        <div class="four wide column">
+            <div class="ui relaxed divided list">
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Intitulé</div>
+                        <div class="description" id="det_name">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Description</div>
+                        <div class="description" id="det_description">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Domaine principal</div>
+                        <div class="description" id="det_field">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Origine de la sollicitation</div>
+                        <div class="description" id="det_origin">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Statut actuel</div>
+                        <div class="description" id="det_status">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Date de création</div>
+                        <div class="description" id="det_creation">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Frais de gestion</div>
+                        <div class="description" id="det_mgmt">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Frais de dossier</div>
+                        <div class="description" id="det_app">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Frais refacturés</div>
+                        <div class="description" id="det_rebilled">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Acompte</div>
+                        <div class="description" id="det_advance">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Signature</div>
+                        <div class="description" id="det_sign">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="content">
+                        <div class="header">Fin</div>
+                        <div class="description" id="det_end">undefined</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div id="addamend_modal_btn" class="ui green icon button"
+                         onClick="DoleticUIModule.showNewAmendmentForm(-1);">Nouvel avenant
+                    </div>
+                </div>
+                <div class="item">
+                    <div id="addtask_modal_btn" class="ui green icon button"
+                         onClick="DoleticUIModule.showNewTaskForm(-1);">Nouvelle phase
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="twelve wide column">
+            <div class="ui horizontal divider">
+                Contacts entreprise
+            </div>
+            <div class="row">
+                <table class="ui fluid very basic celled table">
+                    <thead>
+                    <tr>
+                        <th>
+                            Nom complet
+                        </th>
+                        <th>
+                            Téléphone
+                        </th>
+                        <th>
+                            Adresse mail
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th colspan="3">
+                            <div id="contact_search" class="ui fluid search selection dropdown">
+                                <input type="hidden" id="contact"/>
+                                <i class="dropdown icon"></i>
+                                <div class="default text">Contact...</div>
+                                <div class="menu">
+                                    <!-- CONTACTS WILL GO HERE -->
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div id="contact_btn" class="ui green button"
+                                 onClick="DoleticUIModule.addContact(-1);">
+                                Ajouter
+                            </div>
+                        </th>
+                    </tr>
+                    </tfoot>
+                    <tbody id="project_contacts_body">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="ui horizontal divider">
+                Correspondant qualité
+            </div>
+            <div class="row">
+                <table class="ui fluid very basic celled table">
+                    <thead>
+                    <tr>
+                        <th>
+                            Nom complet
+                        </th>
+                        <th>
+                            Téléphone
+                        </th>
+                        <th>
+                            Adresse mail
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="project_auditor_body">
+                        <tr id="auditor_data">
+                            <td id="auditor_name"></td>
+                            <td id="auditor_tel"></td>
+                            <td id="auditor_mail"></td>
+                            <td>
+                                <button class="ui yellow button" id="delauditor_btn" onClick="DoleticUIModule.editAuditor(); return false;">Modifier</button>
+                            </td>
+                        </tr>
+                        <tr id="auditor_form">
+                            <td colspan="3">
+                                <div id="auditor_search" class="ui fluid search selection dropdown">
+                                    <input type="hidden" id="auditor"/>
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">Correspondant qualité...</div>
+                                    <div class="menu">
+                                        <!-- AUDITORS WILL GO HERE -->
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="ui green button" id="auditor_btn" onClick="DoleticUIModule.assignAuditor(-1); return false;">Assigner</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="ui horizontal divider">
+                Chargés d'affaires
+            </div>
+            <div class="row">
+                <table class="ui fluid very basic celled table">
+                    <thead>
+                    <tr>
+                        <th>
+                            Nom complet
+                        </th>
+                        <th>
+                            Téléphone
+                        </th>
+                        <th>
+                            Adresse mail
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th colspan="3">
+                            <div id="chadaff_search" class="ui fluid search selection dropdown">
+                                <input type="hidden" id="chadaff"/>
+                                <i class="dropdown icon"></i>
+                                <div class="default text">Chargé d'affaires...</div>
+                                <div class="menu">
+                                    <!-- CHADAFFS WILL GO HERE -->
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div id="chadaff_btn" class="ui green button"
+                                 onClick="DoleticUIModule.addChadaff(-1);">
+                                Ajouter
+                            </div>
+                        </th>
+                    </tr>
+                    </tfoot>
+                    <tbody id="project_chadaffs_body">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="ui horizontal divider">
+                Consultants
+            </div>
+            <div class="row">
+                <table class="ui fluid very basic celled table">
+                    <thead>
+                    <tr>
+                        <th>
+                            Nom complet
+                        </th>
+                        <th>
+                            Téléphone
+                        </th>
+                        <th>
+                            Adresse mail
+                        </th>
+                        <th>
+                            Nombre de JEH
+                        </th>
+                        <th>
+                            Rémunération par JEH
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th colspan="3">
+                            <div id="int_search" class="ui fluid search selection dropdown">
+                                <input type="hidden" id="int"/>
+                                <i class="dropdown icon"></i>
+                                <div class="default text">Consultant...</div>
+                                <div class="menu">
+                                    <!-- INTS WILL GO HERE -->
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="ui input">
+                                <input type="number" placeholder="Nombre de JEH..." id="jehassigned"/>
+                            </div>
+
+                        </th>
+                        <th>
+                            <div class="ui input">
+                                <input type="number" placeholder="Paie par JEH..." class="ui input"
+                                       id="jehpay"/>
+                            </div>
+                        </th>
+                        <th>
+                            <div id="int_btn" class="ui green button" onClick="DoleticUIModule.addInt(-1);">
+                                Ajouter
+                            </div>
+                        </th>
+                    </tr>
+                    </tfoot>
+                    <tbody id="project_ints_body">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="ui horizontal divider">
-            Adhésions administrateur
+            Phases de l'étude
         </div>
-        <div class="row" id="admm_table_container">
+        <div class="sixteen wide column" id="task_table_container">
+            <table class="ui very basic fluid celled table">
+                <thead>
+                <tr>
+                    <th>
+                        Ordre
+                    </th>
+                    <th>
+                        Nom
+                    </th>
+                    <th>
+                        Nombre de JEH
+                    </th>
+                    <th>
+                        Prix par JEH
+                    </th>
+                    <th>
+                        Début
+                    </th>
+                    <th>
+                        Fin
+                    </th>
+                    <th>
+                        Terminée
+                    </th>
+                    <th>
+                        Livrables
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="project_tasks_body">
+
+                </tbody>
+            </table>
         </div>
+    </div>
+    <div class="row">
         <div class="ui horizontal divider">
-            Adhésions intervenant
+            Avenants de l'étude
         </div>
-        <div class="row" id="intm_table_container">
+        <div class="sixteen wide column" id="amendment_table_container">
+            <table class="ui very basic fluid celled table">
+                <thead>
+                <tr>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Contenu
+                    </th>
+                    <th>
+                        Imputable à la J.E.
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="project_amendments_body">
+
+                </tbody>
+            </table>
         </div>
+    </div>
+    <div class="row">
         <div class="ui horizontal divider">
-            Historique des postes
+            Documents de l'étude
         </div>
-        <div class="row" id="positions_history">
+        <div class="sixteen wide column" id="project_documents">
             <table class="ui very basic celled table">
                 <thead>
                 <tr>
@@ -95,19 +394,19 @@
                     </th>
                 </tr>
                 </thead>
-                <tbody id="pos_history_body">
+                <tbody id="project_docs_body">
 
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-<div class="ui modal" id="admm_form_modal">
-    <form id="admm_form" class="ui form segment">
-        <h4 class="ui dividing header">Ajout d'une adhésion</h4>
+<div class="ui modal" id="task_form_modal">
+    <form id="task_form" class="ui form segment">
+        <h4 class="ui dividing header">Ajout d'une phase</h4>
         <div id="sdatea_field" class="sixteen wide required field">
             <label>Date de début</label>
-            <div class="ui calendar" id="admm_scalendar">
+            <div class="ui calendar" id="task_scalendar">
                 <div class="ui input left icon">
                     <i class="calendar icon"></i>
                     <input id="sdatea" placeholder="AAAA-mm-jj" type="text"/>
@@ -116,68 +415,271 @@
         </div>
         <div id="edate_field" class="sixteen wide required field">
             <label>Date de fin</label>
-            <div class="ui calendar" id="admm_ecalendar">
+            <div class="ui calendar" id="task_ecalendar">
                 <div class="ui input left icon">
                     <i class="calendar icon"></i>
                     <input id="edate" placeholder="AAAA-mm-jj" type="text"/>
                 </div>
             </div>
         </div>
+        <div id="tname_field" class="sixteen wide required field">
+            <label>Nom</label>
+            <input type="text" placeholder="Nom..." id="tname">
+        </div>
         <div class="sixteen wide required field">
-            <label>Documents présents</label>
-            <select id="docs_adm" name="Documents" multiple="" class="ui fluid dropdown">
-                <option value="0">Cotisation</option>
-                <option value="1">Fiche d'inscription</option>
-                <option value="2">Certificat de scolarité</option>
-            </select>
+            <label>Description</label>
+            <textarea id="tdescription"></textarea>
+        </div>
+        <div class="fields">
+            <div id="jehamount_field" class="eight wide required field">
+                <label>Nombre de JEH</label>
+                <input id="jehamount" type="number"/>
+            </div>
+            <div id="jehcost_field" class="eight wide required field">
+                <label>Prix par JEH</label>
+                <input id="jehcost" type="number" value="340"/>
+            </div>
         </div>
         <div class="ui hr_center small buttons">
-            <div id="abort_admm" class="ui button" onClick="DoleticUIModule.cancelNewAdmMembershipForm(-1);">
+            <div id="abort_task" class="ui button" onClick="DoleticUIModule.cancelNewTaskForm(-1);">
                 Annuler
             </div>
             <div class="or" data-text="ou"></div>
-            <div id="admm_btn" class="ui green button" onClick="DoleticUIModule.insertNewAdmMembership(-1);">
+            <div id="task_btn" class="ui green button" onClick="DoleticUIModule.insertNewTask(-1);">
                 Ajouter
             </div>
         </div>
     </form>
 </div>
-<div class="ui modal" id="intm_form_modal">
-    <form id="intm_form" class="ui form segment">
-        <h4 class="ui dividing header">Ajout d'une adhésion</h4>
-        <div id="sdatei_field" class="sixteen wide required field">
-            <label>Date de début</label>
-            <div class="ui calendar" id="intm_calendar">
+<div class="ui modal" id="amend_form_modal">
+    <form id="amend_form" class="ui form segment">
+        <h4 class="ui dividing header">Ajout d'un avenant</h4>
+        <div id="amdate_field" class="sixteen wide required field">
+            <label>Date</label>
+            <div class="ui calendar" id="amend_scalendar">
                 <div class="ui input left icon">
                     <i class="calendar icon"></i>
-                    <input id="sdatei" placeholder="AAAA-mm-jj" type="text"/>
+                    <input id="amdate" placeholder="AAAA-mm-jj" type="text"/>
+                </div>
+            </div>
+        </div>
+        <div class="fields">
+            <div class="eight wide required field" id="amtype_field">
+                <label>Type d'avenant</label>
+                <div id="amtype_search" class="ui fluid search selection dropdown">
+                    <input type="hidden" id="amtype"/>
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Type...</div>
+                    <div class="menu">
+                        <!-- AMENDMENT TYPES WILL GO HERE -->
+                    </div>
+                </div>
+            </div>
+            <div id="attributable_field" class="eight wide required field">
+                <div class="ui toggle checkbox">
+                    <input type="checkbox" id="attributable">
+                    <label>Imputable à la J.E. ?</label>
                 </div>
             </div>
         </div>
         <div class="sixteen wide required field">
-            <label>
-                Numéro de sécurité sociale
-            </label>
-            <input type="text" id="secu_int" placeholder="Nombre à 13 chiffres..."/>
-        </div>
-        <div class="sixteen wide required field">
-            <label>Documents présents</label>
-            <select id="docs_int" name="Documents" multiple="" class="ui fluid dropdown">
-                <option value="0">Cotisation</option>
-                <option value="1">Fiche d'inscription</option>
-                <option value="2">Certificat de scolarité</option>
-                <option value="3">RIB</option>
-                <option value="4">Pièce d'identité</option>
-            </select>
+            <label>Contenu</label>
+            <textarea id="content_field"></textarea>
         </div>
         <div class="ui hr_center small buttons">
-            <div id="abort_intm" class="ui button" onClick="DoleticUIModule.cancelNewIntMembershipForm(-1);">
+            <div id="abort_amend" class="ui button" onClick="DoleticUIModule.cancelNewAmendmentForm(-1);">
                 Annuler
             </div>
             <div class="or" data-text="ou"></div>
-            <div id="intm_btn" class="ui green button" onClick="DoleticUIModule.insertNewIntMembership(-1);">
+            <div id="amend_btn" class="ui green button" onClick="DoleticUIModule.insertNewAmendment(-1);">
                 Ajouter
             </div>
         </div>
     </form>
+</div>
+<div class="ui modal" id="delivery_modal">
+    <div class="ui grid">
+        <div class="ten wide column">
+            <table class="ui very basic celled table">
+                <thead>
+                <tr>
+                    <th>
+                        Numéro
+                    </th>
+                    <th>
+                        Facturé
+                    </th>
+                    <th>
+                        Livré
+                    </th>
+                    <th>
+                        Payé
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="task_delivery_body">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="six wide column">
+            <div class="row">
+                <form id="delivery_form" class="ui form">
+                    <h4 class="ui dividing header">Ajout d'un livrable</h4>
+                    <div id="taskid_field" class="eight wide required field">
+                        <input id="taskid" type="hidden"/>
+                    </div>
+                    <div class="fields">
+                        <div id="delnumber_field" class="eight wide required field">
+                            <label>Numéro de livrable</label>
+                            <input id="delnumber" type="number"/>
+                        </div>
+                        <div id="billed_field" class="eight wide required field">
+                            <div class="ui toggle checkbox">
+                                <input type="checkbox" id="billed">
+                                <label>Facturé ?</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sixteen wide required field">
+                        <label>Contenu</label>
+                        <textarea id="delcontent"></textarea>
+                    </div>
+                    <div class="ui hr_center small buttons">
+                        <div id="abort_delivery" class="ui button"
+                             onClick="DoleticUIModule.clearNewDeliveryForm(-1);">
+                            Annuler
+                        </div>
+                        <div class="or" data-text="ou"></div>
+                        <div id="delivery_btn" class="ui green button"
+                             onClick="DoleticUIModule.insertNewDelivery(-1);">
+                            Ajouter
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <form id="delivered_form" class="ui form" style="display: none;">
+                    <h4 class="ui dividing header">Confirmation de livraison</h4>
+                    <div id="delid_field" class="eight wide required field">
+                        <input id="delid" type="hidden"/>
+                    </div>
+                    <div id="deldate_field" class="sixteen wide required field">
+                        <label>Date de livraison</label>
+                        <div class="ui calendar" id="delivered_calendar">
+                            <div class="ui input left icon">
+                                <i class="calendar icon"></i>
+                                <input id="deldate" placeholder="AAAA-mm-jj" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui hr_center small buttons">
+                        <div id="abort_delivered" class="ui button" onClick="DoleticUIModule.cancelDeliveredForm();">
+                            Annuler
+                        </div>
+                        <div class="or" data-text="ou"></div>
+                        <div id="delivered_btn" class="ui green button" onClick="DoleticUIModule.deliverDelivery(-1);">
+                            Confirmer
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <form id="paid_form" class="ui form" style="display: none;">
+                    <h4 class="ui dividing header">Confirmation de paiement</h4>
+                    <div id="payid_field" class="eight wide required field">
+                        <input id="payid" type="hidden"/>
+                    </div>
+                    <div id="paydate_field" class="sixteen wide required field">
+                        <label>Date de livraison</label>
+                        <div class="ui calendar" id="paid_calendar">
+                            <div class="ui input left icon">
+                                <i class="calendar icon"></i>
+                                <input id="paydate" placeholder="AAAA-mm-jj" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui hr_center small buttons">
+                        <div id="abort_paid" class="ui button" onClick="DoleticUIModule.cancelPaidForm();">
+                            Annuler
+                        </div>
+                        <div class="or" data-text="ou"></div>
+                        <div id="paid_btn" class="ui green button" onClick="DoleticUIModule.payDelivery(-1);">
+                            Confirmer
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui basic modal" id="content_modal">
+    <div class="header">Contenu de l'avenant</div>
+    <div class="image content">
+        <div class="image"><i class="line chart icon"></i></div>
+        <div class="description">
+            <p id="content_modal_text"></p>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="one fluid ui inverted buttons">
+            <div class="ui green basic inverted button" onclick="DoleticUIModule.hideContentModal();"><i
+                    class="checkmark icon"></i>
+                Ok
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui modal" id="sign_form_modal">
+    <div class="ui grid">
+        <form id="sign_form" class="ui form">
+            <h4 class="ui dividing header">Confirmation de signature</h4>
+            <div id="signdate_field" class="sixteen wide required field">
+                <label>Date de signature</label>
+                <div class="ui calendar" id="sign_calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input id="signdate" placeholder="AAAA-mm-jj" type="text"/>
+                    </div>
+                </div>
+            </div>
+            <div class="ui hr_center small buttons">
+                <div id="abort_sign" class="ui button" onClick="DoleticUIModule.cancelSignForm();">
+                    Annuler
+                </div>
+                <div class="or" data-text="ou"></div>
+                <div id="sign_btn" class="ui green button" onClick="DoleticUIModule.signProject(-1);">
+                    Confirmer
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="ui modal" id="end_form_modal">
+    <div class="ui grid">
+        <form id="end_form" class="ui form">
+            <h4 class="ui dividing header">Confirmation de clôture</h4>
+            <div id="enddate_field" class="sixteen wide required field">
+                <label>Date du PV de fin d'étude</label>
+                <div class="ui calendar" id="end_calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input id="enddate" placeholder="AAAA-mm-jj" type="text"/>
+                    </div>
+                </div>
+            </div>
+            <div class="ui hr_center small buttons">
+                <div id="abort_end" class="ui button" onClick="DoleticUIModule.cancelEndForm();">
+                    Annuler
+                </div>
+                <div class="or" data-text="ou"></div>
+                <div id="end_btn" class="ui green button" onClick="DoleticUIModule.endProject(-1);">
+                    Confirmer
+                </div>
+            </div>
+        </form>
+    </div>
 </div>

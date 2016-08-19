@@ -316,6 +316,12 @@ var DoleticMasterInterface = new function () {
         return str.match(/^\d{10}$/g) != null;
     };
     /**
+     *  Checks number
+     */
+    this.checkInt = function (str) {
+        return str.match(/^\d+$/g) != null;
+    };
+    /**
      *  Checks postal code
      */
     this.checkPostalCode = function (str) {
