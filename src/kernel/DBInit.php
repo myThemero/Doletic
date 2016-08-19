@@ -308,6 +308,28 @@ class FakeDataFunction extends AbstractFunction
         // --------------------------------------------------------------
         parent::endlog("done !");
 
+        // --- fill project
+        parent::info("Filling project object related tables...", true);
+        // --------------------------------------------------------------
+        // Example project
+        $kernel->GetDBObject(ProjectDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+            ->GetResponseData(ProjectServices::INSERT, array(
+                ProjectServices::PARAM_NAME => "Site web",
+                ProjectServices::PARAM_DESCRIPTION => "Développement d'un site web.",
+                ProjectServices::PARAM_ORIGIN => "Mail",
+                ProjectServices::PARAM_FIELD => "IF",
+                ProjectServices::PARAM_FIRM_ID => 1,
+                ProjectServices::PARAM_MGMT_FEE => 0,
+                ProjectServices::PARAM_APP_FEE => 0,
+                ProjectServices::PARAM_REBILLED_FEE => 0,
+                ProjectServices::PARAM_ADVANCE => 0,
+                ProjectServices::PARAM_SECRET => 0,
+                ProjectServices::PARAM_CRITICAL => 0,
+                ProjectServices::PARAM_ASSIGN_CURRENT => false
+            ));
+        // --------------------------------------------------------------
+        parent::endlog("done !");
+
         // --- fill maillist
         parent::info("Filling mailing list object related tables...", true);
         // --------------------------------------------------------------

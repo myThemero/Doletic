@@ -375,21 +375,42 @@ var DoleticUIModule = new function () {
                         "<td>" + data.object[i].auditor_id + "</td>"; // Change this
 
                     if (data.object[i].disabled) {
-
+                        disabled_content += row + "<td><div class=\"ui icon buttons\">" +
+                            "<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
+                            "<i class=\"write icon\"></i>" +
+                            "</button>" +
+                            "<button class=\"ui icon button\" data-tooltip=\"Réactiver\" onClick=\"DoleticUIModule.restoreProject(" + data.object[i].number + "); return false;\">" +
+                            "<i class=\"remove icon\"></i>" +
+                            "</button>" +
+                            "</div>" +
+                            "</tr>";
                     } else if (data.object[i].archived) {
-
+                        archived_content += row + "<td><div class=\"ui icon buttons\">" +
+                            "<button class=\"ui icon button\" data-tooltip=\"Restaurer\" onClick=\"DoleticUIModule.unarchiveProject(" + data.object[i].number + "); return false;\">" +
+                            "<i class=\"write icon\"></i>" +
+                            "</button>" +
+                            "</div>" +
+                            "</tr>";
                     } else if (data.object[i].sign_date == null) {
                         sollic_content += row + "<td><div class=\"ui icon buttons\">" +
                             "<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
                             "<i class=\"write icon\"></i>" +
                             "</button>" +
-                            "<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
+                            "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                             "<i class=\"remove icon\"></i>" +
                             "</button>" +
                             "</div>" +
                             "</tr>";
                     } else {
-
+                        project_content += row + "<td><div class=\"ui icon buttons\">" +
+                            "<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
+                            "<i class=\"write icon\"></i>" +
+                            "</button>" +
+                            "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
+                            "<i class=\"remove icon\"></i>" +
+                            "</button>" +
+                            "</div>" +
+                            "</tr>";
                     }
                 }
                 sollic_content += "</tbody></table>";

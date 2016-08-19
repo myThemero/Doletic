@@ -77,14 +77,14 @@ class Project implements \JsonSerializable
         $this->app_fee = $appFee;
         $this->rebilled_fee = $rebilledFee;
         $this->advance = $advance;
-        $this->secret = $secret;
-        $this->critical = $critical;
+        $this->secret = boolval($secret);
+        $this->critical = boolval($critical);
         $this->creation_date = $creationDate;
         $this->update_date = $updateDate;
-        $this->disabled = $disabled;
+        $this->disabled = boolval($disabled);
         $this->disabled_since = $disabledSince;
         $this->disabled_until = $disabledUntil;
-        $this->archived = $archived;
+        $this->archived = boolval($archived);
         $this->archived_since = $archivedSince;
         $this->contacts = $contacts;
         $this->ints = $ints;
@@ -2032,14 +2032,9 @@ class ProjectServices extends AbstractObjectServices
         // create sql params array
         $sql_params = array();
         // create sql request
-        $sql_active = parent::getDBObject()->GetTable(ProjectDBObject::TABL_PROJECT)->GetSELECTQuery(
+        $sql = parent::getDBObject()->GetTable(ProjectDBObject::TABL_PROJECT)->GetSELECTQuery(
             array(ProjectDBObject::COL_NUMBER)
         );
-        $sql_disabled = parent::getDBObject()->GetTable(ProjectDBObject::TABL_PROJECT_DISABLED)->GetSELECTQuery(
-            array(ProjectDBObject::COL_NUMBER)
-        );
-
-        $sql = DBTable::GetUNIONQuery($sql_active, $sql_disabled, ProjectDBObject::COL_NUMBER, '1');
         // execute SQL query and save result
         $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
         // create udata var
@@ -2129,7 +2124,6 @@ class ProjectDBObject extends AbstractDBObject
     const OBJ_NAME = "project";
     // --- tables
     const TABL_PROJECT = "dol_project";
-    const TABL_PROJECT_DISABLED = "dol_project_disabled";
     const TABL_ORIGIN = "dol_project_origin";
     const TABL_STATUS = "dol_project_status";
     const TABL_AMENDMENT_TYPE = "dol_amendment_type";
@@ -2214,33 +2208,6 @@ class ProjectDBObject extends AbstractDBObject
             ->AddColumn(ProjectDBObject::COL_CRITICAL, DBTable::DT_INT, 1, false, 0)
             ->AddColumn(ProjectDBObject::COL_CREATION_DATE, DBTable::DT_DATETIME, -1, false)
             ->AddColumn(ProjectDBObject::COL_UPDATE_DATE, DBTable::DT_DATETIME, -1, false)
-            ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk1', ProjectDBObject::COL_AUDITOR_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
-            ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk2', ProjectDBObject::COL_ORIGIN, ProjectDBObject::TABL_ORIGIN, ProjectDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
-            ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk3', ProjectDBObject::COL_FIELD, UserDataDBObject::TABL_COM_DIVISION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
-            ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk4', ProjectDBObject::COL_STATUS, ProjectDBObject::TABL_STATUS, ProjectDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
-            ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk5', ProjectDBObject::COL_FIRM_ID, FirmDBObject::TABL_FIRM, FirmDBObject::COL_ID, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
-
-        // --- dol_project table
-        $dol_project = new DBTable(ProjectDBObject::TABL_PROJECT);
-        $dol_project
-            ->AddColumn(ProjectDBObject::COL_NUMBER, DBTable::DT_INT, 11, false, "", true, true)
-            ->AddColumn(ProjectDBObject::COL_NAME, DBTable::DT_VARCHAR, 50, false, "")
-            ->AddColumn(ProjectDBObject::COL_DESCRIPTION, DBTable::DT_VARCHAR, 255, false, "")
-            ->AddColumn(ProjectDBObject::COL_ORIGIN, DBTable::DT_VARCHAR, 255, false, "")
-            ->AddColumn(ProjectDBObject::COL_FIELD, DBTable::DT_VARCHAR, 255, false, "")
-            ->AddColumn(ProjectDBObject::COL_STATUS, DBTable::DT_VARCHAR, 255, false, "")
-            ->AddColumn(ProjectDBObject::COL_FIRM_ID, DBTable::DT_INT, 11, false, "")
-            ->AddColumn(ProjectDBObject::COL_AUDITOR_ID, DBTable::DT_INT, 11, true, null)
-            ->AddColumn(ProjectDBObject::COL_SIGN_DATE, DBTable::DT_DATE, -1, true, null)
-            ->AddColumn(ProjectDBObject::COL_END_DATE, DBTable::DT_DATE, -1, true, null)
-            ->AddColumn(ProjectDBObject::COL_MGMT_FEE, DBTable::DT_INT, 11, false, 0)
-            ->AddColumn(ProjectDBObject::COL_APP_FEE, DBTable::DT_INT, 11, false, 0)
-            ->AddColumn(ProjectDBObject::COL_REBILLED_FEE, DBTable::DT_INT, 11, false, 0)
-            ->AddColumn(ProjectDBObject::COL_ADVANCE, DBTable::DT_INT, 11, false, 0)
-            ->AddColumn(ProjectDBObject::COL_SECRET, DBTable::DT_INT, 1, false, 0)
-            ->AddColumn(ProjectDBObject::COL_CRITICAL, DBTable::DT_INT, 1, false, 0)
-            ->AddColumn(ProjectDBObject::COL_CREATION_DATE, DBTable::DT_DATETIME, -1, false)
-            ->AddColumn(ProjectDBObject::COL_UPDATE_DATE, DBTable::DT_DATETIME, -1, false)
             ->AddColumn(ProjectDBObject::COL_DISABLED, DBTable::DT_INT, 1, false, 0)
             ->AddColumn(ProjectDBObject::COL_DISABLED_SINCE, DBTable::DT_DATE, -1, true, null)
             ->AddColumn(ProjectDBObject::COL_DISABLED_UNTIL, DBTable::DT_DATE, -1, true, null)
@@ -2248,7 +2215,7 @@ class ProjectDBObject extends AbstractDBObject
             ->AddColumn(ProjectDBObject::COL_ARCHIVED_SINCE, DBTable::DT_DATE, -1, true, null)
             ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk1', ProjectDBObject::COL_AUDITOR_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
             ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk2', ProjectDBObject::COL_ORIGIN, ProjectDBObject::TABL_ORIGIN, ProjectDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
-            ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk3', ProjectDBObject::COL_FIELD, UserDataDBObject::TABL_COM_DIVISION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
+            ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk3', ProjectDBObject::COL_FIELD, UserDataDBObject::TABL_COM_INSA_DEPT, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
             ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk4', ProjectDBObject::COL_STATUS, ProjectDBObject::TABL_STATUS, ProjectDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
             ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk5', ProjectDBObject::COL_FIRM_ID, FirmDBObject::TABL_FIRM, FirmDBObject::COL_ID, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 
