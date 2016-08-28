@@ -12,7 +12,7 @@ var DoleticUIModule = new function () {
         this.fillDocumentTypes();
         // fill study identifiers
         this.fillStudyIdentifiers();
-    }
+    };
     /**
      *    Override build function
      */
@@ -51,13 +51,13 @@ var DoleticUIModule = new function () {
 				  <div class=\"row\"> \
 				  </div> \
 				</div>";
-    }
+    };
     /**
      *    Override uploadSuccessHandler
      */
     this.uploadSuccessHandler = function (id, data) {
         this.super.uploadSuccessHandler(id, data);
-    }
+    };
 
     this.nightMode = function (on) {
         if (on) {
@@ -65,7 +65,7 @@ var DoleticUIModule = new function () {
         } else {
             /// \todo implement here
         }
-    }
+    };
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
@@ -84,7 +84,7 @@ var DoleticUIModule = new function () {
                 DoleticServicesInterface.handleServiceError(data);
             }
         });
-    }
+    };
 
     this.fillStudyIdentifiers = function () {
         // clear
@@ -92,7 +92,7 @@ var DoleticUIModule = new function () {
         // fill it with study numbers
         /// \todo implement here
         alert('Still working on it... module study must be developped');
-    }
+    };
 
     this.fillAvailableDocuments = function (type) {
         // clear
@@ -121,4 +121,4 @@ var DoleticUIModule = new function () {
         });
     }
 
-}
+};

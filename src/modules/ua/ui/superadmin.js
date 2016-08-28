@@ -536,6 +536,46 @@ var DoleticUIModule = new function () {
                 DoleticUIModule.fillAmendmentList(number);
                 DoleticUIModule.fillTaskList(number);
 
+                var propaleHtml = "";
+                var propaleValid = "";
+                if(data.object.propale_id == null) {
+                    propaleHtml = '<button class="ui yellow icon button" data-tooltip="Uploader">' +
+                        '<i class="cloud upload icon"></i>' +
+                        '</button>';
+                    propaleValid = '<i>Aucun</i>';
+                } else {
+                    propaleHtml = '<button class="ui green icon button" data-tooltip="Télécharger">' +
+                    '<i class="download icon"></i>' +
+                    '</button>';
+                    if(data.object.propale_valid) {
+                        propaleValid = '<button class="ui green icon button" data-tooltip="Valider">' +
+                            '<i class="checkmark icon"></i>' +
+                            '</button>';
+                    }
+                }
+                $('#propale_original').html(propaleHtml);
+                $('#propale_valid').html(propaleValid);
+
+                var ccHtml = "";
+                var ccValid = "";
+                if(data.object.cc_id == null) {
+                    ccHtml = '<button class="ui yellow icon button" data-tooltip="Uploader">' +
+                        '<i class="cloud upload icon"></i>' +
+                        '</button>';
+                    ccValid = '<i>Aucun</i>';
+                } else {
+                    ccHtml = '<button class="ui green icon button" data-tooltip="Télécharger">' +
+                        '<i class="download icon"></i>' +
+                        '</button>';
+                    if(data.object.cc_valid) {
+                        ccValid = '<button class="ui green icon button" data-tooltip="Valider">' +
+                            '<i class="checkmark icon"></i>' +
+                            '</button>';
+                    }
+                }
+                $('#cc_original').html(ccHtml);
+                $('#cc_valid').html(ccValid);
+
                 $('#det').html(htmlTitle).show().click();
             } else {
                 // use default service service error handler
@@ -579,6 +619,7 @@ var DoleticUIModule = new function () {
                         '<td><a href=\"mailto:"' + int.email + '" target="_blank">' + int.email + '</a></td>' +
                         '<td>' + data.object[i].jeh_assigned + '</td>' +
                         '<td>' + data.object[i].pay + '€</td>' +
+                        '<td></td>' +
                         '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeInt('
                         + number + ', ' + int.id + '); return false;"><i class="remove icon"></i>' +
                         '</button> </td></tr>';

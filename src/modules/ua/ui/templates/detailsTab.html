@@ -167,29 +167,33 @@
                     </tr>
                     </thead>
                     <tbody id="project_auditor_body">
-                        <tr id="auditor_data">
-                            <td id="auditor_name"></td>
-                            <td id="auditor_tel"></td>
-                            <td id="auditor_mail"></td>
-                            <td>
-                                <button class="ui yellow button" id="delauditor_btn" onClick="DoleticUIModule.editAuditor(); return false;">Modifier</button>
-                            </td>
-                        </tr>
-                        <tr id="auditor_form">
-                            <td colspan="3">
-                                <div id="auditor_search" class="ui fluid search selection dropdown">
-                                    <input type="hidden" id="auditor"/>
-                                    <i class="dropdown icon"></i>
-                                    <div class="default text">Correspondant qualité...</div>
-                                    <div class="menu">
-                                        <!-- AUDITORS WILL GO HERE -->
-                                    </div>
+                    <tr id="auditor_data">
+                        <td id="auditor_name"></td>
+                        <td id="auditor_tel"></td>
+                        <td id="auditor_mail"></td>
+                        <td>
+                            <button class="ui yellow button" id="delauditor_btn"
+                                    onClick="DoleticUIModule.editAuditor(); return false;">Modifier
+                            </button>
+                        </td>
+                    </tr>
+                    <tr id="auditor_form">
+                        <td colspan="3">
+                            <div id="auditor_search" class="ui fluid search selection dropdown">
+                                <input type="hidden" id="auditor"/>
+                                <i class="dropdown icon"></i>
+                                <div class="default text">Correspondant qualité...</div>
+                                <div class="menu">
+                                    <!-- AUDITORS WILL GO HERE -->
                                 </div>
-                            </td>
-                            <td>
-                                <button class="ui green button" id="auditor_btn" onClick="DoleticUIModule.assignAuditor(-1); return false;">Assigner</button>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="ui green button" id="auditor_btn"
+                                    onClick="DoleticUIModule.assignAuditor(-1); return false;">Assigner
+                            </button>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -256,10 +260,10 @@
                             Adresse mail
                         </th>
                         <th>
-                            Nombre de JEH
+                            JEH assignés
                         </th>
                         <th>
-                            Rémunération par JEH
+                            Paie par JEH
                         </th>
                         <th>
                             Actions
@@ -387,15 +391,40 @@
                 <thead>
                 <tr>
                     <th>
-                        Poste
+
                     </th>
                     <th>
-                        Depuis le
+                        Propale
+                    </th>
+                    <th>
+                        Convention Entreprise
                     </th>
                 </tr>
                 </thead>
                 <tbody id="project_docs_body">
-
+                <tr>
+                    <td>Générer</td>
+                    <td>
+                        <button id="make_propale_btn" class="ui green icon button" data-tooltip="Générer la propale">
+                            <i class="wizard icon"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button  id="make_cc_btn" class="ui green icon button" data-tooltip="Générer la convention client">
+                            <i class="wizard icon"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Document</td>
+                    <td id="propale_original"></td>
+                    <td id="cc_original"></td>
+                </tr>
+                <tr>
+                    <td>Validé ?</td>
+                    <td id="propale_valid"></td>
+                    <td id="cc_valid"></td>
+                </tr>
                 </tbody>
             </table>
         </div>

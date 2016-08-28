@@ -48,6 +48,13 @@ class Project implements \JsonSerializable
     private $archived = false;
     private $archived_since = null;
 
+    // Docs
+    private $propale = null;
+    private $cc = null;
+    private $propale_valid = false;
+    private $cc_valid = false;
+
+    // Lists
     private $contacts = array();
     private $ints = array();
     private $chadaffs = array();
@@ -61,7 +68,8 @@ class Project implements \JsonSerializable
     public function __construct($number, $name, $description, $origin, $field, $status, $firmId, $auditorId,
                                 $signDate, $endDate, $mgmtFee, $appFee, $rebilledFee, $advance, $secret,
                                 $critical, $creationDate, $updateDate, $disabled, $disabledSince, $disabledUntil,
-                                $archived, $archivedSince, $contacts = [], $ints = [], $chadaffs = [], $amendments = [])
+                                $archived, $archivedSince, $propale, $cc, $propaleValid, $ccValid,
+                                $contacts = [], $ints = [], $chadaffs = [], $amendments = [])
     {
         $this->number = $number;
         $this->name = $name;
@@ -86,6 +94,10 @@ class Project implements \JsonSerializable
         $this->disabled_until = $disabledUntil;
         $this->archived = boolval($archived);
         $this->archived_since = $archivedSince;
+        $this->propale = $propale;
+        $this->cc = $cc;
+        $this->propale_valid = boolval($propaleValid);
+        $this->cc_valid = boolval($ccValid);
         $this->contacts = $contacts;
         $this->ints = $ints;
         $this->chadaffs = $chadaffs;
@@ -729,7 +741,11 @@ class ProjectServices extends AbstractObjectServices
                     $row[ProjectDBObject::COL_DISABLED_SINCE],
                     $row[ProjectDBObject::COL_DISABLED_UNTIL],
                     $row[ProjectDBObject::COL_ARCHIVED],
-                    $row[ProjectDBObject::COL_ARCHIVED_SINCE]);
+                    $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                    $row[ProjectDBObject::COL_PROPALE],
+                    $row[ProjectDBObject::COL_CC],
+                    $row[ProjectDBObject::COL_PROPALE_VALID],
+                    $row[ProjectDBObject::COL_CC_VALID]);
             }
         }
         return $data;
@@ -772,6 +788,10 @@ class ProjectServices extends AbstractObjectServices
                     $row[ProjectDBObject::COL_DISABLED_UNTIL],
                     $row[ProjectDBObject::COL_ARCHIVED],
                     $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                    $row[ProjectDBObject::COL_PROPALE],
+                    $row[ProjectDBObject::COL_CC],
+                    $row[ProjectDBObject::COL_PROPALE_VALID],
+                    $row[ProjectDBObject::COL_CC_VALID],
                     $this->__get_all_contacts_by_project($number),
                     $this->__get_all_ints_by_project($number),
                     $this->__get_all_chadaffs_by_project($number),
@@ -817,7 +837,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -860,7 +884,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -903,7 +931,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -946,7 +978,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -989,7 +1025,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -1032,7 +1072,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -1084,7 +1128,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -1136,7 +1184,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -1188,7 +1240,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -1231,7 +1287,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -1274,7 +1334,11 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID])
                 );
             }
         }
@@ -1514,7 +1578,11 @@ class ProjectServices extends AbstractObjectServices
             ":" . ProjectDBObject::COL_DISABLED_SINCE => null,
             ":" . ProjectDBObject::COL_DISABLED_UNTIL => null,
             ":" . ProjectDBObject::COL_ARCHIVED => 0,
-            ":" . ProjectDBObject::COL_ARCHIVED_SINCE => null
+            ":" . ProjectDBObject::COL_ARCHIVED_SINCE => null,
+            ":" . ProjectDBObject::COL_PROPALE => null,
+            ":" . ProjectDBObject::COL_CC => null,
+            ":" . ProjectDBObject::COL_PROPALE_VALID => 0,
+            ":" . ProjectDBObject::COL_CC_VALID => 0
         );
         // create sql request
         $sql = parent::getDBObject()->GetTable(ProjectDBObject::TABL_PROJECT)->GetINSERTQuery();
@@ -1802,7 +1870,10 @@ class ProjectServices extends AbstractObjectServices
             ":" . ProjectDBObject::COL_NUMBER => $this->__get_next_int_number($number),
             ":" . ProjectDBObject::COL_INT_ID => $intId,
             ":" . ProjectDBObject::COL_JEH_ASSIGNED => $jehAssigned,
-            ":" . ProjectDBObject::COL_PAY => $pay
+            ":" . ProjectDBObject::COL_PAY => $pay,
+            ":" . ProjectDBObject::COL_RM => null,
+            ":" . ProjectDBObject::COL_DBV => null,
+            ":" . ProjectDBObject::COL_RM_VALID => 0
         );
         // create sql request
         $sql = parent::getDBObject()->GetTable(ProjectDBObject::TABL_INT)->GetINSERTQuery();
@@ -2206,6 +2277,14 @@ class ProjectDBObject extends AbstractDBObject
     const COL_DISABLED_UNTIL = 'disabled_until';
     const COL_ARCHIVED = 'archived';
     const COL_ARCHIVED_SINCE = 'archived_since';
+
+    const COL_RM = "rm_id";
+    const COL_DBV = "dbv_id";
+    const COL_RM_VALID = "rm_valid";
+    const COL_PROPALE = "propale_id";
+    const COL_CC = "cc_id";
+    const COL_PROPALE_VALID = "propale_valid";
+    const COL_CC_VALID = "cc_valid";
     // -- attributes
 
     // -- functions
@@ -2250,6 +2329,10 @@ class ProjectDBObject extends AbstractDBObject
             ->AddColumn(ProjectDBObject::COL_DISABLED_UNTIL, DBTable::DT_DATE, -1, true, null)
             ->AddColumn(ProjectDBObject::COL_ARCHIVED, DBTable::DT_INT, 1, false, 0)
             ->AddColumn(ProjectDBObject::COL_ARCHIVED_SINCE, DBTable::DT_DATE, -1, true, null)
+            ->AddColumn(ProjectDBObject::COL_PROPALE, DBTable::DT_INT, 11, true, NULL)
+            ->AddColumn(ProjectDBObject::COL_CC, DBTable::DT_INT, 11, true, NULL)
+            ->AddColumn(ProjectDBObject::COL_PROPALE_VALID, DBTable::DT_INT, 1, false, 0)
+            ->AddColumn(ProjectDBObject::COL_CC_VALID, DBTable::DT_INT, 1, false, 0)
             ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk1', ProjectDBObject::COL_AUDITOR_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
             ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk2', ProjectDBObject::COL_ORIGIN, ProjectDBObject::TABL_ORIGIN, ProjectDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
             ->AddForeignKey(ProjectDBObject::TABL_PROJECT . '_fk3', ProjectDBObject::COL_FIELD, UserDataDBObject::TABL_COM_INSA_DEPT, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
@@ -2299,6 +2382,9 @@ class ProjectDBObject extends AbstractDBObject
             ->AddColumn(ProjectDBObject::COL_NUMBER, DBTable::DT_INT, 11, false, "")
             ->AddColumn(ProjectDBObject::COL_JEH_ASSIGNED, DBTable::DT_INT, 11, false, "")
             ->AddColumn(ProjectDBObject::COL_PAY, DBTable::DT_INT, 11, false, "")
+            ->AddColumn(ProjectDBObject::COL_RM, DBTable::DT_INT, 11, true, NULL)
+            ->AddColumn(ProjectDBObject::COL_DBV, DBTable::DT_INT, 11, true, NULL)
+            ->AddColumn(ProjectDBObject::COL_RM_VALID, DBTable::DT_INT, 11, false, 0)
             ->AddForeignKey(ProjectDBObject::TABL_INT . '_fk1', ProjectDBObject::COL_INT_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_RESTRICT, DBTable::DT_CASCADE)
             ->AddForeignKey(ProjectDBObject::TABL_INT . '_fk2', ProjectDBObject::COL_PROJECT_NUMBER, ProjectDBObject::TABL_PROJECT, ProjectDBObject::COL_NUMBER, DBTable::DT_CASCADE, DBTable::DT_CASCADE)
             ->AddUniqueColumns(array(ProjectDBObject::COL_PROJECT_NUMBER, ProjectDBObject::COL_INT_ID));
