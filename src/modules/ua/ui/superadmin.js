@@ -295,7 +295,7 @@ var DoleticUIModule = new function () {
 
     this.fillProjectsList = function () {
         // Load old members
-        ProjectServicesInterface.getAll(function (data) {
+        ProjectServicesInterface.getAllFull(function (data) {
             // Delete and recreate table so Datatables is reinitialized
             $("#sollic_table_container").html("");
             $("#project_table_container").html("");
@@ -352,14 +352,19 @@ var DoleticUIModule = new function () {
                 ];
 
                 for (var i = 0; i < data.object.length; i++) {
+                    console.log(data.object);
                     var chadaffHtml = "";
-                    for (var j = 0; j < data.object[i].chadaff_id.length; j++) {
-                        chadaffHtml += data.object[i].chadaff_id[j] + "<br>";
+                    var j = 0;
+                    for (j = 0; j < data.object[i].chadaff_id.length; j++) {
+                        var chadaff = window.user_list[data.object[i].chadaff_id[j].chadaff_id];
+                        chadaffHtml += chadaff.firstname + ' ' + chadaff.lastname + "<br>";
                     }
                     chadaffHtml = j == 0 ? "<i>Non assigné</i>" : chadaffHtml;
                     var intHtml = "";
-                    for (var k = 0; k < data.object[i].int_id.length; k++) {
-                        intHtml += data.object[i].int_id[k] + "<br>";
+                    var k = 0;
+                    for (k = 0; k < data.object[i].int_id.length; k++) {
+                        var int = window.user_list[data.object[i].int_id[k].int_id];
+                        intHtml += int.firstname + ' ' + int.lastname + "<br>";
                     }
                     intHtml = k == 0 ? "<i>Non assigné</i>" : intHtml;
                     var row = "<tr>" +

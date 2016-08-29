@@ -144,6 +144,7 @@ var ProjectServicesInterface = new function () {
         // --- (actions)
         ACTION: {
             GET_ALL: "getall",
+            GET_ALL_FULL: "getallful",
             GET_DISABLED: "getdisabled",
             GET_BY_NUMBER: "getbynum",
             GET_FULL_BY_NUMBER: "fullbynum",
@@ -201,6 +202,13 @@ var ProjectServicesInterface = new function () {
     this.getAll = function (successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_ALL,
+            {},
+            successHandler);
+    };
+
+    this.getAllFull = function (successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_FULL,
             {},
             successHandler);
     };

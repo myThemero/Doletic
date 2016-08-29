@@ -414,6 +414,7 @@ class ProjectServices extends AbstractObjectServices
     const PARAM_ARCHIVED_SINCE = "archivedSince";
     // --- internal services (actions)
     const GET_ALL = "getall";
+    const GET_ALL_FULL = "getallful";
     const GET_DISABLED = "getdisabled";
     const GET_BY_NUMBER = "getbynum";
     const GET_FULL_BY_NUMBER = "fullbynum";
@@ -486,6 +487,8 @@ class ProjectServices extends AbstractObjectServices
             $data = $this->__get_project_by_number($params[ProjectServices::PARAM_NUMBER]);
         } else if (!strcmp($action, ProjectServices::GET_FULL_BY_NUMBER)) {
             $data = $this->__get_full_project_by_number($params[ProjectServices::PARAM_NUMBER]);
+        } else if (!strcmp($action, ProjectServices::GET_ALL_FULL)) {
+            $data = $this->__get_all_full_projects();
         } else if (!strcmp($action, ProjectServices::GET_BY_STATUS)) {
             $data = $this->__get_projects_by_status($params[ProjectServices::PARAM_STATUS]);
         } else if (!strcmp($action, ProjectServices::GET_BY_ORIGIN)) {
@@ -796,6 +799,57 @@ class ProjectServices extends AbstractObjectServices
                     $this->__get_all_ints_by_project($number),
                     $this->__get_all_chadaffs_by_project($number),
                     $this->__get_all_amendments_by_project($number)
+                );
+            }
+        }
+        return $data;
+    }
+
+    private function __get_all_full_projects()
+    {
+        // create sql params array
+        $sql_params = array();
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(ProjectDBObject::TABL_PROJECT)->GetSELECTQuery();
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = array();
+        if (isset($pdos)) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($data, new Project(
+                        $row[ProjectDBObject::COL_NUMBER],
+                        $row[ProjectDBObject::COL_NAME],
+                        $row[ProjectDBObject::COL_DESCRIPTION],
+                        $row[ProjectDBObject::COL_ORIGIN],
+                        $row[ProjectDBObject::COL_FIELD],
+                        $row[ProjectDBObject::COL_STATUS],
+                        $row[ProjectDBObject::COL_FIRM_ID],
+                        $row[ProjectDBObject::COL_AUDITOR_ID],
+                        $row[ProjectDBObject::COL_SIGN_DATE],
+                        $row[ProjectDBObject::COL_END_DATE],
+                        $row[ProjectDBObject::COL_MGMT_FEE],
+                        $row[ProjectDBObject::COL_APP_FEE],
+                        $row[ProjectDBObject::COL_REBILLED_FEE],
+                        $row[ProjectDBObject::COL_ADVANCE],
+                        $row[ProjectDBObject::COL_SECRET],
+                        $row[ProjectDBObject::COL_CRITICAL],
+                        $row[ProjectDBObject::COL_CREATION_DATE],
+                        $row[ProjectDBObject::COL_UPDATE_DATE],
+                        $row[ProjectDBObject::COL_DISABLED],
+                        $row[ProjectDBObject::COL_DISABLED_SINCE],
+                        $row[ProjectDBObject::COL_DISABLED_UNTIL],
+                        $row[ProjectDBObject::COL_ARCHIVED],
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE],
+                        $row[ProjectDBObject::COL_PROPALE],
+                        $row[ProjectDBObject::COL_CC],
+                        $row[ProjectDBObject::COL_PROPALE_VALID],
+                        $row[ProjectDBObject::COL_CC_VALID],
+                        $this->__get_all_contacts_by_project($row[ProjectDBObject::COL_NUMBER]),
+                        $this->__get_all_ints_by_project($row[ProjectDBObject::COL_NUMBER]),
+                        $this->__get_all_chadaffs_by_project($row[ProjectDBObject::COL_NUMBER]),
+                        $this->__get_all_amendments_by_project($row[ProjectDBObject::COL_NUMBER])
+                    )
                 );
             }
         }
