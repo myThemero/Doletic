@@ -2,6 +2,7 @@
 
 require_once "interfaces/AbstractModule.php";
 require_once "../modules/kernel/services/objects/UserDataDBObject.php";
+require_once "../modules/kernel/services/objects/UploadDBObject.php";
 require_once "../modules/grc/services/objects/FirmDBObject.php";
 require_once "../modules/grc/services/objects/ContactDBObject.php";
 require_once "../modules/ua/services/objects/ProjectDBObject.php";

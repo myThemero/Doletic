@@ -12,33 +12,29 @@ require_once "objects/RightsMap.php";
 class Document implements \JsonSerializable
 {
     // -- consts
-    const CATEGORY = [
-        'Etude' => ['Propale', 'Convention Client', 'PVRF'],
-        'Phase' => ['PVR', 'PVL'],
-        'Consultant' => ['RM', 'Demande de BV', 'Rapport pédagogique']
-    ];
 
     // -- attributes
     private $id = null;
-    private $label = null;
-    private $upload_date = null;
-    private $type = null;
     private $project_number = null;
-    private $task_id = null;
-    private $int_id = null;
+    private $template_id = null;
+    private $upload = null;
+    private $valid = null;
+    private $checked_by = null;
+
+    private $template_data = [];
 
     /**
      * Document constructor.
      */
-    public function __construct($id, $label, $uploadDate, $type, $projectNumber = null, $taskId = null, $intId = null)
+    public function __construct($id, $projectNumber, $templateId, $upload, $valid, $checkedBy, $templateData = [])
     {
         $this->id = $id;
-        $this->label = $label;
-        $this->upload_date = $uploadDate;
-        $this->type = $type;
         $this->project_number = $projectNumber;
-        $this->task_id = $taskId;
-        $this->int_id = $intId;
+        $this->template_id = $templateId;
+        $this->upload = $upload;
+        $this->valid = boolval($valid);
+        $this->checked_by = $checkedBy;
+        $this->template_data = $templateData;
     }
 
 
@@ -46,17 +42,17 @@ class Document implements \JsonSerializable
     {
         return [
             DocumentDBObject::COL_ID => $this->id,
-            DocumentDBObject::COL_LABEL => $this->label,
-            DocumentDBObject::COL_UPLOAD_DATE => $this->upload_date,
-            DocumentDBObject::COL_TYPE => $this->type,
             DocumentDBObject::COL_PROJECT_NUMBER => $this->project_number,
-            DocumentDBObject::COL_TASK_ID => $this->task_id,
-            DocumentDBObject::COL_INT_ID => $this->int_id
+            DocumentDBObject::COL_TEMPLATE_ID => $this->template_id,
+            DocumentDBObject::COL_UPLOAD => $this->upload,
+            DocumentDBObject::COL_VALID => $this->valid,
+            DocumentDBObject::COL_CHECKED_BY => $this->checked_by,
+            DocumentDBObject::COL_TEMPLATE_DATA => $this->template_data,
         ];
     }
 
     /**
-     * @return null
+     * @return int
      */
     public function getId()
     {
@@ -64,31 +60,7 @@ class Document implements \JsonSerializable
     }
 
     /**
-     * @return null
-     */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    /**
-     * @return null
-     */
-    public function getUploadDate()
-    {
-        return $this->upload_date;
-    }
-
-    /**
-     * @return null
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return null
+     * @return int
      */
     public function getProjectNumber()
     {
@@ -96,20 +68,37 @@ class Document implements \JsonSerializable
     }
 
     /**
-     * @return null
+     * @return string
      */
-    public function getTaskId()
+    public function getTemplateId()
     {
-        return $this->task_id;
+        return $this->template_id;
     }
 
     /**
-     * @return null
+     * @return string
      */
-    public function getIntId()
+    public function getUpload()
     {
-        return $this->int_id;
+        return $this->upload;
     }
+
+    /**
+     * @return bool
+     */
+    public function getValid()
+    {
+        return $this->valid;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCheckedBy()
+    {
+        return $this->checked_by;
+    }
+
 }
 
 
@@ -119,19 +108,32 @@ class DocumentServices extends AbstractObjectServices
     // -- consts
     // --- params keys
     const PARAM_ID = "id";
-    const PARAM_LABEL = "label";
-    const PARAM_UPLOAD_DATE = "uploadDate";
-    const PARAM_TYPE = "type";
-    const PARAM_TEMPLATE_ID = "template_id";
     const PARAM_PROJECT_NUMBER = "projectNumber";
-    const PARAM_TASK_ID = "taskId";
-    const PARAM_INT_ID = "intId";
+    const PARAM_VALID = "valid";
+    const PARAM_CHECKED_BY = "checkedBy";
+    const PARAM_LABEL = "label";
+    const PARAM_TEMPLATE = "template";
+    const PARAM_PREVIOUS = "previous";
+    const PARAM_UPLOAD = "upload";
 
     // --- internal services (actions)
+    const GET_ALL = "getall";
+    const GET_BY_ID = "getbyid";
+    const GET_BY_PROJECT = "byproject";
+    const GET_PROJECT_DOCUMENTS = "projdoc";
+    const GET_BY_TEMPLATE = "bytemp";
+    const GET_BY_PROJECT_AND_TEMPLATE = "byprotemp";
+    const GET_ALL_TEMPLATES = "getalltemp";
+    const GET_TEMPLATE_BY_LABEL = "tempbylabel";
+    const GET_PREVIOUS = "getprev";
+    const INSERT = "insert";
+    const UPDATE = "update";
+    const DELETE = "delete";
+    const VALID = "valid";
+    const INVALID = "invalid";
 
     // -- services that should not be used except for data migration
     const FORCE_INSERT = "forins";
-    const FORCE_POSITION = "forpos";
     // -- functions
 
     // -- construct
@@ -143,14 +145,341 @@ class DocumentServices extends AbstractObjectServices
     public function GetResponseData($action, $params)
     {
         $data = null;
+        if (!strcmp($action, DocumentServices::GET_ALL)) {
+            $data = $this->__get_all_documents();
+        } else if (!strcmp($action, DocumentServices::GET_BY_ID)) {
+            $data = $this->__get_document_by_id($params[DocumentServices::PARAM_ID]);
+        } else if (!strcmp($action, DocumentServices::GET_BY_PROJECT)) {
+            $data = $this->__get_documents_by_project($params[DocumentServices::PARAM_PROJECT_NUMBER]);
+        } else if (!strcmp($action, DocumentServices::GET_PROJECT_DOCUMENTS)) {
+            $data = $this->__get_project_documents($params[DocumentServices::PARAM_PROJECT_NUMBER]);
+        } else if (!strcmp($action, DocumentServices::GET_BY_TEMPLATE)) {
+            $data = $this->__get_documents_by_template($params[DocumentServices::PARAM_TEMPLATE]);
+        } else if (!strcmp($action, DocumentServices::GET_BY_PROJECT_AND_TEMPLATE)) {
+            $data = $this->__get_document_by_project_and_template(
+                $params[DocumentServices::PARAM_PROJECT_NUMBER],
+                $params[DocumentServices::PARAM_TEMPLATE]
+            );
+        } else if (!strcmp($action, DocumentServices::GET_ALL_TEMPLATES)) {
+            $data = $this->__get_all_templates();
+        } else if (!strcmp($action, DocumentServices::GET_TEMPLATE_BY_LABEL)) {
+            $data = $this->__get_template_by_label($params[DocumentServices::PARAM_LABEL]);
+        } else if (!strcmp($action, DocumentServices::GET_PREVIOUS)) {
+            $data = $this->__get_previous_document($params[DocumentServices::PARAM_LABEL]);
+        } else if (!strcmp($action, DocumentServices::INSERT)) {
+            $data = $this->__insert_document(
+                $params[DocumentServices::PARAM_PROJECT_NUMBER],
+                $params[DocumentServices::PARAM_TEMPLATE],
+                $params[DocumentServices::PARAM_UPLOAD]
+            );
+        } else if (!strcmp($action, DocumentServices::UPDATE)) {
+            $data = $this->__update_document(
+                $params[DocumentServices::PARAM_ID],
+                $params[DocumentServices::PARAM_TEMPLATE]
+            );
+        } else if (!strcmp($action, DocumentServices::DELETE)) {
+            $data = $this->__delete_document($params[DocumentServices::PARAM_ID]);
+        } else if (!strcmp($action, DocumentServices::VALID)) {
+            $data = $this->__valid_document($params[DocumentServices::PARAM_ID]);
+        } else if (!strcmp($action, DocumentServices::INVALID)) {
+            $data = $this->__invalid_document($params[DocumentServices::PARAM_ID]);
+        }
         return $data;
     }
 
 # PROTECTED & PRIVATE ####################################################
 
     // -- consult
+    private function __get_all_documents()
+    {
+        // create sql params array
+        $sql_params = array();
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetSELECTQuery();
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = array();
+        if (isset($pdos)) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($data, new Document(
+                        $row[DocumentDBObject::COL_ID],
+                        $row[DocumentDBObject::COL_PROJECT_NUMBER],
+                        $row[DocumentDBObject::COL_TEMPLATE_ID],
+                        $row[DocumentDBObject::COL_UPLOAD],
+                        $row[DocumentDBObject::COL_VALID],
+                        $row[DocumentDBObject::COL_CHECKED_BY]
+                    )
+                );
+            }
+        }
+        return $data;
+    }
+
+    private function __get_document_by_id($id)
+    {
+        // create sql params array
+        $sql_params = array(":" . DocumentDBObject::COL_ID => $id);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL), array(DocumentDBObject::COL_ID));
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = null;
+        if (isset($pdos)) {
+            if (($row = $pdos->fetch()) !== false) {
+                $data = new Document(
+                    $row[DocumentDBObject::COL_ID],
+                    $row[DocumentDBObject::COL_PROJECT_NUMBER],
+                    $row[DocumentDBObject::COL_TEMPLATE_ID],
+                    $row[DocumentDBObject::COL_UPLOAD],
+                    $row[DocumentDBObject::COL_VALID],
+                    $row[DocumentDBObject::COL_CHECKED_BY]
+                );
+            }
+        }
+        return $data;
+    }
+
+    private function __get_documents_by_project($projectNumber)
+    {
+        // create sql params array
+        $sql_params = array(":" . DocumentDBObject::COL_PROJECT_NUMBER => $projectNumber);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL), array(DocumentDBObject::COL_PROJECT_NUMBER));
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = array();
+        if (isset($pdos)) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($data, new Document(
+                        $row[DocumentDBObject::COL_ID],
+                        $row[DocumentDBObject::COL_PROJECT_NUMBER],
+                        $row[DocumentDBObject::COL_TEMPLATE_ID],
+                        $row[DocumentDBObject::COL_UPLOAD],
+                        $row[DocumentDBObject::COL_VALID],
+                        $row[DocumentDBObject::COL_CHECKED_BY]
+                    )
+                );
+            }
+        }
+        return $data;
+    }
+
+    private function __get_project_documents($projectNumber)
+    {
+        $templates = $this->__get_all_templates();
+        foreach ($templates as $key => $template) {
+            $template[DocumentDBObject::COL_DOCUMENT] = $this->__get_document_by_project_and_template(
+                $projectNumber,
+                $template[DocumentDBObject::COL_ID]
+            );
+            $templates[$key] = $template;
+        }
+        return $templates;
+    }
+
+    private function __get_documents_by_template($template)
+    {
+        // create sql params array
+        $sql_params = array(":" . DocumentDBObject::COL_TEMPLATE_ID => $template);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL), array(DocumentDBObject::COL_TEMPLATE_ID));
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = array();
+        if (isset($pdos)) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($data, new Document(
+                        $row[DocumentDBObject::COL_ID],
+                        $row[DocumentDBObject::COL_PROJECT_NUMBER],
+                        $row[DocumentDBObject::COL_TEMPLATE_ID],
+                        $row[DocumentDBObject::COL_UPLOAD],
+                        $row[DocumentDBObject::COL_VALID],
+                        $row[DocumentDBObject::COL_CHECKED_BY]
+                    )
+                );
+            }
+        }
+        return $data;
+    }
+
+    private function __get_document_by_project_and_template($projectNumber, $template)
+    {
+        // create sql params array
+        $sql_params = array(
+            ":" . DocumentDBObject::COL_PROJECT_NUMBER => $projectNumber,
+            ":" . DocumentDBObject::COL_TEMPLATE_ID => $template
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL),
+            array(
+                DocumentDBObject::COL_PROJECT_NUMBER,
+                DocumentDBObject::COL_TEMPLATE_ID
+            ),
+            array(),
+            array(DocumentDBObject::COL_ID => DBTable::ORDER_DESC),
+            1
+        );
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = null;
+        if (isset($pdos)) {
+            if (($row = $pdos->fetch()) !== false) {
+                $data = new Document(
+                    $row[DocumentDBObject::COL_ID],
+                    $row[DocumentDBObject::COL_PROJECT_NUMBER],
+                    $row[DocumentDBObject::COL_TEMPLATE_ID],
+                    $row[DocumentDBObject::COL_UPLOAD],
+                    $row[DocumentDBObject::COL_VALID],
+                    $row[DocumentDBObject::COL_CHECKED_BY]
+                );
+            }
+        }
+        return $data;
+    }
+
+    private function __get_all_templates()
+    {
+        // create sql params array
+        $sql_params = array();
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_TEMPLATE)->GetSELECTQuery();
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = array();
+        if (isset($pdos)) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($data, array(
+                        DocumentDBObject::COL_ID => $row[DocumentDBObject::COL_ID],
+                        DocumentDBObject::COL_LABEL => $row[DocumentDBObject::COL_LABEL],
+                        DocumentDBObject::COL_TEMPLATE => $row[DocumentDBObject::COL_TEMPLATE],
+                        DocumentDBObject::COL_PREVIOUS => $row[DocumentDBObject::COL_PREVIOUS]
+                    )
+                );
+            }
+        }
+        return $data;
+    }
+
+    private function __get_template_by_label($label)
+    {
+        // create sql params array
+        $sql_params = array(":" . DocumentDBObject::COL_LABEL => $label);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_TEMPLATE)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL), array(DocumentDBObject::COL_LABEL));
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = null;
+        if (isset($pdos)) {
+            if (($row = $pdos->fetch()) !== false) {
+                $data = array(
+                    DocumentDBObject::COL_ID => $row[DocumentDBObject::COL_ID],
+                    DocumentDBObject::COL_LABEL => $row[DocumentDBObject::COL_LABEL],
+                    DocumentDBObject::COL_TEMPLATE => $row[DocumentDBObject::COL_TEMPLATE],
+                    DocumentDBObject::COL_PREVIOUS => $row[DocumentDBObject::COL_PREVIOUS]
+                );
+            }
+        }
+        return $data;
+    }
+
+    private function __get_previous_document($id)
+    {
+        $document = $this->__get_document_by_id($id);
+        $template = $this->__get_template_by_label($document->getTemplate());
+        return $this->__get_document_by_project_and_template(
+            $document->getProjectNumber(),
+            $template[DocumentDBObject::COL_PREVIOUS]
+        )[0];
+    }
+
 
     // -- modify
+    private function __insert_document($projectNumber, $template, $upload)
+    {
+        $sql_params = array(
+            ":" . DocumentDBObject::COL_ID => null,
+            ":" . DocumentDBObject::COL_PROJECT_NUMBER => $projectNumber,
+            ":" . DocumentDBObject::COL_TEMPLATE_ID => $template,
+            ":" . DocumentDBObject::COL_UPLOAD => $upload,
+            ":" . DocumentDBObject::COL_VALID => 0,
+            ":" . DocumentDBObject::COL_CHECKED_BY => null
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetINSERTQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
+    private function __update_document($id, $template)
+    {
+        $sql_params = array(
+            ":" . DocumentDBObject::COL_ID => $id,
+            ":" . DocumentDBObject::COL_TEMPLATE_ID => $template
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetUPDATEQuery(
+            array(DocumentDBObject::COL_TEMPLATE_ID)
+        );
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
+    private function __delete_document($id)
+    {
+        $sql_params = array(
+            ":" . DocumentDBObject::COL_ID => $id
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetDELETEQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
+    private function __valid_document($id)
+    {
+        $sql_params = array(
+            ":" . DocumentDBObject::COL_ID => $id,
+            ":" . DocumentDBObject::COL_VALID => 1,
+            ":" . DocumentDBObject::COL_CHECKED_BY => $this->getCurrentUser()->getId()
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetUPDATEQuery(
+            array(
+                DocumentDBObject::COL_VALID,
+                DocumentDBObject::COL_CHECKED_BY
+            )
+        );
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
+    private function __invalid_document($id)
+    {
+        $sql_params = array(
+            ":" . DocumentDBObject::COL_ID => $id,
+            ":" . DocumentDBObject::COL_VALID => 0
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOCUMENT)->GetUPDATEQuery(
+            array(
+                DocumentDBObject::COL_VALID
+            )
+        );
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
 
 
 # PUBLIC RESET STATIC DATA FUNCTION --------------------------------------------------------------------
@@ -166,24 +495,23 @@ class DocumentServices extends AbstractObjectServices
      */
     public function ResetStaticData()
     {
+        $templates = array(
+            ['Proposition Commerciale', '', null],
+            ['Convention Entreprise', '', null],
+            ['Récapitulatif de Mission', '', null]
+        );
         // --- retrieve SQL query
-        $sql_category = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOC_CATEGORY)->GetINSERTQuery();
-        $sql_type = parent::getDBObject()->GetTable(DocumentDBObject::TABL_DOC_TYPE)->GetINSERTQuery();
-        foreach (Document::CATEGORY as $key => $category) {
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_TEMPLATE)->GetINSERTQuery();
+        foreach ($templates as $template) {
             // --- create param array
             $sql_params = array(
-                ":" . DocumentDBObject::COL_LABEL => $key
+                ":" . DocumentDBObject::COL_ID => null,
+                ":" . DocumentDBObject::COL_LABEL => $template[0],
+                ":" . DocumentDBObject::COL_TEMPLATE => $template[1],
+                ":" . DocumentDBObject::COL_PREVIOUS => $template[2]
             );
             // --- execute SQL query
-            parent::getDBConnection()->PrepareExecuteQuery($sql_category, $sql_params);
-            foreach($category as $type) {
-                $sql_params = array(
-                    ":" . DocumentDBObject::COL_LABEL => $type,
-                    ":" . DocumentDBObject::COL_CATEGORY => $key,
-                    ":" . DocumentDBObject::COL_TEMPLATE_ID => null
-                );
-                parent::getDBConnection()->PrepareExecuteQuery($sql_type, $sql_params);
-            }
+            parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         }
     }
 
@@ -199,19 +527,21 @@ class DocumentDBObject extends AbstractDBObject
     // --- object name
     const OBJ_NAME = "document";
     // --- tables
+    const TABL_TEMPLATE = "dol_template";
     const TABL_DOCUMENT = "dol_document";
-    const TABL_DOC_TYPE = "dol_document_type";
-    const TABL_DOC_CATEGORY = "dol_document_category";
+
     // --- columns
     const COL_ID = "id";
-    const COL_LABEL = "label";
-    const COL_UPLOAD_DATE = "upload_date";
-    const COL_TYPE = "type";
-    const COL_TEMPLATE_ID = "template_id";
-    const COL_CATEGORY = "category";
+    const COL_DOCUMENT = "document";
     const COL_PROJECT_NUMBER = "project_number";
-    const COL_TASK_ID = "task_id";
-    const COL_INT_ID = "int_id";
+    const COL_LABEL = "label";
+    const COL_UPLOAD = "upload";
+    const COL_TEMPLATE = "template";
+    const COL_TEMPLATE_ID = "template_id";
+    const COL_PREVIOUS = "previous";
+    const COL_VALID = "valid";
+    const COL_CHECKED_BY = "checked_by";
+    const COL_TEMPLATE_DATA = "template_data";
     // -- attributes
 
     // -- functions
@@ -223,31 +553,58 @@ class DocumentDBObject extends AbstractDBObject
 
         // -- create tables
 
-        // --- dol_document_type table
-        $dol_doc_category = new DBTable(DocumentDBObject::TABL_DOC_CATEGORY);
-        $dol_doc_category
-            ->AddColumn(DocumentDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true, true);
-
-        // --- dol_document_type table
-        $dol_doc_type = new DBTable(DocumentDBObject::TABL_DOC_TYPE);
-        $dol_doc_type
-            ->AddColumn(DocumentDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true, true)
-            ->AddColumn(DocumentDBObject::COL_CATEGORY, DBTable::DT_VARCHAR, 255, false, "")
-            ->AddColumn(DocumentDBObject::COL_TEMPLATE_ID, DBTable::DT_INT, 11, true, "")
-            ->AddForeignKey(DocumentDBObject::TABL_DOC_TYPE . '_fk1', DocumentDBObject::COL_CATEGORY, DocumentDBObject::TABL_DOC_CATEGORY, DocumentDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
+        // --- dol_template table
+        $dol_template = new DBTable(DocumentDBObject::TABL_TEMPLATE);
+        $dol_template
+            ->AddColumn(DocumentDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true, true)
+            ->AddColumn(DocumentDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "")
+            ->AddColumn(DocumentDBObject::COL_TEMPLATE, DBTable::DT_VARCHAR, 50, false, "")
+            ->AddColumn(DocumentDBObject::COL_PREVIOUS, DBTable::DT_VARCHAR, 50, true, null);
 
         // --- dol_document table
         $dol_document = new DBTable(DocumentDBObject::TABL_DOCUMENT);
         $dol_document
             ->AddColumn(DocumentDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
-            ->AddColumn(DocumentDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "")
-            ->AddColumn(DocumentDBObject::COL_UPLOAD_DATE, DBTable::DT_DATETIME, -1, false, "")
-            ->AddColumn(DocumentDBObject::COL_TYPE, DBTable::DT_VARCHAR, 50, false, "")
-            ->AddForeignKey(DocumentDBObject::TABL_DOCUMENT . '_fk1', DocumentDBObject::COL_TYPE, DocumentDBObject::TABL_DOC_TYPE, DocumentDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
+            ->AddColumn(DocumentDBObject::COL_PROJECT_NUMBER, DBTable::DT_INT, 11, false, "")
+            ->AddColumn(DocumentDBObject::COL_TEMPLATE_ID, DBTable::DT_INT, 11, false, "")
+            ->AddColumn(DocumentDBObject::COL_UPLOAD, DBTable::DT_INT, 11, true, null)
+            ->AddColumn(DocumentDBObject::COL_VALID, DBTable::DT_INT, 1, false, "")
+            ->AddColumn(DocumentDBObject::COL_CHECKED_BY, DBTable::DT_INT, 11, true, null)
+            ->AddForeignKey(
+                DocumentDBObject::TABL_DOCUMENT . '_fk1',
+                DocumentDBObject::COL_PROJECT_NUMBER,
+                ProjectDBObject::TABL_PROJECT,
+                ProjectDBObject::COL_NUMBER,
+                DBTable::DT_RESTRICT,
+                DBTable::DT_CASCADE
+            )
+            ->AddForeignKey(
+                DocumentDBObject::TABL_DOCUMENT . '_fk2',
+                DocumentDBObject::COL_TEMPLATE_ID,
+                DocumentDBObject::TABL_TEMPLATE,
+                DocumentDBObject::COL_ID,
+                DBTable::DT_RESTRICT,
+                DBTable::DT_CASCADE
+            )
+            ->AddForeignKey(
+                DocumentDBObject::TABL_DOCUMENT . '_fk3',
+                DocumentDBObject::COL_CHECKED_BY,
+                UserDataDBObject::TABL_USER_DATA,
+                UserDataDBObject::COL_USER_ID,
+                DBTable::DT_RESTRICT,
+                DBTable::DT_CASCADE
+            )
+            ->AddForeignKey(
+                DocumentDBObject::TABL_DOCUMENT . '_fk4',
+                DocumentDBObject::COL_UPLOAD,
+                UploadDBObject::TABL_UPLOAD,
+                UploadDBObject::COL_ID,
+                DBTable::DT_SET_NULL,
+                DBTable::DT_CASCADE
+            );
 
         // -- add tables
-        parent::addTable($dol_doc_category);
-        parent::addTable($dol_doc_type);
+        parent::addTable($dol_template);
         parent::addTable($dol_document);
 
     }

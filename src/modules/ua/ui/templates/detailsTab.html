@@ -391,40 +391,70 @@
                 <thead>
                 <tr>
                     <th>
-
+                        Contact
                     </th>
                     <th>
-                        Propale
+                        Chargé d'affaires
                     </th>
                     <th>
-                        Convention Entreprise
+                        Consultant
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <div id="contact_search_doc" class="ui fluid search selection dropdown">
+                            <input type="hidden" id="contact_doc"/>
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Contact...</div>
+                            <div class="menu">
+                                <!-- CONTACTS WILL GO HERE -->
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="chadaff_search_doc" class="ui fluid search selection dropdown">
+                            <input type="hidden" id="chadaff_doc"/>
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Chargé d'affaires...</div>
+                            <div class="menu">
+                                <!-- CHADAFFS WILL GO HERE -->
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="int_search_doc" class="ui fluid search selection dropdown">
+                            <input type="hidden" id="int_doc"/>
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Consultant...</div>
+                            <div class="menu">
+                                <!-- INTS WILL GO HERE -->
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="ui very basic celled table">
+                <thead>
+                <tr>
+                    <th>
+                        Document
+                    </th>
+                    <th>
+                        Publiposter
+                    </th>
+                    <th>
+                        Upload
+                    </th>
+                    <th>
+                        Validé
                     </th>
                 </tr>
                 </thead>
                 <tbody id="project_docs_body">
-                <tr>
-                    <td>Générer</td>
-                    <td>
-                        <button id="make_propale_btn" class="ui green icon button" data-tooltip="Générer la propale">
-                            <i class="wizard icon"></i>
-                        </button>
-                    </td>
-                    <td>
-                        <button  id="make_cc_btn" class="ui green icon button" data-tooltip="Générer la convention client">
-                            <i class="wizard icon"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Document</td>
-                    <td id="propale_original"></td>
-                    <td id="cc_original"></td>
-                </tr>
-                <tr>
-                    <td>Validé ?</td>
-                    <td id="propale_valid"></td>
-                    <td id="cc_valid"></td>
-                </tr>
+                    <!-- DOCUMENTS WILL GO HERE -->
                 </tbody>
             </table>
         </div>
@@ -495,7 +525,7 @@
         <div class="fields">
             <div class="eight wide required field" id="amtype_field">
                 <label>Type d'avenant</label>
-                <div id="amtype_search" class="ui fluid search selection dropdown">
+                <div id="amtype_search" class="ui fluid multiple search selection dropdown">
                     <input type="hidden" id="amtype"/>
                     <i class="dropdown icon"></i>
                     <div class="default text">Type...</div>

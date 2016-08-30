@@ -395,7 +395,7 @@ var ProjectServicesInterface = new function () {
     };
 
     this.insert = function (name, description, origin, field, firmId, mgmtFee, appFee, rebilledFee, advance,
-                                   secret, critical, assignCurrent, successHandler) {
+                            secret, critical, assignCurrent, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT,
             {
@@ -416,7 +416,7 @@ var ProjectServicesInterface = new function () {
     };
 
     this.update = function (number, name, description, origin, field, firmId, mgmtFee, appFee, rebilledFee, advance,
-                                   secret, critical, successHandler) {
+                            secret, critical, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE,
             {
@@ -984,4 +984,157 @@ var TaskServicesInterface = new function () {
             successHandler);
     };
 
+};
+
+// ----------------------- DOCUMENT INTERFACE SERVICES CLASS ----------------------------------
+
+var DocumentServicesInterface = new function () {
+
+    this.meta = {
+        // --- (object)
+        OBJECT: 'document',
+        // --- (actions)
+        ACTION: {
+            GET_ALL: "getall",
+            GET_BY_ID: "getbyid",
+            GET_PROJECT_DOCUMENTS: "projdoc",
+            GET_BY_PROJECT: "byproject",
+            GET_BY_TEMPLATE: "bytemp",
+            GET_BY_PROJECT_AND_TEMPLATE: "byprotemp",
+            GET_ALL_TEMPLATES: "getalltemp",
+            GET_TEMPLATE_BY_LABEL: "tempbylabel",
+            GET_PREVIOUS: "getprev",
+            INSERT: "insert",
+            UPDATE: "update",
+            DELETE: "delete",
+            VALID: "valid",
+            INVALID: "invalid"
+        }
+    };
+
+    this.getAll = function (successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL,
+            {},
+            successHandler);
+    };
+
+    this.getById = function (id, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_BY_ID,
+            {
+                id: id
+            },
+            successHandler);
+    };
+
+    this.getPrevious = function (id, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_PREVIOUS,
+            {
+                id: id
+            },
+            successHandler);
+    };
+
+    this.getByProject = function (projectNumber, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_BY_PROJECT,
+            {
+                projectNumber: projectNumber
+            },
+            successHandler);
+    };
+
+    this.getByTemplate = function (template, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_BY_TEMPLATE,
+            {
+                template: template
+            },
+            successHandler);
+    };
+
+    this.getByProjectAndTemplate = function (projectNumber, template, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_BY_PROJECT_AND_TEMPLATE,
+            {
+                projectNumber: projectNumber,
+                template: template
+            },
+            successHandler);
+    };
+
+    this.getProjectDocuments = function (projectNumber, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_PROJECT_DOCUMENTS,
+            {
+                projectNumber: projectNumber
+            },
+            successHandler);
+    };
+
+    this.getAllTemplates = function (successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_ALL_TEMPLATES,
+            {},
+            successHandler);
+    };
+
+    this.getTemplateByLabel = function (label, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_TEMPLATE_BY_LABEL,
+            {
+                label: label
+            },
+            successHandler);
+    };
+
+    this.insert = function (projectNumber, template, upload, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.INSERT,
+            {
+                projectNumber: projectNumber,
+                template: template,
+                upload: upload
+            },
+            successHandler);
+    };
+
+    this.update = function (id, template, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.UPDATE,
+            {
+                id: id,
+                template: template
+            },
+            successHandler);
+    };
+
+    this.delete = function (id, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.DELETE,
+            {
+                id: id
+            },
+            successHandler);
+    };
+
+    this.valid = function (id, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.VALID,
+            {
+                id: id
+            },
+            successHandler);
+    };
+
+    this.invalid = function (id, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.INVALID,
+            {
+                id: id
+            },
+            successHandler);
+    };
 };

@@ -25,7 +25,7 @@ class DBTable
     const DT_CASCADE = "CASCADE";
     const DT_NO_ACTION = "NO_ACTION";
     const DT_RESTRICT = "RESTRICT";
-    const DT_SET_NULL = "SET_NULL";
+    const DT_SET_NULL = "SET NULL";
     // --- JOIN
     const DT_LEFT = "LEFT";
     const DT_RIGHT = "RIGHT";

@@ -384,6 +384,12 @@ var DoleticMasterInterface = new function () {
         return objArray;
     };
 
+    this.formatElementId = function(str) {
+        var id = str.toLowerCase().trim().replace(/\s+/g, '_');
+        window.original_id = str;
+        return id;
+    };
+
     this.makeDataTables = function (id, filters) {
         $.getJSON("./ui/dataTables/translate.json", function (data) {
             var table = $('#' + id).DataTable({

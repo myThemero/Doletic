@@ -106,7 +106,8 @@ class Upload implements \JsonSerializable
 
     private function __get_file_type($filename)
     {
-        switch (end(explode('.', $filename))) {
+        $file = explode('.', $filename);
+        switch (end($file)) {
             case 'tex':
                 return DocumentProcessor::TYPE_LATEX;
             case 'docx':
