@@ -414,6 +414,34 @@ class FakeDataFunction extends AbstractFunction
     }
 }
 
+class TestDocumentFunction extends AbstractFunction {
+
+    public function __construct($script)
+    {
+        parent::__construct($script,
+            'Test document generation',
+            '-td',
+            '--test-document',
+            "Generates a document");
+    }
+
+    public function Execute()
+    {
+        parent::info("-- dbinit process starts --");
+        $kernel = new DoleticKernel();    // instanciate
+        $kernel->Init();                // initialize
+        $kernel->ConnectDB();            // connect database
+
+        $phpword = new PHPWord();
+        $template = $phpword->loadTemplate('Propale.docx');
+        $template->setValue('NOMENTREPRISE', 'ACME');
+        $template->save('Propale2.docx');
+
+        parent::endlog("done !");
+        $kernel = null;
+        parent::info("-- dbinit process ends --");
+    }
+}
 
 //________________________________________________________________________________________________________________________
 // ------------- declare script in itself --------------------------------------------------------------------------------
@@ -429,6 +457,7 @@ class DBInitializerScript extends AbstractScript
         parent::addFunction(new ResetDBFunction($this));
         parent::addFunction(new FakeDataFunction($this));
         parent::addFunction(new DataMigrationFunction($this));
+        parent::addFunction(new TestDocumentFunction($this));
     }
 }
 

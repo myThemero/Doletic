@@ -44,17 +44,11 @@ var DoleticMasterInterface = new function () {
      *  Build Doletic common ui
      */
     this.build = function () {
-        var html = " \
-    <a href=\"https://github.com/ETICINSATechnologies/Doletic\"><img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67\" alt=\"Fork me on GitHub\" data-canonical-src=\"https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png\"></a> \
-    <a id=\"doletic_download\" href=\"\" download=\"\" hidden></a><!-- DO NOT REMOVE : download link --> \
-    <div id=\"left_menu\" class=\"ui vertical sticky menu fixed top\" style=\"left: 0px; top: 0px; width: 250px ! important; height: 1813px ! important; margin-top: 0px;\"> \
-                  <a id=\"menu_doletic\" class=\"item\" onClick=\"DoleticServicesInterface.getUIHome();\"><img class=\"ui mini spaced image\" src=\"/resources/doletic_logo.png\">Doletic v2.0</a> \
-                  <a id=\"menu_about_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showAboutDoletic();\"><i class=\"info circle icon\"></i>À propos de Doletic</a> \
-                  <div id=\"module_submenu\" class=\"item\"> \
-                    <!-- MODULES LINKS WILL GO HERE --> \
-                  </div> \
-                </div> \
-                <div class=\"pusher\" style=\"margin-left: 60px;\"> \
+        var html = '<a id="doletic_download" href="" download="" hidden></a>' +
+            '<div id="left_menu" class="ui fixed menu">' +
+            '<a id="menu_doletic" class="header item" onClick="DoleticServicesInterface.getUIHome();"><img class="ui mini spaced image" style="height:15px; width:15px;" src="/resources/doletic_logo.png"/>Doletic v2.1</a>' +
+            '<a id="menu_about_doletic" class="right floated item" onClick="DoleticMasterInterface.showAboutDoletic();"><i class="info circle icon"></i></a>' +
+            '</div>' + "<div class=\"pusher\"> \
                   <div class=\"ui container\"> \
                     <div id=\"" + this.master_container_id + "\" class=\"ui one column centered grid container\"> \
                     <!-- kernel message goes here --> \
@@ -78,8 +72,8 @@ var DoleticMasterInterface = new function () {
                         <p> \
                         Développeurs : \
                         <ul class=\"ui list\"> \
-                          <li>Paul Dautry (ETIC INSA TEchnologies)</li> \
-                          <li>Nicolas Sorin (ETIC INSA TEchnologies)</li> \
+                          <li>Paul Dautry (ETIC INSA Technologies)</li> \
+                          <li>Nicolas Sorin (ETIC INSA Technologies)</li> \
                         </ul> \
                         </p>  \
                       </div>  \
@@ -137,6 +131,7 @@ var DoleticMasterInterface = new function () {
                 // add buttons
                 DoleticMasterInterface.addGeneralButtons();
                 // fill module submenu
+                DoleticMasterInterface.clearModuleSubmenu();
                 DoleticMasterInterface.fillModuleSubmenu();
 
             }
@@ -173,9 +168,9 @@ var DoleticMasterInterface = new function () {
     this.addGeneralButtons = function () {
         this.removeGeneralButtons();
         // add new buttons
-        $('#menu_about_doletic').after(" \
-      <a id=\"menu_logout\" class=\"item\" onClick=\"DoleticServicesInterface.logout();\"><i class=\"power icon\"></i>Déconnexion</a> \
-      <a id=\"menu_preferences_doletic\" class=\"item\" onClick=\"DoleticMasterInterface.showSettingsModal();\"><i class=\"settings icon\"></i>Préférences</a>");
+        $('#menu_about_doletic').after('' +
+            '<a id="menu_preferences_doletic" class="item" onclick="DoleticMasterInterface.showSettingsModal();"><i class="settings icon"></i></a>' +
+            '<a id="menu_logout" class="item" onclick="DoleticServicesInterface.logout();"><i class="power icon"></i></a>');
     };
     /**
      *  Removes general buttons such as logout and preferences
@@ -252,6 +247,9 @@ var DoleticMasterInterface = new function () {
             content +
             "</div> \
           </div>");
+        setTimeout(function() {
+            $('#master_container').transition('fade');
+        }, 2000);
     };
     this.showInfo = function (title, msg) {
         this.showMessage('info', title, msg);
@@ -277,8 +275,8 @@ var DoleticMasterInterface = new function () {
                 var json = JSON.parse(data.object);
                 // iterate over values to build options
                 for (var i = 0; i < json.length && json[i].length == 2; i++) {
-                    content += "<div> \
-                        <div class=\"header\">" + json[i][0] + "</div> \
+                    content += "<div class='ui simple dropdown item module_submenu'> \
+                        <div class=\"header\">" + json[i][0] + "</div><i class='dropdown icon'></i> \
                           <div class=\"menu\">\n";
                     for (var j = 0; j < json[i][1].length && json[i][1][j].length == 2; j++) {
                         content += "    <a class=\"item\" onClick=\"DoleticServicesInterface.getUI('" +
@@ -290,7 +288,7 @@ var DoleticMasterInterface = new function () {
                       </div>";
                 }
                 // insert html content
-                $('#module_submenu').html(content);
+                $('#menu_doletic').after(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -299,7 +297,7 @@ var DoleticMasterInterface = new function () {
     };
 
     this.clearModuleSubmenu = function () {
-        $('#module_submenu').html('');
+        $('.module_submenu').remove();
     };
 
     // Check functions

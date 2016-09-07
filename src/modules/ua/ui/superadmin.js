@@ -595,7 +595,6 @@ var DoleticUIModule = new function () {
                             '<td><a href=\"mailto:"' + int.email + '" target="_blank">' + int.email + '</a></td>' +
                             '<td>' + data.object[i].jeh_assigned + '</td>' +
                             '<td>' + data.object[i].pay + '€</td>' +
-                            '<td></td>' +
                             '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeInt('
                             + number + ', ' + int.id + '); return false;"><i class="remove icon"></i>' +
                             '</button> </td></tr>';
