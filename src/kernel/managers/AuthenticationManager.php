@@ -12,6 +12,7 @@ class AuthenticationManager extends AbstractManager
     // -- attributes
     private $user = null;
     private $rgcode = null;
+    private $rgcodes = array();
 
     // -- functions
     public function __construct(&$kernel)
@@ -19,6 +20,7 @@ class AuthenticationManager extends AbstractManager
         parent::__construct($kernel);
         $this->user = null;
         $this->rgcode = null;
+        $this->rgcodes = array();
     }
 
     /**
@@ -52,6 +54,9 @@ class AuthenticationManager extends AbstractManager
             $this->rgcode = parent::kernel()->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->GetCurrentUser())
                 ->GetResponseData(
                     UserDataServices::GET_USER_RG_CODE, array());
+            $this->rgcodes = parent::kernel()->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->GetCurrentUser())
+                ->GetResponseData(
+                    UserDataServices::GET_USER_RIGHTS, array(UserDataServices::PARAM_USER_ID => $this->GetCurrentUser()->GetId()));
         }
         // return valid user check
         return $this->HasValidUser();
@@ -115,5 +120,13 @@ class AuthenticationManager extends AbstractManager
             return (RightsMap::G_R | RightsMap::D_G);    // return guest and default group
         }
 
+    }
+
+    public function GetCurrentUserRGCodeForModule($module)
+    {
+        if (isset($this->rgcodes[$module])) {
+            return $this->rgcodes[$module];                        // return current user
+        }
+        return (RightsMap::G_R | RightsMap::D_G);    // return guest and default group
     }
 }

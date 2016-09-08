@@ -12,11 +12,6 @@ class Module implements \JsonSerializable
 {
 
     // -- consts
-    const NO_RIGHTS = 0;
-    const G_RIGHTS = 1;
-    const U_RIGHTS = 2;
-    const A_RIGHTS = 3;
-    const SA_RIGHTS = 4;
 
     // -- attributes
     // --- persistent

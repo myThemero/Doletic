@@ -180,7 +180,7 @@ class Services
      */
     private function __check_rights_module($module, $action)
     {
-        return $module->CheckRights($this->kernel->GetCurrentUserRGCode(), $action);
+        return $module->CheckRights($this->kernel->GetCurrentUserRGCodeForModule($module->GetCode()), $action);
     }
 
     private function __service_uis()

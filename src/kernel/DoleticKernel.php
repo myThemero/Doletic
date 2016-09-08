@@ -163,6 +163,11 @@ class DoleticKernel
         return $this->authentication_mgr->GetCurrentUserRGCode();
     }
 
+    public function GetCurrentUserRGCodeForModule($module)
+    {
+        return $this->authentication_mgr->GetCurrentUserRGCodeForModule($module);
+    }
+
     // --- log management --------------------------------------------------------------------
 
     public function LogInfo($script, $message)
