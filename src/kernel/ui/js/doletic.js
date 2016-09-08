@@ -275,6 +275,9 @@ var DoleticMasterInterface = new function () {
                 var json = JSON.parse(data.object);
                 // iterate over values to build options
                 for (var i = 0; i < json.length && json[i].length == 2; i++) {
+                    if(json[i][0] == "Kernel" || json[i][1].length == 0) {
+                        continue;
+                    }
                     content += "<div class='ui simple dropdown item module_submenu'> \
                         <div class=\"header\">" + json[i][0] + "</div><i class='dropdown icon'></i> \
                           <div class=\"menu\">\n";

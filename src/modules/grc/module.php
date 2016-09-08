@@ -22,8 +22,10 @@ class GRCModule extends AbstractModule
             (RightsMap::A_G | RightsMap::M_G), // means only admin and members group can access this module
             array(
                 // -- module interfaces
-                'ui' => RightsMap::G_RMASK,
-                'admin' => RightsMap::SA_RMASK,
+                'guest' => RightsMap::G_RMASK,
+                'ui' => RightsMap::U_RMASK,
+                'admin' => RightsMap::A_RMASK,
+                'superadmin' => RightsMap::SA_RMASK,
                 // -- module services
                 // ---- contact object services
                 ContactDBObject::OBJ_NAME . ':' . ContactServices::GET_CONTACT_BY_ID => RightsMap::U_RMASK,    // only super admin
@@ -39,8 +41,10 @@ class GRCModule extends AbstractModule
         parent::addDBObject(new ContactDBObject($this));
         parent::addDBObject(new FirmDBObject($this));
         // -- add module specific ui
+        parent::addUI('Super-admins', 'superadmin');    // refer to couple (admin.js, admin.css)
         parent::addUI('Administration', 'admin');    // refer to couple (admin.js, admin.css)
         parent::addUI('Membres', 'ui');    // refer to couple (ui.js, ui.css)
+        parent::addUI('Invités', 'guest');    // refer to couple (ui.js, ui.css)
     }
 
 }

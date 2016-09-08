@@ -22,8 +22,10 @@ class HrModule extends AbstractModule
             (RightsMap::A_G | RightsMap::M_G), // means only admin and members group can access this module
             array(
                 // -- module interfaces
-                'ui' => RightsMap::G_RMASK,
-                'admin' => RightsMap::SA_RMASK,
+                'guest' => RightsMap::G_RMASK,
+                'ui' => RightsMap::U_RMASK,
+                'admin' => RightsMap::A_RMASK,
+                'superadmin' => RightsMap::SA_RMASK,
 
             ),
             false, // disable ui
@@ -35,6 +37,7 @@ class HrModule extends AbstractModule
         parent::addUI('Super-Admins', 'superadmin');
         parent::addUI('Admins', 'admin');    // refer to couple (admin.js, admin.css)
         parent::addUI('Membres', 'ui');    // refer to couple (ui.js, ui.css)
+        parent::addUI('Invités', 'guest');    // refer to couple (ui.js, ui.css)
     }
 
 }
