@@ -340,6 +340,7 @@ class UserDataServices extends AbstractObjectServices
     const GET_ALL_DIVISIONS = "alldiv";
     const GET_ALL_POSITIONS = "allpos";
     const GET_ALL_AGS = "allag";
+    const GET_USER_RIGHTS = "userrights";
     const CHECK_MAIL = "checkmail";
     const INSERT_AG = "insag";
     const DELETE_AG = "delag";
@@ -398,6 +399,8 @@ class UserDataServices extends AbstractObjectServices
             $data = $this->__get_all_positions();
         } else if (!strcmp($action, UserDataServices::GET_ALL_AGS)) {
             $data = $this->__get_all_ags();
+        } else if (!strcmp($action, UserDataServices::GET_USER_RIGHTS)) {
+            $data = $this->__get_user_rights($params[UserDataServices::PARAM_USER_ID]);
         } else if (!strcmp($action, UserDataServices::INSERT_AG)) {
             $data = $this->__insert_ag($params[UserDataServices::PARAM_AG], $params[UserDataServices::PARAM_PRESENCE]);
         } else if (!strcmp($action, UserDataServices::DELETE_AG)) {
@@ -933,6 +936,28 @@ class UserDataServices extends AbstractObjectServices
         return $ags;
     }
 
+    private function __get_user_rights($userId)
+    {
+        $position = $this->__get_user_last_position($userId);
+        $sql_params = array(":" . UserDataDBObject::COL_POSITION => $position[UserDataDBObject::COL_LABEL]);
+        // create sql query
+        $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_POSITION_RIGHTS)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL),
+            array(UserDataDBObject::COL_POSITION)
+        );
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create an empty array for teams and fill it
+        $rights = array();
+        if ($pdos != null) {
+            while (($row = $pdos->fetch()) !== false) {
+                $rights[$row[UserDataDBObject::COL_LABEL]] = $row[UserDataDBObject::COL_RIGHTS];
+            }
+        }
+        return $rights;
+
+    }
+
     // -- modify
 
     private function __insert_user_data($userId, $gender, $firstname, $lastname, $birthdate,
@@ -1379,6 +1404,167 @@ class UserDataServices extends AbstractObjectServices
             // --- execute SQL query
             parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         }
+
+        $rights = [
+            'hr' => [
+                "Président" => Module::SA_RIGHTS,
+                "Vice-Président" => Module::SA_RIGHTS,
+                "Secrétaire Général" => Module::SA_RIGHTS,
+                "Trésorier" => Module::SA_RIGHTS,
+                "Vice-Trésorier" => Module::A_RIGHTS,
+                "Comptable" => Module::U_RIGHTS,
+                "Responsable DSI" => Module::SA_RIGHTS,
+                "Responsable GRC" => Module::A_RIGHTS,
+                "Responsable Com" => Module::A_RIGHTS,
+                "Responsable UA" => Module::A_RIGHTS,
+                "Responsable BU" => Module::U_RIGHTS,
+                "Responsable Qualité" => Module::A_RIGHTS,
+                "Junior DSI" => Module::U_RIGHTS,
+                "Junior GRC" => Module::U_RIGHTS,
+                "Junior Com" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_DEFAULT_POS => Module::U_RIGHTS,
+                "Junior Qualité" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_OLD => Module::G_RIGHTS,
+                "Intervenant" => Module::U_RIGHTS,
+                "Client" => Module::G_RIGHTS,
+                "Auditeur CNJE" => Module::G_RIGHTS,
+                "Membre CNJE" => Module::G_RIGHTS
+            ],
+            'grc' => [
+                "Président" => Module::SA_RIGHTS,
+                "Vice-Président" => Module::SA_RIGHTS,
+                "Secrétaire Général" => Module::SA_RIGHTS,
+                "Trésorier" => Module::SA_RIGHTS,
+                "Vice-Trésorier" => Module::A_RIGHTS,
+                "Comptable" => Module::U_RIGHTS,
+                "Responsable DSI" => Module::SA_RIGHTS,
+                "Responsable GRC" => Module::A_RIGHTS,
+                "Responsable Com" => Module::A_RIGHTS,
+                "Responsable UA" => Module::A_RIGHTS,
+                "Responsable BU" => Module::U_RIGHTS,
+                "Responsable Qualité" => Module::A_RIGHTS,
+                "Junior DSI" => Module::U_RIGHTS,
+                "Junior GRC" => Module::A_RIGHTS,
+                "Junior Com" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_DEFAULT_POS => Module::A_RIGHTS,
+                "Junior Qualité" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_OLD => Module::G_RIGHTS,
+                "Intervenant" => Module::U_RIGHTS,
+                "Client" => Module::NO_RIGHTS,
+                "Auditeur CNJE" => Module::G_RIGHTS,
+                "Membre CNJE" => Module::G_RIGHTS
+            ],
+            'kernel' => [
+                "Président" => Module::SA_RIGHTS,
+                "Vice-Président" => Module::SA_RIGHTS,
+                "Secrétaire Général" => Module::SA_RIGHTS,
+                "Trésorier" => Module::SA_RIGHTS,
+                "Vice-Trésorier" => Module::A_RIGHTS,
+                "Comptable" => Module::U_RIGHTS,
+                "Responsable DSI" => Module::SA_RIGHTS,
+                "Responsable GRC" => Module::A_RIGHTS,
+                "Responsable Com" => Module::A_RIGHTS,
+                "Responsable UA" => Module::A_RIGHTS,
+                "Responsable BU" => Module::U_RIGHTS,
+                "Responsable Qualité" => Module::A_RIGHTS,
+                "Junior DSI" => Module::U_RIGHTS,
+                "Junior GRC" => Module::U_RIGHTS,
+                "Junior Com" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_DEFAULT_POS => Module::U_RIGHTS,
+                "Junior Qualité" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_OLD => Module::G_RIGHTS,
+                "Intervenant" => Module::U_RIGHTS,
+                "Client" => Module::G_RIGHTS,
+                "Auditeur CNJE" => Module::G_RIGHTS,
+                "Membre CNJE" => Module::G_RIGHTS
+            ],
+            'tools' => [
+                "Président" => Module::SA_RIGHTS,
+                "Vice-Président" => Module::SA_RIGHTS,
+                "Secrétaire Général" => Module::SA_RIGHTS,
+                "Trésorier" => Module::SA_RIGHTS,
+                "Vice-Trésorier" => Module::A_RIGHTS,
+                "Comptable" => Module::U_RIGHTS,
+                "Responsable DSI" => Module::SA_RIGHTS,
+                "Responsable GRC" => Module::A_RIGHTS,
+                "Responsable Com" => Module::A_RIGHTS,
+                "Responsable UA" => Module::A_RIGHTS,
+                "Responsable BU" => Module::U_RIGHTS,
+                "Responsable Qualité" => Module::A_RIGHTS,
+                "Junior DSI" => Module::U_RIGHTS,
+                "Junior GRC" => Module::U_RIGHTS,
+                "Junior Com" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_DEFAULT_POS => Module::U_RIGHTS,
+                "Junior Qualité" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_OLD => Module::G_RIGHTS,
+                "Intervenant" => Module::U_RIGHTS,
+                "Client" => Module::NO_RIGHTS,
+                "Auditeur CNJE" => Module::G_RIGHTS,
+                "Membre CNJE" => Module::NO_RIGHTS
+            ],
+            'support' => [
+                "Président" => Module::A_RIGHTS,
+                "Vice-Président" => Module::A_RIGHTS,
+                "Secrétaire Général" => Module::A_RIGHTS,
+                "Trésorier" => Module::A_RIGHTS,
+                "Vice-Trésorier" => Module::A_RIGHTS,
+                "Comptable" => Module::U_RIGHTS,
+                "Responsable DSI" => Module::SA_RIGHTS,
+                "Responsable GRC" => Module::A_RIGHTS,
+                "Responsable Com" => Module::A_RIGHTS,
+                "Responsable UA" => Module::A_RIGHTS,
+                "Responsable BU" => Module::U_RIGHTS,
+                "Responsable Qualité" => Module::A_RIGHTS,
+                "Junior DSI" => Module::U_RIGHTS,
+                "Junior GRC" => Module::U_RIGHTS,
+                "Junior Com" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_DEFAULT_POS => Module::U_RIGHTS,
+                "Junior Qualité" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_OLD => Module::G_RIGHTS,
+                "Intervenant" => Module::U_RIGHTS,
+                "Client" => Module::G_RIGHTS,
+                "Auditeur CNJE" => Module::G_RIGHTS,
+                "Membre CNJE" => Module::G_RIGHTS
+            ],
+            'ua' => [
+                "Président" => Module::SA_RIGHTS,
+                "Vice-Président" => Module::SA_RIGHTS,
+                "Secrétaire Général" => Module::SA_RIGHTS,
+                "Trésorier" => Module::SA_RIGHTS,
+                "Vice-Trésorier" => Module::A_RIGHTS,
+                "Comptable" => Module::U_RIGHTS,
+                "Responsable DSI" => Module::SA_RIGHTS,
+                "Responsable GRC" => Module::A_RIGHTS,
+                "Responsable Com" => Module::A_RIGHTS,
+                "Responsable UA" => Module::SA_RIGHTS,
+                "Responsable BU" => Module::A_RIGHTS,
+                "Responsable Qualité" => Module::SA_RIGHTS,
+                "Junior DSI" => Module::U_RIGHTS,
+                "Junior GRC" => Module::U_RIGHTS,
+                "Junior Com" => Module::U_RIGHTS,
+                UserDataDBObject::VAL_DEFAULT_POS => Module::A_RIGHTS,
+                "Junior Qualité" => Module::A_RIGHTS,
+                UserDataDBObject::VAL_OLD => Module::G_RIGHTS,
+                "Intervenant" => Module::U_RIGHTS,
+                "Client" => Module::G_RIGHTS,
+                "Auditeur CNJE" => Module::G_RIGHTS,
+                "Membre CNJE" => Module::G_RIGHTS
+            ]
+        ];
+
+        // --- retrieve SQL query
+        $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_POSITION_RIGHTS)->GetINSERTQuery();
+        foreach ($rights as $module => $right) {
+            foreach ($right as $position => $key) {
+                $sql_params = [
+                    UserDataDBObject::COL_MODULE => $module,
+                    UserDataDBObject::COL_POSITION => $position,
+                    UserDataDBObject::COL_RIGHTS => $key
+                ];
+                // --- execute SQL query
+                parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+            }
+        }
     }
 
 }
@@ -1401,6 +1587,7 @@ class UserDataDBObject extends AbstractDBObject
     const TABL_COM_SCHOOL_YEAR = "com_school_year";
     const TABL_COM_DIVISION = "com_division";
     const TABL_COM_POSITION = "com_position";
+    const TABL_POSITION_RIGHTS = "dol_position_rights";
     const TABL_AG = "com_ag";
     // --- columns
     const COL_ID = "id";
@@ -1432,6 +1619,8 @@ class UserDataDBObject extends AbstractDBObject
     const COL_OLD = "old";
     const COL_ADMM_STATUS = "admm_status";
     const COL_INTM_STATUS = "intm_status";
+    const COL_MODULE = "module";
+    const COL_RIGHTS = "rights";
     // -- attributes
     const VAL_OLD = "Ancien membre";
     const VAL_DEFAULT_POS = "Chargé d'affaires";
@@ -1511,6 +1700,24 @@ class UserDataDBObject extends AbstractDBObject
             ->AddForeignKey(UserDataDBObject::TABL_USER_POSITION . '_fk1', UserDataDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE)
             ->AddForeignKey(UserDataDBObject::TABL_USER_POSITION . '_fk2', UserDataDBObject::COL_POSITION, UserDataDBObject::TABL_COM_POSITION, UserDataDBObject::COL_LABEL, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 
+        $dol_position_rights = new DBTable(UserDataDBObject::TABL_POSITION_RIGHTS);
+        $dol_position_rights
+            ->AddColumn(UserDataDBObject::COL_MODULE, DBTable::DT_VARCHAR, 255, false, "")
+            ->AddColumn(UserDataDBObject::COL_POSITION, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(UserDataDBObject::COL_RIGHTS, DBTable::DT_INT, 3, false)
+            ->AddForeignKey(
+                UserDataDBObject::TABL_POSITION_RIGHTS . '_fk1',
+                UserDataDBObject::COL_MODULE,
+                ModuleDBObject::TABL_MODULE,
+                ModuleDBObject::COL_LABEL, DBTable::DT_CASCADE, DBTable::DT_CASCADE
+            )
+            ->AddForeignKey(
+                UserDataDBObject::TABL_POSITION_RIGHTS . '_fk2',
+                UserDataDBObject::COL_POSITION,
+                UserDataDBObject::TABL_COM_POSITION,
+                UserDataDBObject::COL_LABEL, DBTable::DT_CASCADE, DBTable::DT_CASCADE
+            );
+
         // -- add tables
         parent::addTable($com_gender);
         parent::addTable($com_country);
@@ -1521,6 +1728,7 @@ class UserDataDBObject extends AbstractDBObject
         parent::addTable($com_ag);
         parent::addTable($dol_udata);
         parent::addTable($dol_udata_position);
+        parent::addTable($dol_position_rights);
 
     }
 

@@ -46,7 +46,7 @@ class KernelModule extends AbstractModule
                 CommentDBObject::OBJ_NAME . ':' . CommentServices::UPDATE => RightsMap::G_RMASK,    // everyone 
                 CommentDBObject::OBJ_NAME . ':' . CommentServices::DELETE => RightsMap::SA_RMASK, // only super admin
                 // ---- module object services
-                ModuleDBObject::OBJ_NAME . ':' . ModuleServices::GET_MODULE_BY_ID => RightsMap::SA_RMASK, // only super admin
+                ModuleDBObject::OBJ_NAME . ':' . ModuleServices::GET_MODULE_BY_LABEL => RightsMap::SA_RMASK, // only super admin
                 ModuleDBObject::OBJ_NAME . ':' . ModuleServices::GET_MODULE_BY_NAME => RightsMap::SA_RMASK, // only super admin
                 ModuleDBObject::OBJ_NAME . ':' . ModuleServices::GET_ALL_MODULES => RightsMap::SA_RMASK, // only super admin
                 ModuleDBObject::OBJ_NAME . ':' . ModuleServices::INSERT => RightsMap::SA_RMASK, // only super admin
@@ -162,12 +162,12 @@ class KernelModule extends AbstractModule
             false // disable ui must be true in production version
         );
         // -- add module specific dbo objects
-        parent::addDBObject(new CommentDBObject($this));
-        parent::addDBObject(new ModuleDBObject($this));
         parent::addDBObject(new SettingDBObject($this));
         parent::addDBObject(new UploadDBObject($this));
+        parent::addDBObject(new ModuleDBObject($this));
         parent::addDBObject(new UserDBObject($this));
         parent::addDBObject(new UserDataDBObject($this));
+        parent::addDBObject(new CommentDBObject($this));
         parent::addDBObject(new OVHWrapperDBObject($this));
         parent::addDBObject(new LogDBObject($this));
         parent::addDBObject(new AdmMembershipDBObject($this));

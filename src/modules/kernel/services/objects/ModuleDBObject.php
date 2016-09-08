@@ -12,10 +12,15 @@ class Module implements \JsonSerializable
 {
 
     // -- consts
+    const NO_RIGHTS = 0;
+    const G_RIGHTS = 1;
+    const U_RIGHTS = 2;
+    const A_RIGHTS = 3;
+    const SA_RIGHTS = 4;
 
     // -- attributes
     // --- persistent
-    private $id = null;
+    private $label = null;
     private $name = null;
     private $version = null;
     private $authors = null;
@@ -25,9 +30,9 @@ class Module implements \JsonSerializable
     /**
      * @brief Constructs a module
      */
-    public function __construct($id, $name, $version, $authors, $dependencies, $enabled)
+    public function __construct($label, $name, $version, $authors, $dependencies, $enabled)
     {
-        $this->id = intval($id);
+        $this->label = $label;
         $this->name = $name;
         $this->version = $version;
         $this->authors = $authors;
@@ -38,7 +43,7 @@ class Module implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            ModuleDBObject::COL_ID => $this->id,
+            ModuleDBObject::COL_LABEL => $this->label,
             ModuleDBObject::COL_NAME => $this->name,
             ModuleDBObject::COL_VERSION => $this->version,
             ModuleDBObject::COL_AUTHORS => $this->authors,
@@ -53,7 +58,7 @@ class Module implements \JsonSerializable
      */
     public function GetId()
     {
-        return $this->id;
+        return $this->label;
     }
 
     /**
@@ -109,14 +114,14 @@ class ModuleServices extends AbstractObjectServices
 
     // -- consts
     // --- params keys
-    const PARAM_ID = "id";
+    const PARAM_LABEL = "label";
     const PARAM_NAME = "name";
     const PARAM_VERSION = "version";
     const PARAM_AUTHORS = "authors";
     const PARAM_DEPEND = "dependencies";
     const PARAM_ENABLED = "enabled";
     // --- internal services (actions)
-    const GET_MODULE_BY_ID = "byid";
+    const GET_MODULE_BY_LABEL = "bylabel";
     const GET_MODULE_BY_NAME = "byname";
     const GET_ALL_MODULES = "all";
     const INSERT = "insert";
@@ -133,14 +138,13 @@ class ModuleServices extends AbstractObjectServices
     public function GetResponseData($action, $params)
     {
         $data = null;
-        if (!strcmp($action, ModuleServices::GET_MODULE_BY_ID)) {
-            $data = $this->__get_module_by_id($params[ModuleServices::PARAM_ID]);
-        } else if (!strcmp($action, ModuleServices::GET_MODULE_BY_NAME)) {
-            $data = $this->__get_module_by_key($params[ModuleServices::PARAM_NAME]);
+        if (!strcmp($action, ModuleServices::GET_MODULE_BY_LABEL)) {
+            $data = $this->__get_module_by_label($params[ModuleServices::PARAM_LABEL]);
         } else if (!strcmp($action, ModuleServices::GET_ALL_MODULES)) {
             $data = $this->__get_all_modules();
         } else if (!strcmp($action, ModuleServices::INSERT)) {
             $data = $this->__insert_module(
+                $params[ModuleServices::PARAM_LABEL],
                 $params[ModuleServices::PARAM_NAME],
                 $params[ModuleServices::PARAM_VERSION],
                 $params[ModuleServices::PARAM_AUTHORS],
@@ -148,14 +152,14 @@ class ModuleServices extends AbstractObjectServices
                 $params[ModuleServices::PARAM_ENABLED]);
         } else if (!strcmp($action, ModuleServices::UPDATE)) {
             $data = $this->__update_module(
-                $params[ModuleServices::PARAM_ID],
+                $params[ModuleServices::PARAM_LABEL],
                 $params[ModuleServices::PARAM_NAME],
                 $params[ModuleServices::PARAM_VERSION],
                 $params[ModuleServices::PARAM_AUTHORS],
                 $params[ModuleServices::PARAM_DEPEND],
                 $params[ModuleServices::PARAM_ENABLED]);
         } else if (!strcmp($action, ModuleServices::DELETE)) {
-            $data = $this->__delete_module($params[ModuleServices::PARAM_ID]);
+            $data = $this->__delete_module($params[ModuleServices::PARAM_LABEL]);
         }
         return $data;
     }
@@ -164,13 +168,13 @@ class ModuleServices extends AbstractObjectServices
 
     // -- consult
 
-    private function __get_module_by_id($id)
+    private function __get_module_by_label($label)
     {
         // create sql params array
-        $sql_params = array(":" . ModuleDBObject::COL_ID => $id);
+        $sql_params = array(":" . ModuleDBObject::COL_LABEL => $label);
         // create sql request
         $sql = parent::getDBObject()->GetTable(ModuleDBObject::TABL_MODULE)->GetSELECTQuery(
-            array(DBTable::SELECT_ALL), array(ModuleDBObject::COL_ID));
+            array(DBTable::SELECT_ALL), array(ModuleDBObject::COL_LABEL));
         // execute SQL query and save result
         $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
         // create module var
@@ -178,32 +182,7 @@ class ModuleServices extends AbstractObjectServices
         if (isset($pdos)) {
             if (($row = $pdos->fetch()) !== false) {
                 $module = new Module(
-                    $row[ModuleDBObject::COL_ID],
-                    $row[ModuleDBObject::COL_NAME],
-                    $row[ModuleDBObject::COL_VERSION],
-                    $row[ModuleDBObject::COL_AUTHORS],
-                    $row[ModuleDBObject::COL_DEPEND],
-                    $row[ModuleDBObject::COL_ENABLED]);
-            }
-        }
-        return $module;
-    }
-
-    private function __get_user_by_key($key)
-    {
-        // create sql params array
-        $sql_params = array(":" . ModuleDBObject::COL_KEY => $key);
-        // create sql request
-        $sql = parent::getDBObject()->GetTable(ModuleDBObject::TABL_MODULE)->GetSELECTQuery(
-            array(DBTable::SELECT_ALL), array(ModuleDBObject::COL_KEY));
-        // execute SQL query and save result
-        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-        // create module var
-        $module = null;
-        if (isset($pdos)) {
-            if (($row = $pdos->fetch()) !== false) {
-                $module = new Module(
-                    $row[ModuleDBObject::COL_ID],
+                    $row[ModuleDBObject::COL_LABEL],
                     $row[ModuleDBObject::COL_NAME],
                     $row[ModuleDBObject::COL_VERSION],
                     $row[ModuleDBObject::COL_AUTHORS],
@@ -225,7 +204,7 @@ class ModuleServices extends AbstractObjectServices
         if (isset($pdos)) {
             while (($row = $pdos->fetch()) !== false) {
                 array_push($modules, new Module(
-                    $row[ModuleDBObject::COL_ID],
+                    $row[ModuleDBObject::COL_LABEL],
                     $row[ModuleDBObject::COL_NAME],
                     $row[ModuleDBObject::COL_VERSION],
                     $row[ModuleDBObject::COL_AUTHORS],
@@ -238,11 +217,11 @@ class ModuleServices extends AbstractObjectServices
 
     // -- modify
 
-    private function __insert_module($name, $version, $authors, $dependencies, $enabled)
+    private function __insert_module($label, $name, $version, $authors, $dependencies, $enabled)
     {
         // create sql params
         $sql_params = array(
-            ":" . ModuleDBObject::COL_ID => null,
+            ":" . ModuleDBObject::COL_LABEL => $label,
             ":" . ModuleDBObject::COL_NAME => $name,
             ":" . ModuleDBObject::COL_VERSION => $version,
             ":" . ModuleDBObject::COL_AUTHORS => $authors,
@@ -254,11 +233,11 @@ class ModuleServices extends AbstractObjectServices
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
-    private function __update_module($id, $name, $version, $authors, $dependencies, $enabled)
+    private function __update_module($label, $name, $version, $authors, $dependencies, $enabled)
     {
         // create sql params
         $sql_params = array(
-            ":" . ModuleDBObject::COL_ID => $id,
+            ":" . ModuleDBObject::COL_LABEL => $label,
             ":" . ModuleDBObject::COL_NAME => $name,
             ":" . ModuleDBObject::COL_VERSION => $version,
             ":" . ModuleDBObject::COL_AUTHORS => $authors,
@@ -270,10 +249,10 @@ class ModuleServices extends AbstractObjectServices
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
-    private function __delete_module($id)
+    private function __delete_module($label)
     {
         // create sql params
-        $sql_params = array(":" . ModuleDBObject::COL_ID => $id);
+        $sql_params = array(":" . ModuleDBObject::COL_LABEL => $label);
         // create sql request
         $sql = parent::getDBObject()->GetTable(ModuleDBObject::TABL_MODULE)->GetDELETEQuery();
         // execute query
@@ -285,6 +264,63 @@ class ModuleServices extends AbstractObjectServices
     public function ResetStaticData()
     {
         // default modules if needed
+        $modules = [
+            [
+                ModuleDBObject::COL_LABEL => 'hr',
+                ModuleDBObject::COL_NAME => 'Ressources Humaines',
+                ModuleDBObject::COL_VERSION => '1.0dev',
+                ModuleDBObject::COL_AUTHORS => 'Nicolas Sorin',
+                ModuleDBObject::COL_DEPEND => 'kernel',
+                ModuleDBObject::COL_ENABLED => true
+            ],
+            [
+                ModuleDBObject::COL_LABEL => 'grc',
+                ModuleDBObject::COL_NAME => 'Gestion Relation Client',
+                ModuleDBObject::COL_VERSION => '1.0dev',
+                ModuleDBObject::COL_AUTHORS => 'Olivier Vicente',
+                ModuleDBObject::COL_DEPEND => 'kernel',
+                ModuleDBObject::COL_ENABLED => true
+            ],
+            [
+                ModuleDBObject::COL_LABEL => 'kernel',
+                ModuleDBObject::COL_NAME => 'Kernel',
+                ModuleDBObject::COL_VERSION => '1.0dev',
+                ModuleDBObject::COL_AUTHORS => 'Paul Dautry',
+                ModuleDBObject::COL_DEPEND => '',
+                ModuleDBObject::COL_ENABLED => true
+            ],
+            [
+                ModuleDBObject::COL_LABEL => 'tools',
+                ModuleDBObject::COL_NAME => 'Outils',
+                ModuleDBObject::COL_VERSION => '1.0dev',
+                ModuleDBObject::COL_AUTHORS => 'Paul Dautry',
+                ModuleDBObject::COL_DEPEND => 'kernel',
+                ModuleDBObject::COL_ENABLED => true
+            ],
+            [
+                ModuleDBObject::COL_LABEL => 'support',
+                ModuleDBObject::COL_NAME => 'Support',
+                ModuleDBObject::COL_VERSION => '1.0dev',
+                ModuleDBObject::COL_AUTHORS => 'Paul Dautry',
+                ModuleDBObject::COL_DEPEND => 'kernel',
+                ModuleDBObject::COL_ENABLED => true
+            ],
+            [
+                ModuleDBObject::COL_LABEL => 'ua',
+                ModuleDBObject::COL_NAME => "Unité d'affaires",
+                ModuleDBObject::COL_VERSION => '1.0dev',
+                ModuleDBObject::COL_AUTHORS => 'Nicolas Sorin',
+                ModuleDBObject::COL_DEPEND => 'kernel, grc',
+                ModuleDBObject::COL_ENABLED => true
+            ]
+        ];
+        // --- retrieve SQL query
+        $sql = parent::getDBObject()->GetTable(ModuleDBObject::TABL_MODULE)->GetINSERTQuery();
+        foreach ($modules as $module) {
+            // --- execute SQL query
+            parent::getDBConnection()->PrepareExecuteQuery($sql, $module);
+        }
+
     }
 }
 
@@ -300,7 +336,7 @@ class ModuleDBObject extends AbstractDBObject
     // --- tables
     const TABL_MODULE = "dol_module";
     // --- columns
-    const COL_ID = "id";
+    const COL_LABEL = "label";
     const COL_NAME = "name";
     const COL_VERSION = "version";
     const COL_AUTHORS = "authors";
@@ -318,7 +354,7 @@ class ModuleDBObject extends AbstractDBObject
         // --- dol_module table
         $dol_module = new DBTable(ModuleDBObject::TABL_MODULE);
         $dol_module
-            ->AddColumn(ModuleDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
+            ->AddColumn(ModuleDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true)
             ->AddColumn(ModuleDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(ModuleDBObject::COL_VERSION, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(ModuleDBObject::COL_AUTHORS, DBTable::DT_VARCHAR, 255, false)

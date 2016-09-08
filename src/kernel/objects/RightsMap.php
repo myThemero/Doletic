@@ -59,7 +59,7 @@ class RightsMap
         $this->groups = $groups;    // default value is default group
     }
 
-    public function SetGroups()
+    public function SetGroups($groups)
     {
         $this->groups = $groups;
     }
