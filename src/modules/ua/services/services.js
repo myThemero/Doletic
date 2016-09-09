@@ -168,6 +168,7 @@ var ProjectServicesInterface = new function () {
             GET_ALL_INT_BY_PROJECT: "allintbypro",
             GET_ALL_CONTACT_BY_PROJECT: "allcontbypro",
             INSERT: "insert",
+            INSERT_OWN: "insertown",
             UPDATE: "update",
             UPDATE_OWN: "updateown",
             UNSIGN: "unsign",
@@ -411,6 +412,26 @@ var ProjectServicesInterface = new function () {
                 secret: secret,
                 critical: critical,
                 assignCurrent: assignCurrent
+            },
+            successHandler);
+    };
+
+    this.insertOwn = function (name, description, origin, field, firmId, mgmtFee, appFee, rebilledFee, advance,
+                            secret, critical, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.INSERT_OWN,
+            {
+                name: name,
+                description: description,
+                origin: origin,
+                field: field,
+                firmId: firmId,
+                mgmtFee: mgmtFee,
+                appFee: appFee,
+                rebilledFee: rebilledFee,
+                advance: advance,
+                secret: secret,
+                critical: critical
             },
             successHandler);
     };

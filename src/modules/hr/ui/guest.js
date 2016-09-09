@@ -7,19 +7,24 @@ var DoleticUIModule = new function () {
      *    Override render function
      */
     this.render = function (htmlNode) {
+
         this.super.render(htmlNode, this);
-        // activate items in tabs
-        $('.menu .item').tab();
+
+        window.currentDetails = -1;
+
+        // Load HTML templates
+        DoleticUIModule.getStatsTab();
+        DoleticUIModule.getMembersTab();
+
         // hide user details tab
         $('#det').hide();
-        // fill user list
-        //DoleticUIModule.fillUsersList();
-        // fill team list
-        //DoleticUIModule.fillTeamsList();
-        // fill country field
-        //DoleticUIModule.fillCountrySelector();
-        // fill division field
-        //DoleticUIModule.fillDivisionSelector();
+        //Draw graphs
+        DoleticUIModule.drawGraphs();
+        DoleticUIModule.fillValueIndicators();
+        // fill user and team list. User first to fill user_list global array
+        DoleticUIModule.fillUsersList();
+        // activate items in tabs
+        $('.menu .item').tab();
     };
     /**
      *    Override build function
@@ -29,24 +34,20 @@ var DoleticUIModule = new function () {
 				  <div class=\"row\"> \
 				  </div> \
 				  <div class=\"row\"> \
-				  	<div class=\"sixteen wide column\"> \
-				  		<div class=\"ui top attached tabular menu\"> \
+				  	<div class=\"sixteen wide column\" id=\"page_content\"> \
+				  		<div class=\"ui top attached tabular menu\" id=\"tabmenu\" > \
   							<a class=\"item active\" data-tab=\"stats\">Statistiques</a> \
-  							<a class=\"item\" data-tab=\"memberlist\">Liste des membres</a> \
-  							<a class=\"item\" data-tab=\"teamlist\">Liste des équipes</a> \
-  							<a class=\"item\" id=\"det\" data-tab=\"userdetails\">Détails de l'utilisateur</a> \
+  							<a class=\"item\" id=\"memlist\" data-tab=\"memberlist\">Liste des membres</a> \
 						</div> \
 						<div class=\"ui bottom attached tab segment active\" data-tab=\"stats\"> \
-				  			<p>Cette portion est encore en développpement...</p>\
+							<div id=\"statsTab\">\
+								<div class=\"ui loader active\"></div>\
+							</div>\
 					    </div> \
 						<div class=\"ui bottom attached tab segment\" data-tab=\"memberlist\"> \
-						  <p>Cette portion est encore en développpement......</p>\
-						</div> \
-						<div class=\"ui bottom attached tab segment\" data-tab=\"teamlist\"> \
-						  <p>Cette portion est encore en développpement.........</p>\
-						</div> \
-						<div class=\"ui bottom attached tab segment\" data-tab=\"userdetails\"> \
-						  <p>Cette portion est encore en développpement et ne devrait même pas s'afficher...</p>\
+							<div id=\"membersTab\">\
+								<div class=\"ui loader active\"></div>\
+							</div>\
 						</div> \
 					</div> \
 				  </div> \
@@ -55,58 +56,6 @@ var DoleticUIModule = new function () {
 				  <div class=\"row\"> \
 				  </div> \
 				</div>";
-        /*return "<div class=\"ui two column grid container\"> \
-         <div class=\"row\"> \
-         </div> \
-         <div class=\"row\"> \
-         <div class=\"ten wide column\"> \
-         <div class=\"ui horizontal divider\">Mes tickets</div> \
-         <div id=\"open_popup\" class=\"ui special popup\"> \
-         <div class=\"content\">Votre problème n'a pas encore été pris en charge.</div> \
-         </div> \
-         <div id=\"work_popup\" class=\"ui special popup\"> \
-         <div class=\"content\">Votre problème est en cours de résolution.</div> \
-         </div> \
-         <div id=\"done_popup\" class=\"ui special popup\"> \
-         <div class=\"content\">Votre problème est résolu.</div> \
-         </div> \
-         <div id=\"undefined_popup\" class=\"ui special popup\"> \
-         <div class=\"content\">L'etat de ce ticket est étrange. Merci de prévenir les développeurs.</div> \
-         </div> \
-         <div id=\"ticket_list\" class=\"ui very relaxed celled selection list\"> \
-         <!-- USER TICKETS WILL GO HERE --> \
-         </div> \
-         </div> \
-         <div class=\"six wide column\"> \
-         <form id=\"support_form\" class=\"ui form segment\"> \
-         <h4 class=\"ui dividing header\">Création d'un nouveau ticket</h4> \
-         <div class=\"fields\"> \
-         <div id=\"subject_field\" class=\"twelve wide required field\"> \
-         <label>Sujet</label> \
-         <input id=\"subject\" placeholder=\"Sujet\" type=\"text\"/> \
-         </div> \
-         <div class=\"field\"> \
-         <label>Catégorie</label> \
-         <select id=\"category\" class=\"ui search dropdown\"> \
-         <!-- CATEGORIES WILL GO HERE --> \
-         </select> \
-         </div> \
-         </div> \
-         <div id=\"data_field\" class=\"required field\"> \
-         <label>Description</label> \
-         <textarea id=\"data\"></textarea> \
-         </div> \
-         <div class=\"ui support_center small buttons\"> \
-         <div id=\"abort_btn\" class=\"ui button\" onClick=\"DoleticUIModule.clearNewTicketForm();\">Annuler</div> \
-         <div class=\"or\" data-text=\"ou\"></div> \
-         <div id=\"send_btn\" class=\"ui green button\" onClick=\"DoleticUIModule.sendNewTicket();\">Envoyer</div> \
-         </div> \
-         </form> \
-         </div> \
-         </div> \
-         <div class=\"row\"> \
-         </div> \
-         </div>";*/
     };
     /**
      *    Override uploadSuccessHandler
@@ -121,97 +70,111 @@ var DoleticUIModule = new function () {
          $('#ticket_list').attr('class', 'ui very relaxed celled selection list inverted');
          $('#support_form').attr('class', 'ui form segment inverted');
          $('#abort_btn').attr('class', 'ui button inverted');
-         $('#send_btn').attr('class', 'ui green button inverted');
+         $('#adduser_btn').attr('class', 'ui green button inverted');
          } else {
          $('.ui.horizontal.divider.inverted').attr('class', 'ui horizontal divider');
          $('#ticket_list').attr('class', 'ui very relaxed celled selection list');
          $('#support_form').attr('class', 'ui form segment');
          $('#abort_btn').attr('class', 'ui button');
-         $('#send_btn').attr('class', 'ui green button');
+         $('#adduser_btn').attr('class', 'ui green button');
          }*/
     };
 
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
+    /**
+     *    Load the HTML code of the Stats Tab
+     */
+    this.getStatsTab = function () {
+        $('#agr_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
+        $('#statsTab').load("../modules/hr/ui/templates/statsTab.html", function () {
+            $('#ag_container').prev('.ui.horizontal.divider').remove();
+            $('#ag_container').remove();
+        });
+    };
+
+    /**
+     *    Load the HTML code of the Members Tab
+     */
+    this.getMembersTab = function () {
+        $('#user_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
+        $('#membersTab').load("../modules/hr/ui/templates/membersTab.html", function () {
+            DoleticMasterInterface.makeDefaultCalendar('birthdate_calendar');
+            $('#toggle_old').change(DoleticUIModule.fillUsersList);
+            $('#adduser_modal_btn').remove();
+        });
+    };
+
     this.hasInputError = false;
 
-    this.fillCountrySelector = function () {
-        UserDataServicesInterface.getAllCountries(function (data) {
-            // if no service error
-            if (data.code == 0) {
-                // create content var to build html
-                var content = "";
-                // iterate over values to build options
-                for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + (i + 1) + "\">" + data.object[i] + "</option>\n";
-                }
-                // insert html content
-                $('#country').html(content);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
-    this.fillDivisionSelector = function () {
-        HrServicesInterface.getAllDivisions(function (data) {
-            // if no service error
-            if (data.code == 0) {
-                // create content var to build html
-                var content = "";
-                // iterate over values to build options
-                for (var i = 0; i < data.object.length; i++) {
-                    content += "<option value=\"" + (i + 1) + "\">" + data.object[i] + "</option>\n";
-                }
-                // insert html content
-                $('#division').html(content);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
-        });
-    };
-
     this.fillUsersList = function () {
+        // Load old members
+        var showOld = $('#toggle_old').prop('checked');
         UserDataServicesInterface.getAll(function (data) {
+            // Delete and recreate table so Datatables is reinitialized
+            $("#user_table_container").html("");
             // if no service error
             if (data.code == 0 && data.object != "[]") {
-                // create content var to build html
-                var content = "";
+                // Store data in global array
+                window.user_list = [];
                 // iterate over values to build options
+                var content = "<table class=\"ui very basic celled table\" id=\"user_table\"> \
+                <thead> \
+                    <tr>\
+                        <th>Nom/Mail</th> \
+                        <th>Poste</th> \
+                        <th>Pôle</th> \
+                        <th>Téléphone</th> \
+                        <th>Année</th> \
+                        <th>Actions</th> \
+                    </tr>\
+                </thead>\
+                <tfoot> \
+                    <tr>\
+                        <th>Nom</th> \
+                        <th>Poste</th> \
+                        <th>Pôle</th> \
+                        <th>Téléphone</th> \
+                        <th>Année</th> \
+                        <th></th> \
+                    </tr>\
+                </tfoot>\
+                <tbody id=\"user_body\">";
+
+                var filters = [
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.select_filter,
+                    DoleticMasterInterface.select_filter,
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.reset_filter
+                ];
                 for (var i = 0; i < data.object.length; i++) {
-                    var status, popup_selector;
-                    var id = "popup_trigger_" + i;
-                    switch (data.object[i].status_id) {
-                        case 1:
-                            status = "red radio";
-                            popup_selector = "#open_popup";
-                            break;
-                        case 2:
-                            status = "orange spinner";
-                            popup_selector = "#work_popup";
-                            break;
-                        case 3:
-                            status = "green selected radio";
-                            popup_selector = "#done_popup";
-                            break;
-                        default:
-                            status = "blue help";
-                            popup_selector = "#undefined_popup";
-                            break;
+                    window.user_list[data.object[i].id] = data.object[i];
+
+                    if (!(data.object[i].old && !showOld)) {
+
+                        if (data.object[i].disabled) {
+
+                        } else {
+                            content += "<tr><td> \
+			        				<h4 class=\"ui header\"> \
+			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
+                                "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
+			        				</div> \
+			      					</h4></td> \
+			      					<td>" + data.object[i].position[0].label + "</td> \
+			      					<td>" + data.object[i].position[0].division + "</td> \
+			      					<td>" + data.object[i].tel + "</td> \
+			      					<td>" + data.object[i].school_year + data.object[i].insa_dept + "</td> \
+			    				<td><i>Aucune</i></td> \
+			    				</tr>";
+                        }
                     }
-                    content += "<div class=\"item\"> \
-								  <i id=\"" + id + "\" class=\"" + status + " big icon link\"></i> \
-								  <div class=\"middle aligned content\"> \
-								    <a class=\"header\">" + data.object[i].subject + "</a> \
-								    <div class=\"description\">" + data.object[i].data + "</div>  \
-								  </div> \
-								  <script>$('#" + id + "').popup({popup:'" + popup_selector + "'});</script> \
-								</div>";
                 }
-                // insert html content
-                $('#user_list').html(content);
+                content += "</tbody></table>";
+                $('#user_table_container').append(content);
+                DoleticMasterInterface.makeDataTables('user_table', filters);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -219,113 +182,32 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.fillTeamsList = function () {
-        HrServicesInterface.getAllTeams(function (data) {
-            // if no service error
-            if (data.code == 0 && data.object != "[]") {
-                // create content var to build html
-                var content = "";
-                // iterate over values to build options
-                /*for (var i = 0; i < data.object.length; i++) {
-                 var status, popup_selector;
-                 var id = "popup_trigger_"+i;
-                 switch (data.object[i].status_id) {
-                 case 1:
-                 status = "red radio";
-                 popup_selector = "#open_popup";
-                 break;
-                 case 2:
-                 status = "orange spinner";
-                 popup_selector = "#work_popup";
-                 break;
-                 case 3:
-                 status = "green selected radio";
-                 popup_selector = "#done_popup";
-                 break;
-                 default:
-                 status = "blue help";
-                 popup_selector = "#undefined_popup";
-                 break;
-                 }
-                 content += "<div class=\"item\"> \
-                 <i id=\""+id+"\" class=\""+status+" big icon link\"></i> \
-                 <div class=\"middle aligned content\"> \
-                 <a class=\"header\">"+data.object[i].subject+"</a> \
-                 <div class=\"description\">"+data.object[i].data+"</div>  \
-                 </div> \
-                 <script>$('#"+id+"').popup({popup:'"+popup_selector+"'});</script> \
-                 </div>";
-                 };*/
-                // insert html content
-                $('#team_list').html(content);
-            } else {
-                // use default service service error handler
-                DoleticServicesInterface.handleServiceError(data);
-            }
+    this.drawGraphs = function () {
+        IndicatorServicesInterface.processAllGraphByModule('hr', function (data) {
+            //console.log(data.object);
+            DoleticMasterInterface.drawGraphs(data.object, 'graphs');
         });
     };
 
-    this.clearNewTicketForm = function () {
-        $('#subject').val('');
-        $('#data').val('');
-        /// \todo trouver quelque chose de mieux ici pour le reset du selecteur
-        DoleticUIModule.fillCountrySelector();
-        // clear error
-        if (this.hasInputError) {
-            // disable has error
-            this.hasInputError = false;
-            // change input style
-            $('#support_form').attr('class', 'ui form segment');
-            $('#subject_field').attr('class', 'required field');
-            $('#data_field').attr('class', 'required field');
-            // remove error elements
-            $('#subject_error').remove();
-            $('#data_error').remove();
-        }
+    this.fillValueIndicators = function () {
+        IndicatorServicesInterface.processAllValueByModule('hr', function (data) {
+            //console.log(data.object);
+            DoleticMasterInterface.fillValueIndicators(data.object, 'indicators_body');
+        });
     };
 
-    this.showInputError = function () {
-        if (!this.hasInputError) {
-            // raise loginError flag
-            this.hasInputError = true;
-            // show input error elements
-            $('#support_form').attr('class', 'ui form segment error');
-            $('#subject_field').attr('class', 'field error');
-            $('#subject_field').append("<div id=\"subject_error\" class=\"ui basic red pointing prompt label transition visible\">Le sujet ne doit pas être vide</div>");
-            $('#data_field').attr('class', 'field error');
-            $('#data_field').append("<div id=\"data_error\" class=\"ui basic red pointing prompt label transition visible\">La description ne dois pas être vide</div>");
-        }
+    this.fillTableIndicators = function () {
+        IndicatorServicesInterface.processAllTableByModule('hr', function (data) {
+            //console.log(data.object);
+            DoleticMasterInterface.fillTableIndicators(data.object, 'tables');
+            $('#indictab_0 .indicval_label').click(function () {
+                $('#user_table_Pôle').dropdown('set selected', $(this).html()).change();
+                $('#memlist').click();
+            });
+            $('#indictab_1 .indicval_label').click(function () {
+                $('#user_table_Année').val($(this).html()).change();
+                $('#memlist').click();
+            });
+        });
     };
-
-    this.sendHandler = function (data) {
-        // if no service error
-        if (data.code == 0) {
-            // clear ticket form
-            DoleticUIModule.clearNewTicketForm();
-            // alert user that creation is a success
-            DoleticMasterInterface.showSuccess("Création réussie !", "Le ticket a été créé avec succès !");
-            // fill ticket list
-            DoleticUIModule.fillTicketsList();
-        } else {
-            // use default service service error handler
-            DoleticServicesInterface.handleServiceError(data);
-        }
-    };
-
-    this.sendNewTicket = function () {
-        if ($('#subject').val().length > 0 &&
-            $('#data').val().length > 0) {
-            // retreive missing information
-            TicketServicesInterface.insert(
-                "-1",
-                $('#subject').val(),
-                $('#category').val(),
-                $('#data').val(),
-                DoleticUIModule.sendHandler
-            );
-        } else {
-            DoleticUIModule.showInputError();
-        }
-    }
-
 };

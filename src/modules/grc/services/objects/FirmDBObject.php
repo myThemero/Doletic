@@ -177,8 +177,7 @@ class FirmServices extends AbstractObjectServices
                 $params[FirmServices::PARAM_POSTAL_CODE],
                 $params[FirmServices::PARAM_CITY],
                 $params[FirmServices::PARAM_COUNTRY],
-                $params[FirmServices::PARAM_TYPE],
-                $params[FirmServices::PARAM_LAST_CONTACT]);
+                $params[FirmServices::PARAM_TYPE]);
         } else if (!strcmp($action, FirmServices::UPDATE)) {
             $data = $this->__update_firm(
                 $params[FirmServices::PARAM_ID],
@@ -188,8 +187,7 @@ class FirmServices extends AbstractObjectServices
                 $params[FirmServices::PARAM_POSTAL_CODE],
                 $params[FirmServices::PARAM_CITY],
                 $params[FirmServices::PARAM_COUNTRY],
-                $params[FirmServices::PARAM_TYPE],
-                $params[FirmServices::PARAM_LAST_CONTACT]);
+                $params[FirmServices::PARAM_TYPE]);
         } else if (!strcmp($action, FirmServices::DELETE)) {
             $data = $this->__delete_firm($params[FirmServices::PARAM_ID]);
         }
@@ -263,7 +261,7 @@ class FirmServices extends AbstractObjectServices
         $data = array();
         if (isset($pdos)) {
             while (($row = $pdos->fetch()) !== false) {
-                array_push($firms, $row[FirmDBObject::COL_LABEL]);
+                array_push($data, $row[FirmDBObject::COL_LABEL]);
             }
         }
         return $data;
@@ -271,7 +269,7 @@ class FirmServices extends AbstractObjectServices
 
     // --- modify
 
-    private function __insert_firm($siret, $name, $address, $postalCode, $city, $country, $type, $lastContact)
+    private function __insert_firm($siret, $name, $address, $postalCode, $city, $country, $type)
     {
         // create sql params
         $sql_params = array(
@@ -283,7 +281,7 @@ class FirmServices extends AbstractObjectServices
             ":" . FirmDBObject::COL_CITY => $city,
             ":" . FirmDBObject::COL_COUNTRY => $country,
             ":" . FirmDBObject::COL_TYPE => $type,
-            ":" . FirmDBObject::COL_LAST_CONTACT => $lastContact
+            ":" . FirmDBObject::COL_LAST_CONTACT => null
         );
         // create sql request
         $sql = parent::getDBObject()->GetTable(FirmDBObject::TABL_FIRM)->GetINSERTQuery();
@@ -291,7 +289,7 @@ class FirmServices extends AbstractObjectServices
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
-    private function __update_firm($id, $siret, $name, $address, $postalCode, $city, $country, $type, $lastContact)
+    private function __update_firm($id, $siret, $name, $address, $postalCode, $city, $country, $type)
     {
         // create sql params
         $sql_params = array(
@@ -303,7 +301,7 @@ class FirmServices extends AbstractObjectServices
             ":" . FirmDBObject::COL_CITY => $city,
             ":" . FirmDBObject::COL_COUNTRY => $country,
             ":" . FirmDBObject::COL_TYPE => $type,
-            ":" . FirmDBObject::COL_LAST_CONTACT => $lastContact
+            ":" . FirmDBObject::COL_LAST_CONTACT => null
         );
         // create sql request
         $sql = parent::getDBObject()->GetTable(FirmDBObject::TABL_FIRM)->GetUPDATEQuery();

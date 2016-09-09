@@ -427,6 +427,7 @@ class ProjectServices extends AbstractObjectServices
     const GET_ALL_INT_BY_PROJECT = "allintbypro";
     const GET_ALL_CONTACT_BY_PROJECT = "allcontbypro";
     const INSERT = "insert";
+    const INSERT_OWN = "insertown";
     const UPDATE = "update";
     const UPDATE_OWN = "updateown";
     const UNSIGN = "unsign";
@@ -530,6 +531,21 @@ class ProjectServices extends AbstractObjectServices
                 $params[ProjectServices::PARAM_SECRET],
                 $params[ProjectServices::PARAM_CRITICAL],
                 $params[ProjectServices::PARAM_ASSIGN_CURRENT]
+            );
+        } else if (!strcmp($action, ProjectServices::INSERT_OWN)) {
+            $data = $this->__insert_project(
+                $params[ProjectServices::PARAM_NAME],
+                $params[ProjectServices::PARAM_DESCRIPTION],
+                $params[ProjectServices::PARAM_ORIGIN],
+                $params[ProjectServices::PARAM_FIELD],
+                $params[ProjectServices::PARAM_FIRM_ID],
+                $params[ProjectServices::PARAM_MGMT_FEE],
+                $params[ProjectServices::PARAM_APP_FEE],
+                $params[ProjectServices::PARAM_REBILLED_FEE],
+                $params[ProjectServices::PARAM_ADVANCE],
+                $params[ProjectServices::PARAM_SECRET],
+                $params[ProjectServices::PARAM_CRITICAL],
+                true
             );
         } else if (!strcmp($action, ProjectServices::UPDATE)) {
             $data = $this->__update_project(

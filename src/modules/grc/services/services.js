@@ -30,7 +30,7 @@ var FirmServicesInterface = new function () {
             {id: id},
             successHandler);
     };
-    this.insert = function (siret, name, address, postalCode, city, country, type, lastContact, successHandler) {
+    this.insert = function (siret, name, address, postalCode, city, country, type, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT,
             {
@@ -40,12 +40,11 @@ var FirmServicesInterface = new function () {
                 postalCode: postalCode,
                 city: city,
                 country: country,
-                type: type,
-                lastContact: lastContact
+                type: type
             },
             successHandler);
     };
-    this.update = function (id, siret, name, address, postalCode, city, country, type, lastContact, successHandler) {
+    this.update = function (id, siret, name, address, postalCode, city, country, type, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE,
             {
@@ -56,8 +55,7 @@ var FirmServicesInterface = new function () {
                 postalCode: postalCode,
                 city: city,
                 country: country,
-                type: type,
-                lastContact: lastContact
+                type: type
             },
             successHandler);
     };
@@ -101,7 +99,7 @@ var ContactServicesInterface = new function () {
             {id: id},
             successHandler);
     };
-    this.insert = function (gender, firstname, lastname, firmId, email, phone, categoryId, lastUpdate, successHandler) {
+    this.insert = function (gender, firstname, lastname, firmId, email, phone, category, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT,
             {
@@ -111,12 +109,11 @@ var ContactServicesInterface = new function () {
                 firmId: firmId,
                 email: email,
                 phone: phone,
-                categoryId: categoryId,
-                lastUpdate: lastUpdate
+                category: category
             },
             successHandler);
     };
-    this.update = function (id, gender, firstname, lastname, firmId, email, phone, categoryId, lastUpdate, successHandler) {
+    this.update = function (id, gender, firstname, lastname, firmId, email, phone, category, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE,
             {
@@ -127,8 +124,7 @@ var ContactServicesInterface = new function () {
                 firmId: firmId,
                 email: email,
                 phone: phone,
-                categoryId: categoryId,
-                lastUpdate: lastUpdate
+                category: category
             },
             successHandler);
     };

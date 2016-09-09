@@ -32,11 +32,11 @@ class Contact implements \JsonSerializable
         $this->id = intval($id);
         $this->gender = $gender;
         $this->firstname = $firstname;
-        $this->lastchange = $lastname;
+        $this->lastname = $lastname;
         $this->firm_id = intval($firmId);
         $this->email = $email;
         $this->phone = $phone;
-        $this->category = intval($category);
+        $this->category = $category;
         $this->last_update = $lastUpdate;
     }
 
@@ -266,7 +266,7 @@ class ContactServices extends AbstractObjectServices
         $data = array();
         if (isset($pdos)) {
             while (($row = $pdos->fetch()) !== false) {
-                array_push($contacts, $row[ContactDBObject::COL_LABEL]);
+                array_push($data, $row[ContactDBObject::COL_LABEL]);
             }
         }
         return $data;
@@ -298,7 +298,7 @@ class ContactServices extends AbstractObjectServices
         // create sql params
         $sql_params = array(
             ":" . ContactDBObject::COL_ID => $id,
-            ":" . ContactDBObject::COL_FIRSTNAME => $gender,
+            ":" . ContactDBObject::COL_GENDER => $gender,
             ":" . ContactDBObject::COL_FIRSTNAME => $firstname,
             ":" . ContactDBObject::COL_LASTNAME => $lastname,
             ":" . ContactDBObject::COL_FIRM_ID => $firmId,

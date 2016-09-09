@@ -90,7 +90,6 @@ var DoleticUIModule = new function () {
          *    Override uploadSuccessHandler
          */
         this.uploadSuccessHandler = function (id, data) {
-            console.log(data);
             DocumentServicesInterface.insert(window.currentDetails, window.currentTemplate, data, function () {
                 DoleticUIModule.fillDocumentList(window.currentDetails);
             });
@@ -355,7 +354,6 @@ var DoleticUIModule = new function () {
                     ];
 
                     for (var i = 0; i < data.object.length; i++) {
-                        console.log(data.object);
                         var chadaffHtml = "";
                         var j = 0;
                         for (j = 0; j < data.object[i].chadaff_id.length; j++) {
