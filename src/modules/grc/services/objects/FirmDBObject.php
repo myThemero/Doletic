@@ -147,6 +147,7 @@ class FirmServices extends AbstractObjectServices
     // --- actions
     const GET_FIRM_BY_ID = "byid";
     const GET_ALL_FIRMS = "all";
+    const GET_ALL_FIRM_TYPES = "alltypes";
     const INSERT = "insert";
     const UPDATE = "update";
     const DELETE = "delete";
@@ -166,6 +167,8 @@ class FirmServices extends AbstractObjectServices
             $data = $this->__get_firm_by_id($params[FirmServices::PARAM_ID]);
         } else if (!strcmp($action, FirmServices::GET_ALL_FIRMS)) {
             $data = $this->__get_all_firms();
+        } else if (!strcmp($action, FirmServices::GET_ALL_FIRM_TYPES)) {
+            $data = $this->__get_all_firm_types();
         } else if (!strcmp($action, FirmServices::INSERT)) {
             $data = $this->__insert_firm(
                 $params[FirmServices::PARAM_SIRET],
@@ -211,15 +214,15 @@ class FirmServices extends AbstractObjectServices
         if (isset($pdos)) {
             if (($row = $pdos->fetch()) !== false) {
                 $firm = new Firm(
-                    $row[FirmServices::PARAM_ID],
-                    $row[FirmServices::PARAM_SIRET],
-                    $row[FirmServices::PARAM_NAME],
-                    $row[FirmServices::PARAM_ADDRESS],
-                    $row[FirmServices::PARAM_POSTAL_CODE],
-                    $row[FirmServices::PARAM_CITY],
-                    $row[FirmServices::PARAM_COUNTRY],
-                    $row[FirmServices::PARAM_TYPE],
-                    $row[FirmServices::PARAM_LAST_CONTACT]);
+                    $row[FirmDBObject::COL_ID],
+                    $row[FirmDBObject::COL_SIRET],
+                    $row[FirmDBObject::COL_NAME],
+                    $row[FirmDBObject::COL_ADDRESS],
+                    $row[FirmDBObject::COL_POSTAL_CODE],
+                    $row[FirmDBObject::COL_CITY],
+                    $row[FirmDBObject::COL_COUNTRY],
+                    $row[FirmDBObject::COL_TYPE],
+                    $row[FirmDBObject::COL_LAST_CONTACT]);
             }
         }
         return $firm;
@@ -248,6 +251,22 @@ class FirmServices extends AbstractObjectServices
             }
         }
         return $firms;
+    }
+
+    private function __get_all_firm_types()
+    {
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(FirmDBObject::TABL_FIRM_TYPE)->GetSELECTQuery();
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+        // create an empty array for firms and fill it
+        $data = array();
+        if (isset($pdos)) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($firms, $row[FirmDBObject::COL_LABEL]);
+            }
+        }
+        return $data;
     }
 
     // --- modify
@@ -315,7 +334,21 @@ class FirmServices extends AbstractObjectServices
      */
     public function ResetStaticData()
     {
-        // nothing to init here
+        // --- retrieve SQL query
+        $types = [
+            'SA',
+            'SARL',
+            'Particulier'
+        ];
+        $sql = parent::getDBObject()->GetTable(FirmDBObject::TABL_FIRM_TYPE)->GetINSERTQuery();
+        foreach ($types as $type) {
+            // --- create param array
+            $sql_params = array(
+                ":" . FirmDBObject::COL_LABEL => $type
+            );
+            // --- execute SQL query
+            parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+        }
     }
 
 }
@@ -331,7 +364,9 @@ class FirmDBObject extends AbstractDBObject
     const OBJ_NAME = "firm";
     // --- tables
     const TABL_FIRM = "dol_firm";
+    const TABL_FIRM_TYPE = "dol_firm_type";
     // --- columns
+    const COL_LABEL = "label";
     const COL_ID = "id";
     const COL_SIRET = "siret";
     const COL_NAME = "name";
@@ -351,20 +386,38 @@ class FirmDBObject extends AbstractDBObject
         // -- construct parent
         parent::__construct($module, FirmDBObject::OBJ_NAME);
         // -- create tables
+        // --- dol_firm_type table
+        $dol_firm_type = new DBTable(FirmDBObject::TABL_FIRM_TYPE);
+        $dol_firm_type
+            ->AddColumn(FirmDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
+
         // --- dol_firm table
         $dol_firm = new DBTable(FirmDBObject::TABL_FIRM);
         $dol_firm
             ->AddColumn(FirmDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
-            ->AddColumn(FirmDBObject::COL_SIRET, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(FirmDBObject::COL_SIRET, DBTable::DT_VARCHAR, 255, true)
             ->AddColumn(FirmDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(FirmDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(FirmDBObject::COL_POSTAL_CODE, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(FirmDBObject::COL_CITY, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(FirmDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(FirmDBObject::COL_ADDRESS, DBTable::DT_VARCHAR, 255, true)
+            ->AddColumn(FirmDBObject::COL_POSTAL_CODE, DBTable::DT_VARCHAR, 255, true)
+            ->AddColumn(FirmDBObject::COL_CITY, DBTable::DT_VARCHAR, 255, true)
+            ->AddColumn(FirmDBObject::COL_COUNTRY, DBTable::DT_VARCHAR, 255, true)
             ->AddColumn(FirmDBObject::COL_TYPE, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(FirmDBObject::COL_LAST_CONTACT, DBTable::DT_VARCHAR, 255, false);
+            ->AddColumn(FirmDBObject::COL_LAST_CONTACT, DBTable::DT_VARCHAR, 255, true)
+            ->AddForeignKey(
+                FirmDBObject::TABL_FIRM . '_fk1',
+                FirmDBObject::COL_TYPE,
+                FirmDBObject::TABL_FIRM_TYPE,
+                FirmDBObject::COL_LABEL, DBTable::DT_CASCADE, DBTable::DT_CASCADE
+            )
+            ->AddForeignKey(
+                FirmDBObject::TABL_FIRM . '_fk2',
+                FirmDBObject::COL_COUNTRY,
+                UserDataDBObject::TABL_COM_COUNTRY,
+                UserDataDBObject::COL_LABEL, DBTable::DT_CASCADE, DBTable::DT_CASCADE
+            );
 
         // -- add tables
+        parent::addTable($dol_firm_type);
         parent::addTable($dol_firm);
     }
 

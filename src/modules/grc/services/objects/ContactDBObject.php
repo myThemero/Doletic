@@ -12,10 +12,6 @@ class Contact implements \JsonSerializable
 {
 
     // -- consts
-    const TYPE_CLIENT = 1;
-    const TYPE_FOURNISSEUR = 2;
-    const TYPE_PROSPECT = 3;
-    const TYPE_PROSPECT_INDIRECT = 4;
 
     // -- attributes
     private $id = null;
@@ -154,6 +150,7 @@ class ContactServices extends AbstractObjectServices
     // --- actions
     const GET_CONTACT_BY_ID = "byid";
     const GET_ALL_CONTACTS = "all";
+    const GET_ALL_CONTACT_TYPES = "alltypes";
     const INSERT = "insert";
     const UPDATE = "update";
     const DELETE = "delete";
@@ -173,6 +170,8 @@ class ContactServices extends AbstractObjectServices
             $data = $this->__get_contact_by_id($params[ContactServices::PARAM_ID]);
         } else if (!strcmp($action, ContactServices::GET_ALL_CONTACTS)) {
             $data = $this->__get_all_contacts();
+        } else if (!strcmp($action, ContactServices::GET_ALL_CONTACT_TYPES)) {
+            $data = $this->__get_all_contact_types();
         } else if (!strcmp($action, ContactServices::INSERT)) {
             $data = $this->__insert_contact(
                 $params[ContactServices::PARAM_GENDER],
@@ -181,8 +180,7 @@ class ContactServices extends AbstractObjectServices
                 $params[ContactServices::PARAM_FIRM_ID],
                 $params[ContactServices::PARAM_EMAIL],
                 $params[ContactServices::PARAM_PHONE],
-                $params[ContactServices::PARAM_CATEGORY],
-                $params[ContactServices::PARAM_LAST_UPDATE]);
+                $params[ContactServices::PARAM_CATEGORY]);
         } else if (!strcmp($action, ContactServices::UPDATE)) {
             $data = $this->__update_contact(
                 $params[ContactServices::PARAM_ID],
@@ -192,8 +190,7 @@ class ContactServices extends AbstractObjectServices
                 $params[ContactServices::PARAM_FIRM_ID],
                 $params[ContactServices::PARAM_EMAIL],
                 $params[ContactServices::PARAM_PHONE],
-                $params[ContactServices::PARAM_CATEGORY],
-                $params[ContactServices::PARAM_LAST_UPDATE]);
+                $params[ContactServices::PARAM_CATEGORY]);
         } else if (!strcmp($action, ContactServices::DELETE)) {
             $data = $this->__delete_contact($params[ContactServices::PARAM_ID]);
         }
@@ -219,14 +216,14 @@ class ContactServices extends AbstractObjectServices
             if (($row = $pdos->fetch()) !== false) {
                 $contact = new Contact(
                     $row[ContactDBObject::COL_ID],
-                    $row[ContactServices::PARAM_GENDER],
-                    $row[ContactServices::PARAM_FIRSTNAME],
-                    $row[ContactServices::PARAM_LASTNAME],
-                    $row[ContactServices::PARAM_FIRM_ID],
-                    $row[ContactServices::PARAM_EMAIL],
-                    $row[ContactServices::PARAM_PHONE],
-                    $row[ContactServices::PARAM_CATEGORY],
-                    $row[ContactServices::PARAM_LAST_UPDATE]
+                    $row[ContactDBObject::COL_GENDER],
+                    $row[ContactDBObject::COL_FIRSTNAME],
+                    $row[ContactDBObject::COL_LASTNAME],
+                    $row[ContactDBObject::COL_FIRM_ID],
+                    $row[ContactDBObject::COL_EMAIL],
+                    $row[ContactDBObject::COL_PHONE],
+                    $row[ContactDBObject::COL_CATEGORY],
+                    $row[ContactDBObject::COL_LAST_UPDATE]
                 );
             }
         }
@@ -259,9 +256,25 @@ class ContactServices extends AbstractObjectServices
         return $contacts;
     }
 
+    private function __get_all_contact_types()
+    {
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT_TYPE)->GetSELECTQuery();
+        // execute SQery and sresult
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
+        // create an empty array for contacts and fill it
+        $data = array();
+        if (isset($pdos)) {
+            while (($row = $pdos->fetch()) !== false) {
+                array_push($contacts, $row[ContactDBObject::COL_LABEL]);
+            }
+        }
+        return $data;
+    }
+
     // --- modify
 
-    private function __insert_contact($gender, $firstname, $lastname, $firmId, $email, $phone, $category, $lastUpdate)
+    private function __insert_contact($gender, $firstname, $lastname, $firmId, $email, $phone, $category)
     {
         // create sql params
         $sql_params = array(
@@ -273,14 +286,14 @@ class ContactServices extends AbstractObjectServices
             ":" . ContactDBObject::COL_EMAIL => $email,
             ":" . ContactDBObject::COL_PHONE => $phone,
             ":" . ContactDBObject::COL_CATEGORY => $category,
-            ":" . ContactDBObject::COL_LAST_UPDATE => $lastUpdate
+            ":" . ContactDBObject::COL_LAST_UPDATE => date('Y-m-d')
         );
         // create sql request
         $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT)->GetINSERTQuery();
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
-    private function __update_contact($id, $receiverId, $subject, $category, $data, $statusId)
+    private function __update_contact($id, $gender, $firstname, $lastname, $firmId, $email, $phone, $category)
     {
         // create sql params
         $sql_params = array(
@@ -292,7 +305,7 @@ class ContactServices extends AbstractObjectServices
             ":" . ContactDBObject::COL_EMAIL => $email,
             ":" . ContactDBObject::COL_PHONE => $phone,
             ":" . ContactDBObject::COL_CATEGORY => $category,
-            ":" . ContactDBObject::COL_LAST_UPDATE => $this->lastUpdate
+            ":" . ContactDBObject::COL_LAST_UPDATE => date('Y-m-d')
         );
         // sql request
         $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT)->GetUPDATEQuery();
@@ -324,7 +337,22 @@ class ContactServices extends AbstractObjectServices
      */
     public function ResetStaticData()
     {
-        // nothing to init here
+        // --- retrieve SQL query
+        $types = [
+            'Client',
+            'Fournisseur',
+            'Prospect',
+            'Prospect indirect'
+        ];
+        $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT_TYPE)->GetINSERTQuery();
+        foreach ($types as $type) {
+            // --- create param array
+            $sql_params = array(
+                ":" . ContactDBObject::COL_LABEL => $type
+            );
+            // --- execute SQL query
+            parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+        }
     }
 
 }
@@ -341,8 +369,10 @@ class ContactDBObject extends AbstractDBObject
     const OBJ_NAME = "contact";
     // --- tables
     const TABL_CONTACT = "dol_contact";
+    const TABL_CONTACT_TYPE = "dol_contact_type";
     // --- columns
     const COL_ID = "id";
+    const COL_LABEL = "label";
     const COL_GENDER = "gender";
     const COL_FIRSTNAME = "firstname";
     const COL_LASTNAME = "lastname";
@@ -361,6 +391,11 @@ class ContactDBObject extends AbstractDBObject
         parent::__construct($module, ContactDBObject::OBJ_NAME);
         // -- create tables
         // --- dol_contact table
+        $dol_contact_type = new DBTable(ContactDBObject::TABL_CONTACT_TYPE);
+        $dol_contact_type
+            ->AddColumn(ContactDBObject::COL_LABEL, DBTable::DT_VARCHAR, 255, false, "", false, true);
+
+        // --- dol_contact table
         $dol_contact = new DBTable(ContactDBObject::TABL_CONTACT);
         $dol_contact
             ->AddColumn(ContactDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
@@ -371,9 +406,28 @@ class ContactDBObject extends AbstractDBObject
             ->AddColumn(ContactDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(ContactDBObject::COL_PHONE, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(ContactDBObject::COL_CATEGORY, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(ContactDBObject::COL_LAST_UPDATE, DBTable::DT_VARCHAR, 255, false);
+            ->AddColumn(ContactDBObject::COL_LAST_UPDATE, DBTable::DT_VARCHAR, 255, false)
+            ->AddForeignKey(
+                ContactDBObject::TABL_CONTACT . '_fk1',
+                ContactDBObject::COL_CATEGORY,
+                ContactDBObject::TABL_CONTACT_TYPE,
+                ContactDBObject::COL_LABEL, DBTable::DT_CASCADE, DBTable::DT_CASCADE
+            )
+            ->AddForeignKey(
+                ContactDBObject::TABL_CONTACT . '_fk2',
+                ContactDBObject::COL_FIRM_ID,
+                FirmDBObject::TABL_FIRM,
+                FirmDBObject::COL_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE
+            )
+            ->AddForeignKey(
+                ContactDBObject::TABL_CONTACT . '_fk3',
+                ContactDBObject::COL_GENDER,
+                UserDataDBObject::TABL_COM_GENDER,
+                UserDataDBObject::COL_LABEL, DBTable::DT_CASCADE, DBTable::DT_CASCADE
+            );
 
         // -- add tables
+        parent::addTable($dol_contact_type);
         parent::addTable($dol_contact);
     }
 

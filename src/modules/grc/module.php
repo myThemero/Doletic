@@ -1,6 +1,7 @@
 <?php
 
 require_once "interfaces/AbstractModule.php";
+require_once "../modules/kernel/services/objects/UserDataDBObject.php";
 require_once "../modules/grc/services/objects/ContactDBObject.php";
 require_once "../modules/grc/services/objects/FirmDBObject.php";
 
@@ -38,8 +39,8 @@ class GRCModule extends AbstractModule
             array('kernel') // kernel is always a dependency
         );
         // -- add module specific dbo objects
-        parent::addDBObject(new ContactDBObject($this));
         parent::addDBObject(new FirmDBObject($this));
+        parent::addDBObject(new ContactDBObject($this));
         // -- add module specific ui
         parent::addUI('Super-admins', 'superadmin');    // refer to couple (admin.js, admin.css)
         parent::addUI('Administration', 'admin');    // refer to couple (admin.js, admin.css)

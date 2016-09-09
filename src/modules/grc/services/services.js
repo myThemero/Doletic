@@ -9,6 +9,7 @@ var FirmServicesInterface = new function () {
         ACTION: {
             GET_FIRM_BY_ID: 'byid',
             GET_ALL_FIRMS: 'all',
+            GET_ALL_FIRM_TYPES: 'alltypes',
             INSERT: 'insert',
             UPDATE: 'update',
             DELETE: 'delete'
@@ -18,6 +19,11 @@ var FirmServicesInterface = new function () {
     this.getAll = function (successHandler) {
         return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_FIRMS, {}, successHandler);
     };
+
+    this.getAllFirmTypes = function (successHandler) {
+        return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_FIRM_TYPES, {}, successHandler);
+    };
+
     this.getById = function (id, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_FIRM_BY_ID,
@@ -74,6 +80,7 @@ var ContactServicesInterface = new function () {
         ACTION: {
             GET_CONTACT_BY_ID: 'byid',
             GET_ALL_CONTACTS: 'all',
+            GET_ALL_CONTACT_TYPES: 'alltypes',
             INSERT: 'insert',
             UPDATE: 'update',
             DELETE: 'delete'
@@ -83,6 +90,11 @@ var ContactServicesInterface = new function () {
     this.getAll = function (successHandler) {
         return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_CONTACTS, {}, successHandler);
     };
+
+    this.getAllContactTypes = function (successHandler) {
+        return DoleticServicesInterface.callService(this.meta.OBJECT, this.meta.ACTION.GET_ALL_CONTACT_TYPES, {}, successHandler);
+    };
+
     this.getById = function (id, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.GET_CONTACT_BY_ID,
