@@ -125,6 +125,7 @@ class DocumentServices extends AbstractObjectServices
     const GET_BY_PROJECT_AND_TEMPLATE = "byprotemp";
     const GET_ALL_TEMPLATES = "getalltemp";
     const GET_TEMPLATE_BY_LABEL = "tempbylabel";
+    const GET_TEMPLATE_BY_ID = "tempbyid";
     const GET_PREVIOUS = "getprev";
     const INSERT = "insert";
     const UPDATE = "update";
@@ -164,6 +165,8 @@ class DocumentServices extends AbstractObjectServices
             $data = $this->__get_all_templates();
         } else if (!strcmp($action, DocumentServices::GET_TEMPLATE_BY_LABEL)) {
             $data = $this->__get_template_by_label($params[DocumentServices::PARAM_LABEL]);
+        } else if (!strcmp($action, DocumentServices::GET_TEMPLATE_BY_ID)) {
+            $data = $this->__get_template_by_id($params[DocumentServices::PARAM_ID]);
         } else if (!strcmp($action, DocumentServices::GET_PREVIOUS)) {
             $data = $this->__get_previous_document($params[DocumentServices::PARAM_LABEL]);
         } else if (!strcmp($action, DocumentServices::INSERT)) {
@@ -370,6 +373,30 @@ class DocumentServices extends AbstractObjectServices
         return $data;
     }
 
+    private function __get_template_by_id($id)
+    {
+        // create sql params array
+        $sql_params = array(":" . DocumentDBObject::COL_ID => $id);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_TEMPLATE)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL), array(DocumentDBObject::COL_ID));
+        // execute SQL query and save result
+        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
+        // create udata var
+        $data = null;
+        if (isset($pdos)) {
+            if (($row = $pdos->fetch()) !== false) {
+                $data = array(
+                    DocumentDBObject::COL_ID => $row[DocumentDBObject::COL_ID],
+                    DocumentDBObject::COL_LABEL => $row[DocumentDBObject::COL_LABEL],
+                    DocumentDBObject::COL_TEMPLATE => $row[DocumentDBObject::COL_TEMPLATE],
+                    DocumentDBObject::COL_PREVIOUS => $row[DocumentDBObject::COL_PREVIOUS]
+                );
+            }
+        }
+        return $data;
+    }
+
     private function __get_template_by_label($label)
     {
         // create sql params array
@@ -496,9 +523,9 @@ class DocumentServices extends AbstractObjectServices
     public function ResetStaticData()
     {
         $templates = array(
-            ['Proposition Commerciale', '', null],
-            ['Convention Entreprise', '', null],
-            ['Récapitulatif de Mission', '', null]
+            ['Proposition Commerciale', 'Propale.docx', null],
+            ['Convention Entreprise', 'CC.docx', null],
+            ['Récapitulatif de Mission', 'RM.docx', null]
         );
         // --- retrieve SQL query
         $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_TEMPLATE)->GetINSERTQuery();

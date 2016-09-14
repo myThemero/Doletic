@@ -670,7 +670,9 @@ var DoleticUIModule = new function () {
                         }
                         content += '<tr>' +
                             '<td>' + document.label + '</td>' +
-                            '<td><button class="ui olive icon button"><i class="book icon"></i></button></td>' +
+                            '<td><button class="ui olive icon button" ' +
+                            'onclick="DoleticUIModule.editDocument('+ document.id +', ' + number + ');">' +
+                            '<i class="book icon"></i></button></td>' +
                             '<td>' +
                             '<div class="ui buttons">' +
                             uploadBtn + downloadBtn +
@@ -834,6 +836,16 @@ var DoleticUIModule = new function () {
         this.uploadDocument = function (templateId) {
             window.currentTemplate = templateId;
             $('#file_input_doc' + templateId).click();
+        };
+
+        this.editDocument = function(id, number) {
+            DoleticServicesInterface.editDocument(
+                id,
+                number,
+                $('#contact_search_doc').dropdown('get value'),
+                $('#chadaff_search_doc').dropdown('get value'),
+                $('#int_search_doc').dropdown('get value')
+            );
         };
 
         this.validateDocument = function (id, number) {

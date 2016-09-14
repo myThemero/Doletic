@@ -428,7 +428,7 @@ class TestDocumentFunction extends AbstractFunction {
     public function Execute()
     {
         parent::info("-- dbinit process starts --");
-        $kernel = new DoleticKernel();    // instanciate
+        $kernel = new DoleticKernel();    // instantiate
         $kernel->Init();                // initialize
         $kernel->ConnectDB();            // connect database
 

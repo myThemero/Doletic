@@ -228,6 +228,20 @@ var DoleticServicesInterface = new function () {
     /**
      *
      */
+    this.editDocument = function (template, project, contact, chadaff, int, successHandler) {
+        this.callService('service', 'editdoc',
+            {
+                template: template,
+                project: project,
+                contact: contact,
+                chadaff: chadaff,
+                int: int
+            },
+            successHandler);
+    };
+    /**
+     *
+     */
     this.getAvatar = function (successHandler) {
         this.callService('service', 'getava', {}, successHandler);
     };

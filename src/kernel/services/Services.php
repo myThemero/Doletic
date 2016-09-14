@@ -3,6 +3,7 @@
 require_once "DoleticKernel.php";
 require_once "objects/RightsMap.php";
 require_once "objects/DocumentProcessor.php";
+require_once "objects/DocumentDictionary.php";
 require_once "services/components/ServiceResponse.php";
 require_once "services/components/UploadComponent.php";
 require_once "services/components/DownloadComponent.php";
@@ -28,12 +29,19 @@ class Services
     const SERVICE_GET_USER = "getuser";
     const SERVICE_UPDATE_AVATAR = "updateava";
     const SERVICE_GET_AVATAR = "getava";
+    const SERVICE_EDIT_DOCUMENT = "editdoc";
     // --- params keys
     const PKEY_ID = "id";
     const PKEY_FNAME = "filename";
     const PKEY_STUDY_ID = "studyId";
     const PKEY_TEMPLATE_IDS = "templateIds";
     const PKEY_DOC_TYPE = "documentType";
+    const PARAM_PROJECT = 'project';
+    const PARAM_CHADAFF = 'chadaff';
+    const PARAM_INT = 'int';
+    const PARAM_CONTACT = 'contact';
+    const PARAM_TEMPLATE = 'template';
+    const PARAM_PRESIDENT  = 'president';
 
 
     // -- attributes
@@ -78,6 +86,14 @@ class Services
                     $response = $this->__service_update_user_avatar($post);
                 } else if ($post[Services::PPARAM_ACT] === Services::SERVICE_GET_AVATAR) {
                     $response = $this->__service_get_avatar();
+                } else if ($post[Services::PPARAM_ACT] === Services::SERVICE_EDIT_DOCUMENT) {
+                    $response = $this->__service_edit_document(
+                        $post[Services::PPARAM_PARAMS][Services::PARAM_TEMPLATE],
+                        $post[Services::PPARAM_PARAMS][Services::PARAM_PROJECT],
+                        $post[Services::PPARAM_PARAMS][Services::PARAM_CONTACT],
+                        $post[Services::PPARAM_PARAMS][Services::PARAM_CHADAFF],
+                        $post[Services::PPARAM_PARAMS][Services::PARAM_INT]
+                    );
                 } else {
                     $response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
                 }
@@ -265,6 +281,127 @@ class Services
         }
         // return response
         return $response;
+    }
+
+    private function __service_edit_document($template, $number, $mainContact, $mainChadaff, $mainInt)
+    {
+        // Retrieve template path
+        $path = $this->kernel->GetDBObject(DocumentDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(
+                DocumentServices::GET_TEMPLATE_BY_ID,
+                array(DocumentServices::PARAM_ID => $template)
+            )[DocumentDBObject::COL_TEMPLATE];
+
+        // Retrieve project params
+        $params = $this->__get_project_params($number, $mainContact, $mainChadaff, $mainInt);
+
+        // Build dictionary from params
+        $dict = new DocumentDictionary(DocumentDictionary::DOC_PROPALE, $params);
+
+        // Replace in template
+        $phpword = new PHPWord();
+        $template = $phpword->loadTemplate($path);
+        foreach ($dict->getDict() as $key => $value) {
+            $template->setValue($key, $value);
+        }
+        $template->save($params[Services::PARAM_PROJECT]->GetNumber() . $path);
+
+        return new ServiceResponse("", "", "");
+    }
+
+    /**
+     * @param $number
+     * @param $mainContact
+     * @param $mainChadaff
+     * @param $mainInt
+     * @return array
+     */
+    private function __get_project_params($number, $mainContact, $mainChadaff, $mainInt)
+    {
+        $project = $this->kernel->GetDBService(UaDBService::SERV_NAME)->GetResponseData(
+            UaDBService::GET_FULL_PROJECT_BY_NUMBER,
+            array(ProjectServices::PARAM_NUMBER => $number)
+        );
+        // Replace Chadaff id by infos
+        $mainChadaff = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(UserDataServices::PARAM_ID => $mainChadaff));
+        $mainInt = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(UserDataServices::PARAM_ID => $mainInt));
+        $mainContact = $this->kernel->GetDBObject(ContactDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(ContactServices::GET_CONTACT_BY_ID, array(ContactServices::PARAM_ID => $mainContact));
+        /*$chadaffs = $project->getChadaffs();
+        $newChadaffs = array();
+        foreach ($chadaffs as $chadaff) {
+            array_push(
+                $newChadaffs,
+                $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                    ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(UserDataServices::PARAM_ID => $chadaff))
+            );
+        }
+        $project->setChadaffs($newChadaffs);*/
+
+        /*// Replace Int id by infos
+        $ints = $project->getInts();
+        $newInts = array();
+        foreach ($ints as $int) {
+            array_push(
+                $newInts,
+                $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                    ->GetResponseData(
+                        UserDataServices::GET_USER_DATA_BY_ID,
+                        array(UserDataServices::PARAM_ID => $int[ProjectDBObject::COL_INT_ID])
+                    )
+            );
+        }
+        $project->setInts($newInts);
+
+        // Replace Int id by infos
+        $contacts = $project->getContacts();
+        $newContacts = array();
+        foreach ($contacts as $contact) {
+            array_push(
+                $newContacts,
+                $this->kernel->GetDBObject(ContactDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                    ->GetResponseData(
+                        ContactServices::GET_CONTACT_BY_ID,
+                        array(ContactServices::PARAM_ID => $contact
+                        )
+                    )
+            );
+        }
+        $project->setContacts($newContacts);*/
+
+        // Replace Auditor id by infos
+        $project->setAuditorId(
+            $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                ->GetResponseData(
+                    UserDataServices::GET_USER_DATA_BY_ID,
+                    array(UserDataServices::PARAM_ID => $project->getAuditorId())
+                )
+        );
+
+        // Replace Firm id by infos
+        $project->setFirmId(
+            $this->kernel->GetDBObject(FirmDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                ->GetResponseData(
+                    FirmServices::GET_FIRM_BY_ID,
+                    array(FirmServices::PARAM_ID => $project->getFirmId())
+                )
+        );
+
+        $president = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(
+                UserDataServices::GET_ALL_BY_POS,
+                array(UserDataServices::PARAM_POSITION => 'Président')
+            )[0];
+
+        return [
+            Services::PARAM_PROJECT => $project,
+            Services::PARAM_CHADAFF => $mainChadaff,
+            Services::PARAM_CONTACT => $mainContact,
+            Services::PARAM_INT => $mainInt,
+            Services::PARAM_PRESIDENT => $president
+        ];
     }
 
     private function __service_publish($post)

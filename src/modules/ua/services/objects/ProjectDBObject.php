@@ -352,11 +352,71 @@ class Project implements \JsonSerializable
     }
 
     /**
+     * @param null $firm_id
+     * @return $this
+     */
+    public function setFirmId($firm_id)
+    {
+        $this->firm_id = $firm_id;
+
+        return $this;
+    }
+
+    /**
+     * @param null $auditor_id
+     * @return $this
+     */
+    public function setAuditorId($auditor_id)
+    {
+        $this->auditor_id = $auditor_id;
+
+        return $this;
+    }
+
+    /**
+     * @param array $contacts
+     * @return $this
+     */
+    public function setContacts($contacts)
+    {
+        $this->contacts = $contacts;
+
+        return $this;
+    }
+
+    /**
+     * @param array $ints
+     * @return $this
+     */
+    public function setInts($ints)
+    {
+        $this->ints = $ints;
+
+        return $this;
+    }
+
+    /**
+     * @param array $chadaffs
+     * @return $this
+     */
+    public function setChadaffs($chadaffs)
+    {
+        $this->chadaffs = $chadaffs;
+
+        return $this;
+    }
+
+
+
+    /**
      * @param array $tasks
+     * @return $this
      */
     public function setTasks($tasks)
     {
         $this->tasks = $tasks;
+
+        return $this;
     }
 
 }
