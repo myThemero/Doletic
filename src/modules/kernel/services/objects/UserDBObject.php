@@ -253,22 +253,29 @@ class UserServices extends AbstractObjectServices
     private function __generate_credentials($firstname, $lastname)
     {
         $creds = array();
-        $username = strtolower(str_replace(" ", "-", $firstname) . "." . str_replace(" ", "-", $lastname));
-        /*var_dump($username);
-        // create sql request
-        $sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery();
-        $sql_params = array(":".UserDBObject::COL_USERNAME => $username);
-        // execute SQL query and save result
-        $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-        // check if username already exists
-        while( ($row = $pdos->fetch()) !== false) {
-            $username .= "-a";
+        $username = strtolower(substr($firstname, 0, 1) . str_replace(" ", "", $lastname));
+        $ok = false;
+        $index = 1;
+        // Conditions on index to avoid infinite loop
+        while(!$ok && $index < 10) {
+            $unameTemp = $username . ($index > 1 ? $index : '');
+            // create sql params
+            $sql_params = array(":" . UserDBObject::COL_USERNAME => $unameTemp);
             // create sql request
-            $sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery();
-            $sql_params = array(":".UserDBObject::COL_USERNAME => $username);
+            $sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetSELECTQuery(
+                array(DBTable::SELECT_ALL),
+                array(UserDBObject::COL_USERNAME)
+            );
             // execute SQL query and save result
             $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
-        }*/
+            // create an empty array for tickets and fill it
+            if (!isset($pdos) || isset($pdos) && !$pdos->fetch()) {
+                $ok = true;
+                $username = $unameTemp;
+                break;
+            }
+            $index++;
+        }
         $pass = $this->generateRandomString(16);
         $creds['username'] = $username;
         $creds['pass'] = $pass;
