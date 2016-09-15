@@ -13,6 +13,7 @@ class Main
     // -- consts
     // --- GET & POST keys
     const RPARAM_QUERY = "q";
+    const RPARAM_TOKEN = "t";
     // --- GET specific params
     // --- POST specific params
     const PPARAM_TOKEN = "token";
@@ -43,6 +44,12 @@ class Main
             if (!strcmp($_GET[Main::RPARAM_QUERY], "reset")) {
                 print_r($_SESSION[Main::SPARAM_DOL_KERN]);
                 $this->__display_logout();
+            } else if (!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
+                // reload settings
+                $_SESSION[Main::SPARAM_DOL_KERN]->ReloadSettings();
+                // connect database
+                $_SESSION[Main::SPARAM_DOL_KERN]->ConnectDB();
+                $this->__confirm_reset_pass($_GET[Main::RPARAM_TOKEN]);
             }
         }
         // --------------------------------------------------
@@ -131,9 +138,20 @@ class Main
     {
         // Ask kernel for password reset
         $ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordInit($_POST[Main::PPARAM_MAIL]);
+        $this->__display_login();
         // Terminate returning approriated json structure
         $this->__terminate(json_encode(array('sent' => $ok)));
     }
+
+    private function __confirm_reset_pass($token)
+    {
+        // Ask kernel for password reset
+        $ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordExec($token);
+        $this->__display_restored();
+        // Terminate returning approriated json structure
+        $this->__terminate(json_encode(array('sent' => $ok)));
+    }
+
 
     private function __service()
     {
@@ -169,12 +187,12 @@ class Main
 
     private function __display_lost_ui()
     {
-        // Ask kernel for password reset
-        $ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordExec($_POST[Main::PPARAM_TOKEN]);
-        if ($ok) {
-            // Terminate returning approriated json structure
-            $this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_RESTORED));
-        }
+        $this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_LOST));
+    }
+
+    private function __display_restored()
+    {
+        $this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_RESTORED));
     }
 
     private function __display_login()

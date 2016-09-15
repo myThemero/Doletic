@@ -35,8 +35,8 @@ var DoleticUIModule = new function () {
   						<div id=\"reset_btn\" class=\"ui right floated button\" onClick=\"DoleticUIModule.resetLoginForm();\">Effacer</div> \
 					  </form> \
 					  <div class=\"ui bottom attached info message\"> \
+  						<a id=\"lostPassword\" class=\"ui\" onClick=\"DoleticServicesInterface.getUILost();\">Mot de passe perdu</a> \
   						<i class=\"icon help\"></i> \
-  						<a class=\"ui\" onClick=\"DoleticServicesInterface.getUILost();\">Mot de passe perdu</a> \
 					  </div> \
 					</div> \
 				   </div> \

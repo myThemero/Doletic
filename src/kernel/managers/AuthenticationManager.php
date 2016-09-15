@@ -95,7 +95,17 @@ class AuthenticationManager extends AbstractManager
                 ));
             // if token has been created
             if (isset($token)) {
-                /// \todo send token using user mail
+                // Change url !
+                $this->kernel()->SendMail(
+                    array($mail),
+                    new ResetPasswordMail(),
+                    array(
+                        'PRENOM' => $udata->GetFirstName(),
+                        'URL' => 'http://localhost/src/kernel/Main.php?'
+                            . Main::RPARAM_QUERY . '=' . Main::QUERY_RESET_PASS . '&'
+                            . Main::RPARAM_TOKEN . '=' . $token
+                    )
+                );
                 var_dump($token); // DEBUG
                 $ok = true;
             }

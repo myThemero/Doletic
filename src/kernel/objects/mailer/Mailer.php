@@ -82,4 +82,9 @@ class Mailer
         return true;
     } // SendMail
 
+    public function kernel()
+    {
+        return $this->kernel;
+    }
+
 } // Mailer
