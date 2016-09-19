@@ -216,6 +216,18 @@ var DoleticServicesInterface = new function () {
     /**
      *
      */
+    this.registerUser = function (firstname, lastname, email, successHandler) {
+        this.callService('service', 'register',
+            {
+                firstname: firstname,
+                lastname: lastname,
+                email: email
+            },
+            successHandler);
+    };
+    /**
+     *
+     */
     this.getCurrentUser = function (successHandler) {
         this.callService('service', 'getuser', {}, successHandler);
     };

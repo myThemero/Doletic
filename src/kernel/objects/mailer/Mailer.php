@@ -35,12 +35,20 @@ class Mailer
         $this->mailer->isSMTP();                    // Set mailer to use SMTP
         $this->mailer->Host = $this->host;          // Specify main and backup SMTP servers
         $this->mailer->SMTPAuth = true;             // Enable SMTP authentication
+        $this->mailer->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
         $this->mailer->Username = $this->sender;    // SMTP username
         $this->mailer->Password = $this->password;  // SMTP password
         $this->mailer->SMTPSecure = 'tls';          // Enable TLS encryption, `ssl` also accepted
         $this->mailer->Port = 587;                  // TCP port to connect to
         // CHARSET configuration
         $this->mailer->CharSet = 'UTF-8';
+//        $this->mailer->SMTPDebug = 4; // Debug only
     }
 
     public function SendMail($dest, $template, $params)
@@ -76,6 +84,7 @@ class Mailer
             }
         } catch (RuntimeException $e) {
             $this->kernel()->LogError(get_class(), $e->getMessage());
+            echo $e;
             return false;
         }
         $this->kernel()->LogInfo(get_class(), "Mail envoyé avec succès à " . join(',', $dest));

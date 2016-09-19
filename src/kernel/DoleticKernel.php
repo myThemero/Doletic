@@ -240,7 +240,7 @@ class DoleticKernel
                 $js = $module->GetJS($exploded[1]);                // retrieve js array
                 $css = $module->GetCSS($exploded[1]);            // retrieve css array
                 if (isset($css) && isset($js)) {                // if both css and js are valid arrays
-                    $fragment = $this->ui_mgr->MakeUI($js, $css);    // affect fragment content		
+                    $fragment = $this->ui_mgr->MakeUI($js, $css);    // affect fragment content
                     $found = true;                                // raise found flag
                 }
             }

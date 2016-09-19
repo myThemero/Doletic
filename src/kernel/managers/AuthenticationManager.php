@@ -62,7 +62,7 @@ class AuthenticationManager extends AbstractManager
         return $this->HasValidUser();
     }
 
-    public function ResetPasswordExec($token)
+    public function ResetPasswordExec($token, $mail, $firstname)
     {
         $ok = false;
         $new_pass = parent::kernel()->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($this->GetCurrentUser())
@@ -71,9 +71,15 @@ class AuthenticationManager extends AbstractManager
             ));
         // if token has been created
         if (isset($new_pass)) {
-            /// \todo send new_pass using user mail
-            var_dump($new_pass); // DEBUG
             $ok = true;
+            $this->kernel()->SendMail(
+                array($mail),
+                new PasswordConfirmMail(),
+                array(
+                    'PRENOM' => $firstname,
+                    'PASSWORD' => $new_pass
+                )
+            );
         }
         return $ok;
     }
@@ -96,7 +102,7 @@ class AuthenticationManager extends AbstractManager
             // if token has been created
             if (isset($token)) {
                 // Change url !
-                $this->kernel()->SendMail(
+                /*$this->kernel()->SendMail(
                     array($mail),
                     new ResetPasswordMail(),
                     array(
@@ -105,9 +111,9 @@ class AuthenticationManager extends AbstractManager
                             . Main::RPARAM_QUERY . '=' . Main::QUERY_RESET_PASS . '&'
                             . Main::RPARAM_TOKEN . '=' . $token
                     )
-                );
-                var_dump($token); // DEBUG
+                );*/
                 $ok = true;
+                $this->ResetPasswordExec($token, $mail, $udata->GetFirstName());
             }
         }
         return $ok;

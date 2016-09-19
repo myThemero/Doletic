@@ -45,11 +45,15 @@ class Main
                 print_r($_SESSION[Main::SPARAM_DOL_KERN]);
                 $this->__display_logout();
             } else if (!strcmp($_GET[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
+                // Create a doletic kernel, initialize it & put it in session vars
+                $_SESSION[Main::SPARAM_DOL_KERN] = new DoleticKernel();
+                $_SESSION[Main::SPARAM_DOL_KERN]->Init();
                 // reload settings
                 $_SESSION[Main::SPARAM_DOL_KERN]->ReloadSettings();
-                // connect database
+                // connect to database
                 $_SESSION[Main::SPARAM_DOL_KERN]->ConnectDB();
-                $this->__confirm_reset_pass($_GET[Main::RPARAM_TOKEN]);
+                $_POST[Main::RPARAM_QUERY] = $_GET[Main::RPARAM_QUERY];
+                $_POST[Main::RPARAM_TOKEN] = $_GET[Main::RPARAM_TOKEN];
             }
         }
         // --------------------------------------------------
@@ -92,6 +96,9 @@ class Main
                 else if (!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_LOST)) {
                     $this->__display_lost_ui();
                 } // if reset password query received
+                else if (!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS) && isset($_POST[Main::RPARAM_TOKEN])) {
+                    $this->__confirm_reset_pass($_POST[Main::RPARAM_TOKEN]);
+                }
                 else if (!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
                     $this->__reset_pass();
                 }
@@ -103,7 +110,7 @@ class Main
         } else { // if no doletic kernel in session, create one
             $this->__init();
         }
-        die("UNHANDLED QUERY"); // terminate script explicitly
+        $this->__display_login();
     }
 
 # PROTECTED & PRIVATE ##########################################################
@@ -138,7 +145,6 @@ class Main
     {
         // Ask kernel for password reset
         $ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordInit($_POST[Main::PPARAM_MAIL]);
-        $this->__display_login();
         // Terminate returning approriated json structure
         $this->__terminate(json_encode(array('sent' => $ok)));
     }
@@ -146,10 +152,14 @@ class Main
     private function __confirm_reset_pass($token)
     {
         // Ask kernel for password reset
-        $ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordExec($token);
+        $ok = true;
+        //$ok = $_SESSION[Main::SPARAM_DOL_KERN]->ResetPasswordExec($token);
         $this->__display_restored();
-        // Terminate returning approriated json structure
-        $this->__terminate(json_encode(array('sent' => $ok)));
+//        if($ok) {
+//            $this->__display_restored();
+//        } else {
+//            $this->__terminate(json_encode(array('sent' => $ok)));
+//        }
     }
 
 

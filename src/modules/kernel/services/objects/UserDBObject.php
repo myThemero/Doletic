@@ -102,6 +102,7 @@ class UserServices extends AbstractObjectServices
     const PARAM_ID = "id";
     const PARAM_UNAME = "username";
     const PARAM_HASH = "hash";
+    const PARAM_PASS = "pass";
     const PARAM_TOKEN = "token";
     const PARAM_LAST_CONNECT_TMSP = "lastConnectTimestamp";
     const PARAM_SIGNUP_TMSP = "signupTimestamp";
@@ -277,8 +278,9 @@ class UserServices extends AbstractObjectServices
             $index++;
         }
         $pass = $this->generateRandomString(16);
-        $creds['username'] = $username;
-        $creds['pass'] = $pass;
+        $creds[UserServices::PARAM_UNAME] = $username;
+        $creds[UserServices::PARAM_PASS] = $pass;
+        $creds[UserServices::PARAM_HASH] = sha1($pass);
         return $creds;
     }
 

@@ -7,6 +7,7 @@ require_once "objects/DocumentDictionary.php";
 require_once "services/components/ServiceResponse.php";
 require_once "services/components/UploadComponent.php";
 require_once "services/components/DownloadComponent.php";
+require_once "objects/mailer/mail_templates/Templates.php";
 
 /**
  *
@@ -30,6 +31,7 @@ class Services
     const SERVICE_UPDATE_AVATAR = "updateava";
     const SERVICE_GET_AVATAR = "getava";
     const SERVICE_EDIT_DOCUMENT = "editdoc";
+    const SERVICE_REGISTER = "register";
     // --- params keys
     const PKEY_ID = "id";
     const PKEY_FNAME = "filename";
@@ -41,11 +43,11 @@ class Services
     const PARAM_INT = 'int';
     const PARAM_CONTACT = 'contact';
     const PARAM_TEMPLATE = 'template';
-    const PARAM_PRESIDENT  = 'president';
+    const PARAM_PRESIDENT = 'president';
 
 
     // -- attributes
-    private $kernel = null;
+    private $kernel;
     private $rights_map = null;
 
     // -- functions
@@ -61,7 +63,8 @@ class Services
             Services::SERVICE_UI_LINKS => RightsMap::G_RMASK,
             Services::SERVICE_GET_USER => RightsMap::G_RMASK,
             Services::SERVICE_UPDATE_AVATAR => RightsMap::G_RMASK,
-            Services::SERVICE_GET_AVATAR => RightsMap::G_RMASK
+            Services::SERVICE_GET_AVATAR => RightsMap::G_RMASK,
+            Services::SERVICE_REGISTER => RightsMap::G_RMASK
         ));
     }
 
@@ -93,6 +96,12 @@ class Services
                         $post[Services::PPARAM_PARAMS][Services::PARAM_CONTACT],
                         $post[Services::PPARAM_PARAMS][Services::PARAM_CHADAFF],
                         $post[Services::PPARAM_PARAMS][Services::PARAM_INT]
+                    );
+                } else if ($post[Services::PPARAM_ACT] === Services::SERVICE_REGISTER) {
+                    $response = $this->__service_register_user(
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_FIRSTNAME],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_LASTNAME],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_EMAIL]
                     );
                 } else {
                     $response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
@@ -209,6 +218,32 @@ class Services
     {
         // return response
         return new ServiceResponse($this->kernel->GetCurrentUser());
+    }
+
+    private function __service_register_user($firstname, $lastname, $mail)
+    {
+        $credentials = $this->kernel
+            ->GetDBObject(UserDBObject::OBJ_NAME)
+            ->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(UserServices::GENERATE_CREDENTIALS, array(
+            UserDataServices::PARAM_FIRSTNAME => $firstname,
+            UserDataServices::PARAM_LASTNAME => $lastname
+        ));
+        $user = $this->kernel
+            ->GetDBObject(UserDBObject::OBJ_NAME)
+            ->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(UserServices::INSERT, $credentials);
+        if($user != 0)
+        {
+            $this->kernel->SendMail(array($mail), new WelcomeMail(), array(
+                'PRENOM' => $firstname,
+                'LOGIN' => $credentials[UserServices::PARAM_UNAME],
+                'PASSWORD' => $credentials[UserServices::PARAM_PASS],
+                'URL' => 'http://doleticdev.etic-insa.com'
+            ));
+        }
+        unset($pass);
+        return new ServiceResponse($user);
     }
 
     private function __service_update_user_avatar($post)

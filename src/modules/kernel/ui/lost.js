@@ -60,6 +60,7 @@ var DoleticUIModule = new function () {
                 function (data) {
                     if (data.sent) {
                         DoleticMasterInterface.showSuccess("Mail envoyé !", "Vérifiez votre boîte mail et suivez les consignes indiquées dans le mail.");
+                        $('#mail_input').val('');
                     } else {
                         DoleticMasterInterface.showError("Echec !", "Nous n'avons pas réussi à trouver votre adresse mail. Veuillez réessayer");
                     }

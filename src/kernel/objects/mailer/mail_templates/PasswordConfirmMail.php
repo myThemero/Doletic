@@ -16,23 +16,27 @@ class PasswordConfirmMail extends MailTemplate
         parent::__construct(
         //__________________________________________________________________________________________________________________________________________
         // -- subject ------------------------------------------------------------------------------------------------------------------------------
-            "[Doletic] - Confirmer la réinitialisation du mot de passe.",
+            "[Doletic] - Mot de passe réinitialisé !",
             //__________________________________________________________________________________________________________________________________________
             // -- plain text body ----------------------------------------------------------------------------------------------------------------------
             "Bonjour -{PRENOM}-, \n" .
             "\n" .
-            "Tu as demandé une réinitialisation de ton mot de passe. Si ce n'est pas le cas, ignore ce mail et ton mot de passe ne sera pas changé.\n" .
+            "Ton mot de passe a bien été réinitilisé !\n" .
             "\n" .
-            "Pour valider la réinitialisation, merci de cliquer sur ce lien : -{URL}-.\n" .
+            "Ton nouveau mot de passe est :\n" .
+            "\n" .
+            "-{PASSWORD}-\n" .
             "\n" .
             "À bientôt sur Doletic !\n",
             //__________________________________________________________________________________________________________________________________________
             // -- plain text body ----------------------------------------------------------------------------------------------------------------------
-            "Bonjour <b>-{PRENOM}-</b>,<br>" .
+            "Bonjour -{PRENOM}-, <br>" .
             "<br>" .
-            "Tu as demandé une réinitialisation de ton mot de passe. Si ce n'est pas le cas, ignore ce mail et ton mot de passe ne sera pas changé.<br>" .
+            "Ton mot de passe a bien été réinitilisé !<br>" .
             "<br>" .
-            "Pour valider la réinitialisation, merci de cliquer sur ce lien : <a href=\"-{URL}-\">-{URL}-</a>.<br>" .
+            "Ton nouveau mot de passe est :<br>" .
+            "<br>" .
+            "-{PASSWORD}-<br>" .
             "<br>" .
             "À bientôt sur Doletic !<br>",
             //__________________________________________________________________________________________________________________________________________

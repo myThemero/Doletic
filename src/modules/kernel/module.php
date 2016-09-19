@@ -37,6 +37,7 @@ class KernelModule extends AbstractModule
                 'login' => RightsMap::G_RMASK,
                 'logout' => RightsMap::G_RMASK,
                 'lost' => RightsMap::G_RMASK,
+                'restored' => RightsMap::G_RMASK,
                 'test' => RightsMap::SA_RMASK,
                 // -- module services
                 // ---- comment object services
