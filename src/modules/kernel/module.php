@@ -33,7 +33,6 @@ class KernelModule extends AbstractModule
             RightsMap::D_G, // means everyone in default group can access this module
             array(
                 // -- module interfaces
-                'home' => RightsMap::G_RMASK,
                 'login' => RightsMap::G_RMASK,
                 'logout' => RightsMap::G_RMASK,
                 'lost' => RightsMap::G_RMASK,
@@ -72,6 +71,7 @@ class KernelModule extends AbstractModule
                 UserDBObject::OBJ_NAME . ':' . UserServices::GET_USER_BY_UNAME => RightsMap::G_RMASK,    // everyone
                 UserDBObject::OBJ_NAME . ':' . UserServices::GET_ALL_USERS => RightsMap::G_RMASK,    // everyone
                 UserDBObject::OBJ_NAME . ':' . UserServices::INSERT => RightsMap::A_RMASK,    // only admin and above
+                UserDBObject::OBJ_NAME . ':' . UserServices::UPDATE_OWN_PASS => RightsMap::G_RMASK,    // everyone
                 UserDBObject::OBJ_NAME . ':' . UserServices::UPDATE => RightsMap::A_RMASK,    // only admin and above
                 UserDBObject::OBJ_NAME . ':' . UserServices::DELETE => RightsMap::SA_RMASK,    // only super admin
                 UserDBObject::OBJ_NAME . ':' . UserServices::DISABLE => RightsMap::A_RMASK,    // only admin and above
@@ -89,15 +89,16 @@ class KernelModule extends AbstractModule
                 UserDataDBObject::OBJ_NAME . ':' . UserDataServices::GET_ALL_INSA_DEPTS => RightsMap::G_RMASK,    // everyone
                 UserDataDBObject::OBJ_NAME . ':' . UserDataServices::GET_ALL_DIVISIONS => RightsMap::G_RMASK,  // everyone 
                 UserDataDBObject::OBJ_NAME . ':' . UserDataServices::GET_ALL_POSITIONS => RightsMap::G_RMASK,    // everyone
-                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::INSERT => RightsMap::A_RMASK,    // only admin and above
-                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::UPDATE => RightsMap::A_RMASK,    // only admin and above
-                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::UPDATE_POSTION => RightsMap::A_RMASK,    // only admin and above
+                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::INSERT => RightsMap::SA_RMASK,    // only admin and above
+                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::UPDATE => RightsMap::SA_RMASK,    // only admin and above
+                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::UPDATE_OWN => RightsMap::G_RMASK,    // only admin and above
+                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::UPDATE_POSTION => RightsMap::SA_RMASK,    // only admin and above
                 UserDataDBObject::OBJ_NAME . ':' . UserDataServices::DELETE => RightsMap::SA_RMASK,    // only super admin
-                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::DISABLE => RightsMap::A_RMASK,    // only admin and above
-                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::ENABLE => RightsMap::A_RMASK,    // only admin and above
+                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::DISABLE => RightsMap::SA_RMASK,    // only admin and above
+                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::ENABLE => RightsMap::SA_RMASK,    // only admin and above
                 UserDataDBObject::OBJ_NAME . ':' . UserDataServices::GET_ALL_AGS => RightsMap::G_RMASK,  // everyone
-                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::INSERT_AG => RightsMap::A_RMASK,  // admin  
-                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::DELETE_AG => RightsMap::A_RMASK,  // admin
+                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::INSERT_AG => RightsMap::SA_RMASK,  // admin
+                UserDataDBObject::OBJ_NAME . ':' . UserDataServices::DELETE_AG => RightsMap::SA_RMASK,  // admin
 
                 IndicatorDBObject::OBJ_NAME . ':' . IndicatorServices::GET_BY_ID => RightsMap::A_RMASK,  // only admin and above
                 IndicatorDBObject::OBJ_NAME . ':' . IndicatorServices::GET_ALL => RightsMap::A_RMASK,  // only admin and above
@@ -180,7 +181,6 @@ class KernelModule extends AbstractModule
         parent::addDBService(new KernelDBService($this));
 
         // -- add module specific ui
-        parent::addUI('Home', 'home');    // refer to couple (home.js, home.css)
         parent::addUI('Login', 'login');    // refer to couple (login.js, login.css)
         parent::addUI('Logout', 'logout');    // refer to couple (logout.js, logout.css)
         parent::addUI('Lost', 'lost');    // refer to couple (lost.js, lost.css)

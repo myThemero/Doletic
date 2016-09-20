@@ -353,6 +353,7 @@ class UserDataServices extends AbstractObjectServices
     const ENABLE = "enable";
     const TAG_OLD = "old";
     const UNTAG_OLD = "unold";
+    const UPDATE_OWN = "updown";
     // -- services that should not be used except for data migration
     const FORCE_INSERT = "forins";
     const FORCE_POSITION = "forpos";
@@ -464,6 +465,20 @@ class UserDataServices extends AbstractObjectServices
                 $params[UserDataServices::PARAM_INSA_DEPT],
                 $params[UserDataServices::PARAM_POSITION],
                 $params[UserDataServices::PARAM_AG]);
+        } else if (!strcmp($action, UserDataServices::UPDATE_OWN)) {
+            $data = $this->__update_own_user_data(
+                $params[UserDataServices::PARAM_GENDER],
+                $params[UserDataServices::PARAM_FIRSTNAME],
+                $params[UserDataServices::PARAM_LASTNAME],
+                $params[UserDataServices::PARAM_BIRTHDATE],
+                $params[UserDataServices::PARAM_TEL],
+                $params[UserDataServices::PARAM_EMAIL],
+                $params[UserDataServices::PARAM_ADDRESS],
+                $params[UserDataServices::PARAM_CITY],
+                $params[UserDataServices::PARAM_POSTAL_CODE],
+                $params[UserDataServices::PARAM_COUNTRY],
+                $params[UserDataServices::PARAM_SCHOOL_YEAR],
+                $params[UserDataServices::PARAM_INSA_DEPT]);
         } else if (!strcmp($action, UserDataServices::UPDATE_POSTION)) {
             $data = $this->__update_user_position(
                 $params[UserDataServices::PARAM_USER_ID],
@@ -1059,7 +1074,6 @@ class UserDataServices extends AbstractObjectServices
             ":" . UserDataDBObject::COL_COUNTRY => $country,
             ":" . UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
             ":" . UserDataDBObject::COL_INSA_DEPT => $insaDept,
-            ":" . UserDataDBObject::COL_AVATAR_ID => null,
             ":" . UserDataDBObject::COL_OLD => ($position == UserDataDBObject::VAL_OLD),
             ":" . UserDataDBObject::COL_AG => $ag);
         // create sql request
@@ -1078,7 +1092,6 @@ class UserDataServices extends AbstractObjectServices
             UserDataDBObject::COL_COUNTRY,
             UserDataDBObject::COL_SCHOOL_YEAR,
             UserDataDBObject::COL_INSA_DEPT,
-            UserDataDBObject::COL_AVATAR_ID,
             UserDataDBObject::COL_OLD,
             UserDataDBObject::COL_AG
         ));
@@ -1088,6 +1101,44 @@ class UserDataServices extends AbstractObjectServices
         } else {
             return FALSE;
         }
+    }
+
+    private function __update_own_user_data($gender, $firstname, $lastname, $birthdate,
+                                        $tel, $email, $address, $city, $postalCode, $country, $schoolYear,
+                                        $insaDept)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . UserDataDBObject::COL_USER_ID => $this->getCurrentUser()->GetId(),
+            ":" . UserDataDBObject::COL_GENDER => $gender,
+            ":" . UserDataDBObject::COL_FIRSTNAME => $firstname,
+            ":" . UserDataDBObject::COL_LASTNAME => $lastname,
+            ":" . UserDataDBObject::COL_BIRTHDATE => $birthdate,
+            ":" . UserDataDBObject::COL_TEL => $tel,
+            ":" . UserDataDBObject::COL_EMAIL => $email,
+            ":" . UserDataDBObject::COL_ADDRESS => $address,
+            ":" . UserDataDBObject::COL_CITY => $city,
+            ":" . UserDataDBObject::COL_POSTAL_CODE => $postalCode,
+            ":" . UserDataDBObject::COL_COUNTRY => $country,
+            ":" . UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
+            ":" . UserDataDBObject::COL_INSA_DEPT => $insaDept);
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(array(
+            UserDataDBObject::COL_GENDER,
+            UserDataDBObject::COL_FIRSTNAME,
+            UserDataDBObject::COL_LASTNAME,
+            UserDataDBObject::COL_BIRTHDATE,
+            UserDataDBObject::COL_TEL,
+            UserDataDBObject::COL_EMAIL,
+            UserDataDBObject::COL_ADDRESS,
+            UserDataDBObject::COL_CITY,
+            UserDataDBObject::COL_POSTAL_CODE,
+            UserDataDBObject::COL_COUNTRY,
+            UserDataDBObject::COL_SCHOOL_YEAR,
+            UserDataDBObject::COL_INSA_DEPT
+        ), array(UserDataDBObject::COL_USER_ID));
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
     private function __update_user_position($userId, $position)

@@ -114,6 +114,7 @@ class UserServices extends AbstractObjectServices
     const INSERT = "insert";
     const UPDATE = "update";
     const UPDATE_TOKEN = "updatetok";
+    const UPDATE_OWN_PASS = "updownpass";
     const UPDATE_PASS = "updatepass";
     const DELETE = "delete"; // Only available for disabled users for safety reasons
     const DISABLE = "disable";
@@ -157,6 +158,8 @@ class UserServices extends AbstractObjectServices
             $data = $this->__update_token($params[UserServices::PARAM_ID]);
         } else if (!strcmp($action, UserServices::UPDATE_PASS)) {
             $data = $this->__change_pass($params[UserServices::PARAM_TOKEN]);
+        } else if (!strcmp($action, UserServices::UPDATE_OWN_PASS)) {
+            $data = $this->__update_own_pass($params[UserServices::PARAM_PASS]);
         } else if (!strcmp($action, UserServices::DELETE)) {
             $data = $this->__delete_disabled_user($params[UserServices::PARAM_ID]);
         } else if (!strcmp($action, UserServices::DISABLE)) {
@@ -258,7 +261,7 @@ class UserServices extends AbstractObjectServices
         $ok = false;
         $index = 1;
         // Conditions on index to avoid infinite loop
-        while(!$ok && $index < 10) {
+        while (!$ok && $index < 10) {
             $unameTemp = $username . ($index > 1 ? $index : '');
             // create sql params
             $sql_params = array(":" . UserDBObject::COL_USERNAME => $unameTemp);
@@ -393,6 +396,21 @@ class UserServices extends AbstractObjectServices
             $new_pass = null;
         }
         return $new_pass;
+    }
+
+    private function __update_own_pass($newPass)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . UserDBObject::COL_ID => $this->getCurrentUser()->GetId(),
+            ":" . UserDBObject::COL_PASSWORD => sha1($newPass)
+        );
+        // create sql query
+        $sql = parent::getDBObject()->GetTable(UserDBObject::TABL_USER)->GetUPDATEQuery(
+            array(UserDBObject::COL_PASSWORD)
+        );
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
     private function __delete_user($id)

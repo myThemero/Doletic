@@ -182,7 +182,6 @@ var UserDataServicesInterface = new function () {
             DELETE_AG: 'delag',
             INSERT: "insert",
             UPDATE: "update",
-            UPDATE_OWN: "updown",
             UPDATE_POSTION: "updatepos",
             UPDATE_AVATAR: "updateava",
             DELETE: "delete",
@@ -326,27 +325,6 @@ var UserDataServicesInterface = new function () {
             successHandler);
     };
 
-    this.updateOwn = function (gender, firstname, lastname, birthdate, tel, email, address, city, postalCode, country, schoolYear, insaDept, successHandler) {
-        return DoleticServicesInterface.callService(
-            this.meta.OBJECT,
-            this.meta.ACTION.UPDATE_OWN,
-            {
-                gender: gender,
-                firstname: firstname,
-                lastname: lastname,
-                birthdate: birthdate,
-                tel: tel,
-                email: email,
-                address: address,
-                city: city,
-                postalCode: postalCode,
-                country: country,
-                schoolYear: schoolYear,
-                insaDept: insaDept
-            },
-            successHandler);
-    };
-
     this.updateUserPosition = function (userId, position, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE_POSTION,
@@ -427,7 +405,6 @@ var UserServicesInterface = new function () {
             GENERATE_CREDENTIALS: 'gencred',
             INSERT: 'insert',
             UPDATE: 'update',
-            UPDATE_OWN_PASS: 'updownpass',
             DELETE: 'delete',
             DISABLE: 'disable',
             RESTORE: 'restore'
@@ -481,16 +458,6 @@ var UserServicesInterface = new function () {
             {
                 id: id,
                 hash: phpjsLight.sha1(password)
-            },
-            successHandler);
-    };
-
-    this.updateOwnPass = function (password, successHandler) {
-        return DoleticServicesInterface.callService(
-            this.meta.OBJECT,
-            this.meta.ACTION.UPDATE_OWN_PASS,
-            {
-                pass: password
             },
             successHandler);
     };

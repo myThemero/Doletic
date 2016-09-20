@@ -100,7 +100,7 @@ var DoleticServicesInterface = new function () {
      *  Loads a specific Doletic Home page
      */
     this.getUIHome = function () {
-        this.getUI('kernel:home');
+        this.getUI('dashboard:home');
     };
     /**
      *  Loads a specific Doletic Auth page
@@ -248,6 +248,18 @@ var DoleticServicesInterface = new function () {
                 contact: contact,
                 chadaff: chadaff,
                 int: int
+            },
+            successHandler);
+    };
+    /**
+     *
+     */
+    this.updatePassword = function (uname, oldPass, newPass, successHandler) {
+        this.callService('service', 'password',
+            {
+                username: uname,
+                oldPass: oldPass,
+                newPass: newPass
             },
             successHandler);
     };

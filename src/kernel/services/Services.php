@@ -32,6 +32,7 @@ class Services
     const SERVICE_GET_AVATAR = "getava";
     const SERVICE_EDIT_DOCUMENT = "editdoc";
     const SERVICE_REGISTER = "register";
+    const SERVICE_PASSWORD = "password";
     // --- params keys
     const PKEY_ID = "id";
     const PKEY_FNAME = "filename";
@@ -44,6 +45,8 @@ class Services
     const PARAM_CONTACT = 'contact';
     const PARAM_TEMPLATE = 'template';
     const PARAM_PRESIDENT = 'president';
+    const PARAM_OLD_PASS = 'oldPass';
+    const PARAM_NEW_PASS = 'newPass';
 
 
     // -- attributes
@@ -102,6 +105,12 @@ class Services
                         $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_FIRSTNAME],
                         $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_LASTNAME],
                         $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_EMAIL]
+                    );
+                } else if ($post[Services::PPARAM_ACT] === Services::SERVICE_PASSWORD) {
+                    $response = $this->__service_update_user_password(
+                        $post[Services::PPARAM_PARAMS][UserServices::PARAM_UNAME],
+                        $post[Services::PPARAM_PARAMS][Services::PARAM_OLD_PASS],
+                        $post[Services::PPARAM_PARAMS][Services::PARAM_NEW_PASS]
                     );
                 } else {
                     $response = new ServiceResponse("", ServiceResponse::ERR_MISSING_SERVICE, "Service is missing.");
@@ -226,15 +235,14 @@ class Services
             ->GetDBObject(UserDBObject::OBJ_NAME)
             ->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(UserServices::GENERATE_CREDENTIALS, array(
-            UserDataServices::PARAM_FIRSTNAME => $firstname,
-            UserDataServices::PARAM_LASTNAME => $lastname
-        ));
+                UserDataServices::PARAM_FIRSTNAME => $firstname,
+                UserDataServices::PARAM_LASTNAME => $lastname
+            ));
         $user = $this->kernel
             ->GetDBObject(UserDBObject::OBJ_NAME)
             ->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(UserServices::INSERT, $credentials);
-        if($user != 0)
-        {
+        if ($user != 0) {
             $this->kernel->SendMail(array($mail), new WelcomeMail(), array(
                 'PRENOM' => $firstname,
                 'LOGIN' => $credentials[UserServices::PARAM_UNAME],
@@ -244,6 +252,39 @@ class Services
         }
         unset($pass);
         return new ServiceResponse($user);
+    }
+
+    private function __service_update_user_password($uname, $oldPass, $newPass)
+    {
+        $user = $this->kernel->getCurrentUser();
+        $usercheck = $this->kernel
+            ->GetDBObject(UserDBObject::OBJ_NAME)
+            ->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(UserServices::GET_USER_BY_UNAME, array(
+                    UserServices::PARAM_UNAME => $uname,
+                    UserServices::PARAM_HASH => sha1($oldPass)
+                )
+            );
+        if ($user->GetUserName() === $uname && isset($usercheck)) {
+            if ($this->kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                ->GetResponseData(UserServices::UPDATE_OWN_PASS, [UserServices::PARAM_PASS => $newPass])
+            ) {
+                $udata = $this->kernel
+                    ->GetDBObject(UserDataDBObject::OBJ_NAME)
+                    ->GetServices($this->kernel->GetCurrentUser())
+                    ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(
+                            UserDataServices::PARAM_ID => $this->kernel->GetCurrentUser()->GetId()
+                        )
+                    );
+
+                $this->kernel->SendMail(array($udata->GetEmail()), new ChangePasswordMail(), array(
+                        'PRENOM' => $udata->GetFirstName()
+                    )
+                );
+                return new ServiceResponse("");
+            }
+        }
+        return new ServiceResponse("", ServiceResponse::ERR_SERVICE_FAILED);
     }
 
     private function __service_update_user_avatar($post)

@@ -1273,7 +1273,7 @@ class ProjectServices extends AbstractObjectServices
     private function __get_projects_by_int($intId)
     {
         // create sql params array
-        $sql_params = array(":" . ProjectDBObject::COL_CHADAFF_ID => $intId);
+        $sql_params = array(":" . ProjectDBObject::COL_INT_ID => $intId);
         // create sql request
         $sql1 = parent::getDBObject()->GetTable(ProjectDBObject::TABL_INT)->GetSELECTQuery(
             array(DBTable::SELECT_ALL), array(ProjectDBObject::COL_INT_ID));

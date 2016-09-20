@@ -14,7 +14,7 @@ class UIManager extends AbstractManager
     const INTERFACE_LOST = "kernel:lost";
     const INTERFACE_RESTORED = "kernel:restored";
     const INTERFACE_404 = "kernel:404";
-    const INTERFACE_HOME = "kernel:home";
+    const INTERFACE_HOME = "dashboard:home";
     const INTERFACE_TEST = "kernel:test";
 
     // -- attributes

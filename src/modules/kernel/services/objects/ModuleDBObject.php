@@ -307,6 +307,14 @@ class ModuleServices extends AbstractObjectServices
                 ModuleDBObject::COL_AUTHORS => 'Nicolas Sorin',
                 ModuleDBObject::COL_DEPEND => 'kernel, grc',
                 ModuleDBObject::COL_ENABLED => true
+            ],
+            [
+                ModuleDBObject::COL_LABEL => 'dashboard',
+                ModuleDBObject::COL_NAME => "Accueil",
+                ModuleDBObject::COL_VERSION => '1.0dev',
+                ModuleDBObject::COL_AUTHORS => 'Nicolas Sorin',
+                ModuleDBObject::COL_DEPEND => 'kernel, ua',
+                ModuleDBObject::COL_ENABLED => true
             ]
         ];
         // --- retrieve SQL query
