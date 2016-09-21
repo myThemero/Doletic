@@ -50,9 +50,9 @@ class GRCModule extends AbstractModule
         parent::addDBObject(new ContactDBObject($this));
         // -- add module specific ui
         parent::addUI('Super-admins', 'superadmin');    // refer to couple (admin.js, admin.css)
-        parent::addUI('Administration', 'admin');    // refer to couple (admin.js, admin.css)
-        parent::addUI('Membres', 'ui');    // refer to couple (ui.js, ui.css)
-        parent::addUI('Invités', 'guest');    // refer to couple (ui.js, ui.css)
+        parent::addUI('Administration', 'admin', false);    // refer to couple (admin.js, admin.css)
+        parent::addUI('Membres', 'ui', false);    // refer to couple (ui.js, ui.css)
+        parent::addUI('Invités', 'guest', false);    // refer to couple (ui.js, ui.css)
     }
 
 }

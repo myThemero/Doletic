@@ -18,6 +18,7 @@ var DoleticUIModule = new function () {
         this.refreshMaillistList();
         // refresh doc templates lists
         this.refreshDocTemplateList();
+        window.postLoad();
     };
     /**
      *    Override build function

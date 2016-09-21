@@ -12,6 +12,7 @@ var DoleticUIModule = new function () {
         $('#copy_btn').popup({popup: '#copy_popup'});
         // fill category field
         DoleticUIModule.generateSignature();
+        window.postLoad();
     }
     /**
      *    Override build function

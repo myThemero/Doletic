@@ -12,6 +12,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.fillCategorySelector();
         // fill ticket list
         DoleticUIModule.fillTicketsList();
+        window.postLoad();
     };
     /**
      *    Override build function

@@ -10,6 +10,7 @@ var DoleticUIModule = new function () {
         this.super.render(htmlNode, this);
         // refresh lists
         this.refreshTicketLists();
+        window.postLoad();
     };
     /**
      *    Override build function

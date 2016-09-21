@@ -121,11 +121,11 @@ abstract class AbstractModule
             $ui_links .= "\"" . $this->name . "\",[";
             $ui_added = false;
             // for each module ui
-            foreach ($this->uis as $ui_name => $ui_code) {
+            foreach ($this->uis as $ui_name => $details) {
                 // check if module ui can be accessed by current user
-                if ($this->CheckRights($rgcode, $ui_code)) {
+                if ($this->CheckRights($rgcode, $details[0], $details[1])) {
                     // add ui to list
-                    $ui_links .= "[\"" . $ui_name . "\",\"" . $this->mod_code . ":" . $ui_code . "\"],";
+                    $ui_links .= "[\"" . $ui_name . "\",\"" . $this->mod_code . ":" . $details[0] . "\"],";
                     $ui_added = true; // raise added flag
                 }
             }
@@ -141,9 +141,9 @@ abstract class AbstractModule
     /**
      *
      */
-    public function CheckRights($rgcode, $action)
+    public function CheckRights($rgcode, $action, $alwaysShow = true)
     {
-        return ($this->rights_map->Check($rgcode, $action) === RightsMap::OK);
+        return ($this->rights_map->Check($rgcode, $action, $alwaysShow) === RightsMap::OK);
     }
 
     /**
@@ -182,9 +182,8 @@ abstract class AbstractModule
         $this->db_services[$service->GetName()] = $service;
     }
 
-    protected function addUI($uiName, $uiCode)
+    protected function addUI($uiName, $uiCode, $alwaysShow = true)
     {
-        $this->uis[$uiName] = $uiCode;
+        $this->uis[$uiName] = [$uiCode, $alwaysShow];
     }
-
 }

@@ -21,6 +21,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.fillFirmTypeSelector();
         DoleticUIModule.fillCountrySelector();
         DoleticUIModule.fillGenderSelector();
+        window.postLoad();
     };
     /**
      *    Override build function

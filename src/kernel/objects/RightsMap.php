@@ -74,7 +74,7 @@ class RightsMap
         $this->rules = array_merge($this->rules, $rules);
     }
 
-    public function Check($rgcode, $action, $debug = false)
+    public function Check($rgcode, $action, $alwaysShow = true, $debug = false)
     {
         if ($debug) {
             $this->debug($rgcode, $action);
@@ -84,7 +84,18 @@ class RightsMap
         if ($allowed) {    // if action has been added
             if (array_key_exists($action, $this->rules)) {
                 // check rights against map specified mask for given action
-                $allowed = (($rgcode & $this->rules[$action]) !== 0);
+                if($alwaysShow) {
+                    $allowed = (($rgcode & $this->rules[$action]) !== 0);
+                } else {
+                    // Get last 4 bits of rgcode
+                    $newcode = (string)decbin(intval($rgcode));
+                    $newcode = substr($newcode, strlen($newcode)-4);
+                    // Compare most significant bit of user code with module value
+                    $pos = strlen($newcode) - strpos($newcode, '1');
+                    $ruleBin = decbin($this->rules[$action]);
+                    $rulePos = strlen($ruleBin) - strpos($ruleBin, '1');
+                    $allowed = ($pos == $rulePos);
+                }
             } else {
                 // default behaviour if action mask has not been specified is SUPER_ADMIN_RIGHTS required
                 $allowed = (($rgcode & RightsMap::SA_RMASK) !== 0);

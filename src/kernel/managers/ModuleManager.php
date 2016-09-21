@@ -86,6 +86,7 @@ class ModuleManager extends AbstractManager
     public function GetModuleUILinks()
     {
         $ui_links = "[";
+        ksort($this->modules);
         foreach ($this->modules as $module) {
             $ui_links .= $module->GetAvailableUILinks(parent::kernel()->GetCurrentUserRGCodeForModule($module->GetCode())) . ",";
         }

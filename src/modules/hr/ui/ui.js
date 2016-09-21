@@ -27,6 +27,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.fillUsersList(DoleticUIModule.fillTeamsList);
         // activate items in tabs
         $('.menu .item').tab();
+        window.postLoad();
     };
     /**
      *    Override build function

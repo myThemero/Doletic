@@ -29,6 +29,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.fillDivisionSelector();
         // activate items in tabs
         $('.menu .item').tab();
+        window.postLoad();
     };
     /**
      *    Override build function

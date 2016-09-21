@@ -12,6 +12,7 @@ var DoleticUIModule = new function () {
         $('.menu .item').tab();
         // Load HTML templates
         DoleticUIModule.getStatsTab();
+        window.postLoad();
     };
     /**
      *    Override build function

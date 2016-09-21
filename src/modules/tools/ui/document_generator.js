@@ -12,6 +12,7 @@ var DoleticUIModule = new function () {
         this.fillDocumentTypes();
         // fill study identifiers
         this.fillStudyIdentifiers();
+        window.postLoad();
     };
     /**
      *    Override build function

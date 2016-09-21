@@ -16,17 +16,18 @@ var DoleticServicesInterface = new function () {
         'ERR_MISSING_ACT',
         'ERR_MISSING_SERVICE',
         'ERR_SERVICE_FAILED',
-        'ERR_INSUFFICIENT_RIGHTS',
+        'ERR_INSUFFICIENT_RIGHTS'
     ];
     /**
      *  Loads a standard Doletic page using ui parameter
      */
-    this.getUI = function (ui) {
+    this.getUI = function (ui, action) {
         this.ajaxPOST(
             this.doleticMainURL,
             {
                 q: 'ui',
-                page: ui
+                page: ui,
+                action: action
             },
             'json',
             DoleticServicesInterface.handleAJAXError,

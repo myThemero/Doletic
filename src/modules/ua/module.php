@@ -141,9 +141,9 @@ class UaModule extends AbstractModule
 
         // -- add module specific ui
         parent::addUI('Super-Admins', 'superadmin');
-        parent::addUI('Admins', 'admin');
-        parent::addUI('Membres', 'user');
-        parent::addUI('Invités', 'guest');
+        parent::addUI('Admins', 'admin', false);
+        parent::addUI('Membres', 'user', false);
+        parent::addUI('Invités', 'guest', false);
     }
 
 }

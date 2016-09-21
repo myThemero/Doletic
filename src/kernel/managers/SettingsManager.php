@@ -36,6 +36,12 @@ class SettingsManager extends AbstractManager
     const DBKEY_JE_LOGO_URL = "je_logo_url";
     const DBKEY_JE_SCHOOL_NAME = "je_school_name";
     const DBKEY_JE_DOMAIN = "je_domain";
+    const DBKEY_DOLETIC_URL = "doletic_url";
+    const DBKEY_JEH_LOW = "jeh_low";
+    const DBKEY_JEH_HIGH = "jeh_high";
+    const DBKEY_TVA_RATE = "tva_rate";
+    const DBKEY_YEAR_START = "year_start";
+    const DBKEY_YEAR_END = "year_end";
 
     // -- database keys
     const DB_DEFAULT_SETTINGS = array(
@@ -46,7 +52,13 @@ class SettingsManager extends AbstractManager
         SettingsManager::DBKEY_JE_WEBSITE_URL => 'http://www.etic-insa.com',
         SettingsManager::DBKEY_JE_LOGO_URL => 'http://www.etic-insa.com/assets/logo-etic.png',
         SettingsManager::DBKEY_JE_SCHOOL_NAME => 'INSA Lyon',
-        SettingsManager::DBKEY_JE_DOMAIN => 'etic-insa.com'
+        SettingsManager::DBKEY_JE_DOMAIN => 'etic-insa.com',
+        SettingsManager::DBKEY_DOLETIC_URL => 'doletic.etic-insa.com',
+        SettingsManager::DBKEY_JEH_LOW => '80',
+        SettingsManager::DBKEY_JEH_HIGH => '340',
+        SettingsManager::DBKEY_TVA_RATE => '20',
+        SettingsManager::DBKEY_YEAR_START => '2016-03-21',
+        SettingsManager::DBKEY_YEAR_END => '2017-03-20'
     );
 
     // -- attributes

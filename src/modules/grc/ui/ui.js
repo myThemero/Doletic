@@ -16,6 +16,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.getStatsTab();
         // Fill tables
         DoleticUIModule.fillFirmList(true);
+        window.postLoad();
     };
     /**
      *    Override build function

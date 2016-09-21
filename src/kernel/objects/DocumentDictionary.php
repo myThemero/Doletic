@@ -36,6 +36,23 @@ class DocumentDictionary
             'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
             'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
             'DESCRIPTIONETUDE' => $params[Services::PARAM_PROJECT]->GetName(),
+            'CIVILITEUSER' => 'test', //Monsieur ou madame
+            'NOMUSER' => 'test', //Nom du chadaff
+            'CIVILITEINTERVENANT' => 'test', //Monsieur ou madame
+            'NOMINTERVENANT' => 'test', //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'CIVILITEINTERVENANT1' => 'test', //Monsieur ou madame
+            'NOMINTERVENANT1' => 'test', //Intervenant suivant
+            'CIVILITECORRESPONDANTQUALITE' => 'test', //Monsieur ou madame
+            'NOMCORRESPONDANTQUALITE' => 'test', // Nom du corres qualité
+            'CIVILITECONTACT' => 'test', //Monsieur ou madame
+            'NOMCONTACT' => 'test', //Nom du client
+            'PRENOMCONTACT' => 'test', //Prenom du client
+            'CIVPREZ' => 'test', //Monsieur ou madame
+            'NOMPREZ' => 'test', //Nom du président
+            'DUREEETUDE' => 'test', //Durée de l'étude
+            'NBJOURSJEH' => 'test', //Nombre total de JEHs
+            'TAUXTVA' => 'test', //taux de tva
+            'DJOUR' => 'test', //date actuelle au format 05/05/1994
         ];
     }
 

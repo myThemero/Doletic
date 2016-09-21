@@ -20,6 +20,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.fillUserData();
         DoleticUIModule.fillUserProjects();
         DoleticUIModule.refreshAvatar();
+        window.postLoad();
     };
     /**
      *    Override build function
@@ -157,9 +158,11 @@ var DoleticUIModule = new function () {
                             '</tr>' +
                             '</tfoot>' +
                             '<tbody id="project_body">';
+                        var click = $('#submenu_ua').attr('onclick');
                         for (var i = 0; i < data.object.length; i++) {
+                            var onClick = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillProjectDetails(" + data.object[i].number + ");');";
                             content += '<tr>' +
-                                "<td><button onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
+                                "<td><button onClick=\"" + onClick + "\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                                 '<td>' + data.object[i].name + '</td>' +
                                 '<td>Chargé d\'affaires</td>' +
                                 '<td>' + data.object[i].status + '</td>' +
@@ -167,9 +170,11 @@ var DoleticUIModule = new function () {
                         }
                         ProjectServicesInterface.getByAuditor(userId, function (data) {
                             if (data.code == 0) {
+                                var click = $('#submenu_ua').attr('onclick');
                                 for (var i = 0; i < data.object.length; i++) {
+                                    var onClick = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillProjectDetails(" + data.object[i].number + ");');";
                                     content += '<tr>' +
-                                        "<td><button onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
+                                        "<td><button onClick=\"" + onClick + "\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                                         '<td>' + data.object[i].name + '</td>' +
                                         '<td>Correspondant qualité</td>' +
                                         '<td>' + data.object[i].status + '</td>' +
@@ -177,9 +182,11 @@ var DoleticUIModule = new function () {
                                 }
                                 ProjectServicesInterface.getByInt(userId, function (data) {
                                     if (data.code == 0) {
+                                        var click = $('#submenu_ua').attr('onclick');
                                         for (var i = 0; i < data.object.length; i++) {
+                                            var onClick = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillProjectDetails(" + data.object[i].number + ");');";
                                             content += '<tr>' +
-                                                "<td><button onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
+                                                "<td><button onClick=\"" + onClick + "\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                                                 '<td>' + data.object[i].name + '</td>' +
                                                 '<td>Consultant</td>' +
                                                 '<td>' + data.object[i].status + '</td>' +

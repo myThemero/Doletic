@@ -35,9 +35,9 @@ class HrModule extends AbstractModule
 
         // -- add module specific ui
         parent::addUI('Super-Admins', 'superadmin');
-        parent::addUI('Admins', 'admin');    // refer to couple (admin.js, admin.css)
-        parent::addUI('Membres', 'ui');    // refer to couple (ui.js, ui.css)
-        parent::addUI('Invités', 'guest');    // refer to couple (ui.js, ui.css)
+        parent::addUI('Admins', 'admin', false);    // refer to couple (admin.js, admin.css)
+        parent::addUI('Membres', 'ui', false);    // refer to couple (ui.js, ui.css)
+        parent::addUI('Invités', 'guest', false);    // refer to couple (ui.js, ui.css)
     }
 
 }

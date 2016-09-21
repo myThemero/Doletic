@@ -18,6 +18,7 @@ class Main
     // --- POST specific params
     const PPARAM_TOKEN = "token";
     const PPARAM_PAGE = "page";
+    const PPARAM_ACTION = "action";
     const PPARAM_USER = "user";
     const PPARAM_HASH = "hash";
     const PPARAM_MAIL = "mail";
@@ -98,8 +99,7 @@ class Main
                 } // if reset password query received
                 else if (!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS) && isset($_POST[Main::RPARAM_TOKEN])) {
                     $this->__confirm_reset_pass($_POST[Main::RPARAM_TOKEN]);
-                }
-                else if (!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
+                } else if (!strcmp($_POST[Main::RPARAM_QUERY], Main::QUERY_RESET_PASS)) {
                     $this->__reset_pass();
                 }
             } else { // if no valid user ask for a login
@@ -183,7 +183,11 @@ class Main
         // check if params
         if (array_key_exists(Main::PPARAM_PAGE, $_POST)) {
             // display given interface
-            $this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts($_POST[Main::PPARAM_PAGE]));
+            $this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(
+                $_POST[Main::PPARAM_PAGE],
+                (array_key_exists(Main::PPARAM_ACTION, $_POST) ? $_POST[Main::PPARAM_ACTION] : null)
+            )
+            );
         } else {
             // display page not found interface
             $this->__terminate($_SESSION[Main::SPARAM_DOL_KERN]->GetInterfaceScripts(UIManager::INTERFACE_404));

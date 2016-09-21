@@ -17,6 +17,10 @@ class UIManager extends AbstractManager
     const INTERFACE_HOME = "dashboard:home";
     const INTERFACE_TEST = "kernel:test";
 
+    const ACTION_CLICK = 1;
+    const ACTION_CHANGE = 2;
+    const ACTION_HOVER = 3;
+
     // -- attributes
     private $internal_css = null;
     private $internal_js = null;
@@ -74,7 +78,7 @@ class UIManager extends AbstractManager
     /**
      *    Creates a standard Doletic page including $js scripts and $css stylesheets
      */
-    public function MakeUI($js, $css)
+    public function MakeUI($js, $css, $action = null)
     {
         // create page and add start
         $html_fragment = "";
@@ -86,6 +90,13 @@ class UIManager extends AbstractManager
         foreach ($js as $value) {
             $html_fragment .= "<script class=\"doletic_subscript\" src=\"$value\" type=\"text/javascript\"></script>\n";
         }
+
+        // add post load script
+        $html_fragment .= '<script type="text/javascript">window.postLoad = function() {';
+        if (isset($action)) {
+            $html_fragment .= $action;
+        }
+        $html_fragment .= '}</script>';
         return json_encode(array("module_scripts" => $html_fragment));
     }
 

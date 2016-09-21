@@ -12,6 +12,7 @@ var DoleticUIModule = new function () {
         DoleticMasterInterface.clearModuleSubmenu();
         // remove useless buttons when disconnected
         DoleticMasterInterface.removeGeneralButtons();
+        window.postLoad();
     };
     /**
      *    Override build function

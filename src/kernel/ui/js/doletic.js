@@ -247,7 +247,7 @@ var DoleticMasterInterface = new function () {
             content +
             "</div> \
           </div>");
-        setTimeout(function() {
+        setTimeout(function () {
             $('#master_container').transition('fade');
         }, 2000);
     };
@@ -275,16 +275,25 @@ var DoleticMasterInterface = new function () {
                 var json = JSON.parse(data.object);
                 // iterate over values to build options
                 for (var i = 0; i < json.length && json[i].length == 2; i++) {
-                    if(json[i][0] == "Kernel" || json[i][1].length == 0) {
+                    if (json[i][0] == "Kernel" || json[i][1].length == 0) {
                         continue;
                     }
-                    content += "<div class='ui simple dropdown item module_submenu'> \
+                    if (json[i][1].length == 0) {
+                        // Nothing to do
+                    } else if (json[i][1].length == 1) {
+                        content += "    <a class=\"item module_submenu\" id=\"submenu_"
+                            + json[i][1][0][1].split(':')[0] + "\" onClick=\"DoleticServicesInterface.getUI('" +
+                            json[i][1][0][1] + "');\">" +
+                            json[i][0] + "</a>\n";
+                    } else {
+                        content += "<div class='ui simple dropdown item module_submenu'> \
                         <div class=\"header\">" + json[i][0] + "</div><i class='dropdown icon'></i> \
                           <div class=\"menu\">\n";
-                    for (var j = 0; j < json[i][1].length && json[i][1][j].length == 2; j++) {
-                        content += "    <a class=\"item\" onClick=\"DoleticServicesInterface.getUI('" +
-                            json[i][1][j][1] + "');\">" +
-                            json[i][1][j][0] + "</a>\n";
+                        for (var j = 0; j < json[i][1].length && json[i][1][j].length == 2; j++) {
+                            content += "    <a class=\"item\" onClick=\"DoleticServicesInterface.getUI('" +
+                                json[i][1][j][1] + "');\">" +
+                                json[i][1][j][0] + "</a>\n";
+                        }
                     }
                     content += "    </div> \
                         </div> \
@@ -385,7 +394,7 @@ var DoleticMasterInterface = new function () {
         return objArray;
     };
 
-    this.formatElementId = function(str) {
+    this.formatElementId = function (str) {
         var id = str.toLowerCase().trim().replace(/\s+/g, '_');
         window.original_id = str;
         return id;

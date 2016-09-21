@@ -223,7 +223,7 @@ class DoleticKernel
     /**
      *    Returns the HTML page required
      */
-    public function GetInterfaceScripts($ui)
+    public function GetInterfaceScripts($ui, $action = null)
     {
         $this->__debug("Interface  '" . $ui . "' required.");
         // initialize fragment
@@ -236,11 +236,11 @@ class DoleticKernel
         $found = false;                                        // initialize found flag down
         if (isset($module)) {                                // if module exists
             // if user has sufficient rights to access required ui
-            if ($module->CheckRights($this->GetCurrentUserRGCode(), $exploded[1])) {
+            if ($module->CheckRights($this->GetCurrentUserRGCodeForModule($exploded[0]), $exploded[1])) {
                 $js = $module->GetJS($exploded[1]);                // retrieve js array
                 $css = $module->GetCSS($exploded[1]);            // retrieve css array
                 if (isset($css) && isset($js)) {                // if both css and js are valid arrays
-                    $fragment = $this->ui_mgr->MakeUI($js, $css);    // affect fragment content
+                    $fragment = $this->ui_mgr->MakeUI($js, $css, $action);    // affect fragment content
                     $found = true;                                // raise found flag
                 }
             }

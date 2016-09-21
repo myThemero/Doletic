@@ -35,6 +35,7 @@ var DoleticUIModule = new function () {
             DoleticUIModule.fillAmendmentTypeSelector();
             // activate items in tabs
             $('.menu .item').tab();
+            window.postLoad();
         };
         /**
          *    Override build function
@@ -369,7 +370,7 @@ var DoleticUIModule = new function () {
                         }
                         intHtml = k == 0 ? "<i>Non assigné</i>" : intHtml;
                         var row = "<tr>" +
-                            "<td><button onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
+                            "<td><button id=\"details_" + data.object[i].number + "\" onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                             "<td>" + data.object[i].name + "</td>" +
                             "<td>" + data.object[i].field + "</td>" +
                             "<td>" + window.firm_list[data.object[i].firm_id].name + "</td>" +
