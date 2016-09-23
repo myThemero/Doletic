@@ -47,6 +47,9 @@ class Services
     const PARAM_PRESIDENT = 'president';
     const PARAM_OLD_PASS = 'oldPass';
     const PARAM_NEW_PASS = 'newPass';
+    // --- docs const
+    const TEMPLATES_BASE_PATH  = 'doctemplates/';
+    const TEMPLATES_OUTPUT_PATH  = 'docoutput/';
 
 
     // -- attributes
@@ -376,13 +379,14 @@ class Services
 
         // Replace in template
         $phpword = new PHPWord();
-        $template = $phpword->loadTemplate($path);
+        $template = $phpword->loadTemplate(Services::TEMPLATES_BASE_PATH . $path);
         foreach ($dict->getDict() as $key => $value) {
             $template->setValue($key, $value);
         }
-        $template->save($params[Services::PARAM_PROJECT]->GetNumber() . $path);
+        $name = Services::TEMPLATES_OUTPUT_PATH . $params[Services::PARAM_PROJECT]->GetNumber() . $path;
+        $template->save($name);
 
-        return new ServiceResponse("", "", "");
+        return new ServiceResponse($name);
     }
 
     /**
@@ -465,18 +469,18 @@ class Services
                 )
         );
 
-        $president = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+        /*$president = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(
                 UserDataServices::GET_ALL_BY_POS,
                 array(UserDataServices::PARAM_POSITION => 'Président')
-            )[0];
+            )[0];*/
 
         return [
             Services::PARAM_PROJECT => $project,
             Services::PARAM_CHADAFF => $mainChadaff,
             Services::PARAM_CONTACT => $mainContact,
             Services::PARAM_INT => $mainInt,
-            Services::PARAM_PRESIDENT => $president
+//            Services::PARAM_PRESIDENT => $president
         ];
     }
 

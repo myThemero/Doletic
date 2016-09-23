@@ -1600,6 +1600,30 @@ class UserDataServices extends AbstractObjectServices
                 "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)
+            ],
+            'dashboard' => [
+                "Président" => (RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G),
+                "Vice-Président" => (RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G),
+                "Secrétaire Général" => (RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G),
+                "Trésorier" => (RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G),
+                "Vice-Trésorier" => (RightsMap::A_R | RightsMap::A_G | RightsMap::D_G),
+                "Comptable" => (RightsMap::A_R | RightsMap::M_G | RightsMap::D_G),
+                "Responsable DSI" => (RightsMap::SA_R | RightsMap::A_G | RightsMap::D_G),
+                "Responsable GRC" => (RightsMap::A_R | RightsMap::A_G | RightsMap::D_G),
+                "Responsable Com" => (RightsMap::A_R | RightsMap::A_G | RightsMap::D_G),
+                "Responsable UA" => (RightsMap::A_R | RightsMap::A_G | RightsMap::D_G),
+                "Responsable BU" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Responsable Qualité" => (RightsMap::A_R | RightsMap::A_G | RightsMap::D_G),
+                "Junior DSI" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Junior GRC" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Junior Com" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                UserDataDBObject::VAL_DEFAULT_POS => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Junior Qualité" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                UserDataDBObject::VAL_OLD => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
+                "Intervenant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
+                "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
+                "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)
             ]
         ];
 
