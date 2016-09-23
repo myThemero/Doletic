@@ -113,6 +113,7 @@ var DoleticUIModule = new function () {
      */
     this.getMembersTab = function () {
         $('#user_form_modal').remove(); // Necessary to avoid duplicate (look for better solution)
+        $('#profile_form_modal').remove();
         $('#membersTab').load("../modules/hr/ui/templates/membersTab.html", function () {
             DoleticMasterInterface.makeDefaultCalendar('birthdate_calendar');
             $('#toggle_old').change(DoleticUIModule.fillUsersList);
@@ -205,7 +206,7 @@ var DoleticUIModule = new function () {
 
                         } else {
                             content += "<tr><td> \
-			      						<button class=\"ui icon button\" data-tooltip=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname + "\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails(" + data.object[i].user_id + "); return false;\"> \
+			      						<button class=\"ui teal icon button\" data-tooltip=\"Détails de " + data.object[i].firstname + " " + data.object[i].lastname + "\" data-content=\"Cliquez ici pour afficher plus d'informations\" onClick=\"DoleticUIModule.fillUserDetails(" + data.object[i].user_id + "); return false;\"> \
 				  							<i class=\"user icon\"></i> \
 										</button> \
 										</td><td> \

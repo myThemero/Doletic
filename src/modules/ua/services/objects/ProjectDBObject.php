@@ -2424,7 +2424,7 @@ class ProjectDBObject extends AbstractDBObject
         $dol_project
             ->AddColumn(ProjectDBObject::COL_NUMBER, DBTable::DT_INT, 11, false, "", true, true)
             ->AddColumn(ProjectDBObject::COL_NAME, DBTable::DT_VARCHAR, 50, false, "")
-            ->AddColumn(ProjectDBObject::COL_DESCRIPTION, DBTable::DT_VARCHAR, 255, false, "")
+            ->AddColumn(ProjectDBObject::COL_DESCRIPTION, DBTable::DT_TEXT, -1, false, "")
             ->AddColumn(ProjectDBObject::COL_ORIGIN, DBTable::DT_VARCHAR, 255, false, "")
             ->AddColumn(ProjectDBObject::COL_FIELD, DBTable::DT_VARCHAR, 255, false, "")
             ->AddColumn(ProjectDBObject::COL_STATUS, DBTable::DT_VARCHAR, 255, false, "")

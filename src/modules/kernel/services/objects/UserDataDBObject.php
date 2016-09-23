@@ -1074,7 +1074,7 @@ class UserDataServices extends AbstractObjectServices
             ":" . UserDataDBObject::COL_COUNTRY => $country,
             ":" . UserDataDBObject::COL_SCHOOL_YEAR => $schoolYear,
             ":" . UserDataDBObject::COL_INSA_DEPT => $insaDept,
-            ":" . UserDataDBObject::COL_OLD => ($position == UserDataDBObject::VAL_OLD),
+            ":" . UserDataDBObject::COL_OLD => ($position == UserDataDBObject::VAL_OLD ? 1 : 0),
             ":" . UserDataDBObject::COL_AG => $ag);
         // create sql request
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(array(
@@ -1232,7 +1232,7 @@ class UserDataServices extends AbstractObjectServices
         // create sql params
         $sql_params = array(
             ":" . UserDataDBObject::COL_ID => $id,
-            ":" . UserDataDBObject::COL_DISABLED => true);
+            ":" . UserDataDBObject::COL_DISABLED => 1);
         // create sql request
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(
             array(UserDataDBObject::COL_DISABLED));
@@ -1245,7 +1245,7 @@ class UserDataServices extends AbstractObjectServices
         // create sql params
         $sql_params = array(
             ":" . UserDataDBObject::COL_ID => $id,
-            ":" . UserDataDBObject::COL_DISABLED => false);
+            ":" . UserDataDBObject::COL_DISABLED => 0);
         // create sql request
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_USER_DATA)->GetUPDATEQuery(
             array(UserDataDBObject::COL_DISABLED));

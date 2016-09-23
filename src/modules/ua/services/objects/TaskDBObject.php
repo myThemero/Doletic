@@ -1032,7 +1032,7 @@ class TaskDBObject extends AbstractDBObject
             ->AddColumn(TaskDBObject::COL_PROJECT_NUMBER, DBTable::DT_INT, 11, false, "")
             ->AddColumn(TaskDBObject::COL_NUMBER, DBTable::DT_INT, 11, false, "")
             ->AddColumn(TaskDBObject::COL_NAME, DBTable::DT_VARCHAR, 50, false, "")
-            ->AddColumn(TaskDBObject::COL_DESCRIPTION, DBTable::DT_VARCHAR, 255, false, "")
+            ->AddColumn(TaskDBObject::COL_DESCRIPTION, DBTable::DT_TEXT, -1, false, "")
             ->AddColumn(TaskDBObject::COL_JEH_AMOUNT, DBTable::DT_INT, 11, false, 0)
             ->AddColumn(TaskDBObject::COL_JEH_COST, DBTable::DT_INT, 11, false, 0)
             ->AddColumn(TaskDBObject::COL_START_DATE, DBTable::DT_DATE, -1, false, "")

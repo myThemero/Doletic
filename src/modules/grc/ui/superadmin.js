@@ -371,10 +371,10 @@ var DoleticUIModule = new function () {
                                     <td>" + data.object[i].country + "</td> \
 			    				<td> \
 			    					<div class=\"ui icon buttons\"> \
-				    					<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editFirm(" + data.object[i].id + "); return false;\"> \
+				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editFirm(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"write icon\"></i> \
 										</button>" +
-                        "<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteFirm(" + data.object[i].id + "); return false;\"> \
+                        "<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteFirm(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"remove icon\"></i> \
 										</button> \
 									</div> \
@@ -441,10 +441,10 @@ var DoleticUIModule = new function () {
 			      					<td>" + window.firm_list[data.object[i].firm_id].name + "</td> \
 			    				    <td> \
 			    					<div class=\"ui icon buttons\"> \
-				    					<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
+				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"write icon\"></i> \
 										</button>" +
-                        "<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteContact(" + data.object[i].id + "); return false;\"> \
+                        "<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteContact(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"remove icon\"></i> \
 										</button> \
 									</div> \

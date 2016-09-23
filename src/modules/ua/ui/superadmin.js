@@ -35,7 +35,6 @@ var DoleticUIModule = new function () {
             DoleticUIModule.fillAmendmentTypeSelector();
             // activate items in tabs
             $('.menu .item').tab();
-            window.postLoad();
         };
         /**
          *    Override build function
@@ -164,6 +163,7 @@ var DoleticUIModule = new function () {
                 DoleticMasterInterface.makeDefaultCalendar('paid_calendar');
                 DoleticMasterInterface.makeDefaultCalendar('sign_calendar');
                 DoleticMasterInterface.makeDefaultCalendar('end_calendar');
+                window.postLoad();
             });
         };
 
@@ -297,7 +297,10 @@ var DoleticUIModule = new function () {
         };
 
         this.fillProjectsList = function () {
-            // Load old members
+            // Link to view user details
+            var click = $('#submenu_hr').attr('onclick');
+            click = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillUserDetails(";
+
             ProjectServicesInterface.getAllFull(function (data) {
                 // Delete and recreate table so Datatables is reinitialized
                 $("#sollic_table_container").html("");
@@ -359,60 +362,63 @@ var DoleticUIModule = new function () {
                         var j = 0;
                         for (j = 0; j < data.object[i].chadaff_id.length; j++) {
                             var chadaff = window.user_list[data.object[i].chadaff_id[j].chadaff_id];
-                            chadaffHtml += chadaff.firstname + ' ' + chadaff.lastname + "<br>";
+                            var onClick = click +  + data.object[i].chadaff_id[j].chadaff_id + ");');";
+                            chadaffHtml += '<a href="#" onclick="' + onClick + '">' + chadaff.firstname + ' ' + chadaff.lastname + "</a><br>";
                         }
                         chadaffHtml = j == 0 ? "<i>Non assigné</i>" : chadaffHtml;
                         var intHtml = "";
                         var k = 0;
                         for (k = 0; k < data.object[i].int_id.length; k++) {
                             var int = window.user_list[data.object[i].int_id[k].int_id];
-                            intHtml += int.firstname + ' ' + int.lastname + "<br>";
+                            var onClick = click +  + data.object[i].int_id[k].int_id + ");');";
+                            intHtml += '<a href="#" onclick="' + onClick + '">' + int.firstname + ' ' + int.lastname + "</a><br>";
                         }
                         intHtml = k == 0 ? "<i>Non assigné</i>" : intHtml;
+                        var auditorClick = click +  + data.object[i].auditor_id + ");');";
                         var row = "<tr>" +
-                            "<td><button id=\"details_" + data.object[i].number + "\" onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
+                            "<td><button id=\"details_" + data.object[i].number + "\" onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui teal button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                             "<td>" + data.object[i].name + "</td>" +
                             "<td>" + data.object[i].field + "</td>" +
                             "<td>" + window.firm_list[data.object[i].firm_id].name + "</td>" +
                             "<td>" + data.object[i].creation_date + "</td>" +
                             "<td>" + chadaffHtml + "</td>" + // Change this
                             "<td>" + intHtml + "</td>" + // Change this
-                            "<td>" + (data.object[i].auditor_id != null ? window.user_list[data.object[i].auditor_id].firstname + ' ' + window.user_list[data.object[i].auditor_id].lastname : "<i>Non assigné</i>") + "</td>" +
+                            "<td>" + (data.object[i].auditor_id != null ? '<a href="#" onclick="' + auditorClick + '">' + window.user_list[data.object[i].auditor_id].firstname + ' ' + window.user_list[data.object[i].auditor_id].lastname + '</a>' : "<i>Non assigné</i>") + "</td>" +
                             "<td>" + data.object[i].status + "</td>";
 
                         if (data.object[i].disabled) {
                             disabled_content += row + "<td><div class=\"ui icon buttons\">" +
-                                "<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"write icon\"></i>" +
                                 "</button>" +
-                                "<button class=\"ui icon button\" data-tooltip=\"Réactiver\" onClick=\"DoleticUIModule.restoreProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui olive icon button\" data-tooltip=\"Réactiver\" onClick=\"DoleticUIModule.restoreProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"remove icon\"></i>" +
                                 "</button>" +
                                 "</div></td>" +
                                 "</tr>";
                         } else if (data.object[i].archived) {
                             archived_content += row + "<td><div class=\"ui icon buttons\">" +
-                                "<button class=\"ui icon button\" data-tooltip=\"Restaurer\" onClick=\"DoleticUIModule.unarchiveProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui yellow icon button\" data-tooltip=\"Restaurer\" onClick=\"DoleticUIModule.unarchiveProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"write icon\"></i>" +
                                 "</button>" +
                                 "</div></td>" +
                                 "</tr>";
                         } else if (data.object[i].sign_date == null) {
                             sollic_content += row + "<td><div class=\"ui icon buttons\">" +
-                                "<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"write icon\"></i>" +
                                 "</button>" +
-                                "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui orange icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"remove icon\"></i>" +
                                 "</button>" +
                                 "</div></td>" +
                                 "</tr>";
                         } else {
                             project_content += row + "<td><div class=\"ui icon buttons\">" +
-                                "<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"write icon\"></i>" +
                                 "</button>" +
-                                "<button class=\"ui icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui orange icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"remove icon\"></i>" +
                                 "</button>" +
                                 "</div></td>" +
@@ -468,7 +474,7 @@ var DoleticUIModule = new function () {
                     // Fill basic details
                     $('#det_name').html(data.object.name);
                     $('#det_description').html(data.object.description);
-                    $('#det_field').html(data.object.field)
+                    $('#det_field').html(data.object.field);
                     $('#det_origin').html(data.object.origin);
                     $('#det_status').html(data.object.status);
                     $('#det_creation').html(data.object.creation_date);
@@ -513,8 +519,11 @@ var DoleticUIModule = new function () {
                         htmlTitle += " (désactivé)";
                     }
                     if (data.object.auditor_id != null) {
+                        var click = $('#submenu_hr').attr('onclick');
+                        click = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillUserDetails(";
+                        var onClick = click +  + data.object.auditor_id + ");');";
                         var auditor = window.user_list[data.object.auditor_id];
-                        $('#auditor_name').html(auditor.firstname + ' ' + auditor.lastname);
+                        $('#auditor_name').html('<a href="#" onclick="' + onClick + '">' + auditor.firstname + ' ' + auditor.lastname + '</a>');
                         $('#auditor_tel').html(auditor.tel);
                         $('#auditor_mail').html(auditor.email);
                         $('#auditor_data').show();
@@ -580,16 +589,20 @@ var DoleticUIModule = new function () {
         };
 
         this.fillIntList = function (number) {
+            var click = $('#submenu_hr').attr('onclick');
+            click = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillUserDetails(";
+
             ProjectServicesInterface.getAllIntsByProject(number, function (data) {
                 // if no service error
                 if (data.code == 0 && data.object != "[]") {
                     var content = "";
                     var search_content = "";
                     for (var i = 0; i < data.object.length; i++) {
+                        var onClick = click +  + data.object[i].int_id + ");');";
                         var int = window.user_list[data.object[i].int_id];
                         search_content += '<div class="item" data-value="' + int.id + '">'
                             + int.firstname + ' ' + int.lastname + '</div>';
-                        content += '<tr><td>' + int.firstname + ' ' + int.lastname + '</td>' +
+                        content += '<tr><td><a href="#" onclick="' + onClick + '">' + int.firstname + ' ' + int.lastname + '</a></td>' +
                             '<td>' + int.tel + '</td>' +
                             '<td><a href=\"mailto:"' + int.email + '" target="_blank">' + int.email + '</a></td>' +
                             '<td>' + data.object[i].jeh_assigned + '</td>' +
@@ -608,16 +621,20 @@ var DoleticUIModule = new function () {
         };
 
         this.fillChadaffList = function (number) {
+            var click = $('#submenu_hr').attr('onclick');
+            click = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillUserDetails(";
+
             ProjectServicesInterface.getAllChadaffsByProject(number, function (data) {
                 // if no service error
                 if (data.code == 0 && data.object != "[]") {
                     var content = "";
                     var search_content = "";
                     for (var i = 0; i < data.object.length; i++) {
+                        var onClick = click +  + data.object[i].chadaff_id + ");');";
                         var chadaff = window.user_list[data.object[i].chadaff_id];
                         search_content += '<div class="item" data-value="' + chadaff.id + '">'
                             + chadaff.firstname + ' ' + chadaff.lastname + '</div>';
-                        content += '<tr><td>' + chadaff.firstname + ' ' + chadaff.lastname + '</td>' +
+                        content += '<tr><td><a href="#" onclick="' + onClick + '">' + chadaff.firstname + ' ' + chadaff.lastname + '</a></td>' +
                             '<td>' + chadaff.tel + '</td>' +
                             '<td><a href=\"mailto:"' + chadaff.email + '" target="_blank">' + chadaff.email + '</a></td>' +
                             '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeChadaff('

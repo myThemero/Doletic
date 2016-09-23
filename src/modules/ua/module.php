@@ -30,7 +30,7 @@ class UaModule extends AbstractModule
             array(
                 // -- module interfaces
                 'guest' => RightsMap::G_RMASK,
-                'user' => RightsMap::U_RMASK,
+                'ui' => RightsMap::U_RMASK,
                 'admin' => RightsMap::A_RMASK,
                 'superadmin' => RightsMap::SA_RMASK,
                 // -- module services
@@ -142,7 +142,7 @@ class UaModule extends AbstractModule
         // -- add module specific ui
         parent::addUI('Super-Admins', 'superadmin');
         parent::addUI('Admins', 'admin', false);
-        parent::addUI('Membres', 'user', false);
+        parent::addUI('Membres', 'ui', false);
         parent::addUI('Invités', 'guest', false);
     }
 
