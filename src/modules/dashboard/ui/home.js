@@ -162,7 +162,7 @@ var DoleticUIModule = new function () {
                             '<tbody id="project_body">';
                         var click = $('#submenu_ua').attr('onclick');
                         for (var i = 0; i < data.object.length; i++) {
-                            var onClick = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillProjectDetails(" + data.object[i].number + ");');";
+                            var onClick = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillProjectDetails(" + data.object[i].number + ", true);');";
                             content += '<tr>' +
                                 "<td><button onClick=\"" + onClick + "\" class=\"ui teal button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                                 '<td>' + data.object[i].name + '</td>' +

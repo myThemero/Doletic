@@ -48,8 +48,8 @@ class Services
     const PARAM_OLD_PASS = 'oldPass';
     const PARAM_NEW_PASS = 'newPass';
     // --- docs const
-    const TEMPLATES_BASE_PATH  = 'doctemplates/';
-    const TEMPLATES_OUTPUT_PATH  = 'docoutput/';
+    const TEMPLATES_BASE_PATH = 'doctemplates/';
+    const TEMPLATES_OUTPUT_PATH = 'docoutput/';
 
 
     // -- attributes
@@ -70,7 +70,9 @@ class Services
             Services::SERVICE_GET_USER => RightsMap::G_RMASK,
             Services::SERVICE_UPDATE_AVATAR => RightsMap::G_RMASK,
             Services::SERVICE_GET_AVATAR => RightsMap::G_RMASK,
-            Services::SERVICE_REGISTER => RightsMap::G_RMASK
+            Services::SERVICE_REGISTER => RightsMap::G_RMASK,
+            Services::SERVICE_PASSWORD => RightsMap::G_RMASK,
+            Services::SERVICE_EDIT_DOCUMENT => RightsMap::U_RMASK
         ));
     }
 
@@ -364,6 +366,13 @@ class Services
 
     private function __service_edit_document($template, $number, $mainContact, $mainChadaff, $mainInt)
     {
+        if ($this->isNullOrEmpty($mainContact) || $this->isNullOrEmpty($mainChadaff) || $this->isNullOrEmpty($mainInt)) {
+            return new ServiceResponse(
+                "Le chargé d'affaires, le contact ou le consultant sont manquants !",
+                ServiceResponse::ERR_MISSING_PARAMS,
+                "Le chargé d'affaires, le contact ou le consultant sont manquants !"
+            );
+        }
         // Retrieve template path
         $path = $this->kernel->GetDBObject(DocumentDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(
@@ -535,6 +544,10 @@ class Services
             $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
         }
         return $response;
+    }
+
+    private function isNullOrEmpty($test) {
+        return !isset($test) || $test == "";
     }
 
 }

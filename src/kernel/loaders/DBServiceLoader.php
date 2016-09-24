@@ -37,6 +37,7 @@ class DBServiceLoader extends AbstractLoader
         if (array_key_exists($key, $this->services)) {
             $service = $this->services[$key];
         }
+        $service->setCurrentUser($this->kernel()->GetCurrentUser());
         return $service;
     }
 

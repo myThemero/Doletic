@@ -375,7 +375,7 @@ var DoleticUIModule = new function () {
                         }
                         intHtml = k == 0 ? "<i>Non assigné</i>" : intHtml;
                         var auditorClick = click +  + data.object[i].auditor_id + ");');";
-                        var row = "<tr>" +
+                        var row = "<tr" + (data.object[i].critical ? 'class="error"' : '') + ">" +
                             "<td><button id=\"details_" + data.object[i].number + "\" onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui teal button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                             "<td>" + data.object[i].name + "</td>" +
                             "<td>" + data.object[i].field + "</td>" +
@@ -575,7 +575,7 @@ var DoleticUIModule = new function () {
                         content += '<tr><td>' + contact.firstname + ' ' + contact.lastname + '</td>' +
                             '<td>' + contact.phone + '</td>' +
                             '<td><a href=\"mailto:"' + contact.email + '" target="_blank">' + contact.email + '</a></td>' +
-                            '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeContact('
+                            '<td><button data-tooltip="Supprimer" class="ui red icon button" onclick="DoleticUIModule.removeContact('
                             + number + ', ' + contact.id + '); return false;"><i class="remove icon"></i>' +
                             '</button> </td></tr>';
                     }
@@ -607,7 +607,7 @@ var DoleticUIModule = new function () {
                             '<td><a href=\"mailto:"' + int.email + '" target="_blank">' + int.email + '</a></td>' +
                             '<td>' + data.object[i].jeh_assigned + '</td>' +
                             '<td>' + data.object[i].pay + '€</td>' +
-                            '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeInt('
+                            '<td><button data-tooltip="Supprimer" class="ui red icon button" onclick="DoleticUIModule.removeInt('
                             + number + ', ' + int.id + '); return false;"><i class="remove icon"></i>' +
                             '</button> </td></tr>';
                     }
@@ -637,7 +637,7 @@ var DoleticUIModule = new function () {
                         content += '<tr><td><a href="#" onclick="' + onClick + '">' + chadaff.firstname + ' ' + chadaff.lastname + '</a></td>' +
                             '<td>' + chadaff.tel + '</td>' +
                             '<td><a href=\"mailto:"' + chadaff.email + '" target="_blank">' + chadaff.email + '</a></td>' +
-                            '<td><button data-tooltip="Supprimer" class="ui icon button" onclick="DoleticUIModule.removeChadaff('
+                            '<td><button data-tooltip="Supprimer" class="ui red icon button" onclick="DoleticUIModule.removeChadaff('
                             + number + ', ' + chadaff.id + '); return false;"><i class="remove icon"></i>' +
                             '</button> </td></tr>';
                     }
@@ -735,20 +735,20 @@ var DoleticUIModule = new function () {
                             '<td>' + task.end_date + '</td>' +
                             '<td>' + (task.ended ? 'Oui' : 'Non') + '</td>' +
                             '<td>' +
-                            '<button class="ui icon button" onClick="DoleticUIModule.showDeliveryModal(' + task.id + '); return false;">' +
+                            '<button class="ui teal icon button" onClick="DoleticUIModule.showDeliveryModal(' + task.id + '); return false;">' +
                             '<i class="write icon"></i>' +
                             'Gérer' +
                             '</button>' +
                             '</td>' +
                             '<td>' +
                             '<div class="ui icon buttons">' +
-                            '<button class="ui icon button" data-tooltip="Terminer" onClick="DoleticUIModule.' + (task.ended ? 'un' : '') + 'endTask(' + task.id + ', ' + number + '); return false;">' +
+                            '<button class="ui olive icon button" data-tooltip="Terminer" onClick="DoleticUIModule.' + (task.ended ? 'un' : '') + 'endTask(' + task.id + ', ' + number + '); return false;">' +
                             '<i class="' + (task.ended ? 'reply' : 'checkmark') + ' icon"></i>' +
                             '</button>' +
-                            '<button class="ui icon button" data-tooltip="Modifier" onClick="DoleticUIModule.editTask(' + task.id + ', ' + number + '); return false;">' +
+                            '<button class="ui blue icon button" data-tooltip="Modifier" onClick="DoleticUIModule.editTask(' + task.id + ', ' + number + '); return false;">' +
                             '<i class="write icon"></i>' +
                             '</button>' +
-                            '<button class="ui icon button" data-tooltip="Supprimer" onClick="DoleticUIModule.deleteTask(' + task.id + ', ' + number + '); return false;">' +
+                            '<button class="ui red icon button" data-tooltip="Supprimer" onClick="DoleticUIModule.deleteTask(' + task.id + ', ' + number + '); return false;">' +
                             '<i class="remove icon"></i>' +
                             '</button>' +
                             '</div>' +
@@ -774,32 +774,32 @@ var DoleticUIModule = new function () {
                             '<td><button class="ui basic button" data-tooltip="' + delivery.content + '">' + delivery.number + '</button></td>' +
                             '<td>' + (delivery.billed ? 'Oui' : 'Non') + '</td>' +
                             '<td>' + (delivery.delivered ?
-                            '<button class="ui button" data-tooltip="Annuler livraison" ' +
+                            '<button class="ui orange button" data-tooltip="Annuler livraison" ' +
                             'onClick="DoleticUIModule.undeliverDelivery(' + delivery.id + ', ' + delivery.task_id + ');">' +
                             delivery.delivery_date +
                             '</button>' :
-                            '<button class="ui button" data-tooltip="Marquer comme livré" ' +
+                            '<button class="ui olive button" data-tooltip="Marquer comme livré" ' +
                             'onClick="DoleticUIModule.deliverDelivery(' + delivery.id + ', ' + delivery.task_id + ');">' +
                             'Non' +
                             '</button>') +
                             '</td>' +
                             '<td>' + (delivery.paid ?
-                            '<button class="ui button" data-tooltip="Annuler paiement" ' +
+                            '<button class="ui orange button" data-tooltip="Annuler paiement" ' +
                             'onClick="DoleticUIModule.unpayDelivery(' + delivery.id + ', ' + delivery.task_id + ');">' +
                             delivery.payment_date +
                             '</button>' :
-                            '<button class="ui button" data-tooltip="Marquer comme payé" ' +
+                            '<button class="ui olive button" data-tooltip="Marquer comme payé" ' +
                             'onClick="DoleticUIModule.payDelivery(' + delivery.id + ', ' + delivery.task_id + ');">' +
                             'Non' +
                             '</button>') +
                             '</td>' +
                             '<td>' +
-                            '<div class="ui icon buttons">' +
+                            '<div class="ui blue icon buttons">' +
                             '<button class="ui icon button" data-tooltip="Modifier" ' +
                             'onClick="DoleticUIModule.editDelivery(' + delivery.id + ', ' + taskId + '); return false;">' +
                             '<i class="write icon"></i>' +
                             '</button>' +
-                            '<button class="ui icon button" data-tooltip="Supprimer" ' +
+                            '<button class="ui red icon button" data-tooltip="Supprimer" ' +
                             'onClick="DoleticUIModule.deleteDelivery(' + delivery.id + ', ' + taskId + '); return false;">' +
                             '<i class="remove icon"></i>' +
                             '</button>' +
@@ -826,16 +826,16 @@ var DoleticUIModule = new function () {
                             '<td>' + amendment.creation_date + '</td>' +
                             '<td>' + amendment.type + '</td>' +
                             '<td>' +
-                            '<button class="ui button" onClick="DoleticUIModule.showContentModal(\'' + amendment.content + '\'); return false;">Afficher</button>' +
+                            '<button class="ui teal button" onClick="DoleticUIModule.showContentModal(\'' + amendment.content + '\'); return false;">Afficher</button>' +
                             '</td>' +
                             '<td>' + (amendment.attributable ? 'Oui' : 'Non') + '</td>' +
                             '<td>' +
                             '<div class="ui icon buttons">' +
-                            '<button class="ui icon button" data-tooltip="Modifier" ' +
+                            '<button class="ui blue icon button" data-tooltip="Modifier" ' +
                             'onClick="DoleticUIModule.editAmendment(' + amendment.id + ', ' + number + '); return false;">' +
                             '<i class="write icon"></i>' +
                             '</button>' +
-                            '<button class="ui icon button" data-tooltip="Supprimer" ' +
+                            '<button class="ui red icon button" data-tooltip="Supprimer" ' +
                             'onClick="DoleticUIModule.deleteAmendment(' + amendment.id + ', ' + number + '); return false;">' +
                             '<i class="remove icon"></i>' +
                             '</button>' +

@@ -23,6 +23,7 @@ class UaDBService extends AbstractDBService
     const DELETE_DELIVERY_OWN = "deldelown";
     const END_TASK_OWN = "endtaskown";
     const UNEND_TASK_OWN = "unendtaskown";
+    const GET_PROJECT_DOCUMENTS = "projdoc";
     const SWITCH_TASK_NUMBER_OWN = "switchnumown";
 
     public function __construct($module)
@@ -52,6 +53,10 @@ class UaDBService extends AbstractDBService
             $data = $this->__end_task_own($params);
         } else if (!strcmp($action, UaDBService::UNEND_TASK_OWN)) {
             $data = $this->__unend_task_own($params);
+        } else if (!strcmp($action, UaDBService::GET_PROJECT_DOCUMENTS)) {
+            $data = $this->__get_project_documents($params);
+        } else if (!strcmp($action, UaDBService::SWITCH_TASK_NUMBER_OWN)) {
+            $data = $this->__switch_tasks_own($params);
         }
         return $data;
     }
@@ -79,6 +84,28 @@ class UaDBService extends AbstractDBService
         );
 
         return $project;
+    }
+
+    private function __get_project_documents($params)
+    {
+        $documents = parent::getDBObjectResponseData(
+            DocumentDBObject::OBJ_NAME,
+            DocumentServices::GET_PROJECT_DOCUMENTS,
+            $params
+        );
+        return array(
+            $documents,
+            parent::getDBObjectResponseData(
+                ProjectDBObject::OBJ_NAME,
+                ProjectServices::HAS_AUDITOR_RIGHTS,
+                array(ProjectServices::PARAM_NUMBER => $params[DocumentServices::PARAM_PROJECT_NUMBER])
+            ),
+            parent::getDBObjectResponseData(
+                ProjectDBObject::OBJ_NAME,
+                ProjectServices::HAS_RIGHTS,
+                array(ProjectServices::PARAM_NUMBER => $params[DocumentServices::PARAM_PROJECT_NUMBER])
+            )
+        );
     }
 
     private function __insert_task_own($params)
@@ -149,6 +176,14 @@ class UaDBService extends AbstractDBService
         return false;
     }
 
+    private function __switch_tasks_own($params)
+    {
+        if ($this->__user_has_rights_on_task($params[TaskServices::PARAM_ID])) {
+            return parent::getDBObjectResponseData(TaskDBObject::OBJ_NAME, TaskServices::SWITCH_TASKS_NUMBER, $params);
+        }
+        return false;
+    }
+
     // -- special
 
     private function __user_has_rights_on_task($taskId)
@@ -178,7 +213,7 @@ class UaDBService extends AbstractDBService
                 array(
                     TaskServices::PARAM_ID => $deliveryId
                 )
-            )->getTaskId()
+            )[TaskDBObject::COL_TASK_ID]
         );
     }
 

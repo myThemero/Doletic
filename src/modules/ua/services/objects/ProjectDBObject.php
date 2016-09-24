@@ -407,7 +407,6 @@ class Project implements \JsonSerializable
     }
 
 
-
     /**
      * @param array $tasks
      * @return $this
@@ -514,9 +513,11 @@ class ProjectServices extends AbstractObjectServices
     const UPDATE_AMENDMENT = "updam";
     const UPDATE_AMENDMENT_OWN = "updamown";
     const DELETE_AMENDMENT = "delam";
+    const DELETE_AMENDMENT_OWN = "delamown";
     const ARCHIVE = "archive";
     const UNARCHIVE = "unarchive";
     const HAS_RIGHTS = "hasrights";
+    const HAS_AUDITOR_RIGHTS = "hasauditrights";
     // -- services that should not be used except for data migration
     const FORCE_INSERT = "forins";
     const FORCE_POSITION = "forpos";
@@ -760,12 +761,16 @@ class ProjectServices extends AbstractObjectServices
             );
         } else if (!strcmp($action, ProjectServices::DELETE_AMENDMENT)) {
             $data = $this->__delete_amendment($params[ProjectServices::PARAM_ID]);
+        } else if (!strcmp($action, ProjectServices::DELETE_AMENDMENT_OWN)) {
+            $data = $this->__delete_amendment_own($params[ProjectServices::PARAM_ID]);
         } else if (!strcmp($action, ProjectServices::ARCHIVE)) {
             $data = $this->__archive_project($params[ProjectServices::PARAM_NUMBER]);
         } else if (!strcmp($action, ProjectServices::UNARCHIVE)) {
             $data = $this->__unarchive_project($params[ProjectServices::PARAM_NUMBER]);
         } else if (!strcmp($action, ProjectServices::HAS_RIGHTS)) {
             $data = $this->__user_has_rights($params[ProjectServices::PARAM_NUMBER]);
+        } else if (!strcmp($action, ProjectServices::HAS_AUDITOR_RIGHTS)) {
+            $data = $this->__user_has_auditor_rights($params[ProjectServices::PARAM_NUMBER]);
         }
         return $data;
     }
@@ -1211,7 +1216,8 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE]
+                    )
                 );
             }
         }
@@ -1263,7 +1269,8 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE]
+                    )
                 );
             }
         }
@@ -1315,7 +1322,8 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE]
+                    )
                 );
             }
         }
@@ -1358,7 +1366,8 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE]
+                    )
                 );
             }
         }
@@ -1401,7 +1410,8 @@ class ProjectServices extends AbstractObjectServices
                         $row[ProjectDBObject::COL_DISABLED_SINCE],
                         $row[ProjectDBObject::COL_DISABLED_UNTIL],
                         $row[ProjectDBObject::COL_ARCHIVED],
-                        $row[ProjectDBObject::COL_ARCHIVED_SINCE])
+                        $row[ProjectDBObject::COL_ARCHIVED_SINCE]
+                    )
                 );
             }
         }
@@ -2141,6 +2151,15 @@ class ProjectServices extends AbstractObjectServices
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
+    private function __delete_amendment_own($id)
+    {
+        $amendment = $this->__get_amendment_by_id($id);
+        if ($this->__user_has_rights($amendment[ProjectDBObject::COL_PROJECT_NUMBER])) {
+            return $this->__delete_amendment($id);
+        }
+        return false;
+    }
+
     private function __archive_project($number)
     {
         $project = $this->__get_project_by_number($number);
@@ -2201,7 +2220,16 @@ class ProjectServices extends AbstractObjectServices
 
     private function __user_has_rights($projectNumber)
     {
-        return in_array($this->getCurrentUser()->getId(), $this->__get_all_chadaffs_by_project($projectNumber));
+        $ids = array();
+        foreach ($this->__get_all_chadaffs_by_project($projectNumber) as $chadaff) {
+            array_push($ids, $chadaff[ProjectDBObject::COL_CHADAFF_ID]);
+        }
+        return in_array($this->getCurrentUser()->GetId(), $ids);
+    }
+
+    private function __user_has_auditor_rights($projectNumber)
+    {
+        return $this->__get_project_by_number($projectNumber)->GetAuditorId() == $this->getCurrentUser()->GetId();
     }
 
     // -- special
@@ -2460,7 +2488,7 @@ class ProjectDBObject extends AbstractDBObject
         $dol_amendment
             ->AddColumn(ProjectDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
             ->AddColumn(ProjectDBObject::COL_PROJECT_NUMBER, DBTable::DT_INT, 11, false, "")
-            ->AddColumn(ProjectDBObject::COL_CONTENT, DBTable::DT_VARCHAR, 255, false, "")
+            ->AddColumn(ProjectDBObject::COL_CONTENT, DBTable::DT_TEXT, -1, false, "")
             ->AddColumn(ProjectDBObject::COL_ATTRIBUTABLE, DBTable::DT_INT, 1, false, "")
             ->AddColumn(ProjectDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false, "")
             ->AddForeignKey(ProjectDBObject::TABL_AMENDMENT . '_fk1', ProjectDBObject::COL_PROJECT_NUMBER, ProjectDBObject::TABL_PROJECT, ProjectDBObject::COL_NUMBER, DBTable::DT_CASCADE, DBTable::DT_CASCADE);

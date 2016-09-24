@@ -16,6 +16,7 @@ var UaDBServicesInterface = new function () {
             DELETE_DELIVERY_OWN: "deldelown",
             END_TASK_OWN: "endtaskown",
             UNEND_TASK_OWN: "unendtaskown",
+            GET_PROJECT_DOCUMENTS: "projdoc",
             SWITCH_TASK_NUMBER_OWN: "switchnumown"
         }
     };
@@ -29,12 +30,20 @@ var UaDBServicesInterface = new function () {
             successHandler);
     };
 
-    this.insertTaskOwn = function (projectNumber, number, name, description, jehAmount, jehCost, startDate, endDate, successHandler) {
+    this.getProjectDocuments = function (projectNumber, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.GET_PROJECT_DOCUMENTS,
+            {
+                projectNumber: projectNumber
+            },
+            successHandler);
+    };
+
+    this.insertTaskOwn = function (projectNumber, name, description, jehAmount, jehCost, startDate, endDate, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT_TASK_OWN,
             {
                 projectNumber: projectNumber,
-                number: number,
                 name: name,
                 description: description,
                 jehAmount: jehAmount,
@@ -195,6 +204,7 @@ var ProjectServicesInterface = new function () {
             UPDATE_AMENDMENT: "updam",
             UPDATE_AMENDMENT_OWN: "updamown",
             DELETE_AMENDMENT: "delam",
+            DELETE_AMENDMENT_OWN: "delamown",
             ARCHIVE: "archive",
             UNARCHIVE: "unarchive"
         }
@@ -725,6 +735,15 @@ var ProjectServicesInterface = new function () {
     this.deleteAmendment = function (id, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.DELETE_AMENDMENT,
+            {
+                id: id
+            },
+            successHandler);
+    };
+
+    this.deleteOwnAmendment = function (id, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.DELETE_AMENDMENT_OWN,
             {
                 id: id
             },
