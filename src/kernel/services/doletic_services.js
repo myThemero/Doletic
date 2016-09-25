@@ -214,15 +214,24 @@ var DoleticServicesInterface = new function () {
     this.availableModuleLinks = function (successHandler) {
         this.callService('service', 'uilinks', {}, successHandler);
     };
-    /**
-     *
-     */
-    this.registerUser = function (firstname, lastname, email, successHandler) {
-        this.callService('service', 'register',
+
+    this.registerUser = function (gender, firstname, lastname, birthdate, tel, email, address, city, postalCode, country, schoolYear, insaDept, position, ag, successHandler) {
+        return this.callService('service', 'register',
             {
+                gender: gender,
                 firstname: firstname,
                 lastname: lastname,
-                email: email
+                birthdate: birthdate,
+                tel: tel,
+                email: email,
+                address: address,
+                city: city,
+                postalCode: postalCode,
+                country: country,
+                schoolYear: schoolYear,
+                insaDept: insaDept,
+                position: position,
+                ag: ag
             },
             successHandler);
     };

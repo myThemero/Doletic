@@ -955,26 +955,23 @@ var DoleticUIModule = new function () {
         // ADD OTHER TESTS
         if (DoleticUIModule.checkNewUserForm()) {
             // generate credentials according to db
-            DoleticServicesInterface.registerUser($('#firstname').val().trim(), $('#lastname').val().trim(), $('#mail').val(), function (data) {
-                console.log(data.object);
-                // Insert user data in db
-                UserDataServicesInterface.insert(data.object,
-                    $('#gender_search').dropdown('get value'),
-                    $('#firstname').val(),
-                    $('#lastname').val(),
-                    $('#birthdate').val(),
-                    $('#tel').val(),
-                    $('#mail').val(),
-                    $('#address').val(),
-                    $('#city').val(),
-                    $('#postalcode').val(),
-                    $('#country_search').dropdown('get value'),
-                    $('#schoolyear_search').dropdown('get value'),
-                    $('#dept_search').dropdown('get value'),
-                    $('#position_search').dropdown('get value'),
-                    $('#ag_search').dropdown('get value'),
-                    DoleticUIModule.addUserHandler);
-            });
+            DoleticServicesInterface.registerUser(
+                $('#gender_search').dropdown('get value'),
+                $('#firstname').val(),
+                $('#lastname').val(),
+                $('#birthdate').val(),
+                $('#tel').val(),
+                $('#mail').val(),
+                $('#address').val(),
+                $('#city').val(),
+                $('#postalcode').val(),
+                $('#country_search').dropdown('get value'),
+                $('#schoolyear_search').dropdown('get value'),
+                $('#dept_search').dropdown('get value'),
+                $('#position_search').dropdown('get value'),
+                $('#ag_search').dropdown('get value'),
+                DoleticUIModule.addUserHandler
+            );
         }
 
     };

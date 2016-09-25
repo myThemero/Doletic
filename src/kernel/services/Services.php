@@ -107,9 +107,20 @@ class Services
                     );
                 } else if ($post[Services::PPARAM_ACT] === Services::SERVICE_REGISTER) {
                     $response = $this->__service_register_user(
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_GENDER],
                         $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_FIRSTNAME],
                         $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_LASTNAME],
-                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_EMAIL]
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_BIRTHDATE],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_TEL],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_EMAIL],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_ADDRESS],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_CITY],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_POSTAL_CODE],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_COUNTRY],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_SCHOOL_YEAR],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_INSA_DEPT],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_POSITION],
+                        $post[Services::PPARAM_PARAMS][UserDataServices::PARAM_AG]
                     );
                 } else if ($post[Services::PPARAM_ACT] === Services::SERVICE_PASSWORD) {
                     $response = $this->__service_update_user_password(
@@ -234,32 +245,77 @@ class Services
         return new ServiceResponse($this->kernel->GetCurrentUser());
     }
 
-    private function __service_register_user($firstname, $lastname, $mail)
+    private function __service_register_user($gender, $firstname, $lastname, $birthdate,
+                                             $tel, $mail, $address, $city, $postalCode, $country, $schoolYear,
+                                             $insaDept, $position, $ag)
     {
-        $credentials = $this->kernel
-            ->GetDBObject(UserDBObject::OBJ_NAME)
-            ->GetServices($this->kernel->GetCurrentUser())
-            ->GetResponseData(UserServices::GENERATE_CREDENTIALS, array(
-                UserDataServices::PARAM_FIRSTNAME => $firstname,
-                UserDataServices::PARAM_LASTNAME => $lastname
-            ));
-        $user = $this->kernel
-            ->GetDBObject(UserDBObject::OBJ_NAME)
-            ->GetServices($this->kernel->GetCurrentUser())
-            ->GetResponseData(UserServices::INSERT, $credentials);
-        if ($user != 0) {
-            $this->kernel->SendMail(array($mail), new WelcomeMail(), array(
-                'PRENOM' => $firstname,
-                'LOGIN' => $credentials[UserServices::PARAM_UNAME],
-                'PASSWORD' => $credentials[UserServices::PARAM_PASS],
-                'URL' => 'http://doleticdev.etic-insa.com'
-            ));
+        if ($this->__check_rights_module(
+            $this->kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetModule(),
+            UserDBObject::OBJ_NAME . ':' . UserServices::INSERT)
+        ) {
+            $credentials = $this->kernel
+                ->GetDBObject(UserDBObject::OBJ_NAME)
+                ->GetServices($this->kernel->GetCurrentUser())
+                ->GetResponseData(UserServices::GENERATE_CREDENTIALS, array(
+                    UserDataServices::PARAM_FIRSTNAME => $firstname,
+                    UserDataServices::PARAM_LASTNAME => $lastname
+                ));
+            $user = $this->kernel
+                ->GetDBObject(UserDBObject::OBJ_NAME)
+                ->GetServices($this->kernel->GetCurrentUser())
+                ->GetResponseData(UserServices::INSERT, $credentials);
+            if ($user != 0) {
+
+                if ($this->__check_rights_module(
+                    $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetModule(),
+                    UserDataDBObject::OBJ_NAME . ':' . UserDataServices::INSERT)
+                ) {
+                    $udataParams = [
+                        UserDataServices::PARAM_USER_ID => $user,
+                        UserDataServices::PARAM_GENDER => $gender,
+                        UserDataServices::PARAM_FIRSTNAME => $firstname,
+                        UserDataServices::PARAM_LASTNAME => $lastname,
+                        UserDataServices::PARAM_BIRTHDATE => $birthdate,
+                        UserDataServices::PARAM_TEL => $tel,
+                        UserDataServices::PARAM_EMAIL => $mail,
+                        UserDataServices::PARAM_ADDRESS => $address,
+                        UserDataServices::PARAM_CITY => $city,
+                        UserDataServices::PARAM_POSTAL_CODE => $postalCode,
+                        UserDataServices::PARAM_COUNTRY => $country,
+                        UserDataServices::PARAM_SCHOOL_YEAR => $schoolYear,
+                        UserDataServices::PARAM_INSA_DEPT => $insaDept,
+                        UserDataServices::PARAM_POSITION => $position,
+                        UserDataServices::PARAM_AG => $ag,
+                    ];
+                    if (!$this->kernel
+                        ->GetDBObject(UserDataDBObject::OBJ_NAME)
+                        ->GetServices($this->kernel->GetCurrentUser())
+                        ->GetResponseData(UserDataServices::INSERT, $udataParams)
+                    ) {
+                        $this->kernel
+                            ->GetDBObject(UserDBObject::OBJ_NAME)
+                            ->GetServices($this->kernel->GetCurrentUser())
+                            ->GetResponseData(UserServices::DELETE, [
+                                UserServices::PARAM_ID => $user
+                            ]);
+                    } else {
+                        $this->kernel->SendMail(array($mail), new WelcomeMail(), array(
+                            'PRENOM' => $firstname,
+                            'LOGIN' => $credentials[UserServices::PARAM_UNAME],
+                            'PASSWORD' => $credentials[UserServices::PARAM_PASS],
+                            'URL' => 'http://doleticdev.etic-insa.com'
+                        ));
+                    }
+                }
+            }
+            unset($pass);
+            return new ServiceResponse($user);
         }
-        unset($pass);
-        return new ServiceResponse($user);
+        return new ServiceResponse("", ServiceResponse::ERR_INSUFFICIENT_RIGHTS, "Insufficient rights to access this service.");
     }
 
-    private function __service_update_user_password($uname, $oldPass, $newPass)
+    private
+    function __service_update_user_password($uname, $oldPass, $newPass)
     {
         $user = $this->kernel->getCurrentUser();
         $usercheck = $this->kernel
@@ -292,7 +348,8 @@ class Services
         return new ServiceResponse("", ServiceResponse::ERR_SERVICE_FAILED);
     }
 
-    private function __service_update_user_avatar($post)
+    private
+    function __service_update_user_avatar($post)
     {
         // -- initialize response var
         $response = null;
@@ -330,7 +387,8 @@ class Services
         return $response;
     }
 
-    private function __service_get_avatar()
+    private
+    function __service_get_avatar()
     {
         // initialize null response
         $response = null;
@@ -364,7 +422,8 @@ class Services
         return $response;
     }
 
-    private function __service_edit_document($template, $number, $mainContact, $mainChadaff, $mainInt)
+    private
+    function __service_edit_document($template, $number, $mainContact, $mainChadaff, $mainInt)
     {
         if ($this->isNullOrEmpty($mainContact) || $this->isNullOrEmpty($mainChadaff) || $this->isNullOrEmpty($mainInt)) {
             return new ServiceResponse(
@@ -405,7 +464,8 @@ class Services
      * @param $mainInt
      * @return array
      */
-    private function __get_project_params($number, $mainContact, $mainChadaff, $mainInt)
+    private
+    function __get_project_params($number, $mainContact, $mainChadaff, $mainInt)
     {
         $project = $this->kernel->GetDBService(UaDBService::SERV_NAME)->GetResponseData(
             UaDBService::GET_FULL_PROJECT_BY_NUMBER,
@@ -493,7 +553,8 @@ class Services
         ];
     }
 
-    private function __service_publish($post)
+    private
+    function __service_publish($post)
     {
         // initialize null response
         $response = null;
@@ -546,7 +607,9 @@ class Services
         return $response;
     }
 
-    private function isNullOrEmpty($test) {
+    private
+    function isNullOrEmpty($test)
+    {
         return !isset($test) || $test == "";
     }
 
