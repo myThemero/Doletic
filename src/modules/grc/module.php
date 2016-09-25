@@ -31,6 +31,7 @@ class GRCModule extends AbstractModule
                 // ---- contact object services
                 ContactDBObject::OBJ_NAME . ':' . ContactServices::GET_CONTACT_BY_ID => RightsMap::U_RMASK,    // only super admin
                 ContactDBObject::OBJ_NAME . ':' . ContactServices::GET_ALL_CONTACTS => RightsMap::U_RMASK,    // everyone
+                ContactDBObject::OBJ_NAME . ':' . ContactServices::GET_ALL_CONTACT_TYPES => RightsMap::U_RMASK,    // everyone
                 ContactDBObject::OBJ_NAME . ':' . ContactServices::INSERT => RightsMap::A_RMASK,  // everyone
                 ContactDBObject::OBJ_NAME . ':' . ContactServices::UPDATE => RightsMap::A_RMASK,    // everyone
                 ContactDBObject::OBJ_NAME . ':' . ContactServices::DELETE => RightsMap::SA_RMASK, // only super admin
@@ -38,6 +39,7 @@ class GRCModule extends AbstractModule
                 // ---- contact object services
                 FirmDBObject::OBJ_NAME . ':' . FirmServices::GET_FIRM_BY_ID => RightsMap::U_RMASK,    // only super admin
                 FirmDBObject::OBJ_NAME . ':' . FirmServices::GET_ALL_FIRMS => RightsMap::U_RMASK,    // everyone
+                FirmDBObject::OBJ_NAME . ':' . FirmServices::GET_ALL_FIRM_TYPES => RightsMap::U_RMASK,    // everyone
                 FirmDBObject::OBJ_NAME . ':' . FirmServices::INSERT => RightsMap::A_RMASK,  // everyone
                 FirmDBObject::OBJ_NAME . ':' . FirmServices::UPDATE => RightsMap::A_RMASK,    // everyone
                 FirmDBObject::OBJ_NAME . ':' . FirmServices::DELETE => RightsMap::SA_RMASK, // only super admin
