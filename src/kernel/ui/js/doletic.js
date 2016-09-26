@@ -263,6 +263,12 @@ var DoleticMasterInterface = new function () {
     this.showError = function (title, msg) {
         this.showMessage('negative', title, msg);
     };
+    this.showFormError = function (title, msg, selector) {
+        $(selector).prepend('<div class="ui negative message dol_message">' +
+            '<i class="close icon" onClick="$(this).parent().remove();"></i>' +
+            '<div class="header">' + title + '</div>' + msg +
+            '</div>');
+    };
     /**
      *  Fills submodules submenu
      */

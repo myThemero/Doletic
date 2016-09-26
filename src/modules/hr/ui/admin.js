@@ -589,6 +589,7 @@ var DoleticUIModule = new function () {
     };
 
     this.clearNewTeamForm = function () {
+        $('#team_form .message').remove();
         $('#team_form')[0].reset();
         $('#team_form h4').html("Ajout d'une équipe");
         $('#team_form .dropdown').dropdown('restore defaults');
@@ -719,7 +720,7 @@ var DoleticUIModule = new function () {
         }
         if (!valid) {
             $('#team_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#team_form');
         }
         return valid;
     };

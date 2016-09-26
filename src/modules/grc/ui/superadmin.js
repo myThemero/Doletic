@@ -95,6 +95,7 @@ var DoleticUIModule = new function () {
      *    Clear all the field from the Contact Form
      */
     this.clearNewContactForm = function () {
+        $('#contact_form .message').remove();
         $('#contact_form')[0].reset();
         $('#contact_form .dropdown').dropdown('restore defaults');
         $('#contact_form h4').html("Ajout d'un contact");
@@ -228,6 +229,7 @@ var DoleticUIModule = new function () {
      *    Clear all the field from the Firm Form
      */
     this.clearNewFirmForm = function () {
+        $('#company_form .message').remove();
         $('#company_form')[0].reset();
         $('#company_form .dropdown').dropdown('restore defaults');
         $('#company_form h4').html("Ajout d'une société");
@@ -582,6 +584,7 @@ var DoleticUIModule = new function () {
     };
 
     this.checkNewContactForm = function () {
+        $('#contact_form .message').remove();
         $('#contact_form .field').removeClass('error');
         var valid = true;
         if(!DoleticMasterInterface.checkName($('#firstname').val())) {
@@ -614,12 +617,13 @@ var DoleticUIModule = new function () {
         }
         if (!valid) {
             $('#contact_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#contact_form');
         }
         return valid;
     };
 
     this.checkNewFirmForm = function () {
+        $('#company_form .message').remove();
         $('#company_form .field').removeClass('error');
         var valid = true;
         if(!DoleticMasterInterface.checkName($('#name').val())) {
@@ -648,7 +652,7 @@ var DoleticUIModule = new function () {
         }
         if (!valid) {
             $('#company_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#company_form');
         }
         return valid;
     };

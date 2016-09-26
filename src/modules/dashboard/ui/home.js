@@ -220,6 +220,8 @@ var DoleticUIModule = new function () {
     };
 
     this.showEditProfileForm = function() {
+        $('#profile_form .field').removeClass('error');
+        $('#profile_form .message').remove();
         $('#profile_form_modal').modal('show');
     };
 
@@ -298,6 +300,7 @@ var DoleticUIModule = new function () {
     };
 
     this.checkProfileForm = function () {
+        $('#profile_form .message').remove();
         $('#profile_form .field').removeClass("error");
         var valid = true;
         var errorString = "";
@@ -351,7 +354,7 @@ var DoleticUIModule = new function () {
         }
         if (!valid) {
             $('#profile_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#profile_form');
         }
         return valid;
     };

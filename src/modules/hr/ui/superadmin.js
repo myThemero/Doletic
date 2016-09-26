@@ -911,6 +911,7 @@ var DoleticUIModule = new function () {
     };
 
     this.clearNewUserForm = function () {
+        $('#user_form .message').remove();
         $('#user_form')[0].reset();
         $('#user_form h4').html("Ajout d'un membre");
         $('#firstname').prop('readonly', false);
@@ -923,6 +924,7 @@ var DoleticUIModule = new function () {
     };
 
     this.clearNewTeamForm = function () {
+        $('#team_form .message').remove();
         $('#team_form')[0].reset();
         $('#team_form h4').html("Ajout d'une équipe");
         $('#team_form .dropdown').dropdown('restore defaults');
@@ -931,6 +933,7 @@ var DoleticUIModule = new function () {
     };
 
     this.clearNewAdmMembershipForm = function (userId) {
+        $('#admm_form .message').remove();
         $('#admm_form')[0].reset();
         $('#admm_form h4').html("Ajout d'une adhésion");
         $('#admm_form .dropdown').dropdown('restore defaults');
@@ -939,6 +942,7 @@ var DoleticUIModule = new function () {
     };
 
     this.clearNewIntMembershipForm = function (userId) {
+        $('#intm_form .message').remove();
         $('#intm_form')[0].reset();
         $('#intm_form h4').html("Ajout d'une adhésion");
         $('#intm_form .dropdown').dropdown('restore defaults');
@@ -947,6 +951,8 @@ var DoleticUIModule = new function () {
     };
 
     this.clearNewAGRForm = function () {
+        $('#agr_form .message').remove();
+        $('#agr_form .field').removeClass('error');
         $('#agr_date').val("");
         $('#agr_pr').val("");
     };
@@ -1434,6 +1440,7 @@ var DoleticUIModule = new function () {
 
     this.checkNewUserForm = function () {
         $('#user_form .field').removeClass("error");
+        $('#user_form .message').remove();
         var valid = true;
         var errorString = "";
         if (!DoleticMasterInterface.checkName($('#firstname').val())) {
@@ -1490,13 +1497,14 @@ var DoleticUIModule = new function () {
         }
         if (!valid) {
             $('#user_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#user_form');
         }
         return valid;
     };
 
     this.checkNewTeamForm = function () {
         $('#team_form .field').removeClass("error");
+        $('#team_form .message').remove();
         var valid = true;
         if ($('#tname').val() == "") {
             $('#tname_field').addClass("error");
@@ -1512,13 +1520,14 @@ var DoleticUIModule = new function () {
         }
         if (!valid) {
             $('#team_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#team_form');
         }
         return valid;
     };
 
     this.checkNewAdmMembershipForm = function () {
         $('#admm_form .field').removeClass("error");
+        $('#admm_form .message').remove();
         var valid = true;
         if (!DoleticMasterInterface.checkDate($('#sdatea').val())) {
             $('#sdatea_field').addClass("error");
@@ -1530,13 +1539,14 @@ var DoleticUIModule = new function () {
         }
         if (!valid) {
             $('#admm_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#admm_form');
         }
         return valid;
     };
 
     this.checkNewIntMembershipForm = function () {
         $('#intm_form .field').removeClass("error");
+        $('#intm_form .message').remove();
         var valid = true;
         if (!DoleticMasterInterface.checkDate($('#sdatei').val())) {
             $('#sdatei_field').addClass("error");
@@ -1548,12 +1558,14 @@ var DoleticUIModule = new function () {
         }
         if (!valid) {
             $('#intm_form').transition('shake');
-            DoleticMasterInterface.showError("Erreur !", "Merci de corriger les champs affichés en rouge.");
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#intm_form');
         }
         return valid;
     };
 
     this.checkNewAGRForm = function () {
+        $('#agr_form .message').remove();
+        $('#agr_form .message').removeClass('error');
         var valid = true;
         if (!DoleticMasterInterface.checkDate($('#agr_date').val())) {
             $('#agr_date').addClass("error");
@@ -1562,6 +1574,10 @@ var DoleticUIModule = new function () {
         if (!$('#agr_pr').val() < 0) {
             $('#agr_pr').addClass("error");
             valid = false;
+        }
+        if(!valid) {
+            $('#agr_form').transition('shake');
+            DoleticMasterInterface.showFormError("Erreur !", "Merci de corriger les champs affichés en rouge.", '#agr_form');
         }
         return valid;
     };

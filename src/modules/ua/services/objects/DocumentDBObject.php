@@ -524,7 +524,7 @@ class DocumentServices extends AbstractObjectServices
     {
         $templates = array(
             ['Proposition Commerciale', 'Propale.docx', null],
-            ['Convention Entreprise', 'CC.docx', null],
+            ['Convention Entreprise', 'Convention Entreprise.docx', null],
             ['Récapitulatif de Mission', 'RM.docx', null]
         );
         // --- retrieve SQL query
