@@ -422,8 +422,7 @@ class Services
         return $response;
     }
 
-    private
-    function __service_edit_document($template, $number, $mainContact, $mainChadaff, $mainInt)
+    private function __service_edit_document($template, $number, $mainContact, $mainChadaff, $mainInt)
     {
         if ($this->isNullOrEmpty($mainContact) || $this->isNullOrEmpty($mainChadaff) || $this->isNullOrEmpty($mainInt)) {
             return new ServiceResponse(

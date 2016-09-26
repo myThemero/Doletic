@@ -251,7 +251,7 @@ var DoleticServicesInterface = new function () {
      *
      */
     this.editDocument = function (template, project, contact, chadaff, int, successHandler) {
-        this.callService('service', 'editdoc',
+        return this.callService('service', 'editdoc',
             {
                 template: template,
                 project: project,

@@ -862,7 +862,17 @@ var DoleticUIModule = new function () {
                 number,
                 $('#contact_search_doc').dropdown('get value'),
                 $('#chadaff_search_doc').dropdown('get value'),
-                $('#int_search_doc').dropdown('get value')
+                $('#int_search_doc').dropdown('get value'),
+                function(data) {
+                    if(data.code == 0) {
+                        console.log(data);
+                        $('body').append('<a id="tmp_link" href="' + data.object + '" download style="display: none;"></a> ');
+                        $('#tmp_link')[0].click();
+                        $('#tmp_link').remove();
+                    } else {
+                        DoleticMasterInterface.showError('Erreur', data.error);
+                    }
+                }
             );
         };
 
