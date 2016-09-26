@@ -86,10 +86,28 @@ class DataMigrationFunction extends AbstractFunction
         }
         parent::info("done !");
 
+        parent::info("-- filling memberships --");
+        foreach ($data['admm'] as $admm) {
+            $kernel->GetDBObject(AdmMembershipDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+                ->GetResponseData(AdmMembershipServices::INSERT, $admm);
+        }
+        foreach ($data['intm'] as $intm) {
+            $kernel->GetDBObject(IntMembershipDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+                ->GetResponseData(IntMembershipServices::INSERT, $intm);
+        }
+        parent::info("done !");
+
         parent::info("-- filling user --");
         foreach ($data['user'] as $user) {
             $kernel->GetDBObject(UserDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
                 ->GetResponseData(UserServices::FORCE_INSERT, $user);
+        }
+        parent::info("done !");
+
+        parent::info("-- filling firm --");
+        foreach ($data['firm'] as $firm) {
+            $kernel->GetDBObject(FirmDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+                ->GetResponseData(FirmServices::INSERT, $firm);
         }
         parent::info("done !");
 

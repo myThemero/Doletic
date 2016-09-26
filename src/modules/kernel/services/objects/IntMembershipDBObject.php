@@ -444,12 +444,12 @@ class IntMembershipDBObject extends AbstractDBObject
             ->AddColumn(IntMembershipDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
             ->AddColumn(IntMembershipDBObject::COL_USER_ID, DBTable::DT_INT, 11, false)
             ->AddColumn(IntMembershipDBObject::COL_START_DATE, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(IntMembershipDBObject::COL_FEE, DBTable::DT_INT, 1, false)// boolean
-            ->AddColumn(IntMembershipDBObject::COL_FORM, DBTable::DT_INT, 1, false)// boolean
-            ->AddColumn(IntMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false)// boolean
-            ->AddColumn(IntMembershipDBObject::COL_RIB, DBTable::DT_INT, 1, false)// boolean
-            ->AddColumn(IntMembershipDBObject::COL_IDENTITY, DBTable::DT_INT, 1, false)// boolean
-            ->AddColumn(IntMembershipDBObject::COL_SECU_NUMBER, DBTable::DT_VARCHAR, 13, false)// boolean
+            ->AddColumn(IntMembershipDBObject::COL_FEE, DBTable::DT_INT, 1, false, 0)// boolean
+            ->AddColumn(IntMembershipDBObject::COL_FORM, DBTable::DT_INT, 1, false, 0)// boolean
+            ->AddColumn(IntMembershipDBObject::COL_CERTIF, DBTable::DT_INT, 1, false, 0)// boolean
+            ->AddColumn(IntMembershipDBObject::COL_RIB, DBTable::DT_INT, 1, false, 0)// boolean
+            ->AddColumn(IntMembershipDBObject::COL_IDENTITY, DBTable::DT_INT, 1, false, 0)// boolean
+            ->AddColumn(IntMembershipDBObject::COL_SECU_NUMBER, DBTable::DT_VARCHAR, 20, true, NULL)// boolean
             ->AddForeignKey(IntMembershipDBObject::TABL_INT_MEMBERSHIP . '_fk1', IntMembershipDBObject::COL_USER_ID, UserDataDBObject::TABL_USER_DATA, UserDataDBObject::COL_USER_ID, DBTable::DT_CASCADE, DBTable::DT_CASCADE);
 
         // -- add tables
