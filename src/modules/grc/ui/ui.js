@@ -207,7 +207,7 @@ var DoleticUIModule = new function () {
 			      					</h4></td> \
 			      					<td>" + data.object[i].category + "</td> \
 			      					<td>" + data.object[i].phone + "</td> \
-			      					<td>" + window.firm_list[data.object[i].firm_id].name + "</td> \
+			      					<td>" + (typeof window.firm_list[data.object[i].firm_id] !== 'undefined' ? window.firm_list[data.object[i].firm_id].name : '<i>Aucune</i>') + "</td> \
 			    				    <td> \
 			    					<i>Aucune</i>\
 			    				</td> \

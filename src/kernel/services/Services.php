@@ -45,6 +45,7 @@ class Services
     const PARAM_CONTACT = 'contact';
     const PARAM_TEMPLATE = 'template';
     const PARAM_PRESIDENT = 'president';
+    const PARAM_TRESORIER = 'tresorier';
     const PARAM_OLD_PASS = 'oldPass';
     const PARAM_NEW_PASS = 'newPass';
     // --- docs const
@@ -387,8 +388,7 @@ class Services
         return $response;
     }
 
-    private
-    function __service_get_avatar()
+    private function __service_get_avatar()
     {
         // initialize null response
         $response = null;
@@ -442,16 +442,16 @@ class Services
         $params = $this->__get_project_params($number, $mainContact, $mainChadaff, $mainInt);
 
         // Build dictionary from params
-        $dict = new DocumentDictionary(DocumentDictionary::DOC_PROPALE, $params);
+        $dict = new DocumentDictionary($template, $params);
 
         // Replace in template
         $phpword = new PHPWord();
-        $template = $phpword->loadTemplate(Services::TEMPLATES_BASE_PATH . $path);
+        $templateDoc = $phpword->loadTemplate(Services::TEMPLATES_BASE_PATH . $path);
         foreach ($dict->getDict() as $key => $value) {
-            $template->setValue($key, $value);
+            $templateDoc->setValue($key, $value);
         }
         $name = Services::TEMPLATES_OUTPUT_PATH . $params[Services::PARAM_PROJECT]->GetNumber() . $path;
-        $template->save($name);
+        $templateDoc->save($name);
 
         return new ServiceResponse($name);
     }
@@ -463,8 +463,7 @@ class Services
      * @param $mainInt
      * @return array
      */
-    private
-    function __get_project_params($number, $mainContact, $mainChadaff, $mainInt)
+    private function __get_project_params($number, $mainContact, $mainChadaff, $mainInt)
     {
         $project = $this->kernel->GetDBService(UaDBService::SERV_NAME)->GetResponseData(
             UaDBService::GET_FULL_PROJECT_BY_NUMBER,
@@ -473,8 +472,21 @@ class Services
         // Replace Chadaff id by infos
         $mainChadaff = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(UserDataServices::PARAM_ID => $mainChadaff));
-        $mainInt = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-            ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(UserDataServices::PARAM_ID => $mainInt));
+        $mainInt = [
+            'int' => $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(UserDataServices::PARAM_ID => $mainInt)),
+            'details' => $this->kernel->GetDBObject(ProjectDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                ->GetResponseData(ProjectServices::GET_INT_BY_PROJECT_AND_USER, array(
+                        ProjectServices::PARAM_PROJECT_NUMBER => $number,
+                        ProjectServices::PARAM_INT_ID => $mainInt
+                    )
+                ),
+            'membership' => $this->kernel->GetDBObject(IntMembershipDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+                ->GetResponseData(IntMembershipServices::GET_USER_INT_MEMBERSHIPS, array(
+                        IntMembershipServices::PARAM_USER => $mainInt
+                    )
+                ),
+        ];
         $mainContact = $this->kernel->GetDBObject(ContactDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(ContactServices::GET_CONTACT_BY_ID, array(ContactServices::PARAM_ID => $mainContact));
         /*$chadaffs = $project->getChadaffs();
@@ -537,18 +549,35 @@ class Services
                 )
         );
 
-        /*$president = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+        $president = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(
                 UserDataServices::GET_ALL_BY_POS,
                 array(UserDataServices::PARAM_POSITION => 'Président')
-            )[0];*/
+            );
+        if (isset($president) && !empty($president)) {
+            $president = $president[0];
+        } else {
+            $president = null;
+        }
+
+        $treso = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
+            ->GetResponseData(
+                UserDataServices::GET_ALL_BY_POS,
+                array(UserDataServices::PARAM_POSITION => 'Trésorier')
+            );
+        if (isset($treso) && !empty($treso)) {
+            $treso = $treso[0];
+        } else {
+            $treso = null;
+        }
 
         return [
             Services::PARAM_PROJECT => $project,
             Services::PARAM_CHADAFF => $mainChadaff,
             Services::PARAM_CONTACT => $mainContact,
             Services::PARAM_INT => $mainInt,
-//            Services::PARAM_PRESIDENT => $president
+            Services::PARAM_PRESIDENT => $president,
+            Services::PARAM_TRESORIER => $treso
         ];
     }
 

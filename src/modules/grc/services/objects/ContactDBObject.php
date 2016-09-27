@@ -21,13 +21,19 @@ class Contact implements \JsonSerializable
     private $firm_id = null;
     private $email = null;
     private $phone = null;
+    private $cellphone = null;
     private $category = null;
+    private $role = null;
+    private $notes = null;
+    private $creation_date = null;
+    private $created_by = null;
     private $last_update = null;
 
     /**
      * @brief Constructs a contact
      */
-    public function __construct($id, $gender, $firstname, $lastname, $firmId, $email, $phone, $category, $lastUpdate)
+    public function __construct($id, $gender, $firstname, $lastname, $firmId, $email, $phone, $cellphone, $category,
+                                $role, $notes, $creationDate, $createdBy, $lastUpdate)
     {
         $this->id = intval($id);
         $this->gender = $gender;
@@ -36,7 +42,12 @@ class Contact implements \JsonSerializable
         $this->firm_id = intval($firmId);
         $this->email = $email;
         $this->phone = $phone;
+        $this->cellphone = $cellphone;
         $this->category = $category;
+        $this->role = $role;
+        $this->notes = $notes;
+        $this->creation_date = $creationDate;
+        $this->created_by = intval($createdBy);
         $this->last_update = $lastUpdate;
     }
 
@@ -50,7 +61,12 @@ class Contact implements \JsonSerializable
             ContactDBObject::COL_FIRM_ID => $this->firm_id,
             ContactDBObject::COL_EMAIL => $this->email,
             ContactDBObject::COL_PHONE => $this->phone,
+            ContactDBObject::COL_CELLPHONE => $this->cellphone,
             ContactDBObject::COL_CATEGORY => $this->category,
+            ContactDBObject::COL_ROLE => $this->role,
+            ContactDBObject::COL_NOTES => $this->notes,
+            ContactDBObject::COL_CREATION_DATE => $this->creation_date,
+            ContactDBObject::COL_CREATED_BY => $this->created_by,
             ContactDBObject::COL_LAST_UPDATE => $this->last_update
         ];
     }
@@ -127,6 +143,56 @@ class Contact implements \JsonSerializable
     {
         return $this->last_update;
     }
+
+    /**
+     * @return null
+     */
+    public function getCellphone()
+    {
+        return $this->cellphone;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @return null
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * @return null
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCreationDate()
+    {
+        return $this->creation_date;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreatedBy()
+    {
+        return $this->created_by;
+    }
+
+
 }
 
 /**
@@ -144,7 +210,12 @@ class ContactServices extends AbstractObjectServices
     const PARAM_FIRM_ID = "firmId";
     const PARAM_EMAIL = "email";
     const PARAM_PHONE = "phone";
+    const PARAM_CELLPHONE = "cellphone";
     const PARAM_CATEGORY = "category";
+    const PARAM_ROLE = "role";
+    const PARAM_NOTES = "notes";
+    const PARAM_CREATION_DATE = "creationDate";
+    const PARAM_CREATED_BY = "createdBy";
     const PARAM_LAST_UPDATE = "lastUpdate";
 
     // --- actions
@@ -154,6 +225,8 @@ class ContactServices extends AbstractObjectServices
     const INSERT = "insert";
     const UPDATE = "update";
     const DELETE = "delete";
+
+    const FORCE_INSERT = "forins";
 
     // -- functions
 
@@ -180,7 +253,26 @@ class ContactServices extends AbstractObjectServices
                 $params[ContactServices::PARAM_FIRM_ID],
                 $params[ContactServices::PARAM_EMAIL],
                 $params[ContactServices::PARAM_PHONE],
-                $params[ContactServices::PARAM_CATEGORY]);
+                $params[ContactServices::PARAM_CELLPHONE],
+                $params[ContactServices::PARAM_CATEGORY],
+                $params[ContactServices::PARAM_ROLE],
+                $params[ContactServices::PARAM_NOTES]);
+        } else if (!strcmp($action, ContactServices::FORCE_INSERT)) {
+            $data = $this->__force_insert_contact(
+                $params[ContactServices::PARAM_ID],
+                $params[ContactServices::PARAM_GENDER],
+                $params[ContactServices::PARAM_FIRSTNAME],
+                $params[ContactServices::PARAM_LASTNAME],
+                $params[ContactServices::PARAM_FIRM_ID],
+                $params[ContactServices::PARAM_EMAIL],
+                $params[ContactServices::PARAM_PHONE],
+                $params[ContactServices::PARAM_CELLPHONE],
+                $params[ContactServices::PARAM_CATEGORY],
+                $params[ContactServices::PARAM_ROLE],
+                $params[ContactServices::PARAM_NOTES],
+                $params[ContactServices::PARAM_CREATION_DATE],
+                $params[ContactServices::PARAM_CREATED_BY],
+                $params[ContactServices::PARAM_LAST_UPDATE]);
         } else if (!strcmp($action, ContactServices::UPDATE)) {
             $data = $this->__update_contact(
                 $params[ContactServices::PARAM_ID],
@@ -190,7 +282,10 @@ class ContactServices extends AbstractObjectServices
                 $params[ContactServices::PARAM_FIRM_ID],
                 $params[ContactServices::PARAM_EMAIL],
                 $params[ContactServices::PARAM_PHONE],
-                $params[ContactServices::PARAM_CATEGORY]);
+                $params[ContactServices::PARAM_CELLPHONE],
+                $params[ContactServices::PARAM_CATEGORY],
+                $params[ContactServices::PARAM_ROLE],
+                $params[ContactServices::PARAM_NOTES]);
         } else if (!strcmp($action, ContactServices::DELETE)) {
             $data = $this->__delete_contact($params[ContactServices::PARAM_ID]);
         }
@@ -222,7 +317,12 @@ class ContactServices extends AbstractObjectServices
                     $row[ContactDBObject::COL_FIRM_ID],
                     $row[ContactDBObject::COL_EMAIL],
                     $row[ContactDBObject::COL_PHONE],
+                    $row[ContactDBObject::COL_CELLPHONE],
                     $row[ContactDBObject::COL_CATEGORY],
+                    $row[ContactDBObject::COL_ROLE],
+                    $row[ContactDBObject::COL_NOTES],
+                    $row[ContactDBObject::COL_CREATION_DATE],
+                    $row[ContactDBObject::COL_CREATED_BY],
                     $row[ContactDBObject::COL_LAST_UPDATE]
                 );
             }
@@ -248,7 +348,12 @@ class ContactServices extends AbstractObjectServices
                     $row[ContactDBObject::COL_FIRM_ID],
                     $row[ContactDBObject::COL_EMAIL],
                     $row[ContactDBObject::COL_PHONE],
+                    $row[ContactDBObject::COL_CELLPHONE],
                     $row[ContactDBObject::COL_CATEGORY],
+                    $row[ContactDBObject::COL_ROLE],
+                    $row[ContactDBObject::COL_NOTES],
+                    $row[ContactDBObject::COL_CREATION_DATE],
+                    $row[ContactDBObject::COL_CREATED_BY],
                     $row[ContactDBObject::COL_LAST_UPDATE]
                 ));
             }
@@ -274,7 +379,8 @@ class ContactServices extends AbstractObjectServices
 
     // --- modify
 
-    private function __insert_contact($gender, $firstname, $lastname, $firmId, $email, $phone, $category)
+    private function __insert_contact($gender, $firstname, $lastname, $firmId, $email, $phone, $cellphone, $category,
+                                      $role, $notes)
     {
         // create sql params
         $sql_params = array(
@@ -285,15 +391,21 @@ class ContactServices extends AbstractObjectServices
             ":" . ContactDBObject::COL_FIRM_ID => $firmId,
             ":" . ContactDBObject::COL_EMAIL => $email,
             ":" . ContactDBObject::COL_PHONE => $phone,
+            ":" . ContactDBObject::COL_CELLPHONE => $cellphone,
             ":" . ContactDBObject::COL_CATEGORY => $category,
-            ":" . ContactDBObject::COL_LAST_UPDATE => date('Y-m-d')
+            ":" . ContactDBObject::COL_ROLE => $role,
+            ":" . ContactDBObject::COL_NOTES => $notes,
+            ":" . ContactDBObject::COL_CREATION_DATE => date('Y-m-d H:i:s'),
+            ":" . ContactDBObject::COL_CREATED_BY => $this->getCurrentUser()->GetId(),
+            ":" . ContactDBObject::COL_LAST_UPDATE => date('Y-m-d H:i:s')
         );
         // create sql request
         $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT)->GetINSERTQuery();
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
-    private function __update_contact($id, $gender, $firstname, $lastname, $firmId, $email, $phone, $category)
+    private function __force_insert_contact($id, $gender, $firstname, $lastname, $firmId, $email, $phone, $cellphone,
+                                            $category, $role, $notes, $creationDate, $createdBy, $lastUpdate)
     {
         // create sql params
         $sql_params = array(
@@ -304,8 +416,36 @@ class ContactServices extends AbstractObjectServices
             ":" . ContactDBObject::COL_FIRM_ID => $firmId,
             ":" . ContactDBObject::COL_EMAIL => $email,
             ":" . ContactDBObject::COL_PHONE => $phone,
+            ":" . ContactDBObject::COL_CELLPHONE => $cellphone,
             ":" . ContactDBObject::COL_CATEGORY => $category,
-            ":" . ContactDBObject::COL_LAST_UPDATE => date('Y-m-d')
+            ":" . ContactDBObject::COL_ROLE => $role,
+            ":" . ContactDBObject::COL_NOTES => $notes,
+            ":" . ContactDBObject::COL_CREATION_DATE => $creationDate,
+            ":" . ContactDBObject::COL_CREATED_BY => $createdBy,
+            ":" . ContactDBObject::COL_LAST_UPDATE => $lastUpdate
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT)->GetINSERTQuery();
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
+    private function __update_contact($id, $gender, $firstname, $lastname, $firmId, $email, $phone, $cellphone,
+                                      $category, $role, $notes)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . ContactDBObject::COL_ID => $id,
+            ":" . ContactDBObject::COL_GENDER => $gender,
+            ":" . ContactDBObject::COL_FIRSTNAME => $firstname,
+            ":" . ContactDBObject::COL_LASTNAME => $lastname,
+            ":" . ContactDBObject::COL_FIRM_ID => $firmId,
+            ":" . ContactDBObject::COL_EMAIL => $email,
+            ":" . ContactDBObject::COL_PHONE => $phone,
+            ":" . ContactDBObject::COL_CELLPHONE => $cellphone,
+            ":" . ContactDBObject::COL_CATEGORY => $category,
+            ":" . ContactDBObject::COL_ROLE => $role,
+            ":" . ContactDBObject::COL_NOTES => $notes,
+            ":" . ContactDBObject::COL_LAST_UPDATE => date('Y-m-d H:i:s')
         );
         // sql request
         $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT)->GetUPDATEQuery();
@@ -379,7 +519,12 @@ class ContactDBObject extends AbstractDBObject
     const COL_FIRM_ID = "firm_id";
     const COL_EMAIL = "email";
     const COL_PHONE = "phone";
+    const COL_CELLPHONE = "cellphone";
     const COL_CATEGORY = "category";
+    const COL_ROLE = "role";
+    const COL_NOTES = "notes";
+    const COL_CREATION_DATE = "creation_date";
+    const COL_CREATED_BY = "created_by";
     const COL_LAST_UPDATE = "last_update";
     // -- attributes
 
@@ -399,13 +544,18 @@ class ContactDBObject extends AbstractDBObject
         $dol_contact = new DBTable(ContactDBObject::TABL_CONTACT);
         $dol_contact
             ->AddColumn(ContactDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
-            ->AddColumn(ContactDBObject::COL_GENDER, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(ContactDBObject::COL_GENDER, DBTable::DT_VARCHAR, 255, true, NULL)
             ->AddColumn(ContactDBObject::COL_FIRSTNAME, DBTable::DT_VARCHAR, 255, false)
             ->AddColumn(ContactDBObject::COL_LASTNAME, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(ContactDBObject::COL_FIRM_ID, DBTable::DT_INT, 11, false)
-            ->AddColumn(ContactDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, false)
-            ->AddColumn(ContactDBObject::COL_PHONE, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(ContactDBObject::COL_FIRM_ID, DBTable::DT_INT, 11, true, NULL)
+            ->AddColumn(ContactDBObject::COL_EMAIL, DBTable::DT_VARCHAR, 255, true, NULL)
+            ->AddColumn(ContactDBObject::COL_PHONE, DBTable::DT_VARCHAR, 255, true, NULL)
+            ->AddColumn(ContactDBObject::COL_CELLPHONE, DBTable::DT_VARCHAR, 255, true, NULL)
             ->AddColumn(ContactDBObject::COL_CATEGORY, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(ContactDBObject::COL_ROLE, DBTable::DT_VARCHAR, 255, true, NULL)
+            ->AddColumn(ContactDBObject::COL_NOTES, DBTable::DT_TEXT, -1, true, NULL)
+            ->AddColumn(ContactDBObject::COL_CREATION_DATE, DBTable::DT_VARCHAR, 255, false)
+            ->AddColumn(ContactDBObject::COL_CREATED_BY, DBTable::DT_INT, 11, true, NULL)
             ->AddColumn(ContactDBObject::COL_LAST_UPDATE, DBTable::DT_VARCHAR, 255, false)
             ->AddForeignKey(
                 ContactDBObject::TABL_CONTACT . '_fk1',
@@ -424,6 +574,12 @@ class ContactDBObject extends AbstractDBObject
                 ContactDBObject::COL_GENDER,
                 UserDataDBObject::TABL_COM_GENDER,
                 UserDataDBObject::COL_LABEL, DBTable::DT_CASCADE, DBTable::DT_CASCADE
+            )
+            ->AddForeignKey(
+                ContactDBObject::TABL_CONTACT . '_fk4',
+                ContactDBObject::COL_CREATED_BY,
+                UserDataDBObject::TABL_USER_DATA,
+                UserDataDBObject::COL_USER_ID, DBTable::DT_SET_NULL, DBTable::DT_CASCADE
             );
 
         // -- add tables

@@ -107,7 +107,14 @@ class DataMigrationFunction extends AbstractFunction
         parent::info("-- filling firm --");
         foreach ($data['firm'] as $firm) {
             $kernel->GetDBObject(FirmDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
-                ->GetResponseData(FirmServices::INSERT, $firm);
+                ->GetResponseData(FirmServices::FORCE_INSERT, $firm);
+        }
+        parent::info("done !");
+
+        parent::info("-- filling contact --");
+        foreach ($data['contact'] as $contact) {
+            $kernel->GetDBObject(ContactDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
+                ->GetResponseData(ContactServices::FORCE_INSERT, $contact);
         }
         parent::info("done !");
 
@@ -196,7 +203,7 @@ class FakeDataFunction extends AbstractFunction
                 UserDataServices::PARAM_USER_ID => 1,
                 UserDataServices::PARAM_GENDER => "M.",
                 UserDataServices::PARAM_FIRSTNAME => "SuperAdmin",
-                UserDataServices::PARAM_LASTNAME => "Doe",
+                UserDataServices::PARAM_LASTNAME => "DOE",
                 UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
                 UserDataServices::PARAM_TEL => "0600000000",
                 UserDataServices::PARAM_EMAIL => "super-admin.doe@gmail.com",
@@ -215,7 +222,7 @@ class FakeDataFunction extends AbstractFunction
                 UserDataServices::PARAM_USER_ID => 2,
                 UserDataServices::PARAM_GENDER => "M.",
                 UserDataServices::PARAM_FIRSTNAME => "Admin",
-                UserDataServices::PARAM_LASTNAME => "Doe",
+                UserDataServices::PARAM_LASTNAME => "DOE",
                 UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
                 UserDataServices::PARAM_TEL => "0600000000",
                 UserDataServices::PARAM_EMAIL => "admin.doe@gmail.com",
@@ -235,7 +242,7 @@ class FakeDataFunction extends AbstractFunction
                 UserDataServices::PARAM_USER_ID => 3,
                 UserDataServices::PARAM_GENDER => "M.",
                 UserDataServices::PARAM_FIRSTNAME => "User",
-                UserDataServices::PARAM_LASTNAME => "Doe",
+                UserDataServices::PARAM_LASTNAME => "DOE",
                 UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
                 UserDataServices::PARAM_TEL => "0600000000",
                 UserDataServices::PARAM_EMAIL => "user.doe@gmail.com",
@@ -254,7 +261,7 @@ class FakeDataFunction extends AbstractFunction
                 UserDataServices::PARAM_USER_ID => 4,
                 UserDataServices::PARAM_GENDER => "M.",
                 UserDataServices::PARAM_FIRSTNAME => "Guest",
-                UserDataServices::PARAM_LASTNAME => "Doe",
+                UserDataServices::PARAM_LASTNAME => "DOE",
                 UserDataServices::PARAM_BIRTHDATE => "1994-02-13",
                 UserDataServices::PARAM_TEL => "0600000000",
                 UserDataServices::PARAM_EMAIL => "guest.doe@gmail.com",
@@ -265,7 +272,7 @@ class FakeDataFunction extends AbstractFunction
                 UserDataServices::PARAM_SCHOOL_YEAR => 3,
                 UserDataServices::PARAM_INSA_DEPT => "GI",
                 UserDataServices::PARAM_AG => "2015-10-04",
-                UserDataServices::PARAM_POSITION => "Trésorier"
+                UserDataServices::PARAM_POSITION => "Président"
             ));
 
         $kernel->GetDBObject(IntMembershipDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
@@ -357,7 +364,7 @@ class FakeDataFunction extends AbstractFunction
             ->GetResponseData(ContactServices::INSERT, array(
                 ContactServices::PARAM_GENDER => "M.",
                 ContactServices::PARAM_FIRSTNAME => "Client",
-                ContactServices::PARAM_LASTNAME => "Doe",
+                ContactServices::PARAM_LASTNAME => "DOE",
                 ContactServices::PARAM_FIRM_ID => 1,
                 ContactServices::PARAM_EMAIL => "client.doe@gmail.com",
                 ContactServices::PARAM_PHONE => "0700000000",

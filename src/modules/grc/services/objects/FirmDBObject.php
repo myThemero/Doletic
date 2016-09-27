@@ -152,6 +152,8 @@ class FirmServices extends AbstractObjectServices
     const UPDATE = "update";
     const DELETE = "delete";
 
+    const FORCE_INSERT = "forins";
+
     // -- functions
 
     // --- construct
@@ -171,6 +173,16 @@ class FirmServices extends AbstractObjectServices
             $data = $this->__get_all_firm_types();
         } else if (!strcmp($action, FirmServices::INSERT)) {
             $data = $this->__insert_firm(
+                $params[FirmServices::PARAM_SIRET],
+                $params[FirmServices::PARAM_NAME],
+                $params[FirmServices::PARAM_ADDRESS],
+                $params[FirmServices::PARAM_POSTAL_CODE],
+                $params[FirmServices::PARAM_CITY],
+                $params[FirmServices::PARAM_COUNTRY],
+                $params[FirmServices::PARAM_TYPE]);
+        } else if (!strcmp($action, FirmServices::FORCE_INSERT)) {
+            $data = $this->__force_insert_firm(
+                $params[FirmServices::PARAM_ID],
                 $params[FirmServices::PARAM_SIRET],
                 $params[FirmServices::PARAM_NAME],
                 $params[FirmServices::PARAM_ADDRESS],
@@ -289,6 +301,26 @@ class FirmServices extends AbstractObjectServices
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
+    private function __force_insert_firm($id, $siret, $name, $address, $postalCode, $city, $country, $type)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . FirmDBObject::COL_ID => $id,
+            ":" . FirmDBObject::COL_SIRET => $siret,
+            ":" . FirmDBObject::COL_NAME => $name,
+            ":" . FirmDBObject::COL_ADDRESS => $address,
+            ":" . FirmDBObject::COL_POSTAL_CODE => $postalCode,
+            ":" . FirmDBObject::COL_CITY => $city,
+            ":" . FirmDBObject::COL_COUNTRY => $country,
+            ":" . FirmDBObject::COL_TYPE => $type,
+            ":" . FirmDBObject::COL_LAST_CONTACT => null
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(FirmDBObject::TABL_FIRM)->GetINSERTQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
     private function __update_firm($id, $siret, $name, $address, $postalCode, $city, $country, $type)
     {
         // create sql params
@@ -334,9 +366,15 @@ class FirmServices extends AbstractObjectServices
     {
         // --- retrieve SQL query
         $types = [
-            'SA',
-            'SARL',
-            'Particulier'
+            'Start-up',
+            'Grand groupe',
+            'PME/PMI',
+            'TPE',
+            'Administration',
+            'Grossiste',
+            'Revendeur',
+            'Particulier',
+            'Autres'
         ];
         $sql = parent::getDBObject()->GetTable(FirmDBObject::TABL_FIRM_TYPE)->GetINSERTQuery();
         foreach ($types as $type) {

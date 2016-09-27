@@ -74,6 +74,9 @@ var DoleticUIModule = new function () {
      *    Load the HTML code of the Contacts Tab
      */
     this.getContactsTab = function () {
+        $('#contact_form_modal').remove();
+        $('#user_form_modal').remove();
+        $('#profile_form_modal').remove();
         $('#contactsTab').load("../modules/grc/ui/templates/contactsTab.html");
     };
 
@@ -81,6 +84,7 @@ var DoleticUIModule = new function () {
      *    Load the HTML code of the Companies Tab
      */
     this.getCompaniesTab = function () {
+        $('#company_form_modal').remove();
         $('#companiesTab').load("../modules/grc/ui/templates/companiesTab.html");
     };
 
@@ -116,7 +120,10 @@ var DoleticUIModule = new function () {
                 $('#firm_search').dropdown('get value'),
                 $('#mail').val(),
                 $('#tel').val(),
+                $('#cell').val(),
                 $('#contact_type_search').dropdown('get value'),
+                $('#role').val(),
+                $('#notes').val(),
                 function(data) {
                     DoleticUIModule.addContactHandler(data);
                 });
@@ -152,7 +159,10 @@ var DoleticUIModule = new function () {
                 $('#firstname').val(data.object.firstname);
                 $('#lastname').val(data.object.lastname);
                 $('#tel').val(data.object.phone);
+                $('#cell').val(data.object.cellphone);
                 $('#mail').val(data.object.email);
+                $('#role').val(data.object.role);
+                $('#notes').val(data.object.notes);
                 $('#gender_search').dropdown("set selected", data.object.gender);
                 $('#contact_type_search').dropdown("set selected", data.object.category);
                 $('#firm_search').dropdown("set selected", data.object.firm_id);
@@ -199,7 +209,10 @@ var DoleticUIModule = new function () {
                 $('#firm_search').dropdown('get value'),
                 $('#mail').val(),
                 $('#tel').val(),
+                $('#cell').val(),
                 $('#contact_type_search').dropdown('get value'),
+                $('#role').val(),
+                $('#notes').val(),
                 function(data) {
                     DoleticUIModule.editContactHandler(data);
                 });
@@ -425,7 +438,9 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.select_filter,
                     DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.select_filter,
+                    DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.reset_filter
                 ];
                 for (var i = 0; i < data.object.length; i++) {
@@ -437,7 +452,9 @@ var DoleticUIModule = new function () {
 			      					</h4></td> \
 			      					<td>" + data.object[i].category + "</td> \
 			      					<td>" + data.object[i].phone + "</td> \
-			      					<td>" + window.firm_list[data.object[i].firm_id].name + "</td> \
+			      					<td>" + data.object[i].cellphone + "</td> \
+			      					<td>" + (typeof window.firm_list[data.object[i].firm_id] !== 'undefined' ? window.firm_list[data.object[i].firm_id].name : '<i>Aucune</i>') + "</td> \
+			    				    <td>" + data.object[i].role + "</td> \
 			    				    <td> \
 			    					<div class=\"ui icon buttons\"> \
 				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \

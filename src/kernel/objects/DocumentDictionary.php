@@ -6,22 +6,22 @@ class DocumentDictionary
 {
 
     // -- consts
-    const DOC_PROPALE = "propale";
-    const DOC_CC = "cc";
-    const DOC_RM = "rm";
-    const DOC_PVL = "pvl";
-    const DOC_PVFR = "pvfr";
-    const DOC_PVF = "pvf";
-    const DOC_AVENANTETUDIANT = "avenantetudiant";
-    const DOC_AVENANTENTREPRISE = "avenantentreprise";
-    const DOC_LETTREENVOIAVENANT = "lettreenvoiavenant";
-    const DOC_LETTREENVOIPROPALE = "lettreenvoipropale";
+    const DOC_PROPALE = 1;
+    const DOC_CC = 2;
+    const DOC_RM = 3;
+    const DOC_PVF = 4;
+    const DOC_PVL = 5;
+    const DOC_AVENANTENTREPRISE = 6;
+    const DOC_AVENANTETUDIANT = 7;
+    const DOC_PVFR = 8;
+    const DOC_CONFIDENTIALITEENTREPRISE = 9;
+    const DOC_CONFIDENTIALITEETUDIANT = 10;
+    const DOC_DEMANDEBV = 11;
+    const DOC_DEMANDEFACTURE = 12;
+    const DOC_DEVIS = 13;
+    const DOC_LETTREENVOIAVENANT = 14;
+    const DOC_LETTREENVOIPROPALE = 15;
     const DOC_LETTREENVOIDEVIS = "lettreenvoidevis";
-    const DOC_DEVIS = "devis";
-    const DOC_CONFIDENTIALITEETUDIANT = "confidentialiteetudiant";
-    const DOC_CONFIDENTIALITEENTREPRISE = "confidentialiteentreprise";
-    const DOC_DEMANDEFACTURE = "demandefacture";
-    const DOC_DEMANDEBV = "demandebv";
 
 
     // -- attributes
@@ -94,6 +94,15 @@ class DocumentDictionary
         $project = $params[Services::PARAM_PROJECT];
         $int = $params[Services::PARAM_INT];
         $contact = $params[Services::PARAM_CONTACT];
+        $president = $params[Services::PARAM_PRESIDENT];
+
+        $totalJeh = 0;
+        foreach($project->GetTasks() as $task) {
+            $totalJeh += $task->GetJehAmount();
+        }
+
+        $signDate = $project->GetSignDate();
+        $endDate = $project->GetEndDate();
 
         $this->dict = [
             'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
@@ -101,287 +110,422 @@ class DocumentDictionary
             'DESCRIPTIONETUDE' => $project->GetName(),
             'CIVILITEUSER' => $chadaff->GetGender(), //Monsieur ou madame
             'NOMUSER' => $chadaff->GetFirstName() . ' ' . $chadaff->GetLastName(), //Nom du chadaff
-            'CIVILITEINTERVENANT' => $int->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT' => $int->GetFirstName() . ' ' . $int->GetLastName(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
-            'CIVILITEINTERVENANT1' => $int->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT1' => $int->GetFirstName() . ' ' . $int->GetLastName(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
+            'NOMINTERVENANT' => $int['int']->GetFirstName() . ' ' . $int['int']->GetLastName(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'CIVILITEINTERVENANT1' => $int['int']->GetGender(), //Monsieur ou madame
+            'NOMINTERVENANT1' => $int['int']->GetFirstName() . ' ' . $int['int']->GetLastName(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
             'CIVILITECORRESPONDANTQUALITE' => $project->GetAuditorId()->GetGender(), //Monsieur ou madame
             'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . $project->GetAuditorId()->GetLastName(), // Nom du corres qualité
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
             'NOMCONTACT' => $contact->GetLastName(), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
-            'FCTCONTACT' => 'test', //Fonction du contact
-            'CIVPRESIDENT' => 'test', //Monsieur ou madame
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DUREEETUDE' => 'test', //Durée de l'étude
-            'NBJOURSJEH' => 'test', //Nombre total de JEHs
-            'TAUXTVA' => 'test', //taux de tva
+            'FCTCONTACT' => 'FONCTION CONTACT', //Fonction du contact
+            'CIVPREZ' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
+            'CIVPRESIDENT' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastname() : 'NOM PRESIDENT', //Nom du président
+            'DUREEETUDE' => isset($signDate) && isset($endDate) ? $this->datediffInWeeks($signDate, $endDate) : 'X', //Durée de l'étude
+            'NBJOURSJEH' => $totalJeh, //Nombre total de JEHs
+            'TAUXTVA' => '20', //taux de tva
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
 
     private function __make_conventionclient_dict($params)
     {
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+        $president = $params[Services::PARAM_PRESIDENT];
+
         $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'ADRESSEENTREPRISE' => 'test', //adresse de l'etreprise
-            'CPENTREPRISE' => 'test', //code postale de l'entreprise
-            'VILLEENTREPRISE' => 'test', //ville de l'entreprise
-            'SIRETENTREPRISE' => 'test', //siret de l'entreprise
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'ADRESSEENTREPRISE' => $project->GetFirmId()->GetAddress(), //adresse de l'etreprise
+            'CPENTREPRISE' => $project->GetFirmId()->GetPostalCode(), //code postale de l'entreprise
+            'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
+            'SIRETENTREPRISE' => $project->GetFirmId()->GetSiret(), //siret de l'entreprise
             'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
             'DESCRIPTIONETUDE' => $params[Services::PARAM_PROJECT]->GetName(),
-            'CIVILITECORRESPONDANTQUALITE' => 'test', //Monsieur ou madame 
-            'NOMCORRESPONDANTQUALITE' => 'test', // Nom du corres qualité
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'PRENOMCONTACT' => 'test', //Prenom du client
-            'FCTCONTACT' => 'test', //Fonction du contact
-            'CIVPRESIDENT' => 'test', //Monsieur ou madame
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
+            'CIVILITECORRESPONDANTQUALITE' => $project->GetAuditorId()->GetGender(), //Monsieur ou madame
+            'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . $project->GetAuditorId()->GetLastName(), // Nom du corres qualité
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
+            'FCTCONTACT' => 'FONCTION CONTACT', //Fonction du contact
+            'CIVPRESIDENT' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
 
     private function __make_recapitulatifmission_dict($params)
     {
+        $project = $params[Services::PARAM_PROJECT];
+        $int = $params[Services::PARAM_INT];
+        $president = $params[Services::PARAM_PRESIDENT];
+
+        $membership = $int['membership'];
+        if(isset($membership) && !empty($membership)) {
+            $membership = $membership[0];
+        } else {
+            $membership = null;
+        }
+
+        $total_int = $int['details'][ProjectDBObject::COL_JEH_ASSIGNED] * $int['details'][ProjectDBObject::COL_PAY];
+        $fmt = new NumberFormatter('fr', NumberFormatter::SPELLOUT);
+        $total_int_l = $fmt->format($total_int);
+
         $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'NUMINTER' => 'test', //Numero de l'intervenant
-            'CIVILITEINTERVENANT' => 'test', //Monsieur ou madame 
-            'NOMINTERVENANT' => 'test', //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
-            'PRENOMINTERVENANT' => 'test', //Prénom de l'intervenant
-            'ADRESSEINTERVENANT' => 'test', //Monsieur ou madame 
-            'CPINTERVENANT' => 'test', //Code postal de l'intervenant
-            'VILLEINTERVENANT' => 'test', //Ville intervenant
-            'SECUINTERVENANT' => 'test', //n° sécu intervenant
-            'NBJOURSINTER' => 'test', //nb de jeh de l'intervenant
-            'TOTALINTERVENANT' => 'test', //total d'indemnisation brut
-            'TOTALINTERVENANT_L' => 'test', //total d'indemnisation brut en lettre
-            'TARIFINTERV' => 'test', //nb de euros par jeh
-            'TOTALINTERVENANTTTC' => 'test', //total TTC
-            'TOTALINTERVENANTTTC_L' => 'test', //total TTC en lettre
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'TITREETUDE' => $project->GetNumber(),
+            'NUMINTER' => $int['details'][ProjectDBObject::COL_NUMBER], //Numero de l'intervenant
+            'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
+            'NOMINTERVENANT' => $int['int']->GetLastname(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'PRENOMINTERVENANT' => $int['int']->GetFirstname(), //Prénom de l'intervenant
+            'ADRESSEINTERVENANT' => $int['int']->GetAddress(), //Monsieur ou madame
+            'CPINTERVENANT' => $int['int']->GetPostalCode(), //Code postal de l'intervenant
+            'VILLEINTERVENANT' => $int['int']->GetCity(), //Ville intervenant
+            'SECUINTERVENANT' => isset($membership) ? $membership->GetSecuNumber() : 'NUMERO SECU', //n° sécu intervenant
+            'NBJOURSINTER' => $int['details'][ProjectDBObject::COL_JEH_ASSIGNED], //nb de jeh de l'intervenant
+            'TOTALINTERVENANT_L' => $total_int, //total d'indemnisation brut
+            'TOTALINTERVENANT' => $total_int_l, //total d'indemnisation brut en lettre
+            'TARIFINTERV' => $int['details'][ProjectDBObject::COL_PAY], //nb de euros par jeh
+            'TOTALINTERVENANTTTC_L' => ($total_int - 10), //total TTC
+            'TOTALINTERVENANTTTC' => $fmt->format($total_int - 10), //total TTC en lettre
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastName() : 'NOM PRESIDENT',
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
 
     private function __make_procesverballivraison_dict($params)
     {
-        $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'DESCRIPTIONETUDE' => $params[Services::PARAM_PROJECT]->GetName(),
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'PRENOMCONTACT' => 'test', //Prenom du client
-            'FCTCONTACT' => 'test', //Fonction du contact
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
-            'DATESIGCV' => 'test', //date signature de la cc
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+        $president = $params[Services::PARAM_PRESIDENT];
 
+        $signDate = $project->GetSignDate();
+
+        $this->dict = [
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'TITREETUDE' => $project->GetNumber(),
+            'DESCRIPTIONETUDE' => $project->GetName(),
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
+            'FCTCONTACT' => 'FONCTION CONTACT', //Fonction du contact
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
+            'DATESIGCV' => isset($signDate) ? date('d/m/Y', strtotime($signDate)) : 'JJ/MM/AAAA' //date signature de la cc
         ];
     }
 
     private function __make_procesverbalfinrecette_dict($params)
     {
-        $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'DESCRIPTIONETUDE' => $params[Services::PARAM_PROJECT]->GetName(),
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'PRENOMCONTACT' => 'test', //Prenom du client
-            'FCTCONTACT' => 'test', //Fonction du contact
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
-            'DATESIGCV' => 'test', //date signature de la cc
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+        $president = $params[Services::PARAM_PRESIDENT];
 
+        $signDate = $project->GetSignDate();
+
+        $this->dict = [
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'TITREETUDE' => $project->GetNumber(),
+            'DESCRIPTIONETUDE' => $project->GetName(),
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
+            'FCTCONTACT' => 'FONCTION CONTACT', //Fonction du contact
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
+            'DATESIGCV' => isset($signDate) ? date('d/m/Y', strtotime($signDate)) : 'JJ/MM/AAAA' //date signature de la cc
         ];
     }
 
     private function __make_procesverbalfin_dict($params)
     {
-        $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'DESCRIPTIONETUDE' => $params[Services::PARAM_PROJECT]->GetName(),
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'PRENOMCONTACT' => 'test', //Prenom du client
-            'FCTCONTACT' => 'test', //Fonction du contact
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
-            'DATESIGCV' => 'test', //date signature de la cc
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+        $president = $params[Services::PARAM_PRESIDENT];
 
+        $signDate = $project->GetSignDate();
+
+        $this->dict = [
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'TITREETUDE' => $project->GetNumber(),
+            'DESCRIPTIONETUDE' => $project->GetName(),
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
+            'FCTCONTACT' => 'FONCTION CONTACT', //Fonction du contact
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
+            'DATESIGCV' => isset($signDate) ? date('d/m/Y', strtotime($signDate)) : 'JJ/MM/AAAA' //date signature de la cc
         ];
     }
 
 
     private function __make_avenantetudiant_dict($params)
     {
+        $project = $params[Services::PARAM_PROJECT];
+        $int = $params[Services::PARAM_INT];
+        $president = $params[Services::PARAM_PRESIDENT];
+        $membership = $int['membership'];
+        if(isset($membership) && !empty($membership)) {
+            $membership = $membership[0];
+        } else {
+            $membership = null;
+        }
+
         $this->dict = [
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'NUMINTER' => 'test', //Numero de l'intervenant
-            'CIVILITEINTERVENANT' => 'test', //Monsieur ou madame 
-            'NOMINTERVENANT' => 'test', //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
-            'PRENOMINTERVENANT' => 'test', //Prénom de l'intervenant
-            'ADRESSEINTERVENANT' => 'test', //Monsieur ou madame 
-            'CPINTERVENANT' => 'test', //Code postal de l'intervenant
-            'VILLEINTERVENANT' => 'test', //Ville intervenant
-            'SECUINTERVENANT' => 'test', //n° sécu intervenant
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
+            'TITREETUDE' => $project->GetNumber(),
+            'NUMINTERVENANT' => $int['details'][ProjectDBObject::COL_NUMBER], //Numero de l'intervenant
+            'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
+            'NOMINTERVENANT' => $int['int']->GetLastName(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'PRENOMINTERVENANT' => $int['int']->GetFirstName(), //Prénom de l'intervenant
+            'ADRESSEINTERVENANT' => $int['int']->GetAddress(), //Monsieur ou madame
+            'CPINTERVENANT' => $int['int']->GetPostalCode(), //Code postal de l'intervenant
+            'VILLEINTERVENANT' => $int['int']->GetCity(), //Ville intervenant
+            'SECUINTERVENANT' => isset($membership) ? $membership->GetSecuNumber() : 'NUMERO SECU', //n° sécu intervenant
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
 
     private function __make_avenantentreprise_dict($params)
     {
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+        $president = $params[Services::PARAM_PRESIDENT];
+
         $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'ADRESSEENTREPRISE' => 'test', //adresse de l'etreprise
-            'CPENTREPRISE' => 'test', //code postale de l'entreprise
-            'VILLEENTREPRISE' => 'test', //ville de l'entreprise
-            'SIRETENTREPRISE' => 'test', //siret de l'entreprise
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'PRENOMCONTACT' => 'test', //Prenom du client
-            'FCTCONTACT' => 'test', //Fonction du contact
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'ADRESSEENTREPRISE' => $project->GetFirmId()->GetAddress(), //adresse de l'etreprise
+            'CPENTREPRISE' => $project->GetFirmId()->GetPostalCode(), //code postale de l'entreprise
+            'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
+            'SIRETENTREPRISE' => $project->GetFirmId()->GetSIRET(), //siret de l'entreprise
+            'TITREETUDE' => $project->GetNumber(),
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'PRENOMCONTACT' => $contact->GetFirstname(), //Prenom du client
+            'FCTCONTACT' => 'FONCTION CONTACT', //Fonction du contact
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
 
     private function __make_lettreenvoiavenant_dict($params)
     {
+        $chadaff = $params[Services::PARAM_CHADAFF];
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+
         $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'ADRESSEENTREPRISE' => 'test', //adresse de l'etreprise
-            'CPENTREPRISE' => 'test', //code postale de l'entreprise
-            'VILLEENTREPRISE' => 'test', //ville de l'entreprise
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
-            'NOMUSER' => 'test', //Nom du chadaff 
-            'PRENOMUSER' => 'test', //Prenom du chadaff 
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'ADRESSEENTREPRISE' => $project->GetFirmId()->GetAddress(), //adresse de l'etreprise
+            'CPENTREPRISE' => $project->GetFirmId()->GetPostalCode(), //code postale de l'entreprise
+            'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
+            'TITREETUDE' => $project->GetNumber(),
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetFirstname() . ' ' . $contact->GetLastName(), //Nom du client
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
+            'NOMUSER' => $chadaff->GetLastName(), //Nom du chadaff
+            'PRENOMUSER' => $chadaff->GetFirstName(), //Prenom du chadaff
         ];
     }
 
     private function __make_lettreenvoipropale_dict($params)
     {
+        $chadaff = $params[Services::PARAM_CHADAFF];
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+
         $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'ADRESSEENTREPRISE' => 'test', //adresse de l'etreprise
-            'CPENTREPRISE' => 'test', //code postale de l'entreprise
-            'VILLEENTREPRISE' => 'test', //ville de l'entreprise
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
-            'NOMUSER' => 'test', //Nom du chadaff 
-            'PRENOMUSER' => 'test', //Prenom du chadaff 
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'ADRESSEENTREPRISE' => $project->GetFirmId()->GetAddress(), //adresse de l'etreprise
+            'CPENTREPRISE' => $project->GetFirmId()->GetPostalCode(), //code postale de l'entreprise
+            'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
+            'TITREETUDE' => $project->GetNumber(),
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
+            'NOMUSER' => $chadaff->GetLastname(), //Nom du chadaff
+            'PRENOMUSER' => $chadaff->GetFirstname(), //Prenom du chadaff
         ];
     }
 
     private function __make_lettreenvoidevis_dict($params)
     {
+        $chadaff = $params[Services::PARAM_CHADAFF];
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+
         $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'ADRESSEENTREPRISE' => 'test', //adresse de l'etreprise
-            'CPENTREPRISE' => 'test', //code postale de l'entreprise
-            'VILLEENTREPRISE' => 'test', //ville de l'entreprise
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
-            'NOMUSER' => 'test', //Nom du chadaff 
-            'PRENOMUSER' => 'test', //Prenom du chadaff 
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'ADRESSEENTREPRISE' => $project->GetFirmId()->GetAddress(), //adresse de l'etreprise
+            'CPENTREPRISE' => $project->GetFirmId()->GetPostalCode(), //code postale de l'entreprise
+            'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
+            'TITREETUDE' => $project->GetNumber(),
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
+            'NOMUSER' => $chadaff->GetLastname(), //Nom du chadaff
+            'PRENOMUSER' => $chadaff->GetFirstname(), //Prenom du chadaff
         ];
     }
 
     private function __make_devis_dict($params)
     {
+        $project = $params[Services::PARAM_PROJECT];
+        $chadaff = $params[Services::PARAM_CHADAFF];
+        $contact = $params[Services::PARAM_CONTACT];
+
+        $total = $project->GetMgmtFee() + $project->GetAppFee();
+        foreach($project->GetTasks() as $task) {
+            $total += $task->GetJehAmount() * $task->GetJehCost();
+        }
+        $tva = 0.2 * $total;
+
         $this->dict = [
-            //'DJOUR' => 'test', //date actuelle au format 05/05/1994
-            'FRAISETIC' => 'test', // frais de gestion
-            'FRAISENTREPRISE' => 'test', // frais de dossier
-            'TOTALENTREPRISE' => 'test', // total HT
-            'MONTANTTVAENT' => 'test', // montant de la tva
-            'TOTALENTREPRISETTC' => 'test', // total ttc
-            'TAUXTVA' => 'test', // Taux de tva
+            'FRAISETIC' => $project->GetMgmtFee(), // frais de gestion
+            'FRAISENTREPRISE' => $project->GetAppFee(), // frais de dossier
+            'TOTALENTREPRISE' => $total, // total HT
+            'MONTANTTVAENT' => $tva, // montant de la tva
+            'TOTALENTREPRISETTC' => $total + $tva, // total ttc
+            'TAUXTVA' => '20', // Taux de tva
+            'NOMENTRPERISE' => $project->GetFirmId()->GetName(),
+            'ADRESSEENTREPRISE' => $project->GetFirmId()->GetAddress(), //adresse de l'etreprise
+            'CPENTREPRISE' => $project->GetFirmId()->GetPostalCode(), //code postale de l'entreprise
+            'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
+            'TITREETUDE' => $project->GetNumber(),
+            'DESCRIPTIONETUDE' => $project->GetName(),
+            'CIVILITEUSER' => $chadaff->GetGender(), //Monsieur ou madame
+            'NOMUSER' => $chadaff->GetFirstName() . ' ' . $chadaff->GetLastName(), //Nom du chadaff
+            'PRENOMUSER' => $chadaff->GetFirstname(), //Prenom du chadaff
+            'CIVILITECORRESPONDANTQUALITE' => $project->GetAuditorId()->GetGender(), //Monsieur ou madame
+            'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . $project->GetAuditorId()->GetLastName(), // Nom du corres qualité
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
+            'FCTCONTACT' => 'FONCTION CONTACT', //Fonction du contact
+            'CIVPREZ' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
+            'CIVPRESIDENT' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastname() : 'NOM PRESIDENT', //Nom du président
+            'DUREEETUDE' => isset($signDate) && isset($endDate) ? $this->datediffInWeeks($signDate, $endDate) : 'X', //Durée de l'étude
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
 
     private function __make_confidentialiteetudiant_dict($params)
     {
+        $project = $params[Services::PARAM_PROJECT];
+        $int = $params[Services::PARAM_INT];
+        $president = $params[Services::PARAM_PRESIDENT];
+
+        $membership = $int['membership'];
+        if(isset($membership) && !empty($membership)) {
+            $membership = $membership[0];
+        } else {
+            $membership = null;
+        }
+
         $this->dict = [
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'CIVILITEINTERVENANT' => 'test', //Monsieur ou madame 
-            'NOMINTERVENANT' => 'test', //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
-            'PRENOMINTERVENANT' => 'test', //Prénom de l'intervenant
-            'ADRESSEINTERVENANT' => 'test', //Monsieur ou madame 
-            'CPINTERVENANT' => 'test', //Code postal de l'intervenant
-            'VILLEINTERVENANT' => 'test', //Ville intervenant
-            'SECUINTERVENANT' => 'test', //n° sécu intervenant
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
+            'TITREETUDE' => $project->GetNumber(),
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
+            'NOMINTERVENANT' => $int['int']->GetLastname(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'PRENOMINTERVENANT' => $int['int']->GetFirstname(), //Prénom de l'intervenant
+            'ADRESSEINTERVENANT' => $int['int']->GetAddress(), //Monsieur ou madame
+            'CPINTERVENANT' => $int['int']->GetPostalCode(), //Code postal de l'intervenant
+            'VILLEINTERVENANT' => $int['int']->GetCity(), //Ville intervenant
+            'SECUINTERVENANT' => isset($membership) ? $membership->GetSecuNumber() : 'NUMERO SECU', //n° sécu intervenant
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
 
     private function __make_confidentialiteentreprise_dict($params)
     {
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+        $president = $params[Services::PARAM_PRESIDENT];
+        $treso = $params[Services::PARAM_TRESORIER];
+
         $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'ADRESSEENTREPRISE' => 'test', //adresse de l'etreprise
-            'CPENTREPRISE' => 'test', //code postale de l'entreprise
-            'VILLEENTREPRISE' => 'test', //ville de l'entreprise
-            'SIRETENTREPRISE' => 'test', //siret de l'entreprise
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'CIVILITECONTACT' => 'test', //Monsieur ou madame
-            'NOMCONTACT' => 'test', //Nom du client
-            'PRENOMCONTACT' => 'test', //Prenom du client
-            'FCTCONTACT' => 'test', //Fonction du contact
-            'NOMPRESIDENT' => 'test', //Nom du président
-            'CIVILITETRESORIER' => 'test', //Monsieur ou madame
-            'NOMTRESORIER' => 'test', //Nom du treso
-            'PRENOMTRESORIER' => 'test', //Prenom du treso
-            'DJOUR' => 'test', //date actuelle au format 05/05/1994
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'ADRESSEENTREPRISE' => $project->GetFirmId()->GetAddress(), //adresse de l'etreprise
+            'CPENTREPRISE' => $project->GetFirmId()->GetPostalCode(), //code postale de l'entreprise
+            'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
+            'SIRETENTREPRISE' => $project->GetFirmId()->GetSIRET(), //siret de l'entreprise
+            'TITREETUDE' => $project->GetNumber(),
+            'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
+            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'PRENOMCONTACT' => $contact->GetFirstname(), //Prenom du client
+            'FCTCONTACT' => 'FONCTION CONTACT', //Fonction du contact
+            'CIVTRESORIER' => isset($treso) ? $treso->GetGender() : 'CIVILITE TRESORIER',
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastname() : 'NOM PRESIDENT',//Nom du président
+            'NOMTRESORIER' => isset($treso) ? $treso->GetLastname() : 'NOM TRESORIER', //Nom du treso
+            'PRENOMTRESORIER' => isset($treso) ? $treso->GetFirstname() : 'PRENOM TRESORIER',
+            'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
 
     private function __make_demandefacture_dict($params)
     {
+
+        $chadaff = $params[Services::PARAM_CHADAFF];
+        $project = $params[Services::PARAM_PROJECT];
+        $contact = $params[Services::PARAM_CONTACT];
+        $int = $params[Services::PARAM_INT];
+        $president = $params[Services::PARAM_PRESIDENT];
+
         $this->dict = [
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'ADRESSEENTREPRISE' => 'test', //adresse de l'etreprise
-            'CPENTREPRISE' => 'test', //code postale de l'entreprise
-            'VILLEENTREPRISE' => 'test', //ville de l'entreprise
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'NOMCONTACT' => 'test', //Nom du client
-            'PRENOMCONTACT' => 'test', //Prenom du client
-            'DATESIGCV' => 'test', //date signature de la cc
-            'DESCRIPTIONETUDE' => $params[Services::PARAM_PROJECT]->GetName(),
-            'NOMUSER' => 'test', //Nom du chadaff 
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'ADRESSEENTREPRISE' => $project->GetFirmId()->GetAddress(), //adresse de l'etreprise
+            'CPENTREPRISE' => $project->GetFirmId()->GetPostalCode(), //code postale de l'entreprise
+            'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
+            'SIRETENTREPRISE' => $project->GetFirmId()->GetSIRET(), //siret de l'entreprise
+            'TITREETUDE' => $project->GetNumber(),
+            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'PRENOMCONTACT' => $contact->GetFirstname(), //Prenom du client
+            'DATESIGCV' => isset($signDate) ? date('d/m/Y', strtotime($signDate)) : 'JJ/MM/AAAA', //date signature de la cc
+            'DESCRIPTIONETUDE' => $project->GetName(),
+            'NOMUSER' => $chadaff->GetLastname(),
+            'PRENOMUSER' => $chadaff->GetFirstname() //Prenom du chadaff
         ];
     }
 
     private function __make_demandebv_dict($params)
     {
+        $chadaff = $params[Services::PARAM_CHADAFF];
+        $project = $params[Services::PARAM_PROJECT];
+        $int = $params[Services::PARAM_INT];
+        $president = $params[Services::PARAM_PRESIDENT];
+
+        $membership = $int['membership'];
+        if(isset($membership) && !empty($membership)) {
+            $membership = $membership[0];
+        } else {
+            $membership = null;
+        }
+
         $this->dict = [
-            'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
-            'NOMENTREPRISE' => $params[Services::PARAM_PROJECT]->GetFirmId()->GetName(),
-            'NOMINTERVENANT' => 'test', //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
-            'PRENOMINTERVENANT' => 'test', //Prénom de l'intervenant
-            'ADRESSEINTERVENANT' => 'test', //Monsieur ou madame 
-            'CPINTERVENANT' => 'test', //Code postal de l'intervenant
-            'VILLEINTERVENANT' => 'test', //Ville intervenant
-            'SECUINTERVENANT' => 'test', //n° sécu intervenant
-            'NOMUSER' => 'test', //Nom du chadaff 
-            'PRENOMUSER' => 'test', //Prenom du chadaff 
+            'TITREETUDE' => $project->GetNumber(),
+            'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
+            'NOMINTERVENANT' => $int['int']->GetLastname(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'PRENOMINTERVENANT' => $int['int']->GetFirstname(), //Prénom de l'intervenant
+            'ADRESSEINTERVENANT' => $int['int']->GetAddress(), //Monsieur ou madame
+            'CPINTERVENANT' => $int['int']->GetPostalCode(), //Code postal de l'intervenant
+            'VILLEINTERVENANT' => $int['int']->GetCity(), //Ville intervenant
+            'SECUINTERVENANT' => isset($membership) ? $membership->GetSecuNumber() : 'NUMERO SECU', //n° sécu intervenant
+            'NOMUSER' => $chadaff->GetLastname(),
+            'PRENOMUSER' => $chadaff->GetFirstname() //Prenom du chadaff
         ];
+    }
+
+    private function datediffInWeeks($date1, $date2)
+    {
+        if($date1 > $date2) return $this->datediffInWeeks($date2, $date1);
+        $first = DateTime::createFromFormat('Y-m-d', $date1);
+        $second = DateTime::createFromFormat('Y-m-d', $date2);
+        return floor($first->diff($second)->days/7);
     }
 
 }
