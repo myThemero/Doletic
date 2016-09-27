@@ -807,10 +807,10 @@ var DoleticUIModule = new function () {
                     html = html.replace(/true/g, "Oui");
                     html += "<td>\
 						<div class=\"ui icon buttons\"> \
-							<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editAdmMembership(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+							<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editAdmMembership(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 	  							<i class=\"write icon\"></i> \
 							</button> \
-							<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteAdmMembership(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+							<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteAdmMembership(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 	  							<i class=\"remove icon\"></i> \
 							</button>\
 						</div> \
@@ -882,10 +882,10 @@ var DoleticUIModule = new function () {
                     html = html.replace(/true/g, "Oui");
                     html += "<td>\
 						<div class=\"ui icon buttons\"> \
-							<button class=\"ui icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editIntMembership(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+							<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editIntMembership(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 	  							<i class=\"write icon\"></i> \
 							</button> \
-							<button class=\"ui icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteIntMembership(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
+							<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteIntMembership(" + data.object[i].id + ", " + data.object[i].user_id + "); return false;\"> \
 	  							<i class=\"remove icon\"></i> \
 							</button>\
 						</div> \

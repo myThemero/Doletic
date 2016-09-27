@@ -1411,7 +1411,7 @@ class UserDataServices extends AbstractObjectServices
             parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
         }
         // -- init ETIC div table --------------------------------------------------------------------
-        $divisions = array("DSI", "UA", "GRC", "Com", "Qualité", "SG", "Présidence", "RH", "Trésorerie", "Client", "Ancien", "Intervenant", "CNJE");
+        $divisions = array("DSI", "UA", "GRC", "Com", "Qualité", "SG", "Présidence", "RH", "Trésorerie", "Client", "Ancien", "Consultant", "CNJE");
         // --- retrieve SQL query
         $sql = parent::getDBObject()->GetTable(UserDataDBObject::TABL_COM_DIVISION)->GetINSERTQuery();
         foreach ($divisions as $division) {
@@ -1440,7 +1440,7 @@ class UserDataServices extends AbstractObjectServices
             UserDataDBObject::VAL_DEFAULT_POS => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "UA"), // U  | M | D
             "Junior Qualité" => array((RightsMap::U_R | RightsMap::M_G | RightsMap::D_G), "Qualité"), // U  | M | D
             UserDataDBObject::VAL_OLD => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Ancien"), // G  | C | D
-            "Intervenant" => array((RightsMap::G_R | RightsMap::I_G | RightsMap::D_G), "Intervenant"), // G  | I | D
+            "Consultant" => array((RightsMap::G_R | RightsMap::I_G | RightsMap::D_G), "Consultant"), // G  | I | D
             "Client" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "Client"), // G  | C | D
             "Auditeur CNJE" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "CNJE"), // G  | C | D
             "Membre CNJE" => array((RightsMap::G_R | RightsMap::C_G | RightsMap::D_G), "CNJE") // G  | C | D
@@ -1476,7 +1476,7 @@ class UserDataServices extends AbstractObjectServices
                 UserDataDBObject::VAL_DEFAULT_POS => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Junior Qualité" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 UserDataDBObject::VAL_OLD => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
-                "Intervenant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Consultant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)
@@ -1500,7 +1500,7 @@ class UserDataServices extends AbstractObjectServices
                 UserDataDBObject::VAL_DEFAULT_POS => (RightsMap::A_R | RightsMap::A_G | RightsMap::D_G),
                 "Junior Qualité" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 UserDataDBObject::VAL_OLD => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
-                "Intervenant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Consultant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)
@@ -1524,7 +1524,7 @@ class UserDataServices extends AbstractObjectServices
                 UserDataDBObject::VAL_DEFAULT_POS => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Junior Qualité" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 UserDataDBObject::VAL_OLD => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
-                "Intervenant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Consultant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)
@@ -1548,7 +1548,7 @@ class UserDataServices extends AbstractObjectServices
                 UserDataDBObject::VAL_DEFAULT_POS => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Junior Qualité" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 UserDataDBObject::VAL_OLD => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
-                "Intervenant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Consultant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)
@@ -1572,7 +1572,7 @@ class UserDataServices extends AbstractObjectServices
                 UserDataDBObject::VAL_DEFAULT_POS => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Junior Qualité" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 UserDataDBObject::VAL_OLD => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
-                "Intervenant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Consultant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)
@@ -1596,7 +1596,7 @@ class UserDataServices extends AbstractObjectServices
                 UserDataDBObject::VAL_DEFAULT_POS => (RightsMap::A_R | RightsMap::A_G | RightsMap::D_G),
                 "Junior Qualité" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 UserDataDBObject::VAL_OLD => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
-                "Intervenant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Consultant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)
@@ -1620,7 +1620,7 @@ class UserDataServices extends AbstractObjectServices
                 UserDataDBObject::VAL_DEFAULT_POS => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Junior Qualité" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 UserDataDBObject::VAL_OLD => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
-                "Intervenant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
+                "Consultant" => (RightsMap::U_R | RightsMap::M_G | RightsMap::D_G),
                 "Client" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Auditeur CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G),
                 "Membre CNJE" => (RightsMap::G_R | RightsMap::C_G | RightsMap::D_G)

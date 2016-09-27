@@ -138,7 +138,7 @@ class IntMembership implements \JsonSerializable
     /**
      * @brief
      */
-    public function getSecuNumber()
+    public function GetSecuNumber()
     {
         return $this->secu_number;
     }

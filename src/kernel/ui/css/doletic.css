@@ -50,3 +50,7 @@
 	opacity: 1;
 	z-index: 100;
 }
+
+.sorting:hover, .sorting_desc:hover, .sorting_asc:hover {
+	cursor: pointer !important;
+}

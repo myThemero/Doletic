@@ -379,7 +379,7 @@ var DoleticUIModule = new function () {
                             "<td><button id=\"details_" + data.object[i].number + "\" onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui teal button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                             "<td>" + data.object[i].name + "</td>" +
                             "<td>" + data.object[i].field + "</td>" +
-                            "<td>" + window.firm_list[data.object[i].firm_id].name + "</td>" +
+                            "<td>" + (typeof window.firm_list[data.object[i].firm_id] != 'undefined' ? window.firm_list[data.object[i].firm_id].name : '<i>Aucune</i>') + "</td>" +
                             "<td>" + data.object[i].creation_date + "</td>" +
                             "<td>" + chadaffHtml + "</td>" + // Change this
                             "<td>" + intHtml + "</td>" + // Change this
@@ -399,7 +399,7 @@ var DoleticUIModule = new function () {
                         } else if (data.object[i].archived) {
                             archived_content += row + "<td><div class=\"ui icon buttons\">" +
                                 "<button class=\"ui yellow icon button\" data-tooltip=\"Restaurer\" onClick=\"DoleticUIModule.unarchiveProject(" + data.object[i].number + "); return false;\">" +
-                                "<i class=\"write icon\"></i>" +
+                                "<i class=\"archive icon\"></i>" +
                                 "</button>" +
                                 "</div></td>" +
                                 "</tr>";
@@ -407,6 +407,9 @@ var DoleticUIModule = new function () {
                             sollic_content += row + "<td><div class=\"ui icon buttons\">" +
                                 "<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"write icon\"></i>" +
+                                "</button>" +
+                                "<button class=\"ui yellow icon button\" data-tooltip=\"Avorter\" onClick=\"DoleticUIModule.abortProject(" + data.object[i].number + "); return false;\">" +
+                                "<i class=\"archive icon\"></i>" +
                                 "</button>" +
                                 "<button class=\"ui orange icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"remove icon\"></i>" +
@@ -417,6 +420,9 @@ var DoleticUIModule = new function () {
                             project_content += row + "<td><div class=\"ui icon buttons\">" +
                                 "<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"write icon\"></i>" +
+                                "</button>" +
+                                "<button class=\"ui yellow icon button\" data-tooltip=\"Avorter\" onClick=\"DoleticUIModule.abortProject(" + data.object[i].number + "); return false;\">" +
+                                "<i class=\"archive icon\"></i>" +
                                 "</button>" +
                                 "<button class=\"ui orange icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"remove icon\"></i>" +
@@ -865,7 +871,6 @@ var DoleticUIModule = new function () {
                 $('#int_search_doc').dropdown('get value'),
                 function(data) {
                     if(data.code == 0) {
-                        console.log(data);
                         $('body').append('<a id="tmp_link" href="' + data.object + '" download style="display: none;"></a> ');
                         $('#tmp_link')[0].click();
                         $('#tmp_link').remove();
@@ -1496,6 +1501,16 @@ var DoleticUIModule = new function () {
                 DoleticMasterInterface.hideConfirmModal);
         };
 
+        this.abortProject = function(number) {
+            // Confirmation
+            DoleticMasterInterface.showConfirmModal("Confirmer l'avortement ?", "\<i class=\"archive icon\"\>\<\/i\>",
+                "Etes-vous sûr de vouloir avorter cette sollicitation ? Elle ne sera considérée comme abandonnée.",
+                function () {
+                    DoleticUIModule.abortProjectHandler(number);
+                },
+                DoleticMasterInterface.hideConfirmModal);
+        };
+
         this.archiveProject = function (number) {
             // Confirmation
             DoleticMasterInterface.showConfirmModal("Confirmer l'archivage", "\<i class=\"student icon\"\>\<\/i\>",
@@ -1729,6 +1744,20 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.hideConfirmModal();
                     // alert user that restore is a success
                     DoleticMasterInterface.showSuccess("Restauration réussie !", "L'étude a été restaurée avec succès !");
+                    DoleticUIModule.fillProjectsList();
+                } else {
+                    // use default service service error handler
+                    DoleticServicesInterface.handleServiceError(data);
+                }
+            });
+        };
+
+        this.abortProjectHandler = function (number) {
+            ProjectServicesInterface.abortProject(number, function (data) {
+                // if no service error
+                if (data.code == 0) {
+                    DoleticMasterInterface.hideConfirmModal();
+                    DoleticMasterInterface.showSuccess("Opération réussie !", "L'étude a été avortée.");
                     DoleticUIModule.fillProjectsList();
                 } else {
                     // use default service service error handler

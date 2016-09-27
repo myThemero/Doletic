@@ -183,6 +183,7 @@ var ProjectServicesInterface = new function () {
             UNSIGN: "unsign",
             SIGN: "sign",
             BAD_END: "break",
+            ABORT: "abort",
             END: "end",
             UNEND: "unend",
             ASSIGN_CHADAFF: "assigncha",
@@ -534,6 +535,15 @@ var ProjectServicesInterface = new function () {
                 endDate: endDate,
                 content: content,
                 attributable: attributable
+            },
+            successHandler);
+    };
+
+    this.abortProject = function (number, successHandler) {
+        return DoleticServicesInterface.callService(
+            this.meta.OBJECT, this.meta.ACTION.ABORT,
+            {
+                number: number
             },
             successHandler);
     };

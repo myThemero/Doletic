@@ -1171,7 +1171,7 @@ class IndicatorServices extends AbstractObjectServices
             array(IndicatorDBObject::PROC_STATS_INSCRIPTIONS, "hr", "Inscriptions par mois", Indicator::GRAPH_TYPE, NULL, 'bar', "Recrutés", "insc_graph"),
             //array(IndicatorDBObject::PROC_STATS_MEMBERS, "hr", "Evolution des membres", Indicator::GRAPH_TYPE, NULL, "scatter", "Cumul", "members_graph"),
             array(IndicatorDBObject::PROC_INVALID_ADMM, "hr", "Adhésions administrateur invalides", Indicator::TABLE_TYPE, NULL, "Pôle", "Nombre"),
-            array(IndicatorDBObject::PROC_INVALID_INTM, "hr", "Adhésions intervenant invalides", Indicator::TABLE_TYPE, NULL, "Département INSA", "Nombre")
+            array(IndicatorDBObject::PROC_INVALID_INTM, "hr", "Adhésions Consultant invalides", Indicator::TABLE_TYPE, NULL, "Département INSA", "Nombre")
         );
         foreach ($indicators as $attr) {
             switch ($attr[3]) {
@@ -1310,11 +1310,11 @@ class IndicatorDBObject extends AbstractDBObject
 			WHERE m2.id IS NULL
 			) AS b ON (a.label=b.position)) AS a  INNER JOIN (SELECT * FROM `dol_udata` WHERE `disabled`=0 AND `old`=0) AS b 
 			ON a.user_id = b.user_id 
-			WHERE `division` NOT LIKE 'Intervenant'
+			WHERE `division` NOT LIKE 'Consultant'
 			GROUP BY `division`;
 			 ");
 
-        // -- Intervenants by INSA dept
+        // -- Consultants by INSA dept
         $stats_int_dept = new DBProcedure(IndicatorDBObject::PROC_STATS_INT_DEPT, "
             SELECT a.insa_dept, COUNT(*) AS count FROM (
               SELECT user_id, insa_dept FROM `dol_udata` WHERE disabled=0) AS a 
@@ -1430,7 +1430,7 @@ class IndicatorDBObject extends AbstractDBObject
 			WHERE a.end_date > NOW() AND fee=1 AND form=1 AND certif=1) AS b
 
 			ON a.user_id = b.user_id) AS a
-			WHERE end_date IS NULL AND division NOT LIKE 'Ancien' AND division NOT LIKE 'Intervenant'
+			WHERE end_date IS NULL AND division NOT LIKE 'Ancien' AND division NOT LIKE 'Consultant'
 			GROUP BY division;"
         );
 

@@ -23,7 +23,6 @@ class ToolsModule extends AbstractModule
             array(
                 // -- module interfaces
                 'mail' => RightsMap::U_RMASK,
-                'document_generator' => RightsMap::U_RMASK,
                 'admin' => RightsMap::A_RMASK,
                 // -- module services
                 // ---- maillist object services
@@ -44,7 +43,7 @@ class ToolsModule extends AbstractModule
                 DocumentTemplateDBObject::OBJ_NAME . ':' . DocumentTemplateServices::UPDATE => RightsMap::A_RMASK,
                 DocumentTemplateDBObject::OBJ_NAME . ':' . DocumentTemplateServices::DELETE => RightsMap::A_RMASK
             ),
-            false, // disable ui links
+            false   , // disable ui links
             array('kernel') // kernel is always a dependency
         );
         // -- add module specific dbo objects
@@ -53,7 +52,6 @@ class ToolsModule extends AbstractModule
         // -- add module specific ui
         parent::addUI('Administration', 'admin');    // refer to couple (admin.js, admin.css)
         parent::addUI('Signature Mail', 'mail');    // refer to couple (mail.js, mail.css)
-        parent::addUI('Générateur de documents', 'document_generator');    // refer to couple (document_generator.js, document_generator.css)
     }
 
 }

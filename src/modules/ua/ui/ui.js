@@ -377,7 +377,7 @@ var DoleticUIModule = new function () {
                         "<td><button id=\"details_" + data.object[i].number + "\" onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + ", " + isChadaff + "); return false;\" class=\"ui teal button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                         "<td>" + data.object[i].name + "</td>" +
                         "<td>" + data.object[i].field + "</td>" +
-                        "<td>" + window.firm_list[data.object[i].firm_id].name + "</td>" +
+                        "<td>" + (typeof window.firm_list[data.object[i].firm_id] != 'undefined' ? window.firm_list[data.object[i].firm_id].name : '<i>Aucune</i>') + "</td>" +
                         "<td>" + data.object[i].creation_date + "</td>" +
                         "<td>" + chadaffHtml + "</td>" + // Change this
                         "<td>" + intHtml + "</td>" + // Change this

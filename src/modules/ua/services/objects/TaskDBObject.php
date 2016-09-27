@@ -162,6 +162,7 @@ class TaskServices extends AbstractObjectServices
     const PARAM_PAYMENT_DATE = "paymentDate";
     const PARAM_TASK_ID = "taskId";
     const PARAM_CONTENT = "content";
+    const PARAM_ENDED = "ended";
     const PARAM_DELIVERY_DATE = "deliveryDate";
 
     // --- internal services (actions)
@@ -250,6 +251,18 @@ class TaskServices extends AbstractObjectServices
                 $params[TaskServices::PARAM_JEH_COST],
                 $params[TaskServices::PARAM_START_DATE],
                 $params[TaskServices::PARAM_END_DATE]
+            );
+        } else if (!strcmp($action, TaskServices::FORCE_INSERT)) {
+            $data = $this->__force_insert_task(
+                $params[TaskServices::PARAM_ID],
+                $params[TaskServices::PARAM_PROJECT_NUMBER],
+                $params[TaskServices::PARAM_NAME],
+                $params[TaskServices::PARAM_DESCRIPTION],
+                $params[TaskServices::PARAM_JEH_AMOUNT],
+                $params[TaskServices::PARAM_JEH_COST],
+                $params[TaskServices::PARAM_START_DATE],
+                $params[TaskServices::PARAM_END_DATE],
+                $params[TaskServices::PARAM_ENDED]
             );
         } else if (!strcmp($action, TaskServices::INSERT_DELIVERY)) {
             $data = $this->__insert_delivery(
@@ -683,6 +696,28 @@ class TaskServices extends AbstractObjectServices
         return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
     }
 
+    private function __force_insert_task($id, $projectNumber, $name, $description, $jehAmount, $jehCost, $startDate,
+                                   $endDate, $ended)
+    {
+        // create sql params
+        $sql_params = array(
+            ":" . TaskDBObject::COL_ID => $id,
+            ":" . TaskDBObject::COL_PROJECT_NUMBER => $projectNumber,
+            ":" . TaskDBObject::COL_NUMBER => $this->__get_next_task_number($projectNumber),
+            ":" . TaskDBObject::COL_NAME => $name,
+            ":" . TaskDBObject::COL_DESCRIPTION => $description,
+            ":" . TaskDBObject::COL_JEH_AMOUNT => $jehAmount,
+            ":" . TaskDBObject::COL_JEH_COST => $jehCost,
+            ":" . TaskDBObject::COL_START_DATE => $startDate,
+            ":" . TaskDBObject::COL_END_DATE => $endDate,
+            ":" . TaskDBObject::COL_ENDED => $ended
+        );
+        // create sql request
+        $sql = parent::getDBObject()->GetTable(TaskDBObject::TABL_TASK)->GetINSERTQuery();
+        // execute query
+        return parent::getDBConnection()->PrepareExecuteQuery($sql, $sql_params);
+    }
+
     private function __insert_delivery($taskId, $number, $content, $billed)
     {
         // create sql params
@@ -1031,12 +1066,12 @@ class TaskDBObject extends AbstractDBObject
             ->AddColumn(TaskDBObject::COL_ID, DBTable::DT_INT, 11, false, "", true, true)
             ->AddColumn(TaskDBObject::COL_PROJECT_NUMBER, DBTable::DT_INT, 11, false, "")
             ->AddColumn(TaskDBObject::COL_NUMBER, DBTable::DT_INT, 11, false, "")
-            ->AddColumn(TaskDBObject::COL_NAME, DBTable::DT_VARCHAR, 50, false, "")
-            ->AddColumn(TaskDBObject::COL_DESCRIPTION, DBTable::DT_TEXT, -1, false, "")
-            ->AddColumn(TaskDBObject::COL_JEH_AMOUNT, DBTable::DT_INT, 11, false, 0)
-            ->AddColumn(TaskDBObject::COL_JEH_COST, DBTable::DT_INT, 11, false, 0)
-            ->AddColumn(TaskDBObject::COL_START_DATE, DBTable::DT_DATE, -1, false, "")
-            ->AddColumn(TaskDBObject::COL_END_DATE, DBTable::DT_DATE, -1, true, "")
+            ->AddColumn(TaskDBObject::COL_NAME, DBTable::DT_VARCHAR, 255, true, NULL)
+            ->AddColumn(TaskDBObject::COL_DESCRIPTION, DBTable::DT_TEXT, -1, true, NULL)
+            ->AddColumn(TaskDBObject::COL_JEH_AMOUNT, DBTable::DT_INT, 11, true, NULL)
+            ->AddColumn(TaskDBObject::COL_JEH_COST, DBTable::DT_INT, 11, true, NULL)
+            ->AddColumn(TaskDBObject::COL_START_DATE, DBTable::DT_DATE, -1, true, NULL)
+            ->AddColumn(TaskDBObject::COL_END_DATE, DBTable::DT_DATE, -1, true, NULL)
             ->AddColumn(TaskDBObject::COL_ENDED, DBTable::DT_INT, 1, false, 0)
             ->AddForeignKey(TaskDBObject::TABL_TASK . '_fk1', TaskDBObject::COL_PROJECT_NUMBER, ProjectDBObject::TABL_PROJECT, ProjectDBObject::COL_NUMBER, DBTable::DT_RESTRICT, DBTable::DT_CASCADE);
 

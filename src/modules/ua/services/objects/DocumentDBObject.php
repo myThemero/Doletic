@@ -524,8 +524,20 @@ class DocumentServices extends AbstractObjectServices
     {
         $templates = array(
             ['Proposition Commerciale', 'Propale.docx', null],
-            ['Convention Entreprise', 'Convention Entreprise.docx', null],
-            ['Récapitulatif de Mission', 'RM.docx', null]
+            ['Convention Entreprise', 'Convention_entreprise.docx', null],
+            ['Récapitulatif de Mission', 'RM.docx', null],
+            ['PV de fin d\'étude', 'PV_Fin_etude.docx', null],
+            ['PV de Livraison', 'PV_Livraison.docx', null],
+            ['Avenant Entreprise', 'Avenant_entreprise.docx', null],
+            ['Avenant Etudiant', 'Avenant_Etudiant.docx', null],
+            ['PV de fin de recette', 'PV_Fin_recette.docx', null],
+            ['Accord de confidentialité entreprise', 'Accord_confidentialite_entreprise.docx', null],
+            ['Accord de confidentialité étudiant', 'Accord_confidentialite_etudiant.docx', null],
+            ['Demande de Bulletin de Versement', 'Demande_BV.docx', null],
+            ['Demande de facture', 'Demande_facture.docx', null],
+            ['Devis', 'Devis.docx', null],
+            ['Lettre d\'envoi avenant', 'Lettre_envoi_avenant.docx', null],
+            ['Lettre d\'envoi propale   ', 'Lettre_envoi_propale.docx', null],
         );
         // --- retrieve SQL query
         $sql = parent::getDBObject()->GetTable(DocumentDBObject::TABL_TEMPLATE)->GetINSERTQuery();

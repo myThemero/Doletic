@@ -99,7 +99,7 @@ var ContactServicesInterface = new function () {
             {id: id},
             successHandler);
     };
-    this.insert = function (gender, firstname, lastname, firmId, email, phone, category, successHandler) {
+    this.insert = function (gender, firstname, lastname, firmId, email, phone, cellphone, category, role, notes, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.INSERT,
             {
@@ -109,11 +109,14 @@ var ContactServicesInterface = new function () {
                 firmId: firmId,
                 email: email,
                 phone: phone,
-                category: category
+                cellphone: cellphone,
+                category: category,
+                role: role,
+                notes: notes
             },
             successHandler);
     };
-    this.update = function (id, gender, firstname, lastname, firmId, email, phone, category, successHandler) {
+    this.update = function (id, gender, firstname, lastname, firmId, email, phone, cellphone, category, role, notes, successHandler) {
         return DoleticServicesInterface.callService(
             this.meta.OBJECT, this.meta.ACTION.UPDATE,
             {
@@ -124,7 +127,10 @@ var ContactServicesInterface = new function () {
                 firmId: firmId,
                 email: email,
                 phone: phone,
-                category: category
+                cellphone: cellphone,
+                category: category,
+                role: role,
+                notes: notes
             },
             successHandler);
     };

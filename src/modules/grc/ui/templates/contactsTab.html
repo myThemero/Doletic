@@ -16,6 +16,7 @@
     </div>
     <div class="row">
         <div class="sixteen wide column" id="contact_table_container">
+            <div class="ui loader active"></div>
             <!-- CONTACT TABLE WILL GO HERE -->
         </div>
     </div>
@@ -62,6 +63,12 @@
                 <label>Téléphone</label>
                 <input id="tel" placeholder="0000000000" type="text"/>
             </div>
+            <div id="cell_field" class="eight wide required field">
+                <label>Téléphone mobile</label>
+                <input id="cell" placeholder="0000000000" type="text"/>
+            </div>
+        </div>
+        <div class="fields">
             <div class="eight wide required field" id="firm_field">
                 <label>Société</label>
                 <div id="firm_search" class="ui fluid search selection dropdown">
@@ -73,10 +80,18 @@
                     </div>
                 </div>
             </div>
+            <div id="role_field" class="eight wide required field">
+                <label>Poste</label>
+                <input id="role" placeholder="Role..." type="text"/>
+            </div>
         </div>
         <div id="email_field" class="sixteen wide required field">
             <label>Mail</label>
             <input id="mail" placeholder="Mail..." type="text"/>
+        </div>
+        <div id="notes_field" class="sixteen wide required field">
+            <label>Notes</label>
+            <textarea id="notes" placeholder="Notes..."></textarea>
         </div>
         <div class="ui hr_center small buttons">
             <div id="abort_btn" class="ui button" onClick="DoleticUIModule.clearNewContactForm();">Annuler</div>
