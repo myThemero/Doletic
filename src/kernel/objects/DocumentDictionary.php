@@ -109,20 +109,20 @@ class DocumentDictionary
             'TITREETUDE' => $project->GetNumber(),
             'DESCRIPTIONETUDE' => $project->GetName(),
             'CIVILITEUSER' => $chadaff->GetGender(), //Monsieur ou madame
-            'NOMUSER' => $chadaff->GetFirstName() . ' ' . $chadaff->GetLastName(), //Nom du chadaff
+            'NOMUSER' => $chadaff->GetFirstName() . ' ' . mb_strtoupper($chadaff->GetLastName(), 'UTF-8'), //Nom du chadaff
             'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT' => $int['int']->GetFirstName() . ' ' . $int['int']->GetLastName(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'NOMINTERVENANT' => $int['int']->GetFirstName() . ' ' . mb_strtoupper($int['int']->GetLastName(), 'UTF-8'), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
             'CIVILITEINTERVENANT1' => $int['int']->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT1' => $int['int']->GetFirstName() . ' ' . $int['int']->GetLastName(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'NOMINTERVENANT1' => $int['int']->GetFirstName() . ' ' . mb_strtoupper($int['int']->GetLastName(), 'UTF-8'), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
             'CIVILITECORRESPONDANTQUALITE' => $project->GetAuditorId()->GetGender(), //Monsieur ou madame
-            'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . $project->GetAuditorId()->GetLastName(), // Nom du corres qualité
+            'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . mb_strtoupper($project->GetAuditorId()->GetLastName(), 'UTF-8'), // Nom du corres qualité
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
             'FCTCONTACT' => $contact->GetRole(), //Fonction du contact
             'CIVPREZ' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
             'CIVPRESIDENT' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastname() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DUREEETUDE' => isset($signDate) && isset($endDate) ? $this->datediffInWeeks($signDate, $endDate) : 'X', //Durée de l'étude
             'NBJOURSJEH' => $totalJeh, //Nombre total de JEHs
             'TAUXTVA' => '20', //taux de tva
@@ -145,13 +145,13 @@ class DocumentDictionary
             'TITREETUDE' => $params[Services::PARAM_PROJECT]->GetNumber(),
             'DESCRIPTIONETUDE' => $params[Services::PARAM_PROJECT]->GetName(),
             'CIVILITECORRESPONDANTQUALITE' => $project->GetAuditorId()->GetGender(), //Monsieur ou madame
-            'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . $project->GetAuditorId()->GetLastName(), // Nom du corres qualité
+            'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . mb_strtoupper($project->GetAuditorId()->GetLastName(), 'UTF-8'), // Nom du corres qualité
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
             'FCTCONTACT' => $contact->GetRole(), //Fonction du contact
             'CIVPRESIDENT' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
@@ -178,7 +178,7 @@ class DocumentDictionary
             'TITREETUDE' => $project->GetNumber(),
             'NUMINTER' => $int['details'][ProjectDBObject::COL_NUMBER], //Numero de l'intervenant
             'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT' => $int['int']->GetLastname(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'NOMINTERVENANT' => mb_strtoupper($int['int']->GetLastName(), 'UTF-8'), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
             'PRENOMINTERVENANT' => $int['int']->GetFirstname(), //Prénom de l'intervenant
             'ADRESSEINTERVENANT' => $int['int']->GetAddress(), //Monsieur ou madame
             'CPINTERVENANT' => $int['int']->GetPostalCode(), //Code postal de l'intervenant
@@ -190,7 +190,7 @@ class DocumentDictionary
             'TARIFINTERV' => $int['details'][ProjectDBObject::COL_PAY], //nb de euros par jeh
             'TOTALINTERVENANTTTC_L' => ($total_int - 10), //total TTC
             'TOTALINTERVENANTTTC' => $fmt->format($total_int - 10), //total TTC en lettre
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastName() : 'NOM PRESIDENT',
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT',
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
@@ -208,10 +208,10 @@ class DocumentDictionary
             'TITREETUDE' => $project->GetNumber(),
             'DESCRIPTIONETUDE' => $project->GetName(),
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
             'FCTCONTACT' => $contact->GetRole(), //Fonction du contact
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
             'DATESIGCV' => isset($signDate) ? date('d/m/Y', strtotime($signDate)) : 'JJ/MM/AAAA' //date signature de la cc
         ];
@@ -230,10 +230,10 @@ class DocumentDictionary
             'TITREETUDE' => $project->GetNumber(),
             'DESCRIPTIONETUDE' => $project->GetName(),
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
             'FCTCONTACT' => $contact->GetRole(), //Fonction du contact
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
             'DATESIGCV' => isset($signDate) ? date('d/m/Y', strtotime($signDate)) : 'JJ/MM/AAAA' //date signature de la cc
         ];
@@ -252,10 +252,10 @@ class DocumentDictionary
             'TITREETUDE' => $project->GetNumber(),
             'DESCRIPTIONETUDE' => $project->GetName(),
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
             'FCTCONTACT' => $contact->GetRole(), //Fonction du contact
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
             'DATESIGCV' => isset($signDate) ? date('d/m/Y', strtotime($signDate)) : 'JJ/MM/AAAA' //date signature de la cc
         ];
@@ -278,13 +278,13 @@ class DocumentDictionary
             'TITREETUDE' => $project->GetNumber(),
             'NUMINTERVENANT' => $int['details'][ProjectDBObject::COL_NUMBER], //Numero de l'intervenant
             'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT' => $int['int']->GetLastName(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'NOMINTERVENANT' => mb_strtoupper($int['int']->GetLastName(), 'UTF-8'), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
             'PRENOMINTERVENANT' => $int['int']->GetFirstName(), //Prénom de l'intervenant
             'ADRESSEINTERVENANT' => $int['int']->GetAddress(), //Monsieur ou madame
             'CPINTERVENANT' => $int['int']->GetPostalCode(), //Code postal de l'intervenant
             'VILLEINTERVENANT' => $int['int']->GetCity(), //Ville intervenant
             'SECUINTERVENANT' => isset($membership) ? $membership->GetSecuNumber() : 'NUMERO SECU', //n° sécu intervenant
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
@@ -303,10 +303,10 @@ class DocumentDictionary
             'SIRETENTREPRISE' => $project->GetFirmId()->GetSIRET(), //siret de l'entreprise
             'TITREETUDE' => $project->GetNumber(),
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstname(), //Prenom du client
             'FCTCONTACT' => $contact->GetRole(), //Fonction du contact
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
@@ -324,9 +324,9 @@ class DocumentDictionary
             'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
             'TITREETUDE' => $project->GetNumber(),
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetFirstname() . ' ' . $contact->GetLastName(), //Nom du client
+            'NOMCONTACT' => $contact->GetFirstname() . ' ' . mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
-            'NOMUSER' => $chadaff->GetLastName(), //Nom du chadaff
+            'NOMUSER' => mb_strtoupper($chadaff->GetLastName(), 'UTF-8'), //Nom du chadaff
             'PRENOMUSER' => $chadaff->GetFirstName(), //Prenom du chadaff
         ];
     }
@@ -344,9 +344,9 @@ class DocumentDictionary
             'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
             'TITREETUDE' => $project->GetNumber(),
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
-            'NOMUSER' => $chadaff->GetLastname(), //Nom du chadaff
+            'NOMUSER' => mb_strtoupper($chadaff->GetLastName(), 'UTF-8'), //Nom du chadaff
             'PRENOMUSER' => $chadaff->GetFirstname(), //Prenom du chadaff
         ];
     }
@@ -364,9 +364,9 @@ class DocumentDictionary
             'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
             'TITREETUDE' => $project->GetNumber(),
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
-            'NOMUSER' => $chadaff->GetLastname(), //Nom du chadaff
+            'NOMUSER' => mb_strtoupper($chadaff->GetLastName(), 'UTF-8'), //Nom du chadaff
             'PRENOMUSER' => $chadaff->GetFirstname(), //Prenom du chadaff
         ];
     }
@@ -397,17 +397,17 @@ class DocumentDictionary
             'TITREETUDE' => $project->GetNumber(),
             'DESCRIPTIONETUDE' => $project->GetName(),
             'CIVILITEUSER' => $chadaff->GetGender(), //Monsieur ou madame
-            'NOMUSER' => $chadaff->GetFirstName() . ' ' . $chadaff->GetLastName(), //Nom du chadaff
+            'NOMUSER' => $chadaff->GetFirstName() . ' ' . mb_strtoupper($chadaff->GetLastName(), 'UTF-8'), //Nom du chadaff
             'PRENOMUSER' => $chadaff->GetFirstname(), //Prenom du chadaff
             'CIVILITECORRESPONDANTQUALITE' => $project->GetAuditorId()->GetGender(), //Monsieur ou madame
-            'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . $project->GetAuditorId()->GetLastName(), // Nom du corres qualité
+            'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . mb_strtoupper($project->GetAuditorId()->GetLastName(), 'UTF-8'), // Nom du corres qualité
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastName(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstName(), //Prenom du client
             'FCTCONTACT' => $contact->GetRole(), //Fonction du contact
             'CIVPREZ' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
             'CIVPRESIDENT' => isset($president) ? $president->GetGender() : 'CIV PRESIDENT', //Monsieur ou madame
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastname() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DUREEETUDE' => isset($signDate) && isset($endDate) ? $this->datediffInWeeks($signDate, $endDate) : 'X', //Durée de l'étude
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
@@ -430,13 +430,13 @@ class DocumentDictionary
             'TITREETUDE' => $project->GetNumber(),
             'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
             'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT' => $int['int']->GetLastname(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'NOMINTERVENANT' => mb_strtoupper($int['int']->GetLastName(), 'UTF-8'), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
             'PRENOMINTERVENANT' => $int['int']->GetFirstname(), //Prénom de l'intervenant
             'ADRESSEINTERVENANT' => $int['int']->GetAddress(), //Monsieur ou madame
             'CPINTERVENANT' => $int['int']->GetPostalCode(), //Code postal de l'intervenant
             'VILLEINTERVENANT' => $int['int']->GetCity(), //Ville intervenant
             'SECUINTERVENANT' => isset($membership) ? $membership->GetSecuNumber() : 'NUMERO SECU', //n° sécu intervenant
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . $president->GetLastName() : 'NOM PRESIDENT', //Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstName() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];
     }
@@ -456,11 +456,11 @@ class DocumentDictionary
             'SIRETENTREPRISE' => $project->GetFirmId()->GetSIRET(), //siret de l'entreprise
             'TITREETUDE' => $project->GetNumber(),
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
-            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstname(), //Prenom du client
             'FCTCONTACT' => $contact->GetRole(), //Fonction du contact
             'CIVTRESORIER' => isset($treso) ? $treso->GetGender() : 'CIVILITE TRESORIER',
-            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . $president->GetLastname() : 'NOM PRESIDENT',//Nom du président
+            'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT',//Nom du président
             'NOMTRESORIER' => isset($treso) ? $treso->GetLastname() : 'NOM TRESORIER', //Nom du treso
             'PRENOMTRESORIER' => isset($treso) ? $treso->GetFirstname() : 'PRENOM TRESORIER',
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
@@ -483,11 +483,11 @@ class DocumentDictionary
             'VILLEENTREPRISE' => $project->GetFirmId()->GetCity(), //ville de l'entreprise
             'SIRETENTREPRISE' => $project->GetFirmId()->GetSIRET(), //siret de l'entreprise
             'TITREETUDE' => $project->GetNumber(),
-            'NOMCONTACT' => $contact->GetLastname(), //Nom du client
+            'NOMCONTACT' => mb_strtoupper($contact->GetLastName(), 'UTF-8'), //Nom du client
             'PRENOMCONTACT' => $contact->GetFirstname(), //Prenom du client
             'DATESIGCV' => isset($signDate) ? date('d/m/Y', strtotime($signDate)) : 'JJ/MM/AAAA', //date signature de la cc
             'DESCRIPTIONETUDE' => $project->GetName(),
-            'NOMUSER' => $chadaff->GetLastname(),
+            'NOMUSER' => mb_strtoupper($chadaff->GetLastName(), 'UTF-8'),
             'PRENOMUSER' => $chadaff->GetFirstname() //Prenom du chadaff
         ];
     }
@@ -509,13 +509,13 @@ class DocumentDictionary
         $this->dict = [
             'TITREETUDE' => $project->GetNumber(),
             'NOMENTREPRISE' => $project->GetFirmId()->GetName(),
-            'NOMINTERVENANT' => $int['int']->GetLastname(), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'NOMINTERVENANT' => mb_strtoupper($int['int']->GetLastName(), 'UTF-8'), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
             'PRENOMINTERVENANT' => $int['int']->GetFirstname(), //Prénom de l'intervenant
             'ADRESSEINTERVENANT' => $int['int']->GetAddress(), //Monsieur ou madame
             'CPINTERVENANT' => $int['int']->GetPostalCode(), //Code postal de l'intervenant
             'VILLEINTERVENANT' => $int['int']->GetCity(), //Ville intervenant
             'SECUINTERVENANT' => isset($membership) ? $membership->GetSecuNumber() : 'NUMERO SECU', //n° sécu intervenant
-            'NOMUSER' => $chadaff->GetLastname(),
+            'NOMUSER' => mb_strtoupper($chadaff->GetLastName(), 'UTF-8'),
             'PRENOMUSER' => $chadaff->GetFirstname() //Prenom du chadaff
         ];
     }

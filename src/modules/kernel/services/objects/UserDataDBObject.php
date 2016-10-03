@@ -602,7 +602,7 @@ class UserDataServices extends AbstractObjectServices
             UserDataDBObject::COL_SINCE,
             array(UserDataDBObject::COL_POSITION)
         );
-        $sql = DBTable::GetJOINQuery($sql1, $sql2);
+        $sql = DBTable::GetJOINQuery($sql1, $sql2, array(UserDataDBObject::COL_USER_ID, UserDataDBObject::COL_USER_ID));
         // execute SQL query and save result
         $pdos = parent::getDBConnection()->ResultFromQuery($sql, $sql_params);
         // create an empty array for udata and fill it

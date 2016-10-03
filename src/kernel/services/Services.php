@@ -448,7 +448,7 @@ class Services
         $phpword = new PHPWord();
         $templateDoc = $phpword->loadTemplate(Services::TEMPLATES_BASE_PATH . $path);
         foreach ($dict->getDict() as $key => $value) {
-            $templateDoc->setValue($key, $value);
+            $templateDoc->setValue($key, utf8_decode($value));
         }
         $name = Services::TEMPLATES_OUTPUT_PATH . $params[Services::PARAM_PROJECT]->GetNumber() . $path;
         $templateDoc->save($name);
@@ -489,47 +489,6 @@ class Services
         ];
         $mainContact = $this->kernel->GetDBObject(ContactDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(ContactServices::GET_CONTACT_BY_ID, array(ContactServices::PARAM_ID => $mainContact));
-        /*$chadaffs = $project->getChadaffs();
-        $newChadaffs = array();
-        foreach ($chadaffs as $chadaff) {
-            array_push(
-                $newChadaffs,
-                $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-                    ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(UserDataServices::PARAM_ID => $chadaff))
-            );
-        }
-        $project->setChadaffs($newChadaffs);*/
-
-        /*// Replace Int id by infos
-        $ints = $project->getInts();
-        $newInts = array();
-        foreach ($ints as $int) {
-            array_push(
-                $newInts,
-                $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-                    ->GetResponseData(
-                        UserDataServices::GET_USER_DATA_BY_ID,
-                        array(UserDataServices::PARAM_ID => $int[ProjectDBObject::COL_INT_ID])
-                    )
-            );
-        }
-        $project->setInts($newInts);
-
-        // Replace Int id by infos
-        $contacts = $project->getContacts();
-        $newContacts = array();
-        foreach ($contacts as $contact) {
-            array_push(
-                $newContacts,
-                $this->kernel->GetDBObject(ContactDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
-                    ->GetResponseData(
-                        ContactServices::GET_CONTACT_BY_ID,
-                        array(ContactServices::PARAM_ID => $contact
-                        )
-                    )
-            );
-        }
-        $project->setContacts($newContacts);*/
 
         // Replace Auditor id by infos
         $project->setAuditorId(
