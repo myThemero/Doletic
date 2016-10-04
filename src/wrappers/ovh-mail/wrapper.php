@@ -865,7 +865,7 @@ class OVHMailWrapper extends AbstractOVHWrapper
      */
     private function _post($function, $params = array(), $binding_keys = array())
     {
-        $url = OVHMailWrapper::GET_COMMANDS[$function];
+        $url = OVHMailWrapper::POST_COMMANDS[$function];
         $binded = $this->_bind($params, $url, $binding_keys);
         if (!isset($binded)) {
             return null;

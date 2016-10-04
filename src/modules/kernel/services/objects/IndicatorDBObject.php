@@ -1342,7 +1342,7 @@ class IndicatorDBObject extends AbstractDBObject
 
 			SELECT COUNT(*) INTO count_pc
 			FROM `dol_udata`
-			WHERE insa_dept='PC' AND disabled=0;
+			WHERE insa_dept='PC' AND disabled=0 AND old=0;
 
 			SELECT COUNT(*) INTO count_total
 			FROM `dol_udata`

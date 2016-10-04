@@ -79,54 +79,54 @@ var DoleticUIModule = new function () {
 
     this.generateSignature = function () {
         // create html signature content
-        var html = " \
-<table style=\"color: #000000; font-size: medium;\">\n \
-  <tbody>\n \
-    <tr>\n \
-      <td style=\"padding-right: 15px;\">\n \
-        <a href=\"" + DoleticConfig.JE.website_url + "\" target=\"_blank\">\n \
-          <img src=\"" + DoleticConfig.JE.logo_url + "\" alt=\"\" width=\"97\" height=\"76\" />\n \
-        </a>\n \
-      </td>\n \
-      <td style=\"font-size: 13px; line-height: 14px; font-family: Helvetica,sans-serif;\">\n \
-        <p style=\"margin: 8px  0px;\">\n \
-            <span style=\"display: inline-block; margin-top: 12px; color: #006600; font-size: medium;\">\n \
-	        <span id=\"user_lastname\"></span>&nbsp;<span id=\"user_firstname\"></span>\n \
-          </span>\n \
-          <br />\n \
-          <span style=\"display: inline-block; margin-top: 2px; color: #006600; font-size: medium;\">\n \
-            <strong><span id=\"user_position\"></span></strong>\n \
-          </span>\n \
-          <br />\n \
-          <span style=\"display: inline-block; margin-top: 2px; color: #888888;\">\n \
-            <a><span id=\"user_phone\"></span></a>&nbsp;|&nbsp;<a id=\"mail_lnk\" href=\"mailto:\" target=\"_blank\"><span id=\"user_mail\"></span></a>\n \
-          </span>\n \
-          <br />\n \
-          <span style=\"display: inline-block; margin-top: 2px; color: #888888;\">\n \
-            <span>" + DoleticConfig.JE.school + "&nbsp;-&nbsp;Département&nbsp;<span id=\"user_departement\"></span>&nbsp;-&nbsp;<span id=\"user_year\"></span>&nbsp;année</span>\n \
-          </span>\n \
-        </p>\n \
-      </td>\n \
-    </tr>\n \
-  </tbody>\n \
-</table>\n";
+        var html = '<table style="color: #000000; font-size: medium;">' +
+            '<tbody>' +
+            '<tr>' +
+            '<td style="padding-right: 15px;">' +
+            '<a href="'+ DoleticConfig.JE.website_url + '">' +
+            '<img src="' + DoleticConfig.JE.logo_url + '" alt="" width="139" height="109" />' +
+            '</a>' +
+            '</td>' +
+            '<td style="font-size: 13px; line-height: 14px; font-family: Helvetica,sans-serif;">' +
+            '<p style="margin: 0px 0px;">' +
+            '<span id="user_fullname" style="display: inline-block; margin-top: 12px; color: #006600; font-size: medium;">' +
+            '</span><br />' +
+            '<span style="display: inline-block; margin-top: 2px; color: #006600; font-size: medium;">' +
+            '<strong id="user_position"></strong>' +
+            '</span><br />' +
+            '<span style="color: #3366ff;">' +
+            '<span style="display: inline-block; margin-top: 2px;">' +
+            '<a style="color: #3366ff;" id="user_phone"></a>' +
+            '</span>' +
+            '<span style="display: inline-block; margin-top: 2px;">&nbsp;|&nbsp;' +
+            '<a id="user_mail" style="color: #3366ff;">' +
+            '</a>' +
+            '</span>' +
+            '</span></p>' +
+            '<p style="margin: 0px 0px;">' +
+            '<span style="display: inline-block; margin-top: 2px; color: #888888;"></span>' +
+            '<strong><span style="display: inline-block; margin-top: 2px; color: #888888;">ETIC INSA Technologies</span>&nbsp;</strong>' +
+            '<br /><span style="display: inline-block; margin-top: 2px; color: #888888;">' +
+            '<span> 20 avenue Albert Einstein - 69 100 Villeurbanne </span>' +
+            '</span> <br />' +
+            '<span style="display: inline-block; margin-top: 2px; color: #888888;">' +
+            '<span> T&eacute;l&eacute;phone : <span style="color: #888888;">' +
+            '<a style="color: #888888;" href="tel:+33 (0)4 78 94 02 27">' +
+            ' +33 (0)4 78 94 02 27 ' +
+            '</a></span></span></span></p></td></tr></tbody></table>';
         // put html signature into preview zone
         $('#preview_zone').html(html);
         // fill signature fields using user data
         DoleticServicesInterface.getCurrentUser(function (data) {
             if (data.code == 0) {
-                // set mail
                 var mail = data.object.username + DoleticConfig.JE.mail_domain;
-                $('#mail_lnk').attr('href', 'mailto:' + mail);
-                $('#user_mail').html(mail);
+                $('#user_mail').html(mail).attr('href', 'mailto:' + mail);
                 // retrieve user data
                 UserDataServicesInterface.getById(data.object.id, function (data) {
                     if (data.code == 0) {
                         // set firstname, lastname, phone and year
-                        $('#user_firstname').html(data.object.firstname);
-                        $('#user_lastname').html(data.object.lastname);
-                        $('#user_phone').html(data.object.tel);
-                        $('#user_year').html(data.object.school_year);
+                        $('#user_fullname').html(data.object.firstname + ' ' + data.object.lastname);
+                        $('#user_phone').html(data.object.tel.replace(/^0/, '+33 (0)')).attr('href', 'tel:' + data.object.tel);
                         $('#user_departement').html(data.object.insa_dept);
                         $('#user_position').html(data.object.position[0].label);
                         // update signature source code when finished
@@ -143,10 +143,10 @@ var DoleticUIModule = new function () {
                 DoleticUIModule.updateSignatureSourceCode(); // <!> necessary because asynchronously called
             }
         });
-    }
+    };
 
     this.updateSignatureSourceCode = function () {
         $('#code_zone').html($('#preview_zone').html());
-    }
+    };
 
-}
+};

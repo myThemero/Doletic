@@ -300,12 +300,21 @@ class Services
                                 UserServices::PARAM_ID => $user
                             ]);
                     } else {
+                        // Send mail with credentials
                         $this->kernel->SendMail(array($mail), new WelcomeMail(), array(
                             'PRENOM' => $firstname,
                             'LOGIN' => $credentials[UserServices::PARAM_UNAME],
                             'PASSWORD' => $credentials[UserServices::PARAM_PASS],
                             'URL' => 'http://doleticdev.etic-insa.com'
                         ));
+
+                        // Create mailbox
+                        $ovh = $this->kernel->GetWrapper(OVHMailWrapper::NAME);
+                        $ovh->Execute(OVHMailWrapper::FUNC_CREATE_MAILBOX, array(
+                                'accountName' => $credentials[UserServices::PARAM_UNAME],
+                                'password' => $credentials[UserServices::PARAM_PASS]
+                            )
+                        );
                     }
                 }
             }
@@ -315,8 +324,7 @@ class Services
         return new ServiceResponse("", ServiceResponse::ERR_INSUFFICIENT_RIGHTS, "Insufficient rights to access this service.");
     }
 
-    private
-    function __service_update_user_password($uname, $oldPass, $newPass)
+    private function __service_update_user_password($uname, $oldPass, $newPass)
     {
         $user = $this->kernel->getCurrentUser();
         $usercheck = $this->kernel
@@ -339,18 +347,27 @@ class Services
                         )
                     );
 
+                // Send mail to warn user
                 $this->kernel->SendMail(array($udata->GetEmail()), new ChangePasswordMail(), array(
                         'PRENOM' => $udata->GetFirstName()
                     )
                 );
+
+                // Update webmail password
+                $ovh = $this->kernel->GetWrapper(OVHMailWrapper::NAME);
+                $ovh->Execute(OVHMailWrapper::FUNC_CHANGE_MAILBOX_PWD, array(
+                        'email' => $uname . '@' . $this->kernel->SettingValue(SettingsManager::DBKEY_JE_DOMAIN),
+                        'password' => $newPass
+                    )
+                );
+
                 return new ServiceResponse("");
             }
         }
         return new ServiceResponse("", ServiceResponse::ERR_SERVICE_FAILED);
     }
 
-    private
-    function __service_update_user_avatar($post)
+    private function __service_update_user_avatar($post)
     {
         // -- initialize response var
         $response = null;
@@ -540,7 +557,7 @@ class Services
         ];
     }
 
-    private
+    /*private
     function __service_publish($post)
     {
         // initialize null response
@@ -592,10 +609,9 @@ class Services
             $response = new ServiceResponse("", $e->getCode(), $e->getMessage());
         }
         return $response;
-    }
+    }*/
 
-    private
-    function isNullOrEmpty($test)
+    private function isNullOrEmpty($test)
     {
         return !isset($test) || $test == "";
     }
