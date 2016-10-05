@@ -18,6 +18,9 @@ var DoleticServicesInterface = new function () {
         'ERR_SERVICE_FAILED',
         'ERR_INSUFFICIENT_RIGHTS'
     ];
+
+    this.activeAjax = 0;
+
     /**
      *  Loads a standard Doletic page using ui parameter
      */
@@ -303,13 +306,21 @@ var DoleticServicesInterface = new function () {
         // DEBUG -------------------------------
         console.debug("ajaxPOST called with url = " + url + "\ndata = \n" + JSON.stringify(data));
         // -------------------------------------
+        $("body").css("cursor", "progress").fadeTo( "fast" , 0.7);
+        this.activeAjax++;
         $.ajax({
             url: url,
             type: 'POST',
             data: data,
             dataType: dataType,
             error: errorHandler,
-            success: successHandler
+            success: successHandler,
+            complete: function () {
+                DoleticServicesInterface.activeAjax--;
+                if(DoleticServicesInterface.activeAjax == 0) {
+                    $("body").css("cursor", "default").fadeTo( "fast" , 1);
+                }
+            }
         });
     };
     /**
