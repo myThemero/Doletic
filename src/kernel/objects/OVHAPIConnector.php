@@ -22,10 +22,6 @@ class OVHAPIConnector
         $application_key = $wrapperConfig->GetApplicationKey();
         $application_secret = $wrapperConfig->GetApplicationSecret();
         $consumer_key = $wrapperConfig->GetConsumerKey();
-        var_dump($application_key);
-        var_dump($application_secret);
-        var_dump($endpoint);
-        var_dump($consumer_key);
         // check settings
         if (isset($application_key) && strlen($application_key) > 0 &&
             isset($application_secret) && strlen($application_secret) > 0 &&

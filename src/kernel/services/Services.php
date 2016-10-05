@@ -309,12 +309,18 @@ class Services
                         ));
 
                         // Create mailbox
-                        $ovh = $this->kernel->GetWrapper(OVHMailWrapper::NAME);
-                        $ovh->Execute(OVHMailWrapper::FUNC_CREATE_MAILBOX, array(
-                                'accountName' => $credentials[UserServices::PARAM_UNAME],
-                                'password' => $credentials[UserServices::PARAM_PASS]
-                            )
-                        );
+                        $wrapper = $this->kernel->GetWrapper(OVHMailWrapper::NAME);
+                        if (isset($wrapper)) {
+                            $result = $wrapper->Execute(OVHMailWrapper::FUNC_CREATE_MAILBOX, array(
+                                    OVHMailWrapper::ARG_DOMAIN => "etic-insa.com",
+                                    'accountName' => $credentials[UserServices::PARAM_UNAME],
+                                    'password' => $credentials[UserServices::PARAM_PASS]
+                                )
+                            );
+                            if (!isset($result)) {
+                                // Handle error
+                            }
+                        }
                     }
                 }
             }
@@ -354,12 +360,15 @@ class Services
                 );
 
                 // Update webmail password
+
                 $ovh = $this->kernel->GetWrapper(OVHMailWrapper::NAME);
                 $ovh->Execute(OVHMailWrapper::FUNC_CHANGE_MAILBOX_PWD, array(
-                        'email' => $uname . '@' . $this->kernel->SettingValue(SettingsManager::DBKEY_JE_DOMAIN),
+                        OVHMailWrapper::ARG_DOMAIN => "etic-insa.com",
+                        OVHMailWrapper::ARG_ACCOUNT_NAME => $uname,
                         'password' => $newPass
                     )
                 );
+
 
                 return new ServiceResponse("");
             }

@@ -22,7 +22,7 @@ LOC_TSTAMP=$(date +%s)
 DLT_TSTAMP=$(expr ${OVH_TSTAMP} - ${LOC_TSTAMP})
 NOW_TSTAMP=$(expr ${LOC_TSTAMP} + ${DLT_TSTAMP})
 HASH_BASE=$(echo ${AS}"+"${CK}"+"${METHOD}"+"${QUERY}"+"${BODY}"+"${NOW_TSTAMP})
-HASH=$(php5 sha1.php ${HASH_BASE})
+HASH=$(php sha1.php ${HASH_BASE})
 SIGN=$(echo '$1$'${HASH})
 
 # ---------- cURL related parameters

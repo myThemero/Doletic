@@ -59,13 +59,13 @@ class Api
      * @var array
      */
     private $endpoints = [
-        'ovh-eu'        => 'https://api.ovh.com/1.0',
-        'ovh-ca'        => 'https://ca.api.ovh.com/1.0',
-        'kimsufi-eu'    => 'https://eu.api.kimsufi.com/1.0',
-        'kimsufi-ca'    => 'https://ca.api.kimsufi.com/1.0',
+        'ovh-eu' => 'https://api.ovh.com/1.0',
+        'ovh-ca' => 'https://ca.api.ovh.com/1.0',
+        'kimsufi-eu' => 'https://eu.api.kimsufi.com/1.0',
+        'kimsufi-ca' => 'https://ca.api.kimsufi.com/1.0',
         'soyoustart-eu' => 'https://eu.api.soyoustart.com/1.0',
         'soyoustart-ca' => 'https://ca.api.soyoustart.com/1.0',
-        'runabove-ca'   => 'https://api.runabove.com/1.0',
+        'runabove-ca' => 'https://api.runabove.com/1.0',
     ];
 
     /**
@@ -113,14 +113,14 @@ class Api
     /**
      * Construct a new wrapper instance
      *
-     * @param string $application_key    key of your application.
+     * @param string $application_key key of your application.
      *                                   For OVH APIs, you can create a application's credentials on
      *                                   https://api.ovh.com/createApp/
      * @param string $application_secret secret of your application.
-     * @param string $api_endpoint       name of api selected
-     * @param string $consumer_key       If you have already a consumer key, this parameter prevent to do a
+     * @param string $api_endpoint name of api selected
+     * @param string $consumer_key If you have already a consumer key, this parameter prevent to do a
      *                                   new authentication
-     * @param Client $http_client        instance of http client
+     * @param Client $http_client instance of http client
      *
      * @throws Exceptions\InvalidParameterException if one parameter is missing or with bad value
      */
@@ -130,7 +130,8 @@ class Api
         $api_endpoint,
         $consumer_key = null,
         Client $http_client = null
-    ) {
+    )
+    {
         if (!isset($application_key)) {
             throw new Exceptions\InvalidParameterException("Application key parameter is empty");
         }
@@ -149,17 +150,17 @@ class Api
 
         if (!isset($http_client)) {
             $http_client = new Client([
-                'timeout'         => 30,
+                'timeout' => 30,
                 'connect_timeout' => 5,
             ]);
         }
 
-        $this->application_key    = $application_key;
-        $this->endpoint           = $this->endpoints[$api_endpoint];
+        $this->application_key = $application_key;
+        $this->endpoint = $this->endpoints[$api_endpoint];
         $this->application_secret = $application_secret;
-        $this->http_client        = $http_client;
-        $this->consumer_key       = $consumer_key;
-        $this->time_delta         = null;
+        $this->http_client = $http_client;
+        $this->consumer_key = $consumer_key;
+        $this->time_delta = null;
     }
 
     /**
@@ -171,8 +172,8 @@ class Api
     private function calculateTimeDelta()
     {
         if (!isset($this->time_delta)) {
-            $response         = $this->http_client->get($this->endpoint . "/auth/time");
-            $serverTimestamp  = (int)(String)$response->getBody();
+            $response = $this->http_client->get($this->endpoint . "/auth/time");
+            $serverTimestamp = (int)(String)$response->getBody();
             $this->time_delta = $serverTimestamp - (int)\time();
         }
 
@@ -183,7 +184,7 @@ class Api
      * Request a consumer key from the API and the validation link to
      * authorize user to validate this consumer key
      *
-     * @param array  $accessRules list of rules your application need.
+     * @param array $accessRules list of rules your application need.
      * @param string $redirection url to redirect on your website after authentication
      *
      * @return mixed
@@ -192,8 +193,9 @@ class Api
     public function requestCredentials(
         array $accessRules,
         $redirection = null
-    ) {
-        $parameters              = new \StdClass();
+    )
+    {
+        $parameters = new \StdClass();
         $parameters->accessRules = $accessRules;
         $parameters->redirection = $redirection;
 
@@ -214,17 +216,17 @@ class Api
      * This is the main method of this wrapper. It will
      * sign a given query and return its result.
      *
-     * @param string               $method           HTTP method of request (GET,POST,PUT,DELETE)
-     * @param string               $path             relative url of API request
-     * @param \stdClass|array|null $content          body of the request
-     * @param bool                 $is_authenticated if the request use authentication
+     * @param string $method HTTP method of request (GET,POST,PUT,DELETE)
+     * @param string $path relative url of API request
+     * @param \stdClass|array|null $content body of the request
+     * @param bool $is_authenticated if the request use authentication
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
     private function rawCall($method, $path, $content = null, $is_authenticated = true)
     {
-        $url     = $this->endpoint . $path;
+        $url = $this->endpoint . $path;
         $request = new Request($method, $url);
 
         if (isset($content) && $method == 'GET') {
@@ -234,7 +236,7 @@ class Api
             $query = array();
             if (!empty($query_string)) {
                 $queries = explode('&', $query_string);
-                foreach($queries as $element) {
+                foreach ($queries as $element) {
                     $key_value_query = explode('=', $element, 2);
                     $query[$key_value_query[0]] = $key_value_query[1];
                 }
@@ -243,23 +245,19 @@ class Api
             $query = array_merge($query, (array)$content);
 
             // rewrite query args to properly dump true/false parameters
-            foreach($query as $key => $value)
-            {
-                if ($value === false)
-                {
+            foreach ($query as $key => $value) {
+                if ($value === false) {
                     $query[$key] = "false";
-                }
-                elseif ($value === true)
-                {
+                } elseif ($value === true) {
                     $query[$key] = "true";
                 }
             }
 
             $query = \GuzzleHttp\Psr7\build_query($query);
 
-            $url     = $request->getUri()->withQuery($query);
+            $url = $request->getUri()->withQuery($query);
             $request = $request->withUri($url);
-            $body    = "";
+            $body = "";
         } elseif (isset($content)) {
             $body = json_encode($content);
 
@@ -269,7 +267,7 @@ class Api
         }
 
         $headers = [
-            'Content-Type'      => 'application/json; charset=utf-8',
+            'Content-Type' => 'application/json; charset=utf-8',
             'X-Ovh-Application' => $this->application_key,
         ];
 
@@ -282,10 +280,10 @@ class Api
             $headers['X-Ovh-Timestamp'] = $now;
 
             if (isset($this->consumer_key)) {
-                $toSign                     = $this->application_secret . '+' . $this->consumer_key . '+' . $method
+                $toSign = $this->application_secret . '+' . $this->consumer_key . '+' . $method
                     . '+' . $url . '+' . $body . '+' . $now;
-                $signature                  = '$1$' . sha1($toSign);
-                $headers['X-Ovh-Consumer']  = $this->consumer_key;
+                $signature = '$1$' . sha1($toSign);
+                $headers['X-Ovh-Consumer'] = $this->consumer_key;
                 $headers['X-Ovh-Signature'] = $signature;
             }
         }
@@ -299,8 +297,8 @@ class Api
     /**
      * Wrap call to Ovh APIs for GET requests
      *
-     * @param string $path    path ask inside api
-     * @param array  $content content to send inside body of request
+     * @param string $path path ask inside api
+     * @param array $content content to send inside body of request
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
@@ -313,8 +311,8 @@ class Api
     /**
      * Wrap call to Ovh APIs for POST requests
      *
-     * @param string $path    path ask inside api
-     * @param array  $content content to send inside body of request
+     * @param string $path path ask inside api
+     * @param array $content content to send inside body of request
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
@@ -327,8 +325,8 @@ class Api
     /**
      * Wrap call to Ovh APIs for PUT requests
      *
-     * @param string $path    path ask inside api
-     * @param array  $content content to send inside body of request
+     * @param string $path path ask inside api
+     * @param array $content content to send inside body of request
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
@@ -341,8 +339,8 @@ class Api
     /**
      * Wrap call to Ovh APIs for DELETE requests
      *
-     * @param string $path    path ask inside api
-     * @param array  $content content to send inside body of request
+     * @param string $path path ask inside api
+     * @param array $content content to send inside body of request
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
@@ -366,5 +364,18 @@ class Api
     public function getHttpClient()
     {
         return $this->http_client;
+    }
+
+    public function __sleep()
+    {
+        return array('endpoints', 'endpoint', 'application_key', 'application_secret', 'consumer_key');
+    }
+
+    public function __wakeup()
+    {
+        $this->http_client = new Client([
+            'timeout' => 30,
+            'connect_timeout' => 5,
+        ]);
     }
 }
