@@ -178,6 +178,7 @@ var DoleticUIModule = new function () {
                 // if no service error
                 if (data.code == 0) {
                     var adm_content = "";
+                    var auditor_content = "";
                     var int_content = "";
                     for (var i = 0; i < data.object.length; i++) {
                         window.user_list[data.object[i].user_id] = data.object[i];
@@ -185,12 +186,17 @@ var DoleticUIModule = new function () {
                             adm_content += '<div class="item" data-value="' + data.object[i].id + '">'
                                 + data.object[i].firstname + ' ' + data.object[i].lastname + '</div>';
                         }
+                        if (data.object[i].position[0].division == "Qualité") {
+                            auditor_content += '<div class="item" data-value="' + data.object[i].id + '">'
+                                + data.object[i].firstname + ' ' + data.object[i].lastname + '</div>';
+                        }
                         if (data.object[i].intm_status != "Non") {
                             int_content += '<div class="item" data-value="' + data.object[i].id + '">'
                                 + data.object[i].firstname + ' ' + data.object[i].lastname + '</div>';
                         }
                     }
-                    $('#auditor_search .menu').html(adm_content);
+                    $('#auditor_search .menu').html(auditor_content);
+                    console.log(auditor_content);
                     $('#chadaff_search .menu').html(adm_content);
                     $('#int_search .menu').html(int_content);
                 } else {
@@ -224,13 +230,9 @@ var DoleticUIModule = new function () {
             ContactServicesInterface.getAll(function (data) {
                 // if no service error
                 if (data.code == 0) {
-                    var content = '';
                     for (var i = 0; i < data.object.length; i++) {
                         window.contact_list[data.object[i].id] = data.object[i];
-                        content += '<div class="item" data-value="' + data.object[i].id + '">' + data.object[i].firstname
-                            + ' ' + data.object[i].lastname + '</div>';
                     }
-                    $('#contact_search .menu').html(content);
                 } else {
                     // use default service service error handler
                     DoleticServicesInterface.handleServiceError(data);
@@ -550,6 +552,17 @@ var DoleticUIModule = new function () {
                     $('#task_btn').attr('onClick', 'DoleticUIModule.insertNewTask(' + number + '); return false;');
                     $('#sign_btn').attr('onClick', 'DoleticUIModule.signProject(' + number + '); return false;');
                     $('#end_btn').attr('onClick', 'DoleticUIModule.endProject(' + number + '); return false;');
+
+                    // Fill contacts related to project number
+                    var contactOptions = "";
+                    for(var i = 0; i<window.contact_list.length; i++) {
+                        if(typeof window.contact_list[i] != 'undefined' && window.contact_list[i].firm_id == data.object.firm_id) {
+                            contactOptions += '<div class="item" data-value="' + window.contact_list[i].id
+                                + '">' + window.contact_list[i].firstname + ' '
+                                + window.contact_list[i].lastname + '</div>';
+                        }
+                    }
+                    $('#contact_search .menu').html(contactOptions);
 
                     // Fill lists
                     DoleticUIModule.fillContactList(number);
