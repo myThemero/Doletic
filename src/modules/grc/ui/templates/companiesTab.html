@@ -1,6 +1,6 @@
 <div class="ui two column grid container">
     <div class="row">
-        <div class="twelve wide column">
+        <div class="eleven wide column">
             <div class="ui buttons">
                 <div id="company_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewFirmForm();">
                     Ajouter une société
@@ -11,6 +11,12 @@
                 <div id="excel_company_btn" class="ui yellow button" onClick="alert('Fonction non implémentée...')">
                     Exporter au format Excel
                 </div>
+            </div>
+        </div>
+        <div class="five wide column">
+            <div class="ui toggle checkbox">
+                <input type="checkbox" id="toggle_old_firms">
+                <label>Afficher les anciennes sociétés</label>
             </div>
         </div>
     </div>
@@ -27,7 +33,7 @@
     <form id="company_form" class="ui form segment">
         <h4 class="ui dividing header">Ajout d'une société</h4>
         <div class="ui fields">
-            <div id="siret_field" class="eight wide required field">
+            <div id="siret_field" class="eight wide field">
                 <label>SIRET</label>
                 <input id="siret" placeholder="SIRET..." type="text"/>
             </div>

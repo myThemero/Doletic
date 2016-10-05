@@ -94,6 +94,7 @@ var DoleticUIModule = new function () {
      *    Add the gender selector
      */
     this.fillFirmList = function (fillContact) {
+        var showOld = $('#toggle_old_firms').prop('checked');
         FirmServicesInterface.getAll(function (data) {
             window.firm_list = [];
             $('#company_table_container').html('');
@@ -137,9 +138,11 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.reset_filter
                 ];
                 var selector_content = '';
+                var counter = 0;
                 for (var i = 0; i < data.object.length; i++) {
                     window.firm_list[data.object[i].id] = data.object[i];
-                    content += "<tr><td>" + data.object[i].name + "</td> \
+                    if (showOld || counter < 100) {
+                        content += "<tr><td>" + data.object[i].name + "</td> \
 			      					<td>" + data.object[i].siret + "</td> \
 			      					<td>" + data.object[i].type + "</td> \
 			      					<td>" + data.object[i].address + "</td> \
@@ -150,7 +153,9 @@ var DoleticUIModule = new function () {
 			    					<i>Aucune</i>\
 			    				</td> \
 			    				</tr>";
+                    }
                     selector_content += '<div class="item" data-value="' + data.object[i].id + '">' + data.object[i].name + '</div>';
+                    counter++;
                 }
                 content += "</tbody></table>";
                 $('#company_table_container').append(content);
@@ -166,6 +171,7 @@ var DoleticUIModule = new function () {
     };
 
     this.fillContactList = function () {
+        var showOld = $('#toggle_old_contacts').prop('checked');
         ContactServicesInterface.getAll(function (data) {
             $('#contact_table_container').html('');
             // if no service error
@@ -198,7 +204,8 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.select_filter,
                     DoleticMasterInterface.reset_filter
                 ];
-                for (var i = 0; i < data.object.length; i++) {
+                var counter = 0;
+                for (var i = 0; i < data.object.length && (showOld || counter<100); i++) {
                     content += "<tr><td> \
 			        				<h4 class=\"ui header\"> \
 			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
@@ -212,6 +219,7 @@ var DoleticUIModule = new function () {
 			    					<i>Aucune</i>\
 			    				</td> \
 			    				</tr>";
+                    counter++;
                 }
                 content += "</tbody></table>";
                 $('#contact_table_container').append(content);

@@ -77,7 +77,9 @@ var DoleticUIModule = new function () {
         $('#contact_form_modal').remove();
         $('#user_form_modal').remove();
         $('#profile_form_modal').remove();
-        $('#contactsTab').load("../modules/grc/ui/templates/contactsTab.html");
+        $('#contactsTab').load("../modules/grc/ui/templates/contactsTab.html", function () {
+            $('#toggle_old_contacts').change(DoleticUIModule.fillContactList);
+        });
     };
 
     /**
@@ -85,7 +87,11 @@ var DoleticUIModule = new function () {
      */
     this.getCompaniesTab = function () {
         $('#company_form_modal').remove();
-        $('#companiesTab').load("../modules/grc/ui/templates/companiesTab.html");
+        $('#companiesTab').load("../modules/grc/ui/templates/companiesTab.html", function () {
+            $('#toggle_old_firms').change(function () {
+                DoleticUIModule.fillFirmList(false);
+            });
+        });
     };
 
     /**
@@ -124,7 +130,7 @@ var DoleticUIModule = new function () {
                 $('#contact_type_search').dropdown('get value'),
                 $('#role').val(),
                 $('#notes').val(),
-                function(data) {
+                function (data) {
                     DoleticUIModule.addContactHandler(data);
                 });
         }
@@ -145,13 +151,13 @@ var DoleticUIModule = new function () {
                 $('#city').val(),
                 $('#country_search').dropdown('get value'),
                 $('#firm_type_search').dropdown('get value'),
-                function(data) {
+                function (data) {
                     DoleticUIModule.addFirmHandler(data);
                 });
         }
     };
 
-    this.editContact = function(id) {
+    this.editContact = function (id) {
         $('#contact_form h4').html("Edition d'un contact");
         ContactServicesInterface.getById(id, function (data) {
             // if no service error
@@ -175,7 +181,7 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.editFirm = function(id) {
+    this.editFirm = function (id) {
         $('#company_form h4').html("Edition d'une société");
         FirmServicesInterface.getById(id, function (data) {
             // if no service error
@@ -197,7 +203,7 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.updateContact = function(id) {
+    this.updateContact = function (id) {
         // ADD OTHER TESTS
         if (DoleticUIModule.checkNewContactForm()) {
             // Insert new project in db
@@ -213,13 +219,13 @@ var DoleticUIModule = new function () {
                 $('#contact_type_search').dropdown('get value'),
                 $('#role').val(),
                 $('#notes').val(),
-                function(data) {
+                function (data) {
                     DoleticUIModule.editContactHandler(data);
                 });
         }
     };
 
-    this.updateFirm = function(id) {
+    this.updateFirm = function (id) {
         // ADD OTHER TESTS
         if (DoleticUIModule.checkNewFirmForm()) {
             // Insert new project in db
@@ -232,7 +238,7 @@ var DoleticUIModule = new function () {
                 $('#city').val(),
                 $('#country_search').dropdown('get value'),
                 $('#firm_type_search').dropdown('get value'),
-                function(data) {
+                function (data) {
                     DoleticUIModule.editFirmHandler(data);
                 });
         }
@@ -332,6 +338,7 @@ var DoleticUIModule = new function () {
      *    Add the gender selector
      */
     this.fillFirmList = function (fillContact) {
+        var showOld = $('#toggle_old_firms').prop('checked');
         FirmServicesInterface.getAll(function (data) {
             window.firm_list = [];
             $('#company_table_container').html('');
@@ -375,9 +382,11 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.reset_filter
                 ];
                 var selector_content = '';
+                var counter = 0;
                 for (var i = 0; i < data.object.length; i++) {
                     window.firm_list[data.object[i].id] = data.object[i];
-                    content += "<tr><td>" + data.object[i].name + "</td> \
+                    if (showOld || counter < 100) {
+                        content += "<tr><td>" + data.object[i].name + "</td> \
 			      					<td>" + data.object[i].siret + "</td> \
 			      					<td>" + data.object[i].type + "</td> \
 			      					<td>" + data.object[i].address + "</td> \
@@ -389,13 +398,15 @@ var DoleticUIModule = new function () {
 				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editFirm(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"write icon\"></i> \
 										</button>" +
-                        "<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteFirm(" + data.object[i].id + "); return false;\"> \
+                            "<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteFirm(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"remove icon\"></i> \
 										</button> \
 									</div> \
 			    				</td> \
 			    				</tr>";
+                    }
                     selector_content += '<div class="item" data-value="' + data.object[i].id + '">' + data.object[i].name + '</div>';
+                    counter++;
                 }
                 content += "</tbody></table>";
                 $('#company_table_container').append(content);
@@ -412,6 +423,7 @@ var DoleticUIModule = new function () {
     };
 
     this.fillContactList = function () {
+        var showOld = $('#toggle_old_contacts').prop('checked');
         ContactServicesInterface.getAll(function (data) {
             $('#contact_table_container').html('');
             // if no service error
@@ -450,7 +462,8 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.reset_filter
                 ];
-                for (var i = 0; i < data.object.length; i++) {
+                var counter = 0;
+                for (var i = 0; i < data.object.length && (showOld || counter<100); i++) {
                     content += "<tr><td> \
 			        				<h4 class=\"ui header\"> \
 			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
@@ -473,6 +486,7 @@ var DoleticUIModule = new function () {
 									</div> \
 			    				</td> \
 			    				</tr>";
+                    counter++;
                 }
                 content += "</tbody></table>";
                 $('#contact_table_container').append(content);
@@ -524,7 +538,7 @@ var DoleticUIModule = new function () {
             DoleticMasterInterface.hideConfirmModal);
     };
 
-    this.addContactHandler = function(data) {
+    this.addContactHandler = function (data) {
         // if no service error
         if (data.code == 0) {
             // clear contact form
@@ -537,7 +551,7 @@ var DoleticUIModule = new function () {
         }
     };
 
-    this.editContactHandler = function(data) {
+    this.editContactHandler = function (data) {
         // if no service error
         if (data.code == 0) {
             // clear contact form
@@ -564,7 +578,7 @@ var DoleticUIModule = new function () {
         });
     };
 
-    this.addFirmHandler = function(data) {
+    this.addFirmHandler = function (data) {
         // if no service error
         if (data.code == 0) {
             // clear firm form
@@ -577,7 +591,7 @@ var DoleticUIModule = new function () {
         }
     };
 
-    this.editFirmHandler = function(data) {
+    this.editFirmHandler = function (data) {
         // if no service error
         if (data.code == 0) {
             // clear firm form
@@ -608,11 +622,11 @@ var DoleticUIModule = new function () {
         $('#contact_form .message').remove();
         $('#contact_form .field').removeClass('error');
         var valid = true;
-        if(!DoleticMasterInterface.checkName($('#firstname').val())) {
+        if (!DoleticMasterInterface.checkName($('#firstname').val())) {
             valid = false;
             $('#firstname_field').addClass('error');
         }
-        if(!DoleticMasterInterface.checkName($('#lastname').val())) {
+        if (!DoleticMasterInterface.checkName($('#lastname').val())) {
             valid = false;
             $('#lastname_field').addClass('error');
         }
@@ -628,11 +642,15 @@ var DoleticUIModule = new function () {
             $('#firm_field').addClass("error");
             valid = false;
         }
-        if(!DoleticMasterInterface.checkTel($('#tel').val())) {
+        if ($('#tel').val() != '' && !DoleticMasterInterface.checkTel($('#tel').val())) {
             valid = false;
             $('#tel_field').addClass('error');
         }
-        if(!DoleticMasterInterface.checkMail($('#mail').val())) {
+        if ($('#cell').val() != '' && !DoleticMasterInterface.checkTel($('#cell').val())) {
+            valid = false;
+            $('#cell_field').addClass('error');
+        }
+        if ($('#cell').val() != '' && !DoleticMasterInterface.checkMail($('#mail').val())) {
             valid = false;
             $('#email_field').addClass('error');
         }
@@ -647,15 +665,15 @@ var DoleticUIModule = new function () {
         $('#company_form .message').remove();
         $('#company_form .field').removeClass('error');
         var valid = true;
-        if(!DoleticMasterInterface.checkName($('#name').val())) {
+        if (!DoleticMasterInterface.checkName($('#name').val())) {
             valid = false;
             $('#name_field').addClass('error');
         }
-        if($('#address').val() == "") {
+        if ($('#address').val() == "") {
             valid = false;
             $('#address_field').addClass('error');
         }
-        if($('#city').val() == "") {
+        if ($('#city').val() == "") {
             valid = false;
             $('#city_field').addClass('error');
         }
@@ -667,7 +685,7 @@ var DoleticUIModule = new function () {
             $('#firm_type_field').addClass("error");
             valid = false;
         }
-        if(!DoleticMasterInterface.checkPostalCode($('#postalcode').val())) {
+        if (!DoleticMasterInterface.checkPostalCode($('#postalcode').val())) {
             valid = false;
             $('#postalcode').addClass('error');
         }

@@ -241,7 +241,12 @@ class FirmServices extends AbstractObjectServices
     private function __get_all_firms()
     {
         // create sql request
-        $sql = parent::getDBObject()->GetTable(FirmDBObject::TABL_FIRM)->GetSELECTQuery();
+        $sql = parent::getDBObject()->GetTable(FirmDBObject::TABL_FIRM)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL),
+            array(DBTable::EVERYWHERE),
+            array(),
+            array(FirmDBObject::COL_ID => DBTable::ORDER_DESC) // Change for last contact when used
+        );
         // execute SQL query and save result
         $pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
         // create an empty array for firms and fill it

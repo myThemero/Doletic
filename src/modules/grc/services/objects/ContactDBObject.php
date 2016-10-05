@@ -333,7 +333,12 @@ class ContactServices extends AbstractObjectServices
     private function __get_all_contacts()
     {
         // create sql request
-        $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT)->GetSELECTQuery();
+        $sql = parent::getDBObject()->GetTable(ContactDBObject::TABL_CONTACT)->GetSELECTQuery(
+            array(DBTable::SELECT_ALL),
+            array(DBTable::EVERYWHERE),
+            array(),
+            array(ContactDBObject::COL_CREATION_DATE => DBTable::ORDER_DESC)
+        );
         // execute SQery and sresult
         $pdos = parent::getDBConnection()->ResultFromQuery($sql, array());
         // create an empty array for contacts and fill it

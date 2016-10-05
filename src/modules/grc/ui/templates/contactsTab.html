@@ -1,6 +1,6 @@
 <div class="ui two column grid container">
     <div class="row">
-        <div class="twelve wide column">
+        <div class="eleven wide column">
             <div class="ui buttons">
                 <div id="contact_modal_btn" class="ui green button" onClick="DoleticUIModule.showNewContactForm();">
                     Ajouter un contact
@@ -11,6 +11,12 @@
                 <div id="excel_contact_btn" class="ui yellow button" onClick="alert('Fonction non implémentée...')">
                     Exporter au format Excel
                 </div>
+            </div>
+        </div>
+        <div class="five wide column">
+            <div class="ui toggle checkbox">
+                <input type="checkbox" id="toggle_old_contacts">
+                <label>Afficher les anciens contacts</label>
             </div>
         </div>
     </div>
@@ -59,11 +65,11 @@
             </div>
         </div>
         <div class="fields">
-            <div id="tel_field" class="eight wide required field">
+            <div id="tel_field" class="eight wide field">
                 <label>Téléphone</label>
                 <input id="tel" placeholder="0000000000" type="text"/>
             </div>
-            <div id="cell_field" class="eight wide required field">
+            <div id="cell_field" class="eight wide field">
                 <label>Téléphone mobile</label>
                 <input id="cell" placeholder="0000000000" type="text"/>
             </div>
@@ -85,11 +91,11 @@
                 <input id="role" placeholder="Role..." type="text"/>
             </div>
         </div>
-        <div id="email_field" class="sixteen wide required field">
+        <div id="email_field" class="sixteen wide field">
             <label>Mail</label>
             <input id="mail" placeholder="Mail..." type="text"/>
         </div>
-        <div id="notes_field" class="sixteen wide required field">
+        <div id="notes_field" class="sixteen wide field">
             <label>Notes</label>
             <textarea id="notes" placeholder="Notes..."></textarea>
         </div>
