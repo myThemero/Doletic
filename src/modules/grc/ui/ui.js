@@ -182,7 +182,9 @@ var DoleticUIModule = new function () {
                         <th>Nom/Email</th> \
                         <th>Type</th> \
                         <th>Téléphone</th> \
+                        <th>Mobile</th> \
                         <th>Société</th> \
+                        <th>Role</th> \
                         <th>Actions</th> \
                     </tr>\
                 </thead>\
@@ -191,7 +193,9 @@ var DoleticUIModule = new function () {
                         <th>Nom/Email</th> \
                         <th>Type</th> \
                         <th>Téléphone</th> \
+                        <th>Mobile</th> \
                         <th>Société</th> \
+                        <th>Role</th> \
                         <th></th> \
                     </tr>\
                 </tfoot>\
@@ -201,7 +205,9 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.select_filter,
                     DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.select_filter,
+                    DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.reset_filter
                 ];
                 var counter = 0;
@@ -214,7 +220,9 @@ var DoleticUIModule = new function () {
 			      					</h4></td> \
 			      					<td>" + data.object[i].category + "</td> \
 			      					<td>" + data.object[i].phone + "</td> \
+			      					<td>" + data.object[i].cellphone + "</td> \
 			      					<td>" + (typeof window.firm_list[data.object[i].firm_id] !== 'undefined' ? window.firm_list[data.object[i].firm_id].name : '<i>Aucune</i>') + "</td> \
+			    				    <td>" + data.object[i].role + "</td> \
 			    				    <td> \
 			    					<i>Aucune</i>\
 			    				</td> \

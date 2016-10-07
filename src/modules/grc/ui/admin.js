@@ -425,7 +425,9 @@ var DoleticUIModule = new function () {
                         <th>Nom/Email</th> \
                         <th>Type</th> \
                         <th>Téléphone</th> \
+                        <th>Mobile</th> \
                         <th>Société</th> \
+                        <th>Role</th> \
                         <th>Actions</th> \
                     </tr>\
                 </thead>\
@@ -434,7 +436,9 @@ var DoleticUIModule = new function () {
                         <th>Nom/Email</th> \
                         <th>Type</th> \
                         <th>Téléphone</th> \
+                        <th>Mobile</th> \
                         <th>Société</th> \
+                        <th>Role</th> \
                         <th></th> \
                     </tr>\
                 </tfoot>\
