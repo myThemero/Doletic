@@ -42,6 +42,7 @@ class Services
     const PARAM_PROJECT = 'project';
     const PARAM_CHADAFF = 'chadaff';
     const PARAM_INT = 'int';
+    const PARAM_ERROR = 'error';
     const PARAM_CONTACT = 'contact';
     const PARAM_TEMPLATE = 'template';
     const PARAM_PRESIDENT = 'president';
@@ -467,6 +468,15 @@ class Services
         // Retrieve project params
         $params = $this->__get_project_params($number, $mainContact, $mainChadaff, $mainInt);
 
+        // Check of errors
+        if(isset($params[Services::PARAM_ERROR])) {
+            return new ServiceResponse(
+                $params[Services::PARAM_ERROR],
+                ServiceResponse::ERR_MISSING_PARAMS,
+                $params[Services::PARAM_ERROR]
+            );
+        }
+
         // Build dictionary from params
         $dict = new DocumentDictionary($template, $params);
 
@@ -495,6 +505,16 @@ class Services
             UaDBService::GET_FULL_PROJECT_BY_NUMBER,
             array(ProjectServices::PARAM_NUMBER => $number)
         );
+
+        $auditorId = $project->GetAuditorId();
+        if(!isset($auditorId)) {
+            return [Services::PARAM_ERROR => "L'étude n'a pas de correspondant qualité. Les documents ne peuvent être créés."];
+        }
+        $firmId = $project->GetFirmId();
+        if(!isset($firmId)) {
+            return [Services::PARAM_ERROR => "L'étude n'a pas de société associée. Les documents ne peuvent être créés."];
+        }
+
         // Replace Chadaff id by infos
         $mainChadaff = $this->kernel->GetDBObject(UserDataDBObject::OBJ_NAME)->GetServices($this->kernel->GetCurrentUser())
             ->GetResponseData(UserDataServices::GET_USER_DATA_BY_ID, array(UserDataServices::PARAM_ID => $mainChadaff));
