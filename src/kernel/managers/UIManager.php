@@ -55,6 +55,7 @@ class UIManager extends AbstractManager
 <html>
 	<head>
 		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>
+		<link rel=\"icon\" href=\"/resources/doletic_logo.png\">
 		<title>Doletic</title>";
         // add css entries
         foreach (array_merge($this->internal_css) as $value) {

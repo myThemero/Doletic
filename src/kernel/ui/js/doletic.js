@@ -411,6 +411,7 @@ var DoleticMasterInterface = new function () {
             var table = $('#' + id).DataTable({
                 retrieve: true,
                 language: data,
+                aaSorting: [],
                 initComplete: function () {
                     if (filters != []) {
                         var i = 0;

@@ -26,7 +26,7 @@ var DoleticUIModule = new function () {
 					  <form id=\"login_form\" class=\"ui form attached fluid segment\"> \
 				  		<div id=\"uname_field\" class=\"required field\"> \
 					      <label>Nom d'utilisateur</label> \
-					      <input id=\"uname_input\" placeholder=\"prenom.nom\" name=\"username\" type=\"text\"> \
+					      <input id=\"uname_input\" placeholder=\"pnom\" name=\"username\" type=\"text\"> \
 						</div> \
 						<div id=\"pass_field\" class=\"required field\"> \
 					      <label>Mot de passe</label> \

@@ -196,7 +196,6 @@ var DoleticUIModule = new function () {
                         }
                     }
                     $('#auditor_search .menu').html(auditor_content);
-                    console.log(auditor_content);
                     $('#chadaff_search .menu').html(adm_content);
                     $('#int_search .menu').html(int_content);
                 } else {
@@ -1596,7 +1595,7 @@ var DoleticUIModule = new function () {
             $('#project_form .field').removeClass("error");
             var valid = true;
             var errorString = "";
-            if (!DoleticMasterInterface.checkName($('#name').val())) {
+            if ($('#name').val().trim() == '') {
                 $('#name_field').addClass("error");
                 valid = false;
             }
@@ -1655,7 +1654,8 @@ var DoleticUIModule = new function () {
                 $('#jehamount_field').addClass("error");
                 valid = false;
             }
-            if (!DoleticMasterInterface.checkInt($('#jehcost').val())) {
+            // Use setting for max JEH cost ...
+            if (!DoleticMasterInterface.checkInt($('#jehcost').val()) || Number($('#jehcost').val()) > 340 || Number($('#jehcost').val()) < 80) {
                 $('#jehcost_field').addClass("error");
                 valid = false;
             }
