@@ -1552,7 +1552,7 @@ var DoleticUIModule = new function () {
             $('#sdatei_field').addClass("error");
             valid = false;
         }
-        if (!/^\d{13}$/.test($('#secu_int').val().trim())) {
+        if (!/^\d{15}$/.test($('#secu_int').val().trim())) {
             $('#secu_int').addClass("error");
             valid = false;
         }
