@@ -1451,7 +1451,7 @@ var DoleticUIModule = new function () {
             $('#lastname_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkDate($('#birthdate').val())) {
+        if (!DoleticMasterInterface.checkDate($('#birthdate').val()) && $('#birthdate').val().trim() != '') {
             $('#birthdate_field').addClass("error");
             valid = false;
         }
