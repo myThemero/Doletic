@@ -1,0 +1,58 @@
+<form id="task_form" class="ui form segment">
+    <h4 class="ui dividing header">Création d'une tâche</h4>
+    <div class="ui fields">
+        <div id="title_field" class="eight wide required field">
+            <label>Titre</label>
+            <input id="title" placeholder="Titre de la tâche" type="text"/>
+        </div>
+        <div id="priority_field" class="eight wide required field">
+            <label>Priorité</label>
+            <div id="priority_search" class="ui selection dropdown">
+                <input type="hidden" id="priority"/>
+                <i class="dropdown icon"></i>
+                <div class="default text">Choisir une priorité</div>
+                <div class="menu">
+                    <div class="item" data-value="1">Basse</div>
+                    <div class="item" data-value="2">Normale</div>
+                    <div class="item" data-value="3">Haute</div>
+                    <div class="item" data-value="4">Importante</div>
+                    <div class="item" data-value="5">Critique</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="details_field" class="sixteen wide field">
+        <label>Description</label>
+        <textarea id="details" placeholder="Description de la tâche"></textarea>
+    </div>
+    <div class="ui fields">
+        <div id="enddate_field" class="five wide field">
+            <label>Echéance</label>
+            <div class="ui calendar" id="enddate_calendar">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    <input id="enddate" placeholder="AAAA-mm-jj" type="text"/>
+                </div>
+            </div>
+        </div>
+        <div class="eleven wide required field">
+            <label>Membres concernés</label>
+            <select id="members" name="Documents" multiple="" class="ui fluid dropdown">
+                <option value="0">Martin DELBECQUE</option>
+                <option value="1">Kim BERTRAND</option>
+                <option value="2">Nicolas SORIN</option>
+                <option value="3">Luc CRISTOL</option>
+                <option value="4" selected>Moi</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui sixteen wide field toggle checkbox">
+        <input type="checkbox" name="public">
+        <label>Créer une tâche distincte pour chaque membre au lieu d'une tâche commune</label>
+    </div>
+    <div class="ui hr_center small buttons">
+        <div id="abort_intm" class="ui button" onClick="DoleticUIModule.closeNewTaskForm();">Annuler</div>
+        <div class="or" data-text="ou"></div>
+        <div id="intm_btn" class="ui green button">Ajouter</div>
+    </div>
+</form>

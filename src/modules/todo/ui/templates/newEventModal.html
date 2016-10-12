@@ -1,0 +1,63 @@
+<form id="event_form" class="ui form segment">
+    <h4 class="ui dividing header">Création d'un évènement</h4>
+    <div class="ui fields">
+        <div id="title_field" class="eight wide required field">
+            <label>Titre</label>
+            <input id="title" placeholder="Titre de l'évènement" type="text"/>
+        </div>
+        <div id="place_field" class="eight wide field">
+            <label>Lieu</label>
+            <div class="ui left icon input">
+                <input id="place" type="text" placeholder="Lieu de l'évènement">
+                <i class="marker icon"></i>
+            </div>
+        </div>
+    </div>
+    <div id="details_field" class="sixteen wide field">
+        <label>Description</label>
+        <textarea id="details" placeholder="Description de l'évènement"></textarea>
+    </div>
+    <div class="ui fields">
+        <div id="owner_field" class="six wide field">
+            <label>Propriétaire</label>
+            <div class="ui left icon input">
+                <input id="owner" type="text" disabled/>
+                <i class="child icon"></i>
+            </div>
+        </div>
+        <div id="begdate_field" class="five wide required field">
+            <label>Date de début</label>
+            <div class="ui calendar" id="begdate_calendar">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    <input id="begdate" placeholder="AAAA-mm-jj HH:MM" type="text"/>
+                </div>
+            </div>
+        </div>
+        <div id="enddate_field" class="five wide required field">
+            <label>Date de fin</label>
+            <div class="ui calendar" id="enddate_calendar">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    <input id="enddate" placeholder="AAAA-mm-jj HH:MM" type="text"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui fields">
+        <div class="sixteen wide required field">
+            <label>Membres concernés</label>
+            <select id="members" name="Documents" multiple="" class="ui fluid dropdown">
+                <option value="0">Martin DELBECQUE</option>
+                <option value="1">Kim BERTRAND</option>
+                <option value="2">Nicolas SORIN</option>
+                <option value="3">Luc CRISTOL</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui hr_center small buttons">
+        <div id="abort_intm" class="ui button" onClick="DoleticUIModule.closeNewEventForm();">Annuler</div>
+        <div class="or" data-text="ou"></div>
+        <div id="intm_btn" class="ui green button">Ajouter</div>
+    </div>
+</form>
