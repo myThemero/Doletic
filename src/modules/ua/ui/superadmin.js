@@ -49,7 +49,7 @@ var DoleticUIModule = new function () {
   							<a class=\"item active\" data-tab=\"stats\">Statistiques</a> \
   							<a class=\"item\" id=\"sollist\" data-tab=\"solliclist\">Sollicitations</a> \
   							<a class=\"item\" id=\"prolist\" data-tab=\"projectlist\">Etudes en cours</a> \
-  							<a class=\"item\" id=\"dislist\" data-tab=\"disabledlist\">Etudes en attente</a> \
+  							<a class=\"item\" id=\"dislist\" data-tab=\"disabledlist\">Etudes en Stand-By</a> \
   							<a class=\"item\" id=\"arclist\" data-tab=\"archivedlist\">Etudes archivées</a> \
   							<a class=\"item\" id=\"det\" data-tab=\"projectdetails\">Détails de l'étude</a> \
 						</div> \
@@ -393,6 +393,9 @@ var DoleticUIModule = new function () {
                                 "<i class=\"write icon\"></i>" +
                                 "</button>" +
                                 "<button class=\"ui olive icon button\" data-tooltip=\"Réactiver\" onClick=\"DoleticUIModule.restoreProject(" + data.object[i].number + "); return false;\">" +
+                                "<i class=\"refresh icon\"></i>" +
+                                "</button>" +
+                                "<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"remove icon\"></i>" +
                                 "</button>" +
                                 "</div></td>" +
@@ -412,7 +415,7 @@ var DoleticUIModule = new function () {
                                 "<button class=\"ui yellow icon button\" data-tooltip=\"Avorter\" onClick=\"DoleticUIModule.abortProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"archive icon\"></i>" +
                                 "</button>" +
-                                "<button class=\"ui orange icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui orange icon button\" data-tooltip=\"Mettre en Stand-By\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"remove icon\"></i>" +
                                 "</button>" +
                                 "</div></td>" +
@@ -425,7 +428,7 @@ var DoleticUIModule = new function () {
                                 "<button class=\"ui yellow icon button\" data-tooltip=\"Avorter\" onClick=\"DoleticUIModule.abortProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"archive icon\"></i>" +
                                 "</button>" +
-                                "<button class=\"ui orange icon button\" data-tooltip=\"Désactiver\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
+                                "<button class=\"ui orange icon button\" data-tooltip=\"Mettre en Stand-By\" onClick=\"DoleticUIModule.disableProject(" + data.object[i].number + "); return false;\">" +
                                 "<i class=\"remove icon\"></i>" +
                                 "</button>" +
                                 "</div></td>" +

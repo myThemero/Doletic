@@ -662,6 +662,7 @@ var DoleticUIModule = new function () {
     };
 
     this.checkNewFirmForm = function () {
+        console.log($('#company_form'));
         $('#company_form .message').remove();
         $('#company_form .field').removeClass('error');
         var valid = true;
