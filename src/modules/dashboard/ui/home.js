@@ -57,7 +57,6 @@ var DoleticUIModule = new function () {
 // ---- OTHER FUNCTION REQUIRED BY THE MODULE ITSELF
 
     this.getDashboard = function(callback) {
-        $('#user_form_modal').remove();
         $('#profile_form_modal').remove();
         $('#dashboard_container').load("../modules/dashboard/ui/templates/dashboard.html", callback);
     };
@@ -96,18 +95,18 @@ var DoleticUIModule = new function () {
                     if (data.code == 0) {
                         // set user name
                         $('#user_fulname').html(data.object.firstname + ' ' + data.object.lastname);
-                        $('#firstname').val(data.object.firstname);
-                        $('#lastname').val(data.object.lastname);
-                        $('#birthdate').val(data.object.birthdate);
-                        $('#gender_search').dropdown('set selected', data.object.gender);
-                        $('#schoolyear_search').dropdown('set selected', data.object.school_year);
-                        $('#dept_search').dropdown('set selected', data.object.insa_dept);
-                        $('#country_search').dropdown('set selected', data.object.country);
-                        $('#mail').val(data.object.email);
-                        $('#tel').val(data.object.tel);
-                        $('#address').val(data.object.address);
-                        $('#postalcode').val(data.object.postal_code);
-                        $('#city').val(data.object.city);
+                        $('#profile_firstname').val(data.object.firstname);
+                        $('#profile_lastname').val(data.object.lastname);
+                        $('#profile_birthdate').val(data.object.birthdate);
+                        $('#profile_gender_search').dropdown('set selected', data.object.gender);
+                        $('#profile_schoolyear_search').dropdown('set selected', data.object.school_year);
+                        $('#profile_dept_search').dropdown('set selected', data.object.insa_dept);
+                        $('#profile_country_search').dropdown('set selected', data.object.country);
+                        $('#profile_mail').val(data.object.email);
+                        $('#profile_tel').val(data.object.tel);
+                        $('#profile_address').val(data.object.address);
+                        $('#profile_postalcode').val(data.object.postal_code);
+                        $('#profile_city').val(data.object.city);
                     } else {
                         // use doletic services interface to display error
                         DoleticServicesInterface.handleServiceError(data);
@@ -241,18 +240,18 @@ var DoleticUIModule = new function () {
     this.updateProfile = function() {
         if(DoleticUIModule.checkProfileForm()) {
             UserDataServicesInterface.updateOwn(
-                $('#gender_search').dropdown('get value'),
-                $('#firstname').val(),
-                $('#lastname').val(),
-                $('#birthdate').val(),
-                $('#tel').val(),
-                $('#mail').val(),
-                $('#address').val(),
-                $('#city').val(),
-                $('#postalcode').val(),
-                $('#country_search').dropdown('get value'),
-                $('#schoolyear_search').dropdown('get value'),
-                $('#dept_search').dropdown('get value'),
+                $('#profile_gender_search').dropdown('get value'),
+                $('#profile_firstname').val(),
+                $('#profile_lastname').val(),
+                $('#profile_birthdate').val(),
+                $('#profile_tel').val(),
+                $('#profile_mail').val(),
+                $('#profile_address').val(),
+                $('#profile_city').val(),
+                $('#profile_postalcode').val(),
+                $('#profile_country_search').dropdown('get value'),
+                $('#profile_schoolyear_search').dropdown('get value'),
+                $('#profile_dept_search').dropdown('get value'),
                 function(data) {
                     if (data.code == 0) {
                         DoleticUIModule.cancelProfileForm();
@@ -304,52 +303,52 @@ var DoleticUIModule = new function () {
         $('#profile_form .field').removeClass("error");
         var valid = true;
         var errorString = "";
-        if (!DoleticMasterInterface.checkName($('#firstname').val())) {
-            $('#firstname_field').addClass("error");
+        if (!DoleticMasterInterface.checkName($('#profile_firstname').val())) {
+            $('#profile_firstname_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkName($('#lastname').val())) {
-            $('#lastname_field').addClass("error");
+        if (!DoleticMasterInterface.checkName($('#profile_lastname').val())) {
+            $('#profile_lastname_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkDate($('#birthdate').val())) {
-            $('#birthdate_field').addClass("error");
+        if (!DoleticMasterInterface.checkDate($('#profile_birthdate').val())) {
+            $('#profile_birthdate_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkTel($('#tel').val())) {
-            $('#tel_field').addClass("error");
+        if (!DoleticMasterInterface.checkTel($('#profile_tel').val())) {
+            $('#profile_tel_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkMail($('#mail').val())) {
-            $('#mail_field').addClass("error");
+        if (!DoleticMasterInterface.checkMail($('#profile_mail').val())) {
+            $('#profile_mail_field').addClass("error");
             valid = false;
         }
-        if ($('#address').val() == "") {
-            $('#address_field').addClass("error");
+        if ($('#profile_address').val() == "") {
+            $('#profile_address_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkName($('#city').val())) {
-            $('#city_field').addClass("error");
+        if (!DoleticMasterInterface.checkName($('#profile_city').val())) {
+            $('#profile_city_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkPostalCode($('#postalcode').val())) {
-            $('#postalcode_field').addClass("error");
+        if (!DoleticMasterInterface.checkPostalCode($('#profile_postalcode').val())) {
+            $('#profile_postalcode_field').addClass("error");
             valid = false;
         }
-        if ($('#gender_search').dropdown('get value') == "") {
-            $('#gender_field').addClass("error");
+        if ($('#profile_gender_search').dropdown('get value') == "") {
+            $('#profile_gender_field').addClass("error");
             valid = false;
         }
-        if ($('#country_search').dropdown('get value') == "") {
-            $('#country_field').addClass("error");
+        if ($('#profile_country_search').dropdown('get value') == "") {
+            $('#profile_country_field').addClass("error");
             valid = false;
         }
-        if ($('#schoolyear_search').dropdown('get value') == "") {
-            $('#schoolyear_field').addClass("error");
+        if ($('#profile_schoolyear_search').dropdown('get value') == "") {
+            $('#profile_schoolyear_field').addClass("error");
             valid = false;
         }
-        if ($('#dept_search').dropdown('get value') == "") {
-            $('#dept_field').addClass("error");
+        if ($('#profile_dept_search').dropdown('get value') == "") {
+            $('#profile_dept_field').addClass("error");
             valid = false;
         }
         if (!valid) {
@@ -370,7 +369,7 @@ var DoleticUIModule = new function () {
                     content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#country_search .menu').html(content).dropdown();
+                $('#profile_country_search .menu').html(content).dropdown();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -389,7 +388,7 @@ var DoleticUIModule = new function () {
                     content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#gender_search .menu').html(content).dropdown();
+                $('#profile_gender_search .menu').html(content).dropdown();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -408,7 +407,7 @@ var DoleticUIModule = new function () {
                     content += '<div class="item" data-value="' + data.object[i].label + '">' + data.object[i].label + '</div>';
                 }
                 // insert html content
-                $('#dept_search .menu').html(content).dropdown();
+                $('#profile_dept_search .menu').html(content).dropdown();
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -427,7 +426,7 @@ var DoleticUIModule = new function () {
                     content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
-                $('#schoolyear_search .menu').html(content);
+                $('#profile_schoolyear_search .menu').html(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);

@@ -26,22 +26,17 @@ var DoleticUIModule = new function () {
  				  	<div class=\"row\"> \
  				  		<div class=\"sixteen wide column\"> \
  				  			<div class=\"ui top attached tabular menu\"> \
-   								<a class=\"item active\" data-tab=\"contacts\">Gestion des Contacts</a> \
-   								<a class=\"item\" data-tab=\"companies\">Gestion des Sociétés</a> \
-								<a class=\"item\" data-tab=\"stats\">Statistiques</a> \
+   								<a class=\"item active\" data-tab=\"companies\">Gestion des Sociétés</a> \
+   								<a class=\"item\" data-tab=\"contacts\">Gestion des Contacts</a> \
  							</div> \
- 							<div class=\"ui bottom attached tab segment active\" data-tab=\"contacts\"> \
-								<div id=\"contactsTab\"> \
-								</div> \
- 					    	</div> \
- 							<div class=\"ui bottom attached tab segment\" data-tab=\"companies\"> \
+ 							<div class=\"ui bottom attached tab segment active\" data-tab=\"companies\"> \
 								<div id=\"companiesTab\"> \
 								</div> \
                         	</div> \
-							<div class=\"ui bottom attached tab segment\" data-tab=\"stats\"> \
-								<div id=\"statsTab\"> \
+                            <div class=\"ui bottom attached tab segment\" data-tab=\"contacts\"> \
+								<div id=\"contactsTab\"> \
 								</div> \
-							</div> \
+ 					    	</div> \
 						</div> \
  					</div> \
 	 				<div class=\"row\"> \

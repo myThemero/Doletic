@@ -31,22 +31,17 @@ var DoleticUIModule = new function () {
  				  	<div class=\"row\"> \
  				  		<div class=\"sixteen wide column\"> \
  				  			<div class=\"ui top attached tabular menu\"> \
-   								<a class=\"item active\" data-tab=\"contacts\">Gestion des Contacts</a> \
-   								<a class=\"item\" data-tab=\"companies\">Gestion des Sociétés</a> \
-								<a class=\"item\" data-tab=\"stats\">Statistiques</a> \
+   								<a class=\"item active\" data-tab=\"companies\">Gestion des Sociétés</a> \
+   								<a class=\"item\" data-tab=\"contacts\">Gestion des Contacts</a> \
  							</div> \
- 							<div class=\"ui bottom attached tab segment active\" data-tab=\"contacts\"> \
-								<div id=\"contactsTab\"> \
-								</div> \
- 					    	</div> \
- 							<div class=\"ui bottom attached tab segment\" data-tab=\"companies\"> \
+ 							<div class=\"ui bottom attached tab segment active\" data-tab=\"companies\"> \
 								<div id=\"companiesTab\"> \
 								</div> \
                         	</div> \
-							<div class=\"ui bottom attached tab segment\" data-tab=\"stats\"> \
-								<div id=\"statsTab\"> \
+                            <div class=\"ui bottom attached tab segment\" data-tab=\"contacts\"> \
+								<div id=\"contactsTab\"> \
 								</div> \
-							</div> \
+ 					    	</div> \
 						</div> \
  					</div> \
 	 				<div class=\"row\"> \
@@ -75,8 +70,6 @@ var DoleticUIModule = new function () {
      */
     this.getContactsTab = function () {
         $('#contact_form_modal').remove();
-        $('#user_form_modal').remove();
-        $('#profile_form_modal').remove();
         $('#contactsTab').load("../modules/grc/ui/templates/contactsTab.html");
     };
 
@@ -114,16 +107,16 @@ var DoleticUIModule = new function () {
         if (DoleticUIModule.checkNewContactForm()) {
             // Insert new project in db
             ContactServicesInterface.insert(
-                $('#gender_search').dropdown('get value'),
-                $('#firstname').val(),
-                $('#lastname').val(),
-                $('#firm_search').dropdown('get value'),
-                $('#mail').val(),
-                $('#tel').val(),
-                $('#cell').val(),
+                $('#contact_gender_search').dropdown('get value'),
+                $('#contact_firstname').val(),
+                $('#contact_lastname').val(),
+                $('#contact_firm_search').dropdown('get value'),
+                $('#contact_mail').val(),
+                $('#contact_tel').val(),
+                $('#contact_cell').val(),
                 $('#contact_type_search').dropdown('get value'),
-                $('#role').val(),
-                $('#notes').val(),
+                $('#contact_role').val(),
+                $('#contact_notes').val(),
                 function (data) {
                     DoleticUIModule.addContactHandler(data);
                 });
@@ -138,12 +131,12 @@ var DoleticUIModule = new function () {
         if (DoleticUIModule.checkNewFirmForm()) {
             // Insert new project in db
             FirmServicesInterface.insert(
-                $('#siret').val(),
-                $('#name').val(),
-                $('#address').val(),
-                $('#postalcode').val(),
-                $('#city').val(),
-                $('#country_search').dropdown('get value'),
+                $('#firm_siret').val(),
+                $('#firm_name').val(),
+                $('#firm_address').val(),
+                $('#firm_postalcode').val(),
+                $('#firm_city').val(),
+                $('#firm_country_search').dropdown('get value'),
                 $('#firm_type_search').dropdown('get value'),
                 function (data) {
                     DoleticUIModule.addFirmHandler(data);
@@ -156,16 +149,16 @@ var DoleticUIModule = new function () {
         ContactServicesInterface.getById(id, function (data) {
             // if no service error
             if (data.code == 0 && data.object != "[]") {
-                $('#firstname').val(data.object.firstname);
-                $('#lastname').val(data.object.lastname);
-                $('#tel').val(data.object.phone);
-                $('#cell').val(data.object.cellphone);
-                $('#mail').val(data.object.email);
-                $('#role').val(data.object.role);
-                $('#notes').val(data.object.notes);
-                $('#gender_search').dropdown("set selected", data.object.gender);
+                $('#contact_firstname').val(data.object.firstname);
+                $('#contact_lastname').val(data.object.lastname);
+                $('#contact_tel').val(data.object.phone);
+                $('#contact_cell').val(data.object.cellphone);
+                $('#contact_mail').val(data.object.email);
+                $('#contact_role').val(data.object.role);
+                $('#contact_notes').val(data.object.notes);
+                $('#contact_gender_search').dropdown("set selected", data.object.gender);
                 $('#contact_type_search').dropdown("set selected", data.object.category);
-                $('#firm_search').dropdown("set selected", data.object.firm_id);
+                $('#contact_firm_search').dropdown("set selected", data.object.firm_id);
                 $('#addcontact_btn').html("Confirmer").attr("onClick", "DoleticUIModule.updateContact(" + id + "); return false;");
                 $('#contact_form_modal').modal('show');
             } else {
@@ -180,14 +173,14 @@ var DoleticUIModule = new function () {
         FirmServicesInterface.getById(id, function (data) {
             // if no service error
             if (data.code == 0 && data.object != "[]") {
-                $('#name').val(data.object.name);
-                $('#siret').val(data.object.siret);
-                $('#address').val(data.object.address);
-                $('#postalcode').val(data.object.postal_code);
-                $('#city').val(data.object.city);
+                $('#firm_name').val(data.object.name);
+                $('#firm_siret').val(data.object.siret);
+                $('#firm_address').val(data.object.address);
+                $('#firm_postalcode').val(data.object.postal_code);
+                $('#firm_city').val(data.object.city);
                 $('#firm_type_search').dropdown("set selected", data.object.type);
                 $('#contact_type_search').dropdown("set selected", data.object.category);
-                $('#country_search').dropdown("set selected", data.object.country);
+                $('#firm_country_search').dropdown("set selected", data.object.country);
                 $('#addfirm_btn').html("Confirmer").attr("onClick", "DoleticUIModule.updateFirm(" + id + "); return false;");
                 $('#company_form_modal').modal('show');
             } else {
@@ -203,16 +196,16 @@ var DoleticUIModule = new function () {
             // Insert new project in db
             ContactServicesInterface.update(
                 id,
-                $('#gender_search').dropdown('get value'),
-                $('#firstname').val(),
-                $('#lastname').val(),
-                $('#firm_search').dropdown('get value'),
-                $('#mail').val(),
-                $('#tel').val(),
-                $('#cell').val(),
+                $('#contact_gender_search').dropdown('get value'),
+                $('#contact_firstname').val(),
+                $('#contact_lastname').val(),
+                $('#contact_firm_search').dropdown('get value'),
+                $('#contact_mail').val(),
+                $('#contact_tel').val(),
+                $('#contact_cell').val(),
                 $('#contact_type_search').dropdown('get value'),
-                $('#role').val(),
-                $('#notes').val(),
+                $('#contact_role').val(),
+                $('#contact_notes').val(),
                 function (data) {
                     DoleticUIModule.editContactHandler(data);
                 });
@@ -225,12 +218,12 @@ var DoleticUIModule = new function () {
             // Insert new project in db
             FirmServicesInterface.update(
                 id,
-                $('#siret').val(),
-                $('#name').val(),
-                $('#address').val(),
-                $('#postalcode').val(),
-                $('#city').val(),
-                $('#country_search').dropdown('get value'),
+                $('#firm_siret').val(),
+                $('#firm_name').val(),
+                $('#firm_address').val(),
+                $('#firm_postalcode').val(),
+                $('#firm_city').val(),
+                $('#firm_country_search').dropdown('get value'),
                 $('#firm_type_search').dropdown('get value'),
                 function (data) {
                     DoleticUIModule.editFirmHandler(data);
@@ -298,7 +291,7 @@ var DoleticUIModule = new function () {
                 for (var i = 0; i < data.object.length; i++) {
                     content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
-                $('#country_search .menu').html(content);
+                $('#firm_country_search .menu').html(content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -562,37 +555,37 @@ var DoleticUIModule = new function () {
         $('#contact_form .message').remove();
         $('#contact_form .field').removeClass('error');
         var valid = true;
-        if (!DoleticMasterInterface.checkName($('#firstname').val())) {
+        if (!DoleticMasterInterface.checkName($('#contact_firstname').val())) {
             valid = false;
-            $('#firstname_field').addClass('error');
+            $('#contact_firstname_field').addClass('error');
         }
-        if (!DoleticMasterInterface.checkName($('#lastname').val())) {
+        if (!DoleticMasterInterface.checkName($('#contact_lastname').val())) {
             valid = false;
-            $('#lastname_field').addClass('error');
+            $('#contact_lastname_field').addClass('error');
         }
-        if ($('#gender_search').dropdown('get value') == "") {
-            $('#gender_field').addClass("error");
+        if ($('#contact_gender_search').dropdown('get value') == "") {
+            $('#contact_gender_field').addClass("error");
             valid = false;
         }
         if ($('#contact_type_search').dropdown('get value') == "") {
             $('#contact_type_field').addClass("error");
             valid = false;
         }
-        if ($('#firm_search').dropdown('get value') == "") {
-            $('#firm_field').addClass("error");
+        if ($('#contact_firm_search').dropdown('get value') == "") {
+            $('#contact_firm_field').addClass("error");
             valid = false;
         }
-        if ($('#tel').val() != '' && !DoleticMasterInterface.checkTel($('#tel').val())) {
+        if ($('#contact_tel').val() != '' && !DoleticMasterInterface.checkTel($('#contact_tel').val())) {
             valid = false;
-            $('#tel_field').addClass('error');
+            $('#contact_tel_field').addClass('error');
         }
-        if ($('#cell').val() != '' && !DoleticMasterInterface.checkTel($('#cell').val())) {
+        if ($('#contact_cell').val() != '' && !DoleticMasterInterface.checkTel($('#contact_cell').val())) {
             valid = false;
-            $('#cell_field').addClass('error');
+            $('#contact_cell_field').addClass('error');
         }
-        if ($('#cell').val() != '' && !DoleticMasterInterface.checkMail($('#mail').val())) {
+        if ($('#contact_cell').val() != '' && !DoleticMasterInterface.checkMail($('#contact_mail').val())) {
             valid = false;
-            $('#email_field').addClass('error');
+            $('#contact_email_field').addClass('error');
         }
         if (!valid) {
             $('#contact_form').transition('shake');
@@ -605,29 +598,29 @@ var DoleticUIModule = new function () {
         $('#company_form .message').remove();
         $('#company_form .field').removeClass('error');
         var valid = true;
-        if (!DoleticMasterInterface.checkName($('#name').val())) {
+        if (!DoleticMasterInterface.checkName($('#firm_name').val())) {
             valid = false;
-            $('#name_field').addClass('error');
+            $('#firm_name_field').addClass('error');
         }
-        if ($('#address').val() == "") {
+        if ($('#firm_address').val() == "") {
             valid = false;
-            $('#address_field').addClass('error');
+            $('#firm_address_field').addClass('error');
         }
-        if ($('#city').val() == "") {
+        if ($('#firm_city').val() == "") {
             valid = false;
-            $('#city_field').addClass('error');
+            $('#firm_city_field').addClass('error');
         }
-        if ($('#country_search').dropdown('get value') == "") {
-            $('#country_field').addClass("error");
+        if ($('#firm_country_search').dropdown('get value') == "") {
+            $('#firm_country_field').addClass("error");
             valid = false;
         }
         if ($('#firm_type_search').dropdown('get value') == "") {
             $('#firm_type_field').addClass("error");
             valid = false;
         }
-        if (!DoleticMasterInterface.checkPostalCode($('#postalcode').val())) {
+        if (!DoleticMasterInterface.checkPostalCode($('#firm_postalcode').val())) {
             valid = false;
-            $('#postalcode').addClass('error');
+            $('#firm_postalcode_field').addClass('error');
         }
         if (!valid) {
             $('#company_form').transition('shake');
