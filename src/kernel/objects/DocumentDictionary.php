@@ -112,10 +112,10 @@ class DocumentDictionary
             'DESCRIPTIONETUDE' => $project->GetName(),
             'CIVILITEUSER' => $chadaff->GetGender(), //Monsieur ou madame
             'NOMUSER' => $chadaff->GetFirstName() . ' ' . mb_strtoupper($chadaff->GetLastName(), 'UTF-8'), //Nom du chadaff
-            'CIVILITEINTERVENANT' => $int['int']->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT' => $int['int']->GetFirstName() . ' ' . mb_strtoupper($int['int']->GetLastName(), 'UTF-8'), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
-            'CIVILITEINTERVENANT1' => $int['int']->GetGender(), //Monsieur ou madame
-            'NOMINTERVENANT1' => $int['int']->GetFirstName() . ' ' . mb_strtoupper($int['int']->GetLastName(), 'UTF-8'), //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'CIVILITEINTERVENANT' => isset($int['int']) ? $int['int']->GetGender() : 'CIVILITE INTERVENANT', //Monsieur ou madame
+            'NOMINTERVENANT' => isset($int['int']) ? ($int['int']->GetFirstName() . ' ' . mb_strtoupper($int['int']->GetLastName(), 'UTF-8')) : 'NOM INTERVENANT', //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
+            'CIVILITEINTERVENANT1' => isset($int['int']) ? $int['int']->GetGender()  : 'CIVILITE INTERVENANT', //Monsieur ou madame
+            'NOMINTERVENANT1' => isset($int['int']) ? ($int['int']->GetFirstName() . ' ' . mb_strtoupper($int['int']->GetLastName(), 'UTF-8')) : 'NOM INTERVENANT', //Nom de l'intervenant, à faire plusieurs fois si plusieurs intervenants
             'CIVILITECORRESPONDANTQUALITE' => $project->GetAuditorId()->GetGender(), //Monsieur ou madame
             'NOMCORRESPONDANTQUALITE' => $project->GetAuditorId()->GetFirstname() . ' ' . mb_strtoupper($project->GetAuditorId()->GetLastName(), 'UTF-8'), // Nom du corres qualité
             'CIVILITECONTACT' => $contact->GetGender(), //Monsieur ou madame
