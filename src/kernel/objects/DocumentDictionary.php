@@ -97,8 +97,10 @@ class DocumentDictionary
         $president = $params[Services::PARAM_PRESIDENT];
 
         $totalJeh = 0;
+        $total = $project->GetMgmtFee() + $project->GetAppFee();
         foreach($project->GetTasks() as $task) {
             $totalJeh += $task->GetJehAmount();
+            $total += $task->GetJehAmount() * $task->GetJehCost();
         }
 
         $signDate = $project->GetSignDate();
@@ -125,6 +127,11 @@ class DocumentDictionary
             'NOMPRESIDENT' => isset($president) ? $president->GetFirstname() . ' ' . mb_strtoupper($president->GetLastname(), 'UTF-8') : 'NOM PRESIDENT', //Nom du président
             'DUREEETUDE' => isset($signDate) && isset($endDate) ? $this->datediffInWeeks($signDate, $endDate) : 'X', //Durée de l'étude
             'NBJOURSJEH' => $totalJeh, //Nombre total de JEHs
+            'FRAISETUDE' => $project->GetMgmtFee(),
+            'FRAISENTREPRISE' => $project->GetAppFee(),
+            'TOTALENTREPRISE' => $total,
+            'MONTANTTVAENT' => $total*0.2,
+            'TOTALENTREPRISETTC' => $total*1.2,
             'TAUXTVA' => '20', //taux de tva
             'DJOUR' => date('d/m/Y'), //date actuelle au format 05/05/1994
         ];

@@ -574,7 +574,7 @@ var DoleticUIModule = new function () {
                         '</button>' : '<i>Aucune</i>') + '</td></tr>';
                 }
                 $('#project_contacts_body').html(content);
-                $('#contact_search_doc .menu').html(search_content).dropdown();
+                $('#contact_search_doc .menu').html(search_content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -606,7 +606,7 @@ var DoleticUIModule = new function () {
                         '</button>' : '<i>Aucune</i>') + '</td></tr>';
                 }
                 $('#project_ints_body').html(content);
-                $('#int_search_doc .menu').html(search_content).dropdown();
+                $('#int_search_doc .menu').html(search_content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -634,7 +634,7 @@ var DoleticUIModule = new function () {
                         '<td><i>Aucune</i></td></tr>';
                 }
                 $('#project_chadaffs_body').html(content);
-                $('#chadaff_search_doc .menu').html(search_content).dropdown();
+                $('#chadaff_search_doc .menu').html(search_content);
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
