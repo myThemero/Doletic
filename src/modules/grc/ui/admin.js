@@ -583,7 +583,7 @@ var DoleticUIModule = new function () {
             valid = false;
             $('#contact_cell_field').addClass('error');
         }
-        if ($('#contact_cell').val() != '' && !DoleticMasterInterface.checkMail($('#contact_mail').val())) {
+        if ($('#contact_mail').val() != '' && !DoleticMasterInterface.checkMail($('#contact_mail').val())) {
             valid = false;
             $('#contact_email_field').addClass('error');
         }
