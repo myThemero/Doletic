@@ -562,8 +562,10 @@ var DoleticUIModule = new function () {
             if (data.code == 0 && data.object != "[]") {
                 var content = "";
                 var search_content = "";
+                var defaultValue = 0;
                 for (var i = 0; i < data.object.length; i++) {
                     var contact = window.contact_list[data.object[i].contact_id];
+                    defaultValue = (i == 0 ? contact.id : defaultValue);
                     search_content += '<div class="item" data-value="' + contact.id + '">'
                         + contact.firstname + ' ' + contact.lastname + '</div>';
                     content += '<tr><td>' + contact.firstname + ' ' + contact.lastname + '</td>' +
@@ -574,7 +576,13 @@ var DoleticUIModule = new function () {
                         '</button>' : '<i>Aucune</i>') + '</td></tr>';
                 }
                 $('#project_contacts_body').html(content);
-                $('#contact_search_doc .menu').html(search_content);
+                $.when($('#contact_search_doc .menu').html(search_content)).then(function() {
+                    if (defaultValue != 0) {
+                        $('#contact_search_doc').dropdown('set selected', defaultValue);
+                    } else {
+                        $('#contact_search_doc').dropdown('restore defaults');
+                    }
+                });
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -591,9 +599,11 @@ var DoleticUIModule = new function () {
             if (data.code == 0 && data.object != "[]") {
                 var content = "";
                 var search_content = "";
+                var defaultValue = 0;
                 for (var i = 0; i < data.object.length; i++) {
                     var onClick = click + +data.object[i].int_id + ");');";
                     var int = window.user_list[data.object[i].int_id];
+                    defaultValue = (i == 0 ? int.id : defaultValue);
                     search_content += '<div class="item" data-value="' + int.id + '">'
                         + int.firstname + ' ' + int.lastname + '</div>';
                     content += '<tr><td><a href="#" onclick="' + onClick + '">' + int.firstname + ' ' + int.lastname + '</a></td>' +
@@ -606,7 +616,13 @@ var DoleticUIModule = new function () {
                         '</button>' : '<i>Aucune</i>') + '</td></tr>';
                 }
                 $('#project_ints_body').html(content);
-                $('#int_search_doc .menu').html(search_content);
+                $.when($('#int_search_doc .menu').html(search_content)).then(function () {
+                    if (defaultValue != 0) {
+                        $('#int_search_doc').dropdown('set selected', defaultValue);
+                    } else {
+                        $('#int_search_doc').dropdown('restore defaults');
+                    }
+                });
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);
@@ -623,9 +639,11 @@ var DoleticUIModule = new function () {
             if (data.code == 0 && data.object != "[]") {
                 var content = "";
                 var search_content = "";
+                var defaultValue = 0;
                 for (var i = 0; i < data.object.length; i++) {
                     var onClick = click + data.object[i].chadaff_id + ");');";
                     var chadaff = window.user_list[data.object[i].chadaff_id];
+                    defaultValue = (i == 0 ? chadaff.id : defaultValue);
                     search_content += '<div class="item" data-value="' + chadaff.id + '">'
                         + chadaff.firstname + ' ' + chadaff.lastname + '</div>';
                     content += '<tr><td><a href="#" onclick="' + onClick + '">' + chadaff.firstname + ' ' + chadaff.lastname + '</a></td>' +
@@ -634,7 +652,13 @@ var DoleticUIModule = new function () {
                         '<td><i>Aucune</i></td></tr>';
                 }
                 $('#project_chadaffs_body').html(content);
-                $('#chadaff_search_doc .menu').html(search_content);
+                $.when($('#chadaff_search_doc .menu').html(search_content)).then(function () {
+                    if (defaultValue != 0) {
+                        $('#chadaff_search_doc').dropdown('set selected', defaultValue);
+                    } else {
+                        $('#chadaff_search_doc').dropdown('restore defaults');
+                    }
+                });
             } else {
                 // use default service service error handler
                 DoleticServicesInterface.handleServiceError(data);

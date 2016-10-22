@@ -300,7 +300,7 @@ var DoleticUIModule = new function () {
         this.fillProjectsList = function () {
             // Link to view user details
             var click = $('#submenu_hr').attr('onclick');
-            click = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillUserDetails(";
+            click = click.substr(0, click.length - 2) + ", 'DoleticUIModule.fillUserDetails(";
 
             ProjectServicesInterface.getAllFull(function (data) {
                 // Delete and recreate table so Datatables is reinitialized
@@ -363,7 +363,7 @@ var DoleticUIModule = new function () {
                         var j = 0;
                         for (j = 0; j < data.object[i].chadaff_id.length; j++) {
                             var chadaff = window.user_list[data.object[i].chadaff_id[j].chadaff_id];
-                            var onClick = click +  + data.object[i].chadaff_id[j].chadaff_id + ");');";
+                            var onClick = click + +data.object[i].chadaff_id[j].chadaff_id + ");');";
                             chadaffHtml += '<a href="#" onclick="' + onClick + '">' + chadaff.firstname + ' ' + chadaff.lastname + "</a><br>";
                         }
                         chadaffHtml = j == 0 ? "<i>Non assigné</i>" : chadaffHtml;
@@ -371,11 +371,11 @@ var DoleticUIModule = new function () {
                         var k = 0;
                         for (k = 0; k < data.object[i].int_id.length; k++) {
                             var int = window.user_list[data.object[i].int_id[k].int_id];
-                            var onClick = click +  + data.object[i].int_id[k].int_id + ");');";
+                            var onClick = click + +data.object[i].int_id[k].int_id + ");');";
                             intHtml += '<a href="#" onclick="' + onClick + '">' + int.firstname + ' ' + int.lastname + "</a><br>";
                         }
                         intHtml = k == 0 ? "<i>Non assigné</i>" : intHtml;
-                        var auditorClick = click +  + data.object[i].auditor_id + ");');";
+                        var auditorClick = click + +data.object[i].auditor_id + ");');";
                         var row = "<tr" + (data.object[i].critical ? 'class="error"' : '') + ">" +
                             "<td><button id=\"details_" + data.object[i].number + "\" onClick=\"DoleticUIModule.fillProjectDetails(" + data.object[i].number + "); return false;\" class=\"ui teal button\" data-tooltip=\"Détails de l'étude " + data.object[i].number + "\">" + data.object[i].number + "</button></td>" +
                             "<td>" + data.object[i].name + "</td>" +
@@ -530,8 +530,8 @@ var DoleticUIModule = new function () {
                     }
                     if (data.object.auditor_id != null) {
                         var click = $('#submenu_hr').attr('onclick');
-                        click = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillUserDetails(";
-                        var onClick = click +  + data.object.auditor_id + ");');";
+                        click = click.substr(0, click.length - 2) + ", 'DoleticUIModule.fillUserDetails(";
+                        var onClick = click + +data.object.auditor_id + ");');";
                         var auditor = window.user_list[data.object.auditor_id];
                         $('#auditor_name').html('<a href="#" onclick="' + onClick + '">' + auditor.firstname + ' ' + auditor.lastname + '</a>');
                         $('#auditor_tel').html(auditor.tel);
@@ -557,8 +557,8 @@ var DoleticUIModule = new function () {
 
                     // Fill contacts related to project number
                     var contactOptions = "";
-                    for(var i = 0; i<window.contact_list.length; i++) {
-                        if(typeof window.contact_list[i] != 'undefined' && window.contact_list[i].firm_id == data.object.firm_id) {
+                    for (var i = 0; i < window.contact_list.length; i++) {
+                        if (typeof window.contact_list[i] != 'undefined' && window.contact_list[i].firm_id == data.object.firm_id) {
                             contactOptions += '<div class="item" data-value="' + window.contact_list[i].id
                                 + '">' + window.contact_list[i].firstname + ' '
                                 + window.contact_list[i].lastname + '</div>';
@@ -589,8 +589,10 @@ var DoleticUIModule = new function () {
                 if (data.code == 0 && data.object != "[]") {
                     var content = "";
                     var search_content = "";
+                    var defaultValue = 0;
                     for (var i = 0; i < data.object.length; i++) {
                         var contact = window.contact_list[data.object[i].contact_id];
+                        defaultValue = (i == 0 ? contact.id : defaultValue);
                         search_content += '<div class="item" data-value="' + contact.id + '">'
                             + contact.firstname + ' ' + contact.lastname + '</div>';
                         content += '<tr><td>' + contact.firstname + ' ' + contact.lastname + '</td>' +
@@ -601,7 +603,13 @@ var DoleticUIModule = new function () {
                             '</button> </td></tr>';
                     }
                     $('#project_contacts_body').html(content);
-                    $('#contact_search_doc .menu').html(search_content);
+                    $.when($('#contact_search_doc .menu').html(search_content)).then(function() {
+                        if (defaultValue != 0) {
+                            $('#contact_search_doc').dropdown('set selected', defaultValue);
+                        } else {
+                            $('#contact_search_doc').dropdown('restore defaults');
+                        }
+                    });
                 } else {
                     // use default service service error handler
                     DoleticServicesInterface.handleServiceError(data);
@@ -611,16 +619,18 @@ var DoleticUIModule = new function () {
 
         this.fillIntList = function (number) {
             var click = $('#submenu_hr').attr('onclick');
-            click = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillUserDetails(";
+            click = click.substr(0, click.length - 2) + ", 'DoleticUIModule.fillUserDetails(";
 
             ProjectServicesInterface.getAllIntsByProject(number, function (data) {
                 // if no service error
                 if (data.code == 0 && data.object != "[]") {
                     var content = "";
                     var search_content = "";
+                    var defaultValue = 0;
                     for (var i = 0; i < data.object.length; i++) {
-                        var onClick = click +  + data.object[i].int_id + ");');";
+                        var onClick = click + +data.object[i].int_id + ");');";
                         var int = window.user_list[data.object[i].int_id];
+                        defaultValue = (i == 0 ? int.id : defaultValue);
                         search_content += '<div class="item" data-value="' + int.id + '">'
                             + int.firstname + ' ' + int.lastname + '</div>';
                         content += '<tr><td><a href="#" onclick="' + onClick + '">' + int.firstname + ' ' + int.lastname + '</a></td>' +
@@ -633,7 +643,13 @@ var DoleticUIModule = new function () {
                             '</button> </td></tr>';
                     }
                     $('#project_ints_body').html(content);
-                    $('#int_search_doc .menu').html(search_content);
+                    $.when($('#int_search_doc .menu').html(search_content)).then(function () {
+                        if (defaultValue != 0) {
+                            $('#int_search_doc').dropdown('set selected', defaultValue);
+                        } else {
+                            $('#int_search_doc').dropdown('restore defaults');
+                        }
+                    });
                 } else {
                     // use default service service error handler
                     DoleticServicesInterface.handleServiceError(data);
@@ -643,16 +659,18 @@ var DoleticUIModule = new function () {
 
         this.fillChadaffList = function (number) {
             var click = $('#submenu_hr').attr('onclick');
-            click = click.substr(0, click.length-2) + ", 'DoleticUIModule.fillUserDetails(";
+            click = click.substr(0, click.length - 2) + ", 'DoleticUIModule.fillUserDetails(";
 
             ProjectServicesInterface.getAllChadaffsByProject(number, function (data) {
                 // if no service error
                 if (data.code == 0 && data.object != "[]") {
                     var content = "";
                     var search_content = "";
+                    var defaultValue = 0;
                     for (var i = 0; i < data.object.length; i++) {
-                        var onClick = click +  + data.object[i].chadaff_id + ");');";
+                        var onClick = click + +data.object[i].chadaff_id + ");');";
                         var chadaff = window.user_list[data.object[i].chadaff_id];
+                        defaultValue = (i == 0 ? chadaff.id : defaultValue);
                         search_content += '<div class="item" data-value="' + chadaff.id + '">'
                             + chadaff.firstname + ' ' + chadaff.lastname + '</div>';
                         content += '<tr><td><a href="#" onclick="' + onClick + '">' + chadaff.firstname + ' ' + chadaff.lastname + '</a></td>' +
@@ -663,7 +681,13 @@ var DoleticUIModule = new function () {
                             '</button> </td></tr>';
                     }
                     $('#project_chadaffs_body').html(content);
-                    $('#chadaff_search_doc .menu').html(search_content);
+                    $.when($('#chadaff_search_doc .menu').html(search_content)).then(function () {
+                        if (defaultValue != 0) {
+                            $('#chadaff_search_doc').dropdown('set selected', defaultValue);
+                        } else {
+                            $('#chadaff_search_doc').dropdown('restore defaults');
+                        }
+                    });
                 } else {
                     // use default service service error handler
                     DoleticServicesInterface.handleServiceError(data);
@@ -710,7 +734,7 @@ var DoleticUIModule = new function () {
                         content += '<tr>' +
                             '<td>' + document.label + '</td>' +
                             '<td><button class="ui olive icon button" ' +
-                            'onclick="DoleticUIModule.editDocument('+ document.id +', ' + number + ');">' +
+                            'onclick="DoleticUIModule.editDocument(' + document.id + ', ' + number + ');">' +
                             '<i class="book icon"></i></button></td>' +
                             '<td>' +
                             '<div class="ui buttons">' +
@@ -877,15 +901,15 @@ var DoleticUIModule = new function () {
             $('#file_input_doc' + templateId).click();
         };
 
-        this.editDocument = function(id, number) {
+        this.editDocument = function (id, number) {
             DoleticServicesInterface.editDocument(
                 id,
                 number,
                 $('#contact_search_doc').dropdown('get value'),
                 $('#chadaff_search_doc').dropdown('get value'),
                 $('#int_search_doc').dropdown('get value'),
-                function(data) {
-                    if(data.code == 0) {
+                function (data) {
+                    if (data.code == 0) {
                         $('body').append('<a id="tmp_link" href="' + data.object + '" download style="display: none;"></a> ');
                         $('#tmp_link')[0].click();
                         $('#tmp_link').remove();
@@ -1516,7 +1540,7 @@ var DoleticUIModule = new function () {
                 DoleticMasterInterface.hideConfirmModal);
         };
 
-        this.abortProject = function(number) {
+        this.abortProject = function (number) {
             // Confirmation
             DoleticMasterInterface.showConfirmModal("Confirmer l'avortement ?", "\<i class=\"archive icon\"\>\<\/i\>",
                 "Etes-vous sûr de vouloir avorter cette sollicitation ? Elle ne sera considérée comme abandonnée.",
