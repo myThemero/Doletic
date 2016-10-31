@@ -390,12 +390,14 @@ class FakeDataFunction extends AbstractFunction
                 FirmServices::PARAM_CITY => "Ville",
                 FirmServices::PARAM_COUNTRY => "France",
                 FirmServices::PARAM_TYPE => "SA",
-                FirmServices::PARAM_LAST_CONTACT => "2015-01-01"
+                FirmServices::PARAM_LAST_CONTACT => "2015-01-01",
+                FirmServices::PARAM_TYPE => "Start-up"
             ));
 
         // Example contact
         $kernel->GetDBObject(ContactDBObject::OBJ_NAME)->GetServices($kernel->GetCurrentUser())
-            ->GetResponseData(ContactServices::INSERT, array(
+            ->GetResponseData(ContactServices::FORCE_INSERT, array(
+                ContactServices::PARAM_ID => NULL,
                 ContactServices::PARAM_GENDER => "M.",
                 ContactServices::PARAM_FIRSTNAME => "Client",
                 ContactServices::PARAM_LASTNAME => "DOE",
@@ -409,7 +411,9 @@ class FakeDataFunction extends AbstractFunction
                 ContactServices::PARAM_ROLE => "CEO",
                 ContactServices::PARAM_ERROR_FLAG => -1,
                 ContactServices::PARAM_NEXT_CALL_DATE => NULL,
-                ContactServices::PARAM_LAST_UPDATE => "2015-01-01"
+                ContactServices::PARAM_LAST_UPDATE => "2015-01-01",
+                ContactServices::PARAM_CREATED_BY => 1,
+                ContactServices::PARAM_CREATION_DATE => "2015-01-01"
             ));
         // --------------------------------------------------------------
         parent::endlog("done !");
