@@ -14,6 +14,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.getContactsTab();
         DoleticUIModule.getCompaniesTab();
         DoleticUIModule.getProspectsTab();
+        DoleticUIModule.getAchievedProspectsTab();
         DoleticUIModule.getStatsTab();
         // Fill tables
         DoleticUIModule.fillFirmList(true);
@@ -34,8 +35,9 @@ var DoleticUIModule = new function () {
  				  			<div class=\"ui top attached tabular menu\"> \
    								<a class=\"item active\" data-tab=\"companies\">Gestion des Sociétés</a> \
    								<a class=\"item\" data-tab=\"prospects\">Prospections à réaliser</a> \
-   								<a class=\"item\" data-tab=\"achievedProspects\">Résultat des prospections</a> \
-   								<a class=\"item\" data-tab=\"contacts\">Gestion des Clients</a> \
+   								<a class=\"item\" data-tab=\"achievedProspects\">Résultats des prospections</a> \
+   								<a class=\"item\" data-tab=\"contacts\">Contacts courants</a> \
+   								<a class=\"item\" data-tab=\"oldContacts\">Anciens contacts</a> \
  							</div> \
  							<div class=\"ui bottom attached tab segment active\" data-tab=\"companies\"> \
 								<div id=\"companiesTab\"> \
@@ -51,6 +53,10 @@ var DoleticUIModule = new function () {
  					    	</div> \
                             <div class=\"ui bottom attached tab segment\" data-tab=\"contacts\"> \
 								<div id=\"contactsTab\"> \
+								</div> \
+ 					    	</div> \
+                            <div class=\"ui bottom attached tab segment\" data-tab=\"oldContacts\"> \
+								<div id=\"oldContactsTab\"> \
 								</div> \
  					    	</div> \
 						</div> \
@@ -105,6 +111,16 @@ var DoleticUIModule = new function () {
         //$('#prospects_form_modal').remove();
         $('#prospectsTab').load("../modules/grc/ui/templates/prospectsTab.html", function () {
             DoleticUIModule.fillProspectList();
+        });
+    };
+
+    /**
+     *    Load the HTML code of the Propects Tab
+     */
+    this.getAchievedProspectsTab = function () {
+        //$('#prospects_form_modal').remove();
+        $('#achievedProspectsTab').load("../modules/grc/ui/templates/achievedProspectsTab.html", function () {
+            //DoleticUIModule.fillProspectList();
         });
     };
 
@@ -441,7 +457,6 @@ var DoleticUIModule = new function () {
             <thead> \
                 <tr>\
                     <th>Nom/Email</th> \
-                    <th>Type</th> \
                     <th>Téléphone</th> \
                     <th>Mobile</th> \
                     <th>Société</th> \
@@ -452,7 +467,6 @@ var DoleticUIModule = new function () {
             <tfoot> \
                 <tr>\
                     <th>Nom/Email</th> \
-                    <th>Type</th> \
                     <th>Téléphone</th> \
                     <th>Mobile</th> \
                     <th>Société</th> \
@@ -464,7 +478,6 @@ var DoleticUIModule = new function () {
 
         var filters = [
             DoleticMasterInterface.input_filter,
-            DoleticMasterInterface.select_filter,
             DoleticMasterInterface.input_filter,
             DoleticMasterInterface.input_filter,
             DoleticMasterInterface.select_filter,
