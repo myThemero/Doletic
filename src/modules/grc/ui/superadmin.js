@@ -13,6 +13,7 @@ var DoleticUIModule = new function () {
         // Load HTML templates
         DoleticUIModule.getContactsTab();
         DoleticUIModule.getCompaniesTab();
+        DoleticUIModule.getProspectsTab();
         DoleticUIModule.getStatsTab();
         // Fill tables
         DoleticUIModule.fillFirmList(true);
@@ -32,12 +33,22 @@ var DoleticUIModule = new function () {
  				  		<div class=\"sixteen wide column\"> \
  				  			<div class=\"ui top attached tabular menu\"> \
    								<a class=\"item active\" data-tab=\"companies\">Gestion des Sociétés</a> \
-   								<a class=\"item\" data-tab=\"contacts\">Gestion des Contacts</a> \
+   								<a class=\"item\" data-tab=\"prospects\">Prospections à réaliser</a> \
+   								<a class=\"item\" data-tab=\"achievedProspects\">Résultat des prospections</a> \
+   								<a class=\"item\" data-tab=\"contacts\">Gestion des Clients</a> \
  							</div> \
  							<div class=\"ui bottom attached tab segment active\" data-tab=\"companies\"> \
 								<div id=\"companiesTab\"> \
 								</div> \
                         	</div> \
+                            <div class=\"ui bottom attached tab segment\" data-tab=\"prospects\"> \
+								<div id=\"prospectsTab\"> \
+								</div> \
+ 					    	</div> \
+                            <div class=\"ui bottom attached tab segment\" data-tab=\"achievedProspects\"> \
+								<div id=\"achievedProspectsTab\"> \
+								</div> \
+ 					    	</div> \
                             <div class=\"ui bottom attached tab segment\" data-tab=\"contacts\"> \
 								<div id=\"contactsTab\"> \
 								</div> \
@@ -84,6 +95,16 @@ var DoleticUIModule = new function () {
             $('#toggle_old_firms').change(function () {
                 DoleticUIModule.fillFirmList(false);
             });
+        });
+    };
+
+    /**
+     *    Load the HTML code of the Propects Tab
+     */
+    this.getProspectsTab = function () {
+        //$('#prospects_form_modal').remove();
+        $('#prospectsTab').load("../modules/grc/ui/templates/prospectsTab.html", function () {
+            DoleticUIModule.fillProspectList();
         });
     };
 
@@ -413,6 +434,47 @@ var DoleticUIModule = new function () {
                 DoleticServicesInterface.handleServiceError(data);
             }
         });
+    };
+
+    this.fillProspectList = function() {
+        var content = "<table class=\"ui very basic celled table\" id=\"prospect_table\"> \
+            <thead> \
+                <tr>\
+                    <th>Nom/Email</th> \
+                    <th>Type</th> \
+                    <th>Téléphone</th> \
+                    <th>Mobile</th> \
+                    <th>Société</th> \
+                    <th>Role</th> \
+                    <th>Actions</th> \
+                </tr>\
+            </thead>\
+            <tfoot> \
+                <tr>\
+                    <th>Nom/Email</th> \
+                    <th>Type</th> \
+                    <th>Téléphone</th> \
+                    <th>Mobile</th> \
+                    <th>Société</th> \
+                    <th>Role</th> \
+                    <th></th> \
+                </tr>\
+            </tfoot>\
+            <tbody id=\"prospect_body\">";
+
+        var filters = [
+            DoleticMasterInterface.input_filter,
+            DoleticMasterInterface.select_filter,
+            DoleticMasterInterface.input_filter,
+            DoleticMasterInterface.input_filter,
+            DoleticMasterInterface.select_filter,
+            DoleticMasterInterface.input_filter,
+            DoleticMasterInterface.reset_filter
+        ];
+
+        content += "</tbody></table>";
+        $('#prospect_table_container').append(content);
+        DoleticMasterInterface.makeDataTables('prospect_table', filters);
     };
 
     this.fillContactList = function () {
