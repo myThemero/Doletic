@@ -120,7 +120,7 @@ var DoleticUIModule = new function () {
     this.getAchievedProspectsTab = function () {
         //$('#prospects_form_modal').remove();
         $('#achievedProspectsTab').load("../modules/grc/ui/templates/achievedProspectsTab.html", function () {
-            //DoleticUIModule.fillProspectList();
+            DoleticUIModule.fillAchievedProspectList();
         });
     };
 
@@ -453,54 +453,14 @@ var DoleticUIModule = new function () {
     };
 
     this.fillProspectList = function() {
-        var content = "<table class=\"ui very basic celled table\" id=\"prospect_table\"> \
-            <thead> \
-                <tr>\
-                    <th>Nom/Email</th> \
-                    <th>Téléphone</th> \
-                    <th>Mobile</th> \
-                    <th>Société</th> \
-                    <th>Role</th> \
-                    <th>Actions</th> \
-                </tr>\
-            </thead>\
-            <tfoot> \
-                <tr>\
-                    <th>Nom/Email</th> \
-                    <th>Téléphone</th> \
-                    <th>Mobile</th> \
-                    <th>Société</th> \
-                    <th>Role</th> \
-                    <th></th> \
-                </tr>\
-            </tfoot>\
-            <tbody id=\"prospect_body\">";
-
-        var filters = [
-            DoleticMasterInterface.input_filter,
-            DoleticMasterInterface.input_filter,
-            DoleticMasterInterface.input_filter,
-            DoleticMasterInterface.select_filter,
-            DoleticMasterInterface.input_filter,
-            DoleticMasterInterface.reset_filter
-        ];
-
-        content += "</tbody></table>";
-        $('#prospect_table_container').append(content);
-        DoleticMasterInterface.makeDataTables('prospect_table', filters);
-    };
-
-    this.fillContactList = function () {
-        var showOld = $('#toggle_old_contacts').prop('checked');
-        ContactServicesInterface.getAll(function (data) {
-            $('#contact_table_container').html('');
+        ContactServicesInterface.getByCategory('Prospect', function (data) {
+            $('#prospect_table_container').html('');
             // if no service error
             if (data.code == 0 && data.object != "[]") {
-                var content = "<table class=\"ui very basic celled table\" id=\"contact_table\"> \
+                var content = "<table class=\"ui very basic celled table\" id=\"prospect_table\"> \
                 <thead> \
                     <tr>\
                         <th>Nom/Email</th> \
-                        <th>Type</th> \
                         <th>Téléphone</th> \
                         <th>Mobile</th> \
                         <th>Société</th> \
@@ -511,7 +471,6 @@ var DoleticUIModule = new function () {
                 <tfoot> \
                     <tr>\
                         <th>Nom/Email</th> \
-                        <th>Type</th> \
                         <th>Téléphone</th> \
                         <th>Mobile</th> \
                         <th>Société</th> \
@@ -519,11 +478,10 @@ var DoleticUIModule = new function () {
                         <th></th> \
                     </tr>\
                 </tfoot>\
-                <tbody id=\"company_body\">";
+                <tbody id=\"prospect_body\">";
 
                 var filters = [
                     DoleticMasterInterface.input_filter,
-                    DoleticMasterInterface.select_filter,
                     DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.input_filter,
                     DoleticMasterInterface.select_filter,
@@ -531,14 +489,14 @@ var DoleticUIModule = new function () {
                     DoleticMasterInterface.reset_filter
                 ];
                 var counter = 0;
-                for (var i = 0; i < data.object.length && (showOld || counter<100); i++) {
+                for (var i = 0; i < data.object.length && counter<100; i++) {
+
                     content += "<tr><td> \
 			        				<h4 class=\"ui header\"> \
 			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
                         "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
 			        				</div> \
 			      					</h4></td> \
-			      					<td>" + data.object[i].category + "</td> \
 			      					<td>" + data.object[i].phone + "</td> \
 			      					<td>" + data.object[i].cellphone + "</td> \
 			      					<td>" + (typeof window.firm_list[data.object[i].firm_id] !== 'undefined' ? window.firm_list[data.object[i].firm_id].name : '<i>Aucune</i>') + "</td> \
@@ -548,7 +506,182 @@ var DoleticUIModule = new function () {
 				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"write icon\"></i> \
 										</button>" +
-                        "<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteContact(" + data.object[i].id + "); return false;\"> \
+                        "<button class=\"ui orange icon button\" data-tooltip=\"Marquer comme prospecté\" onClick=\"\"> \
+                              <i class=\"call icon\"></i> \
+                        </button> \
+                        <button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteContact(" + data.object[i].id + "); return false;\"> \
+				  							<i class=\"remove icon\"></i> \
+										</button> \
+									</div> \
+			    				</td> \
+			    				</tr>";
+                    counter++;
+                }
+                content += "</tbody></table>";
+                $('#prospect_table_container').append(content);
+                DoleticMasterInterface.makeDataTables('prospect_table', filters);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.fillAchievedProspectList = function() {
+        ContactServicesInterface.getByCategory('Prospect appelé', function (data) {
+            $('#achievedProspect_table_container').html('');
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                var content = "<table class=\"ui very basic celled table\" id=\"achievedProspect_table\"> \
+                <thead> \
+                    <tr>\
+                        <th>Nom/Email</th> \
+                        <th>Société</th> \
+                        <th>Role</th> \
+                        <th>Prochaine prospection</th> \
+                        <th>Coordonnées</th> \
+                        <th>Actions</th> \
+                    </tr>\
+                </thead>\
+                <tfoot> \
+                    <tr>\
+                        <th>Nom/Email</th> \
+                        <th>Société</th> \
+                        <th>Role</th> \
+                        <th>Prochaine prospection</th> \
+                        <th>Coordonnées</th> \
+                        <th></th> \
+                    </tr>\
+                </tfoot>\
+                <tbody id=\"achievedProspect_body\">";
+
+                var filters = [
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.select_filter,
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.select_filter,
+                    DoleticMasterInterface.reset_filter
+                ];
+                var counter = 0;
+                for (var i = 0; i < data.object.length && counter<100; i++) {
+
+                    var nextCallDate = "<i>Aucune</i>";
+                    if(data.object[i].nextCallDate !== null) {
+                        nextCallDate = data.object[i].nextCallDate;
+                    }
+
+                    var error = "Correctes";
+                    if(data.object[i].errorFlag != -1) {
+                        error = "Erronées";
+                    }
+
+                    content += "<tr><td> \
+			        				<h4 class=\"ui header\"> \
+			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
+                        "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
+			        				</div> \
+			      					</h4></td> \
+			      					<td>" + (typeof window.firm_list[data.object[i].firm_id] !== 'undefined' ? window.firm_list[data.object[i].firm_id].name : '<i>Aucune</i>') + "</td> \
+			    				    <td>" + data.object[i].role + "</td> \
+			      					<td>" + nextCallDate + "</td> \
+			    				    <td>" + error + "</td> \
+			    				    <td> \
+			    					<div class=\"ui icon buttons\"> \
+				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
+				  							<i class=\"write icon\"></i> \
+										</button>" +
+                                        "<button class=\"ui yellow icon button\" data-tooltip=\"Demander une prospection\" onClick=\"\"> \
+                                              <i class=\"reply icon\"></i> \
+                                        </button> \
+                                        <button class=\"ui orange icon button\" data-tooltip=\"Marquer comme client\" onClick=\"\"> \
+                                              <i class=\"suitcase icon\"></i> \
+                                        </button> \
+                                        <button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteContact(" + data.object[i].id + "); return false;\"> \
+				  							<i class=\"remove icon\"></i> \
+										</button> \
+									</div> \
+			    				</td> \
+			    				</tr>";
+                    counter++;
+                }
+                content += "</tbody></table>";
+                $('#achievedProspect_table_container').append(content);
+                DoleticMasterInterface.makeDataTables('achievedProspect_table', filters);
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
+    };
+
+    this.fillContactList = function () {
+        ContactServicesInterface.getByCategory('Client', function (data) {
+            $('#contact_table_container').html('');
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+                var content = "<table class=\"ui very basic celled table\" id=\"contact_table\"> \
+                <thead> \
+                    <tr>\
+                        <th>Nom/Email</th> \
+                        <th>Téléphone</th> \
+                        <th>Mobile</th> \
+                        <th>Société</th> \
+                        <th>Role</th> \
+                        <th>Prospecté</th> \
+                        <th>Actions</th> \
+                    </tr>\
+                </thead>\
+                <tfoot> \
+                    <tr>\
+                        <th>Nom/Email</th> \
+                        <th>Téléphone</th> \
+                        <th>Mobile</th> \
+                        <th>Société</th> \
+                        <th>Role</th> \
+                        <th>Prospecté</th> \
+                        <th></th> \
+                    </tr>\
+                </tfoot>\
+                <tbody id=\"company_body\">";
+
+                var filters = [
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.select_filter,
+                    DoleticMasterInterface.input_filter,
+                    DoleticMasterInterface.select_filter,
+                    DoleticMasterInterface.reset_filter
+                ];
+                var counter = 0;
+                for (var i = 0; i < data.object.length && counter<100; i++) {
+
+                    var isProspected = "Non";
+                    if(data.object[i].prospected == 1) {
+                        isProspected = "Oui";
+                    }
+
+                    content += "<tr><td> \
+			        				<h4 class=\"ui header\"> \
+			          				<div class=\"content\">" + data.object[i].firstname + " " + data.object[i].lastname +
+                        "<div class=\"sub header\"><a href=\"mailto:" + data.object[i].email + "\" target=\"_blank\">" + data.object[i].email + "</a></div> \
+			        				</div> \
+			      					</h4></td> \
+			      					<td>" + data.object[i].phone + "</td> \
+			      					<td>" + data.object[i].cellphone + "</td> \
+			      					<td>" + (typeof window.firm_list[data.object[i].firm_id] !== 'undefined' ? window.firm_list[data.object[i].firm_id].name : '<i>Aucune</i>') + "</td> \
+			    				    <td>" + data.object[i].role + "</td> \
+			    				    <td>" + isProspected + "</td> \
+			    				    <td> \
+			    					<div class=\"ui icon buttons\"> \
+				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
+				  							<i class=\"write icon\"></i> \
+										</button>" +
+                                        "<button class=\"ui orange icon button\" data-tooltip=\"Marquer comme ancien\" onClick=\"\"> \
+				  							<i class=\"birthday icon\"></i> \
+										</button> \
+										<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteContact(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"remove icon\"></i> \
 										</button> \
 									</div> \
