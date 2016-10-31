@@ -401,8 +401,14 @@ class FakeDataFunction extends AbstractFunction
                 ContactServices::PARAM_LASTNAME => "DOE",
                 ContactServices::PARAM_FIRM_ID => 1,
                 ContactServices::PARAM_EMAIL => "client.doe@gmail.com",
-                ContactServices::PARAM_PHONE => "0700000000",
+                ContactServices::PARAM_PHONE => "0100000000",
+                ContactServices::PARAM_CELLPHONE => "0700000000",
                 ContactServices::PARAM_CATEGORY => "Client",
+                ContactServices::PARAM_NOTES => "QQues notes",
+                ContactServices::PARAM_ORIGIN => "Obtenu via Kim",
+                ContactServices::PARAM_ROLE => "CEO",
+                ContactServices::PARAM_ERROR_FLAG => -1,
+                ContactServices::PARAM_NEXT_CALL_DATE => NULL,
                 ContactServices::PARAM_LAST_UPDATE => "2015-01-01"
             ));
         // --------------------------------------------------------------
