@@ -411,6 +411,7 @@ class FakeDataFunction extends AbstractFunction
                 ContactServices::PARAM_ROLE => "CEO",
                 ContactServices::PARAM_ERROR_FLAG => -1,
                 ContactServices::PARAM_NEXT_CALL_DATE => NULL,
+                ContactServices::PARAM_PROSPECTED => 0,
                 ContactServices::PARAM_LAST_UPDATE => "2015-01-01",
                 ContactServices::PARAM_CREATED_BY => 1,
                 ContactServices::PARAM_CREATION_DATE => "2015-01-01"
