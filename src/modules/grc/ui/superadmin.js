@@ -18,27 +18,26 @@ var DoleticUIModule = new function () {
         this.super.render(htmlNode, this);
         // activate items in tabs
         $('.menu .item').tab();
-        // Load HTML templates
-        DoleticUIModule.getContactsTab();
-        DoleticUIModule.getCompaniesTab();
-        DoleticUIModule.getProspectsTab();
-        DoleticUIModule.getAchievedProspectsTab();
-        DoleticUIModule.getOldContactsTab();
-        DoleticUIModule.getStatsTab();
-        DoleticUIModule.getContactDetailsTab();
-        DoleticUIModule.getContactFormModal();
-
-        // Hide contact details
+        // hide some tabs
         $('#det_cont_tabChoose').hide();
-
-        // Fill tables
-        DoleticUIModule.fillFirmList(true);
-
-        // Fill all the selectors
-        DoleticUIModule.fillContactTypeSelector();
-        DoleticUIModule.fillFirmTypeSelector();
-        DoleticUIModule.fillCountrySelector();
-        DoleticUIModule.fillGenderSelector();
+        // Load HTML templates
+        DoleticUIModule.getCompaniesTab(function() {
+            DoleticUIModule.fillFirmList(function() {
+                DoleticUIModule.getProspectsTab();
+                DoleticUIModule.getAchievedProspectsTab();
+                DoleticUIModule.getContactsTab();
+                DoleticUIModule.getOldContactsTab();
+                DoleticUIModule.getStatsTab();
+                DoleticUIModule.getContactDetailsTab();
+                DoleticUIModule.getContactFormModal(function() {
+                    DoleticUIModule.fillContactTypeSelector();
+                    DoleticUIModule.fillFirmTypeSelector();
+                    DoleticUIModule.fillCountrySelector();
+                    DoleticUIModule.fillGenderSelector();
+                    DoleticUIModule.fillFirmSelector();
+                });
+            });
+        });
 
         window.postLoad();
     };
@@ -108,75 +107,96 @@ var DoleticUIModule = new function () {
     /**
      *    Load the HTML code of the Contacts Tab
      */
-    this.getContactsTab = function () {
+    this.getContactsTab = function (callbackFct) {
         //$('#contact_form_modal').remove();
         $('#contactsTab').load("../modules/grc/ui/templates/contactsTab.html", function () {
             DoleticUIModule.fillContactList();
+            if(callbackFct) {
+                callbackFct();
+            }
         });
     };
 
     /**
      *    Load the HTML code of the Companies Tab
      */
-    this.getCompaniesTab = function () {
+    this.getCompaniesTab = function (callbackFct) {
         $('#company_form_modal').remove();
         $('#companiesTab').load("../modules/grc/ui/templates/companiesTab.html", function () {
             $('#toggle_old_firms').change(function () {
                 DoleticUIModule.fillFirmList(false);
             });
+            if(callbackFct) {
+                callbackFct();
+            }
         });
     };
 
     /**
      *    Load the HTML code of the Propects Tab
      */
-    this.getProspectsTab = function () {
+    this.getProspectsTab = function (callbackFct) {
         //$('#prospects_form_modal').remove();
         $('#prospectsTab').load("../modules/grc/ui/templates/prospectsTab.html", function () {
             DoleticUIModule.fillProspectList();
+            if(callbackFct) {
+                callbackFct();
+            }
         });
     };
 
     /**
      *    Load the HTML code of the Propects Tab
      */
-    this.getAchievedProspectsTab = function () {
+    this.getAchievedProspectsTab = function (callbackFct) {
         //$('#prospects_form_modal').remove();
         $('#achievedProspectsTab').load("../modules/grc/ui/templates/achievedProspectsTab.html", function () {
             DoleticUIModule.fillAchievedProspectList();
+            if(callbackFct) {
+                callbackFct();
+            }
         });
     };
 
     /**
      *    Load the HTML code of the Contacts Tab
      */
-    this.getOldContactsTab = function () {
+    this.getOldContactsTab = function (callbackFct) {
         //$('#contact_form_modal').remove();
         $('#oldContactsTab').load("../modules/grc/ui/templates/oldContactsTab.html", function () {
             DoleticUIModule.fillOldContactList();
+            if(callbackFct) {
+                callbackFct();
+            }
         });
     };
 
     /**
      *    Load the HTML code of the Stats Tab
      */
-    this.getStatsTab = function () {
+    this.getStatsTab = function (callbackFct) {
         $('#statsTab').load("../modules/grc/ui/templates/statsTab.html");
     };
 
     /**
      *    Load the HTML code of the Stats Tab
      */
-    this.getContactDetailsTab = function () {
-        $('#contactDetailsTab').load("../modules/grc/ui/templates/contactDetailsTab.html");
+    this.getContactDetailsTab = function (callbackFct) {
+        $('#contactDetailsTab').load("../modules/grc/ui/templates/contactDetailsTab.html", function() {
+            if(callbackFct) {
+                callbackFct();
+            }
+        });
     };
 
     /**
      *    Load the HTML code of the Stats Tab
      */
-    this.getContactFormModal = function () {
+    this.getContactFormModal = function (callbackFct) {
         $('#contact_form_modal').load("../modules/grc/ui/templates/contactFormModal.html", function() {
-            DoleticUIModule.fillGenderSelector();
+            if(callbackFct) {
+                callbackFct();
+            }
         });
     };
 
@@ -214,6 +234,10 @@ var DoleticUIModule = new function () {
                 $('#contact_type_search').dropdown('get value'),
                 $('#contact_role').val(),
                 $('#contact_notes').val(),
+                $('#contact_origin').val(),
+                $('#contact_error').val(),
+                $('#sdatei_nextCalldate').val(),
+                $('#contact_prospected').val(),
                 function (data) {
                     DoleticUIModule.addContactHandler(data);
                 });
@@ -363,6 +387,7 @@ var DoleticUIModule = new function () {
         // ADD OTHER TESTS
         if (DoleticUIModule.checkNewContactForm()) {
             // Insert new project in db
+            console.log("update");
             ContactServicesInterface.update(
                 id,
                 $('#contact_gender_search').dropdown('get value'),
@@ -375,6 +400,9 @@ var DoleticUIModule = new function () {
                 $('#contact_type_search').dropdown('get value'),
                 $('#contact_role').val(),
                 $('#contact_notes').val(),
+                $('#contact_origin').val(),
+                $('#contact_error').val(),
+                $('#contact_prospected').val(),
                 function (data) {
                     DoleticUIModule.editContactHandler(data);
                 });
@@ -492,9 +520,22 @@ var DoleticUIModule = new function () {
     };
 
     /**
+     *    Add the firm selector
+     */
+    this.fillFirmSelector = function () {
+        var content = '';
+        // iterate over values to build options
+        for (var id in window.firm_list) {
+            content += '<div class="item" data-value="' + window.firm_list[id].id + '">' + window.firm_list[id].name + '</div>';
+        }
+        // insert html content
+        $('#contact_firm_search .menu').html(content);
+    };
+
+    /**
      *    Add the gender selector
      */
-    this.fillFirmList = function (fillContact) {
+    this.fillFirmList = function (callbackFct) {
         var showOld = $('#toggle_old_firms').prop('checked');
         FirmServicesInterface.getAll(function (data) {
             window.firm_list = [];
@@ -562,15 +603,13 @@ var DoleticUIModule = new function () {
 			    				</td> \
 			    				</tr>";
                     }
-                    selector_content += '<div class="item" data-value="' + data.object[i].id + '">' + data.object[i].name + '</div>';
                     counter++;
                 }
                 content += "</tbody></table>";
                 $('#company_table_container').append(content);
-                $('#contact_firm_search .menu').html(selector_content);
                 DoleticMasterInterface.makeDataTables('company_table', filters);
-                if (fillContact) {
-                    DoleticUIModule.fillContactList();
+                if (callbackFct) {
+                    callbackFct();
                 }
             } else {
                 // use default service service error handler
@@ -815,7 +854,7 @@ var DoleticUIModule = new function () {
 				  							<i class=\"write icon\"></i> \
 										</button>" +
                                         "<button class=\"ui orange icon button\" data-tooltip=\"Marquer comme ancien\" onClick=\"\"> \
-				  							<i class=\"blind icon\"></i> \
+				  							<i class=\"birthday icon\"></i> \
 										</button> \
 										<button class=\"ui red icon button\" data-tooltip=\"Supprimer\" onClick=\"DoleticUIModule.deleteContact(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"remove icon\"></i> \
@@ -1077,6 +1116,19 @@ var DoleticUIModule = new function () {
         if ($('#contact_mail').val() != '' && !DoleticMasterInterface.checkMail($('#contact_mail').val())) {
             valid = false;
             $('#contact_email_field').addClass('error');
+        }
+        if ($('#contact_error').val() == '' || $('#contact_error').val() === null) {
+            valid = false;
+            $('#contact_error').addClass('error');
+        }
+        if ($('#contact_prospected').val() == '' || $('#contact_prospected').val() === null ||
+                ($('#contact_prospected').val() != 0 && $('#contact_prospected').val() != 1)) {
+            valid = false;
+            $('#contact_prospected_field').addClass('error');
+        }
+        if ($('#sdatei_nextCalldate').val() != '' && !DoleticMasterInterface.checkDate($('#sdatei_nextCalldate').val())) {
+            valid = false;
+            $('#contact_nextCallDate_field').addClass('error');
         }
         if (!valid) {
             $('#contact_form').transition('shake');
