@@ -25,6 +25,11 @@ var DoleticUIModule = new function () {
         DoleticUIModule.getAchievedProspectsTab();
         DoleticUIModule.getOldContactsTab();
         DoleticUIModule.getStatsTab();
+        DoleticUIModule.getContactDetailsTab();
+
+        // Hide contact details
+        $('#det_cont_tabChoose').hide();
+
         // Fill tables
         DoleticUIModule.fillFirmList(true);
         // Fill all the selectors
@@ -47,6 +52,7 @@ var DoleticUIModule = new function () {
    								<a class=\"item\" data-tab=\"achievedProspects\">Résultats des prospections</a> \
    								<a class=\"item\" data-tab=\"contacts\">Contacts courants</a> \
    								<a class=\"item\" data-tab=\"oldContacts\">Anciens contacts</a> \
+   								<a class=\"item\" data-tab=\"contactDetails\" id=\"det_cont_tabChoose\">Détails du contact</a> \
  							</div> \
  							<div class=\"ui bottom attached tab segment active\" data-tab=\"companies\"> \
 								<div id=\"companiesTab\"> \
@@ -66,6 +72,10 @@ var DoleticUIModule = new function () {
  					    	</div> \
                             <div class=\"ui bottom attached tab segment\" data-tab=\"oldContacts\"> \
 								<div id=\"oldContactsTab\"> \
+								</div> \
+ 					    	</div> \
+                            <div class=\"ui bottom attached tab segment\" data-tab=\"contactDetails\"> \
+								<div id=\"contactDetailsTab\"> \
 								</div> \
  					    	</div> \
 						</div> \
@@ -151,6 +161,13 @@ var DoleticUIModule = new function () {
     };
 
     /**
+     *    Load the HTML code of the Stats Tab
+     */
+    this.getContactDetailsTab = function () {
+        $('#contactDetailsTab').load("../modules/grc/ui/templates/contactDetailsTab.html");
+    };
+
+    /**
      *    Clear all the field from the Contact Form
      */
     this.clearNewContactForm = function () {
@@ -183,6 +200,74 @@ var DoleticUIModule = new function () {
                     DoleticUIModule.addContactHandler(data);
                 });
         }
+    };
+
+    /**
+     *    Open Contact Details Tab
+     */
+    this.openContactInfo = function (contactId) {
+        ContactServicesInterface.getById(contactId, function (data) {
+            // if no service error
+            if (data.code == 0 && data.object != "[]") {
+
+                var tabTitle = "Détails de ";
+                tabTitle += data.object.firstname;
+                tabTitle += " ";
+                tabTitle += data.object.lastname;
+                $('#det_cont_tabChoose').html(tabTitle);
+
+                $('#det_cont_name').html(data.object.gender + " " + data.object.firstname + " " + data.object.lastname);
+                $('#det_cont_email').html(data.object.email);
+                $('#det_cont_phone').html(data.object.phone);
+                $('#det_cont_cellphone').html(data.object.cellphone);
+                $('#det_cont_role').html(data.object.role);
+
+                if(typeof window.firm_list[data.object.firm_id] !== 'undefined') {
+                    $('#det_cont_firm').html(window.firm_list[data.object.firm_id].name);
+                } else {
+                    $('#det_cont_firm').html("<i>Aucune</i>");
+                }
+
+                if(data.object.prospected == 1) {
+                    $('#det_cont_prospected').html("Oui");
+                } else if(data.object.prospected == 0) {
+                    $('#det_cont_prospected').html("Non");
+                } else {
+                    $('#det_cont_prospected').html("undefined");
+                }
+
+                if(data.object.errorFlag == -1) {
+                    $('#det_cont_error').html("Correctes");
+                } else {
+                    $('#det_cont_error').html("Erronées");
+                }
+
+                if(data.object.nextCallDate !== null && data.object.nextCallDate != "") {
+                    $('#det_cont_next_call_date').html(data.object.nextCallDate);
+                } else {
+                    $('#det_cont_next_call_date').html("<i>Aucune</i>");
+                }
+
+                if(data.object.origin !== null && data.object.origin != "") {
+                    $('#det_cont_origin').html(data.object.origin);
+                } else {
+                    $('#det_cont_origin').html("<i>Inconnue</i>");
+                }
+
+                if(data.object.notes !== null && data.object.notes != "") {
+                    $('#det_cont_notes').html(data.object.notes);
+                } else {
+                    $('#det_cont_notes').html("<i>Aucune</i>");
+                }
+
+                $('#det_cont_tabChoose').show();
+                $('#det_cont_tabChoose').click();
+
+            } else {
+                // use default service service error handler
+                DoleticServicesInterface.handleServiceError(data);
+            }
+        });
     };
 
     /**
@@ -522,7 +607,7 @@ var DoleticUIModule = new function () {
 			    				    <td>" + data.object[i].role + "</td> \
 			    				    <td> \
 			    					<div class=\"ui icon buttons\"> \
-			    					    <button class=\"ui teal icon button\" data-tooltip=\"Informations\" onClick=\"\"> \
+			    					    <button class=\"ui teal icon button\" data-tooltip=\"Informations\" onClick=\"DoleticUIModule.openContactInfo(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"info icon\"></i> \
 										</button>\
 				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
@@ -610,7 +695,7 @@ var DoleticUIModule = new function () {
 			    				    <td>" + error + "</td> \
 			    				    <td> \
 			    					<div class=\"ui icon buttons\"> \
-			    					    <button class=\"ui teal icon button\" data-tooltip=\"Informations\" onClick=\"\"> \
+			    					    <button class=\"ui teal icon button\" data-tooltip=\"Informations\" onClick=\"DoleticUIModule.openContactInfo(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"info icon\"></i> \
 										</button>\
 				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
@@ -700,7 +785,7 @@ var DoleticUIModule = new function () {
 			    				    <td>" + isProspected + "</td> \
 			    				    <td> \
 			    					<div class=\"ui icon buttons\"> \
-			    					    <button class=\"ui teal icon button\" data-tooltip=\"Informations\" onClick=\"\"> \
+			    					    <button class=\"ui teal icon button\" data-tooltip=\"Informations\" onClick=\"DoleticUIModule.openContactInfo(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"info icon\"></i> \
 										</button>\
 				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
@@ -787,7 +872,7 @@ var DoleticUIModule = new function () {
 			    				    <td>" + isProspected + "</td> \
 			    				    <td> \
 			    					<div class=\"ui icon buttons\"> \
-			    					    <button class=\"ui teal icon button\" data-tooltip=\"Informations\" onClick=\"\"> \
+			    					    <button class=\"ui teal icon button\" data-tooltip=\"Informations\" onClick=\"DoleticUIModule.openContactInfo(" + data.object[i].id + "); return false;\"> \
 				  							<i class=\"info icon\"></i> \
 										</button>\
 				    					<button class=\"ui blue icon button\" data-tooltip=\"Modifier\" onClick=\"DoleticUIModule.editContact(" + data.object[i].id + "); return false;\"> \
