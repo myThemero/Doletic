@@ -26,6 +26,7 @@ var DoleticUIModule = new function () {
         DoleticUIModule.getOldContactsTab();
         DoleticUIModule.getStatsTab();
         DoleticUIModule.getContactDetailsTab();
+        DoleticUIModule.getContactFormModal();
 
         // Hide contact details
         $('#det_cont_tabChoose').hide();
@@ -82,7 +83,8 @@ var DoleticUIModule = new function () {
  					</div> \
 	 				<div class=\"row\"> \
 	 				</div> \
-				</div>";
+				</div>\
+                <div class=\"ui modal\" id=\"contact_form_modal\"></div>";
     };
     /**
      *    Override uploadSuccessHandler
@@ -165,6 +167,13 @@ var DoleticUIModule = new function () {
      */
     this.getContactDetailsTab = function () {
         $('#contactDetailsTab').load("../modules/grc/ui/templates/contactDetailsTab.html");
+    };
+
+    /**
+     *    Load the HTML code of the Stats Tab
+     */
+    this.getContactFormModal = function () {
+        $('#contact_form_modal').load("../modules/grc/ui/templates/contactFormModal.html");
     };
 
     /**
