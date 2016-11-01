@@ -33,11 +33,13 @@ var DoleticUIModule = new function () {
 
         // Fill tables
         DoleticUIModule.fillFirmList(true);
+
         // Fill all the selectors
         DoleticUIModule.fillContactTypeSelector();
         DoleticUIModule.fillFirmTypeSelector();
         DoleticUIModule.fillCountrySelector();
         DoleticUIModule.fillGenderSelector();
+
         window.postLoad();
     };
     /**
@@ -107,7 +109,7 @@ var DoleticUIModule = new function () {
      *    Load the HTML code of the Contacts Tab
      */
     this.getContactsTab = function () {
-        $('#contact_form_modal').remove();
+        //$('#contact_form_modal').remove();
         $('#contactsTab').load("../modules/grc/ui/templates/contactsTab.html", function () {
             DoleticUIModule.fillContactList();
         });
@@ -173,7 +175,9 @@ var DoleticUIModule = new function () {
      *    Load the HTML code of the Stats Tab
      */
     this.getContactFormModal = function () {
-        $('#contact_form_modal').load("../modules/grc/ui/templates/contactFormModal.html");
+        $('#contact_form_modal').load("../modules/grc/ui/templates/contactFormModal.html", function() {
+            DoleticUIModule.fillGenderSelector();
+        });
     };
 
     /**
@@ -182,7 +186,12 @@ var DoleticUIModule = new function () {
     this.clearNewContactForm = function () {
         $('#contact_form .message').remove();
         $('#contact_form')[0].reset();
-        $('#contact_form .dropdown').dropdown('restore defaults');
+        $('#contact_gender_field .dropdown').dropdown('restore defaults');
+        $('#contact_type_field .dropdown').dropdown('restore defaults');
+        $('#contact_firm_field .dropdown').dropdown('restore defaults');
+        $('#contact_error_field .dropdown').dropdown('restore defaults');
+        $('#contact_prospected_field .dropdown').dropdown('restore defaults');
+
         $('#contact_form h4').html("Ajout d'un contact");
         $('#addcontact_btn').html("Ajouter").attr("onClick", "DoleticUIModule.insertNewContact(); return false;");
     };
@@ -312,9 +321,13 @@ var DoleticUIModule = new function () {
                 $('#contact_mail').val(data.object.email);
                 $('#contact_role').val(data.object.role);
                 $('#contact_notes').val(data.object.notes);
+                $('#contact_origin').val(data.object.origin);
+                $('#sdatei_nextCalldate').val(data.object.nextCallDate);
                 $('#contact_gender_search').dropdown("set selected", data.object.gender);
                 $('#contact_type_search').dropdown("set selected", data.object.category);
                 $('#contact_firm_search').dropdown("set selected", data.object.firm_id);
+                $('#contact_prospected_search').dropdown("set selected", data.object.prospected);
+                $('#contact_error_search').dropdown("set selected", data.object.errorFlag);
                 $('#addcontact_btn').html("Confirmer").attr("onClick", "DoleticUIModule.updateContact(" + id + "); return false;");
                 $('#contact_form_modal').modal('show');
             } else {
@@ -469,6 +482,7 @@ var DoleticUIModule = new function () {
                     content += '<div class="item" data-value="' + data.object[i] + '">' + data.object[i] + '</div>';
                 }
                 // insert html content
+
                 $('#contact_gender_search .menu').html(content);
             } else {
                 // use default service service error handler
